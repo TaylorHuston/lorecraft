@@ -1,9 +1,9 @@
 {
-  "name": "src",
+  "name": "lorecraft",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "A batteries-included AdonisJS starter kit for building modern APIs with type-safe frontend integration",
+  "description": "Lorecraft application monorepo",
   "license": "MIT",
   "workspaces": [
     "apps/*"
