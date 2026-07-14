@@ -6,11 +6,11 @@ status: ready_to_close
 
 ## Resume Here
 
-- Current state: Storybook covers the isolated Adventure prototype and current production auth/workspace components; user confirmation and independent review are complete
-- Last completed action: remediated the consolidated review findings and completed the regression verification union
-- Next action: obtain explicit merge-and-close authorization for `change/adventure-ui-storybook` into `develop`
-- Active branch/ref: change/adventure-ui-storybook
-- Expected dirty files: none after the review commit
+- Current state: implementation, review, manual confirmation, local integration, and closeout are complete
+- Last completed action: fast-forwarded reviewed commit `9c06207` into `develop` and archived this Change
+- Next action: none
+- Active branch/ref: develop
+- Expected dirty files: none after the closeout commit
 - Known blockers: none
 
 ## Task Checklist
@@ -39,6 +39,7 @@ status: ready_to_close
 | 2026-07-14 | Storybook workbench       | Frontend config, prototype component, stories                              | implemented | this branch  |
 | 2026-07-14 | Production UI catalog     | Auth and workspace components                                              | implemented | this branch  |
 | 2026-07-14 | Review remediation        | CI, setup docs, prototype accessibility, interaction states, and artifacts | implemented | `79f2f15`    |
+| 2026-07-14 | Local integration         | Fast-forward merge into `develop`                                           | completed   | `9c06207`    |
 
 ## Verification Ledger
 
@@ -68,9 +69,9 @@ status: ready_to_close
 ## Review And Closeout
 
 - Review status: passed
-- Review record: `docs/changes/2026-07-14-storybook-ui-workbench/review.md`
+- Review record: `docs/changes/closed/2026-07-14-storybook-ui-workbench/review.md`
 - ADR status: not applicable
 - Epic reconciliation: no Epic action; verify no product behavior was mounted
-- PR / merge state: reviewed and ready for local integration into `develop`; not merged
+- PR / merge state: reviewed and fast-forwarded locally into `develop` at `9c06207`
 - Accepted deferred gaps: hosted publication and external visual regression are deferred
-- Change folder move: pending explicit merge authorization and closeout
+- Change folder move: completed; archived under `docs/changes/closed/`
