@@ -297,6 +297,28 @@ describe('account workspace entry', () => {
     }
   )
 
+  it('LC-001/S2/R2-S3 coalesces tab visibility and window focus into one session check', async () => {
+    let resolveRevalidation: (account: null) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(null)
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    renderTestApp({ route: '/sign-in', session: null, api: { restoreSession } })
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    await act(async () => document.dispatchEvent(new Event('visibilitychange')))
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
+
+    await act(async () => resolveRevalidation(null))
+    expect(restoreSession).toHaveBeenCalledTimes(2)
+  })
+
   it.each([
     ['/sign-up', 'Create your Lorecraft account'],
     ['/sign-in', 'Sign in to Lorecraft'],
@@ -328,6 +350,47 @@ describe('account workspace entry', () => {
       expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
     }
   )
+
+  it('LC-001/S2/R2-S3 keeps the public draft while retry is pending and prevents repeat retries', async () => {
+    const user = userEvent.setup()
+    let rejectRevalidation: (error: Error) => void = () => undefined
+    let resolveRetry: (account: null) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(null)
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((_resolve, reject) => {
+            rejectRevalidation = reject
+          })
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((resolve) => {
+            resolveRetry = resolve
+          })
+      )
+    renderTestApp({ route: '/sign-in', session: null, api: { restoreSession } })
+
+    await user.type(await screen.findByLabelText('Email'), 'draft@example.com')
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await act(async () => rejectRevalidation(new Error('network unavailable')))
+
+    const retry = await screen.findByRole('button', { name: 'Try again' })
+    await user.click(retry)
+
+    expect(screen.getByRole('button', { name: 'Trying again...' })).toBeDisabled()
+    expect(screen.getByRole('alert')).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
+    expect(restoreSession).toHaveBeenCalledTimes(3)
+
+    await user.click(screen.getByRole('button', { name: 'Trying again...' }))
+    expect(restoreSession).toHaveBeenCalledTimes(3)
+
+    await act(async () => resolveRetry(null))
+    await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
+    expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
+  })
 
   it('LC-001/S1/R2-S1 keeps successful signup authoritative over an older anonymous revalidation', async () => {
     const user = userEvent.setup()

@@ -42,13 +42,18 @@ function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
 }
 
 function SessionRefreshError() {
-  const { retry } = useAuth()
+  const { isRevalidating, retry } = useAuth()
 
   return (
-    <aside className={styles.refreshError} role="alert">
+    <aside className={styles.refreshError} role="alert" aria-busy={isRevalidating}>
       <span>We couldn't refresh your session.</span>
-      <button className={styles.refreshRetry} type="button" onClick={retry}>
-        Try again
+      <button
+        className={styles.refreshRetry}
+        type="button"
+        disabled={isRevalidating}
+        onClick={retry}
+      >
+        {isRevalidating ? 'Trying again...' : 'Try again'}
       </button>
     </aside>
   )

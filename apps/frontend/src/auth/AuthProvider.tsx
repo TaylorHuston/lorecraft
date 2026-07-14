@@ -11,7 +11,8 @@ export function AuthProvider({ api, children }: AuthProviderProps) {
   const session = useQuery({
     queryKey: sessionQueryKey,
     queryFn: () => api.restoreSession(),
-    refetchOnWindowFocus: 'always',
+    // Session focus handling is explicit below so one browser return produces one request.
+    refetchOnWindowFocus: false,
     retry: false,
     staleTime: 30_000,
   })
