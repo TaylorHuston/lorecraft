@@ -132,7 +132,8 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 - WHEN an unauthenticated visitor partially completes signup or sign-in
 - AND returning window focus triggers background session revalidation
 - THEN the public form remains mounted while the session check is pending
-- AND the visitor's unfinished input remains available when the server still reports no authenticated session.
+- AND the visitor's unfinished input remains available when the server still reports no authenticated session
+- AND a failed background check leaves the draft mounted with a non-destructive retry action.
 
 ##### Implemented By
 
@@ -170,7 +171,8 @@ The system SHALL deny unauthenticated access to both the workspace UI and protec
 - WHEN an authenticated user leaves the workspace open and the server session later expires or is revoked elsewhere
 - AND the user returns focus to the workspace
 - THEN the client revalidates the session
-- AND the workspace returns to sign-in without continuing to render private account state.
+- AND the workspace returns to sign-in without continuing to render private account state
+- AND keyboard focus moves to sign-in, or returns to the previously focused workspace control when the session remains valid.
 
 ##### Requirement R2: Logout Invalidation
 

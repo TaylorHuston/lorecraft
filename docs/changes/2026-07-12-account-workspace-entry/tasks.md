@@ -1,17 +1,17 @@
 ---
-status: review
+status: in_progress
 ---
 
 # Tasks: Account Workspace Entry
 
 ## Resume Here
 
-- Current state: all required review findings are implemented and pass focused, integration, browser, security, and static verification
-- Last completed action: verified 24 backend, 41 frontend, 16 database-safety, and 2 Playwright tests against fresh isolated schemas, plus static and dependency gates
-- Next action: commit the verified remediation and run a fresh independent `/sdd-review` from the resulting source commit
+- Current state: fresh review of `b38d7b7` found required migration-upgrade and accessibility remediation; CI and artifact-only findings were safely corrected during review
+- Last completed action: verified 24 backend, 41 frontend, 16 database-safety, and 2 Playwright tests against fresh isolated schemas, plus static and dependency gates; review findings are recorded in `review.md`
+- Next action: run `/sdd-apply` to add a forward users-schema migration with upgrade-path proof, focus the protected-session error recovery surface, and provide a 44px retry touch target
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: the reviewed frontend/backend/CI safety implementation, public setup docs, and reconciled Epic/change artifacts
-- Known blockers: no implementation blocker remains; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
+- Expected dirty files: none after the safe review-fix commit
+- Known blockers: three required implementation findings, followed by fresh review; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -103,6 +103,10 @@ status: review
 - [x] 8.7 Preserve public auth drafts and a non-destructive retry path when background session revalidation fails.
 - [x] 8.8 Restore keyboard focus after protected session revalidation succeeds or redirects to sign-in.
 - [x] 8.9 Reconcile Scenario references, verification gaps, canonical manual status, and final evidence counts found during independent artifact review.
+- [ ] 8.10 Restore the original users migration and add a forward migration plus upgrade-path proof for existing databases.
+- [ ] 8.11 Move focus to protected-session error recovery when background revalidation fails and add regression evidence.
+- [ ] 8.12 Give the public background-refresh retry control a minimum 44px touch target.
+- [x] 8.13 Correct the unpublished `actions/checkout@v7` CI reference to the current supported major and reconcile stale change artifacts.
 
 ## Implementation Ledger
 
@@ -170,7 +174,7 @@ status: review
 
 ## Blockers / Open Questions
 
-- No implementation blocker remains from the prior reviews; all required findings are implemented and locally verified in `c7d990b`, and fresh independent review remains required because functional source changed.
+- Required remediation from the `b38d7b7` review remains in the users migration upgrade path and frontend error-recovery accessibility.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
@@ -183,9 +187,9 @@ status: review
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested` on 2026-07-14 for source `d05d78e00d1a1797544c3e5342bf91cd1338b9c2`
+- `sdd-review` verdict: `changes-requested` on 2026-07-14 for source `b38d7b7a0f620b4be978b28f45ae50dc1181f0e3`
 - Review record: `review.md`
-- `review.md` findings resolved: required findings are implemented and locally verified; the historical verdict remains `changes-requested` until fresh independent rereview, and deployment/reliability suggestions remain recorded
+- `review.md` findings resolved: CI and artifact findings were safely fixed; migration-upgrade and accessibility findings remain for `/sdd-apply`
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started
