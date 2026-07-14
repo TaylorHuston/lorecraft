@@ -3,8 +3,8 @@
 ## Resume Here
 
 - Current state: both required rereview findings are implemented and pass isolated integration, browser, security, and static verification
-- Last completed action: added open-workspace session focus revalidation plus a JSON-only signup/login boundary with consistent declared-length and streaming size enforcement
-- Next action: commit the verified implementation and run a fresh independent `/sdd-review`
+- Last completed action: committed the verified session and auth request-boundary remediation as `78bebd6`
+- Next action: run a fresh independent `/sdd-review` from the current branch head; functional remediation is `78bebd6`
 - Active branch/ref: `change/account-workspace-entry`
 - Expected dirty files: frontend auth/query tests and configuration, backend request-boundary/bodyparser tests and configuration, then this task ledger and `LC-001`
 - Known blockers: no implementation blocker remains; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
@@ -98,7 +98,7 @@
 | 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | `6468754`    |
 | 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`    |
 | 2026-07-13 | Safe review fixes                           | main integration after delegated review                                | Login throttle proof, CSRF recovery, formatting, and Epic evidence              | 18 backend and 32 frontend tests pass                          | `95f7799`    |
-| 2026-07-14 | Required rereview remediation               | delegated frontend/backend implementation plus main integration        | Session focus revalidation, auth request boundary, parser policy, tests, docs   | 22 backend, 34 frontend, and 2 browser tests pass              | pending      |
+| 2026-07-14 | Required rereview remediation               | delegated frontend/backend implementation plus main integration        | Session focus revalidation, auth request boundary, parser policy, tests, docs   | 22 backend, 34 frontend, and 2 browser tests pass              | `78bebd6`    |
 
 ## Verification Ledger
 
