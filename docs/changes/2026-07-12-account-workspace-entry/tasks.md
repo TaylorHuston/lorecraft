@@ -2,12 +2,12 @@
 
 ## Resume Here
 
-- Current state: fresh review findings were safely remediated in `95f7799`; that functional commit requires independent rereview
+- Current state: independent review found missing open-workspace session revalidation and unauthenticated multipart processing before auth throttles
 - Last completed action: added exact login-throttle proof and CSRF-expiry recovery, passing 18 database-backed backend tests and 32 frontend tests
-- Next action: rerun `/sdd-review` against immutable functional source commit `95f7799`
+- Next action: return to `/sdd-apply` for session revalidation, restricted auth request parsing, and focused verification
 - Active branch/ref: `change/account-workspace-entry`
 - Expected dirty files: none after the review-record commit
-- Known blockers: no implementation blocker; independent rereview, manual UI confirmation, and provider-specific evidence remain pending
+- Known blockers: session-expiry revalidation and pre-throttle multipart restriction are required before integration; manual UI confirmation and provider-specific evidence remain explicit gaps
 
 ## Task Checklist
 
@@ -59,6 +59,8 @@
   - [x] R2/R2-S2: the invalidated session cannot be reused.
   - [x] R3/R3-S1: an account with no Worlds sees an intentional empty state and no incomplete creation control.
 - [x] 5.4 Update Story-level Implemented By maps with current code locations.
+- [ ] 5.5 Revalidate the current account session when an open workspace regains focus and remove protected UI when the session has expired or been revoked.
+- [ ] 5.6 Prevent signup and login requests from triggering unused multipart file processing before rate limiting and validation.
 
 ### 6. Verification
 
@@ -69,6 +71,8 @@
 - [ ] 6.5 Validate migrations and integration behavior against disposable PostgreSQL in CI, then smoke-test the isolated Neon test branch.
 - [x] 6.6 Confirm logs and browser storage contain no passwords, connection strings, session values, or bearer tokens.
 - [x] 6.7 Update Story-level Verified By maps with Scenario-mapped evidence and explicit remaining manual/provider gaps.
+- [ ] 6.8 Add focused Scenario evidence that an already-rendered workspace returns to sign-in after session expiry or external revocation.
+- [ ] 6.9 Add deterministic evidence that auth routes reject unsupported or oversized multipart payloads before temporary-file processing.
 
 ### 7. Documentation, Review, And Closeout
 
@@ -108,6 +112,8 @@
 | 2026-07-13 | PostgreSQL-backed backend suite                                             | integration test           | Account persistence, hashing, duplicate handling, real database sessions, safe anonymous reads and logout, CSRF, CORS, and exact limits | 18 passed against an isolated Neon schema                      |
 | 2026-07-13 | Playwright account workspace journey                                        | deterministic browser E2E  | Same-origin proxy, real cookie/CSRF flow, storage isolation, refresh, replay denial, auth routing, and empty state                      | 2 passed on desktop and mobile against an isolated Neon schema |
 | 2026-07-13 | Fresh local integration review of `2eb5174`                                 | independent review         | Artifact truth, code/security, verification, UI, documentation, and integration readiness                                               | changes-requested; safe fixes committed as `95f7799`           |
+| 2026-07-14 | Independent rereview of `f87cabe`                                           | independent review         | Corrected auth behavior, Scenario evidence, security, docs, conflict state, and integration readiness                                   | changes-requested; open workspaces need session revalidation   |
+| 2026-07-14 | Safe review fix                                                             | main integration           | Backend CSRF error contract test                                                                                                        | exact `INVALID_CSRF_TOKEN` response shape asserted             |
 
 ## Manual Feedback
 
@@ -132,22 +138,23 @@
 
 ## Blockers / Open Questions
 
-- Blocker: safe functional review fixes at `95f7799` require a fresh independent review before integration.
+- Blocker: an already-rendered workspace can remain visible after server-session expiry or external revocation because session focus revalidation is disabled.
+- Blocker: signup and login parse and write unsupported multipart uploads before their route-level throttles execute.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
 ## Closeout
 
-- Epic files updated: yes; acceptance remains pending independent rereview, manual UI confirmation, and dedicated Neon branch smoke
+- Epic files updated: yes; session revalidation and auth multipart handling block acceptance, while manual UI confirmation and dedicated Neon branch smoke remain explicit gaps
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; remaining gaps are dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
+- Scenario-mapped Verified By maps current: yes; remaining gaps include `S3/R1-S3`, auth multipart handling, dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested` on 2026-07-13
+- `sdd-review` verdict: `changes-requested` on 2026-07-14 at `f87cabe502f7573d239d4ae0c96006114771c4a9`
 - Review record: `review.md`
-- `review.md` findings resolved: required findings fixed in `95f7799`; independent rereview pending
+- `review.md` findings resolved: no; session revalidation and auth multipart handling are required, and one non-blocking reliability suggestion remains recorded
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started

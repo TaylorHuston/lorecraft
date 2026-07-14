@@ -2,8 +2,8 @@
 id: LC-001
 status: draft
 created: 2026-07-12
-modified: 2026-07-13
-last_verified: 2026-07-13
+modified: 2026-07-14
+last_verified: 2026-07-14
 stories:
   - S1
   - S2
@@ -54,9 +54,9 @@ A user can create an account, return through a secure browser session, reach a p
 
 | Story | Status      | Capability                                          | Last Verified | Notes                                       |
 | ----- | ----------- | --------------------------------------------------- | ------------- | ------------------------------------------- |
-| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-13    | Automated backend and browser proof passes. |
-| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-13    | Automated backend and browser proof passes. |
-| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-13    | Manual UI confirmation remains pending.     |
+| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes. |
+| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes. |
+| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-14    | Manual UI confirmation remains pending.     |
 
 ## Stories
 
@@ -65,7 +65,7 @@ A user can create an account, return through a secure browser session, reach a p
 Status: implemented
 Created: 2026-07-12
 Modified: 2026-07-13
-Last verified: 2026-07-13
+Last verified: 2026-07-14
 
 As a new user, I want to create an account and enter my private workspace, so that I can begin using Lorecraft.
 
@@ -137,7 +137,7 @@ The system SHALL establish an authenticated browser session after successful acc
 Status: implemented
 Created: 2026-07-12
 Modified: 2026-07-13
-Last verified: 2026-07-13
+Last verified: 2026-07-14
 
 As a returning user, I want Lorecraft to recognize or re-authenticate me, so that I can resume my private workspace without unnecessary friction.
 
@@ -202,7 +202,7 @@ The system SHALL restore a valid existing session across page refreshes and keep
 Status: implemented
 Created: 2026-07-12
 Modified: 2026-07-13
-Last verified: 2026-07-13
+Last verified: 2026-07-14
 
 As an account holder, I want my workspace protected and my session terminable, so that only I can access my private Lorecraft data.
 
@@ -222,6 +222,13 @@ The system SHALL deny unauthenticated access to both the workspace UI and protec
 
 - WHEN a request without a valid session calls a protected account endpoint
 - THEN the API returns an authentication failure without private account data.
+
+###### Scenario R1-S3: Open Workspace Session Ends
+
+- WHEN an authenticated user leaves the workspace open and the server session later expires or is revoked elsewhere
+- AND the user returns focus to the workspace
+- THEN the client revalidates the session
+- AND the workspace returns to sign-in without continuing to render private account state.
 
 ##### Requirement R2: Logout Invalidation
 
@@ -270,6 +277,7 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 
 #### Verification Gaps
 
+- `S3/R1-S3` is not implemented: an already-rendered workspace does not currently revalidate when its server session expires or is revoked elsewhere.
 - Manual confirmation is needed for the protected transition, empty workspace, responsive layout, and logout flow.
 
 ## Cross-Story Concerns
@@ -278,6 +286,7 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 - The browser uses HTTP-only session cookies with CSRF protection and does not store bearer tokens.
 - PostgreSQL migrations and integration tests must use explicitly acknowledged disposable databases and never target production or shared development data.
 - Public auth and CSRF bootstrap routes are rate-limited in-process; a shared ingress or distributed limit remains a deployment requirement before horizontal scaling.
+- Auth endpoints currently inherit global multipart auto-processing before their route-level throttles; this unsupported request path must be restricted before the Epic is accepted.
 - Browser API traffic stays on the frontend origin and reaches AdonisJS through the `/api` proxy; split-host browser deployment is not supported by this session/CSRF contract.
 - The React client consumes the typed Tuyau contract while keeping presentation and form state client-specific.
 
@@ -297,4 +306,4 @@ This Epic is healthy when:
 
 ## Notes
 
-- The Epic remains draft until implementation, verification, and independent SDD review support acceptance.
+- Independent SDD review found session-revalidation and pre-throttle multipart-processing gaps. The Epic remains draft until those gaps are resolved and the change is accepted and merged.

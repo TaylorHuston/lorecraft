@@ -117,6 +117,9 @@ test.group('Account API security', (group) => {
     })
 
     response.assertStatus(403)
+    response.assertBody({
+      errors: [{ code: 'INVALID_CSRF_TOKEN', message: 'Invalid or expired CSRF token.' }],
+    })
     response.assertBodyNotContains({ password: 'correct horse battery staple' })
   })
 
