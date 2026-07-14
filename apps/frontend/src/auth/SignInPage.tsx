@@ -26,7 +26,8 @@ export function SignInPage() {
   const signIn = useMutation({
     mutationFn: (input: SignInInput) => api.signIn(input),
     retry: false,
-    onSuccess: (account) => {
+    onSuccess: async (account) => {
+      await queryClient.cancelQueries({ queryKey: sessionQueryKey })
       queryClient.setQueryData(sessionQueryKey, account)
       const returnLocation = (location.state as ReturnLocation | null)?.from
       const destination = returnLocation
@@ -109,6 +110,7 @@ export function SignInPage() {
             id="signin-email"
             name="email"
             type="email"
+            autoFocus
             autoComplete="email"
             required
             aria-invalid={Boolean(fieldErrors.email)}

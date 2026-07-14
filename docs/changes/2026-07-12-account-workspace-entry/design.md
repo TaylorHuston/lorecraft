@@ -115,7 +115,7 @@ The system SHALL establish a browser session for valid credentials and reject in
 
 ##### Requirement R2: Session Restoration
 
-The system SHALL restore a valid existing session across page refreshes and keep authenticated users out of the signup and sign-in journey.
+The system SHALL restore a valid existing session across page refreshes, keep authenticated users out of the signup and sign-in journey, and preserve an unauthenticated visitor's unfinished public auth form during background session revalidation.
 
 ###### Scenario R2-S1: Workspace Refresh
 
@@ -126,6 +126,13 @@ The system SHALL restore a valid existing session across page refreshes and keep
 
 - WHEN an authenticated user opens the signup or sign-in route
 - THEN the client returns them to `Your Worlds`.
+
+###### Scenario R2-S3: Public Auth Draft Survives Session Revalidation
+
+- WHEN an unauthenticated visitor partially completes signup or sign-in
+- AND returning window focus triggers background session revalidation
+- THEN the public form remains mounted while the session check is pending
+- AND the visitor's unfinished input remains available when the server still reports no authenticated session.
 
 ##### Implemented By
 
@@ -259,11 +266,11 @@ Verified by focused client behavior and anonymous API protection tests plus Post
 
 Use Option 1. AdonisJS is the authoritative API-first backend, and the Vite React SPA is the initial client. The backend exposes session-aware account endpoints with server-side validation and authorization. Tuyau generates the TypeScript route contract consumed through TanStack Query; the frontend sends credentials and CSRF tokens but never stores an authentication bearer token. Browser requests use the frontend origin and a `/api` proxy forwards them to AdonisJS, avoiding a deployment-specific cross-host XSRF contract.
 
-Configure Lucid for PostgreSQL through `DATABASE_URL` using the standard `pg` driver. A dedicated Neon project with isolated `main`, `develop`, and resettable `test` branches is the intended hosted topology, not yet a provisioned or provider-verified environment. Migrations remain portable PostgreSQL migrations; application code must not depend on Neon-specific data APIs. Tests must never reset or mutate production or shared development data.
+Configure Lucid for PostgreSQL through `DATABASE_URL` using the standard `pg` driver. A dedicated Neon project with isolated `main`, `develop`, and resettable `test` branches is the intended hosted topology, not yet a provisioned or provider-verified environment. Migrations remain portable PostgreSQL migrations; application code must not depend on Neon-specific data APIs. Tests must never reset or mutate production or shared development data. Test and E2E launchers must reject the effective normal application target after normalizing PostgreSQL host and schema semantics, require explicit host/database components and an identifiable disposable database or schema, neutralize inherited PostgreSQL connection overrides in child processes, and retain the framework's production migration protection rather than bypassing it unconditionally.
 
 Signup validates email, password, and confirmation, creates the account transactionally, establishes a session, and returns the authenticated account representation. Sign-in, current-account, and sign-out endpoints form the browser auth contract. Existing opaque-token capability may remain for future clients, but SPA routes and client storage must not consume it.
 
-The React client uses route guards based on the current-account query, dedicated signup/sign-in forms, and an authenticated `Your Worlds` route. The current-account query revalidates whenever the window regains focus, suppressing protected UI while the check is unresolved so an expired or externally revoked session cannot leave stale private state visible. Successful sign-out cancels any in-flight session query before clearing its cache. CSS Modules and shared CSS custom properties follow workspace styling defaults. The workspace intentionally contains no World-creation action in this change.
+The React client uses route guards based on the current-account query, dedicated signup/sign-in forms, and an authenticated `Your Worlds` route. The current-account query revalidates whenever the window regains focus, suppressing protected UI while the check is unresolved so an expired or externally revoked session cannot leave stale private state visible. Public auth routes distinguish initial session loading from background revalidation so unfinished form input remains mounted during successful and failed anonymous checks, with a non-destructive retry when refresh fails. Protected revalidation restores the prior workspace focus after success and moves focus to sign-in when the session has ended. Successful sign-out cancels any in-flight session query before clearing its cache. CSS Modules and shared CSS custom properties follow workspace styling defaults. The workspace intentionally contains no World-creation action in this change.
 
 Signup and sign-in accept JSON only. A server middleware boundary rejects unsupported auth content types and declared payloads over 16 KB before the router body parser, session, CSRF, and route-level throttles run. The JSON parser enforces the same limit for unknown-length streams, and the exception handler normalizes that rejection to the same auth error contract. Multipart auto-processing is disabled unless a future change explicitly names an upload route.
 

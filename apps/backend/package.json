@@ -13,8 +13,10 @@
     "build": "node ace build",
     "dev": "node ace serve --hmr",
     "migrate": "node ace migration:run",
-    "migrate:ci": "node ace migration:run --force",
-    "test": "node scripts/run-tests.mjs",
+    "migrate:ci": "node scripts/run-migrations.mjs test",
+    "migrate:e2e": "node scripts/run-migrations.mjs e2e",
+    "test": "npm run test:database-safety && node scripts/run-tests.mjs",
+    "test:database-safety": "node --test scripts/database-safety.test.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"

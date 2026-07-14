@@ -1,4 +1,4 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { AuthApiError } from '../auth/authApi'
@@ -263,6 +263,125 @@ describe('account workspace entry', () => {
     ).not.toBeInTheDocument()
   })
 
+  it.each([
+    ['/sign-up', 'Create your Lorecraft account'],
+    ['/sign-in', 'Sign in to Lorecraft'],
+  ])(
+    'LC-001/S2/R2-S3 preserves an unfinished %s draft during anonymous focus revalidation',
+    async (route, heading) => {
+      const user = userEvent.setup()
+      let resolveRevalidation: (account: null) => void = () => undefined
+      const restoreSession = vi
+        .fn()
+        .mockResolvedValueOnce(null)
+        .mockImplementationOnce(
+          () =>
+            new Promise<null>((resolve) => {
+              resolveRevalidation = resolve
+            })
+        )
+      renderTestApp({ route, session: null, api: { restoreSession } })
+
+      await user.type(await screen.findByLabelText('Email'), 'draft@example.com')
+      await act(async () => window.dispatchEvent(new Event('focus')))
+      await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
+
+      expect(screen.getByRole('heading', { name: heading })).toBeVisible()
+      expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
+
+      await act(async () => resolveRevalidation(null))
+
+      expect(screen.getByRole('heading', { name: heading })).toBeVisible()
+      expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
+      expect(restoreSession).toHaveBeenCalledTimes(2)
+    }
+  )
+
+  it.each([
+    ['/sign-up', 'Create your Lorecraft account'],
+    ['/sign-in', 'Sign in to Lorecraft'],
+  ])(
+    'LC-001/S2/R2-S3 preserves an unfinished %s draft when anonymous focus revalidation fails',
+    async (route, heading) => {
+      const user = userEvent.setup()
+      let rejectRevalidation: (error: Error) => void = () => undefined
+      const restoreSession = vi
+        .fn()
+        .mockResolvedValueOnce(null)
+        .mockImplementationOnce(
+          () =>
+            new Promise<null>((_resolve, reject) => {
+              rejectRevalidation = reject
+            })
+        )
+      renderTestApp({ route, session: null, api: { restoreSession } })
+
+      await user.type(await screen.findByLabelText('Email'), 'draft@example.com')
+      await act(async () => window.dispatchEvent(new Event('focus')))
+      await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
+      await act(async () => rejectRevalidation(new Error('network unavailable')))
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        "We couldn't refresh your session."
+      )
+      expect(screen.getByRole('heading', { name: heading })).toBeVisible()
+      expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
+    }
+  )
+
+  it('LC-001/S1/R2-S1 keeps successful signup authoritative over an older anonymous revalidation', async () => {
+    const user = userEvent.setup()
+    let resolveRevalidation: (account: null) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(null)
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    const signUp = vi.fn().mockResolvedValue({ id: 7, email: 'new@example.com' })
+    renderTestApp({ route: '/sign-up', session: null, api: { restoreSession, signUp } })
+
+    await user.type(await screen.findByLabelText('Email'), 'new@example.com')
+    await user.type(screen.getByLabelText('Password'), 'correct horse')
+    await user.type(screen.getByLabelText('Confirm password'), 'correct horse')
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    await act(async () => resolveRevalidation(null))
+    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+  })
+
+  it('LC-001/S2/R1-S1 keeps successful sign-in authoritative over an older anonymous revalidation', async () => {
+    const user = userEvent.setup()
+    let resolveRevalidation: (account: null) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(null)
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    const signIn = vi.fn().mockResolvedValue({ id: 4, email: 'member@example.com' })
+    renderTestApp({ route: '/sign-in', session: null, api: { restoreSession, signIn } })
+
+    await user.type(await screen.findByLabelText('Email'), 'member@example.com')
+    await user.type(screen.getByLabelText('Password'), 'correct horse')
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    await act(async () => resolveRevalidation(null))
+    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+  })
+
   it('LC-001/S3/R2-S1 signs out and returns the account to sign in', async () => {
     const user = userEvent.setup()
     const signOut = vi.fn().mockResolvedValue(undefined)
@@ -352,6 +471,9 @@ describe('account workspace entry', () => {
 
     expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
 
+    screen.getByRole('button', { name: 'Sign out' }).focus()
+    expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus()
+
     await act(async () => window.dispatchEvent(new Event('focus')))
 
     expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
@@ -364,6 +486,34 @@ describe('account workspace entry', () => {
     expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(2)
+    expect(screen.getByLabelText('Email')).toHaveFocus()
+  })
+
+  it('LC-001/S3/R1-S3 restores workspace focus after a successful session revalidation', async () => {
+    const account = { id: 4, email: 'member@example.com' }
+    let resolveRevalidation: (resolvedAccount: { id: number; email: string }) => void = () =>
+      undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(account)
+      .mockImplementationOnce(
+        () =>
+          new Promise<typeof account>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
+
+    const signOutButton = await screen.findByRole('button', { name: 'Sign out' })
+    signOutButton.focus()
+    expect(signOutButton).toHaveFocus()
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
+
+    await act(async () => resolveRevalidation(account))
+
+    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus())
   })
 
   it('LC-001/S3/R2-S1 ignores a late focus revalidation after sign-out succeeds', async () => {

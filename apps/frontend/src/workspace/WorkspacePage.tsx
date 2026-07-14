@@ -29,6 +29,7 @@ export function WorkspacePage() {
           </span>
         </div>
         <button
+          id="workspace-sign-out"
           className={styles.signOut}
           type="button"
           onClick={() => signOut.mutate()}

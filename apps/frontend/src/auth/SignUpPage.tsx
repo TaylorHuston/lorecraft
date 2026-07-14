@@ -42,7 +42,8 @@ export function SignUpPage() {
   const signUp = useMutation({
     mutationFn: (input: SignUpInput) => api.signUp(input),
     retry: false,
-    onSuccess: (account) => {
+    onSuccess: async (account) => {
+      await queryClient.cancelQueries({ queryKey: sessionQueryKey })
       queryClient.setQueryData(sessionQueryKey, account)
       navigate('/worlds', { replace: true })
     },

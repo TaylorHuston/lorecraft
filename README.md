@@ -75,17 +75,27 @@ npm run typecheck
 npm run build
 ```
 
-Backend functional tests refuse to run unless a disposable PostgreSQL database is supplied separately from the development database:
+Backend migrations and functional tests refuse to run unless a disposable PostgreSQL database is supplied separately from the development database, explicitly acknowledged, and identifiable by a test-oriented database or schema name:
 
 ```bash
-DATABASE_URL='postgresql://...' npm run migrate:ci --workspace @lorecraft/backend
-TEST_DATABASE_URL='postgresql://...' ALLOW_TEST_DATABASE_WRITES=1 npm run test
+DATABASE_URL='postgresql://.../lorecraft' \
+TEST_DATABASE_URL='postgresql://.../lorecraft_test' \
+ALLOW_TEST_DATABASE_WRITES=1 \
+npm run migrate:ci --workspace @lorecraft/backend
+
+DATABASE_URL='postgresql://.../lorecraft' \
+TEST_DATABASE_URL='postgresql://.../lorecraft_test' \
+ALLOW_TEST_DATABASE_WRITES=1 \
+npm run test
 ```
 
 The Playwright account journey has the same safety boundary through separate variables:
 
 ```bash
-E2E_DATABASE_URL='postgresql://...' ALLOW_E2E_DATABASE_WRITES=1 npm run test:e2e
+DATABASE_URL='postgresql://.../lorecraft' \
+E2E_DATABASE_URL='postgresql://.../lorecraft_e2e' \
+ALLOW_E2E_DATABASE_WRITES=1 \
+npm run test:e2e
 ```
 
-Do not point either command at production or shared development data. CI provisions an isolated PostgreSQL service for migrations, backend tests, and desktop/mobile Playwright verification. A separate Neon smoke check remains required before accepting hosted-database behavior.
+The guarded commands require `DATABASE_URL` so they can reject a target that resolves to the application database, require a disposable identifier such as `test`, `e2e`, `ci`, or `preview` in the database or effective schema name, and do not bypass Lucid's production migration protection. Schema-isolated Neon runs must use the direct endpoint with PostgreSQL `options=-csearch_path=...`; the pooled endpoint does not accept that startup option. Do not point these commands at production or shared development data. CI provisions an isolated PostgreSQL service for migrations, backend tests, and desktop/mobile Playwright verification. A separate Neon smoke check remains required before accepting hosted-database behavior.

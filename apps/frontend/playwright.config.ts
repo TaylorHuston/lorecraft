@@ -1,15 +1,22 @@
 import { defineConfig, devices } from '@playwright/test'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  assertDisposableDatabase,
+  databaseChildEnvironment,
+} from '../backend/scripts/database-safety.mjs'
 
 const databaseUrl = process.env.E2E_DATABASE_URL
-const databaseWritesAllowed = process.env.ALLOW_E2E_DATABASE_WRITES === '1'
 
-if (!databaseUrl || !databaseWritesAllowed) {
-  throw new Error(
-    'E2E_DATABASE_URL and ALLOW_E2E_DATABASE_WRITES=1 are required for a disposable PostgreSQL test database.'
-  )
-}
+assertDisposableDatabase({
+  acknowledgement: process.env.ALLOW_E2E_DATABASE_WRITES,
+  acknowledgementName: 'ALLOW_E2E_DATABASE_WRITES',
+  applicationDatabaseUrl: process.env.DATABASE_URL,
+  databaseEnvironment: process.env,
+  nodeEnvironment: process.env.NODE_ENV,
+  targetDatabaseUrl: databaseUrl,
+  targetName: 'E2E_DATABASE_URL',
+})
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const frontendUrl = 'http://localhost:4173'
@@ -41,10 +48,9 @@ export default defineConfig({
       name: 'backend',
       cwd: repositoryRoot,
       command:
-        'npm run migrate:ci --workspace @lorecraft/backend && npm run dev --workspace @lorecraft/backend',
+        'npm run migrate:e2e --workspace @lorecraft/backend && DATABASE_URL="$E2E_DATABASE_URL" npm run dev --workspace @lorecraft/backend',
       env: {
-        ...process.env,
-        DATABASE_URL: databaseUrl,
+        ...databaseChildEnvironment(process.env),
         CORS_ORIGIN: frontendUrl,
         NODE_ENV: 'development',
         PORT: '3335',
@@ -60,7 +66,6 @@ export default defineConfig({
       command:
         'npm run dev --workspace @lorecraft/frontend -- --host localhost --port 4173 --strictPort',
       env: {
-        ...process.env,
         API_SERVER_URL: backendUrl,
       },
       url: frontendUrl,

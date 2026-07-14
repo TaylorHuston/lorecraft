@@ -30,10 +30,14 @@ changes-requested
 
 ### REQUIRED
 
-- [ ] `apps/frontend/src/auth/AuthProvider.tsx:32` and `apps/frontend/src/app/AppRoutes.tsx:51` - Every background session fetch is exposed as global loading state. Returning focus while editing signup or sign-in replaces the public form with `Checking your session...`, remounting it with empty fields after the anonymous response. Recommendation: distinguish initial loading from background revalidation, preserve public forms during background checks, continue suppressing protected content, and add focus/draft-preservation tests for both forms.
-- [ ] `apps/backend/scripts/run-tests.mjs:3`, `apps/frontend/playwright.config.ts:5`, and `apps/backend/package.json:16` - The destructive test paths accept any database URL once a write flag is set, and `migrate:ci` always passes Lucid's production override. A mistyped environment can therefore migrate or write to a shared development or production database despite the README's separate-disposable-database contract. Recommendation: centralize and test a disposable-database assertion that rejects the normal application URL and requires an approved test/ephemeral identifier, and remove the unconditional `--force` migration override.
-- [ ] `apps/backend/tests/functional/account_security.spec.ts:137` - Exact server-side CSRF rejection is proven only for signup. Login and logout use separately wired mutation routes, so either route could lose CSRF enforcement without a backend regression failure. Recommendation: table-drive missing/invalid-token functional tests over signup, login, and logout, assert the exact `403 INVALID_CSRF_TOKEN` response, and prove no mutation occurred.
+- [x] `apps/frontend/src/auth/AuthProvider.tsx:32` and `apps/frontend/src/app/AppRoutes.tsx:51` - Resolved in the apply pass: initial loading and background revalidation are distinct, public forms remain mounted, and focused signup/sign-in draft-preservation tests pass while protected content remains suppressed.
+- [x] `apps/backend/scripts/run-tests.mjs:3`, `apps/frontend/playwright.config.ts:5`, and `apps/backend/package.json:16` - Resolved in the apply pass: a shared tested guard rejects the normal application target and unidentified disposable targets, guarded migration launchers replace unconditional `--force`, and root plus Playwright suites pass against fresh isolated schemas.
+- [x] `apps/backend/tests/functional/account_security.spec.ts:137` - Resolved in the apply pass: table-driven missing/forged-token tests cover signup, login, and logout with exact `403 INVALID_CSRF_TOKEN` and unchanged account/session state.
 - [x] `tasks.md:6-9` - The resume handoff referenced `78bebd6` and expected dirty implementation files even though the reviewed source is clean at `d05d78e`. Corrected in this review update.
+- [x] `apps/backend/scripts/database-safety.mjs` and guarded launchers - Resolved during the current review: target comparison now follows loopback and PostgreSQL schema casing semantics, requires explicit host/database components, and neutralizes inherited connection overrides in child processes.
+- [x] `apps/frontend/src/app/AppRoutes.tsx` - Resolved during the current review: failed public background checks preserve the mounted draft and expose a non-destructive retry action.
+- [x] `apps/frontend/src/app/AppRoutes.tsx` and `WorkspacePage.tsx` - Resolved during the current review: keyboard focus returns to the prior workspace control after successful revalidation and moves to sign-in when the session has ended.
+- [x] Epic and change artifacts - Resolved during the current review: Scenario references, verification gaps, manual status, and final test counts are reconciled.
 
 ### SUGGESTION
 
@@ -43,6 +47,8 @@ changes-requested
 - [ ] `apps/frontend/src/workspace/WorkspacePage.module.css:159` - Narrow layouts hide the signed-in email. Consider retaining account identity in a wrapping or secondary header row.
 
 ## Verification Evidence
+
+This table records evidence for the immutable reviewed source `d05d78e`; remediation evidence remains in `tasks.md` until a fresh independent review establishes a new verdict.
 
 | Command / Scenario                                                        | Evidence Type             | Requirement / Scenario               | Result                                       | What It Proves                                                                                                                      |
 | ------------------------------------------------------------------------- | ------------------------- | ------------------------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -95,7 +101,7 @@ changes-requested
 - Draft preservation: partially complete `/sign-up` and `/sign-in`, switch windows or tabs, and return. Expected after remediation: drafts and focus survive the background session check.
 - Account journey: create an account, refresh `/worlds`, sign out, sign back in, and revisit `/sign-up`. Expect stable transitions and no private-workspace flash.
 - Responsive layout: repeat signup, sign-in, empty workspace, account identity, and sign-out at narrow mobile and wide desktop sizes. Expect no clipping, hidden essential identity, or horizontal overflow.
-- Status: pending user confirmation.
+- Status: pending user.
 
 ## Review Log
 
@@ -104,3 +110,5 @@ changes-requested
 - 2026-07-14: Independent rereview of `f87cabe` returned `changes-requested` for missing open-workspace session revalidation and unauthenticated multipart processing before auth throttles.
 - 2026-07-14: Apply remediation implemented both required findings at `78bebd6`; evidence and lifecycle records were committed through `d05d78e`.
 - 2026-07-14: Fresh review of `d05d78e` returned `changes-requested` for public-form focus data loss, unsafe disposable-database enforcement, and incomplete server-side CSRF route coverage.
+- 2026-07-14: Apply remediation implemented all three required findings; the historical verdict remains `changes-requested` until a fresh independent review evaluates the new source commit.
+- 2026-07-14: Independent review of the uncommitted remediation found effective-database identity gaps, failed-background-check draft loss, missing focus restoration, and artifact drift. Safe fixes pass 16 database-safety, 24 backend, 41 frontend, and 2 browser tests; they require a committed source and fresh rereview before the verdict can change.

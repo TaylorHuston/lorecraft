@@ -4,7 +4,39 @@ import db from '@adonisjs/lucid/services/db'
 import testUtils from '@adonisjs/core/services/test_utils'
 import limiter from '@adonisjs/limiter/services/main'
 import { sessionCookieName } from '#config/session'
-import { bootstrapBrowserSession, withBrowserSession } from '#tests/helpers/browser_session'
+import User from '#models/user'
+import {
+  bootstrapBrowserSession,
+  continueBrowserSession,
+  withBrowserSession,
+} from '#tests/helpers/browser_session'
+
+const csrfMutationCases = [
+  {
+    id: 'signup',
+    path: '/api/v1/auth/signup',
+    story: 'LC-001/S1/R2-S1',
+  },
+  {
+    id: 'login',
+    path: '/api/v1/auth/login',
+    story: 'LC-001/S2/R1-S1',
+  },
+  {
+    id: 'logout',
+    path: '/api/v1/account/logout',
+    story: 'LC-001/S3/R2-S1',
+  },
+] as const
+
+const invalidCsrfTokens = [
+  { label: 'missing', value: undefined },
+  { label: 'invalid', value: 'forged-csrf-token' },
+] as const
+
+const invalidCsrfResponse = {
+  errors: [{ code: 'INVALID_CSRF_TOKEN', message: 'Invalid or expired CSRF token.' }],
+}
 
 function sendChunkedJson(url: string, chunks: string[]) {
   return new Promise<{
@@ -134,26 +166,87 @@ test.group('Account API security', (group) => {
     response.assertHeaderMissing('access-control-allow-credentials')
   })
 
-  test('LC-001/Cross-Story: state-changing account requests require a CSRF token', async ({
-    client,
-    assert,
-  }) => {
-    const browser = await bootstrapBrowserSession(client)
-    const response = await withBrowserSession(
-      client.post('/api/v1/auth/signup'),
-      browser.session
-    ).json({
-      email: 'new.user@example.com',
-      password: 'correct horse battery staple',
-      passwordConfirmation: 'correct horse battery staple',
-    })
+  for (const mutation of csrfMutationCases) {
+    test(`${mutation.story}: ${mutation.id} rejects missing and invalid CSRF tokens without mutation`, async ({
+      client,
+      assert,
+    }) => {
+      for (const token of invalidCsrfTokens) {
+        const email = `csrf-${mutation.id}-${token.label}@example.com`
 
-    response.assertStatus(403)
-    assert.deepEqual(response.body(), {
-      errors: [{ code: 'INVALID_CSRF_TOKEN', message: 'Invalid or expired CSRF token.' }],
+        if (mutation.id === 'login') {
+          await User.create({ email, password: 'correct horse battery staple' })
+        }
+
+        const browser = await bootstrapBrowserSession(client)
+        let browserSession = browser.session
+
+        if (mutation.id === 'logout') {
+          const signup = await withBrowserSession(
+            client.post('/api/v1/auth/signup'),
+            browserSession,
+            {
+              csrf: true,
+            }
+          ).json({
+            email,
+            password: 'correct horse battery staple',
+            passwordConfirmation: 'correct horse battery staple',
+          })
+          signup.assertCreated()
+          browserSession = continueBrowserSession(signup, browserSession)
+        }
+
+        const accountsBefore = await db.from('users').count('* as total').firstOrFail()
+        const sessionBefore = await db
+          .from('sessions')
+          .select('user_id')
+          .where('id', browserSession.sessionId)
+          .firstOrFail()
+        const request = withBrowserSession(client.post(mutation.path), browserSession)
+
+        if (token.value) {
+          request.header('x-csrf-token', token.value)
+        }
+
+        const response =
+          mutation.id === 'logout'
+            ? await request
+            : await request.json(
+                mutation.id === 'signup'
+                  ? {
+                      email,
+                      password: 'correct horse battery staple',
+                      passwordConfirmation: 'correct horse battery staple',
+                    }
+                  : { email, password: 'correct horse battery staple' }
+              )
+
+        response.assertStatus(403)
+        assert.deepEqual(response.body(), invalidCsrfResponse)
+        response.assertBodyNotContains({ password: 'correct horse battery staple' })
+
+        const accountsAfter = await db.from('users').count('* as total').firstOrFail()
+        const sessionAfter = await db
+          .from('sessions')
+          .select('user_id')
+          .where('id', browserSession.sessionId)
+          .firstOrFail()
+        assert.equal(Number(accountsAfter.total), Number(accountsBefore.total))
+        assert.equal(sessionAfter.user_id, sessionBefore.user_id)
+
+        const profile = await withBrowserSession(
+          client.get('/api/v1/account/profile'),
+          browserSession
+        )
+        profile.assertStatus(mutation.id === 'logout' ? 200 : 401)
+
+        if (mutation.id === 'logout') {
+          profile.assertBodyContains({ data: { email } })
+        }
+      }
     })
-    response.assertBodyNotContains({ password: 'correct horse battery staple' })
-  })
+  }
 
   test('LC-001/S3/R1-S2: an anonymous protected API request returns no account data', async ({
     client,

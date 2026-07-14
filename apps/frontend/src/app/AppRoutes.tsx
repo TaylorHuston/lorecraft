@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { SignInPage } from '../auth/SignInPage'
@@ -35,11 +36,45 @@ function SessionError() {
   )
 }
 
+function SessionRefreshError() {
+  const { retry } = useAuth()
+
+  return (
+    <aside className={styles.refreshError} role="alert">
+      <span>We couldn't refresh your session.</span>
+      <button className={styles.refreshRetry} type="button" onClick={retry}>
+        Try again
+      </button>
+    </aside>
+  )
+}
+
 function ProtectedRoute() {
   const auth = useAuth()
   const location = useLocation()
+  const lastFocusedElementId = useRef<string | null>(null)
+  const wasRevalidating = useRef(false)
 
-  if (auth.isLoading) return <SessionLoading />
+  useEffect(() => {
+    const rememberFocus = (event: FocusEvent) => {
+      if (event.target instanceof HTMLElement && event.target.id) {
+        lastFocusedElementId.current = event.target.id
+      }
+    }
+
+    document.addEventListener('focusin', rememberFocus)
+    return () => document.removeEventListener('focusin', rememberFocus)
+  }, [])
+
+  useEffect(() => {
+    if (wasRevalidating.current && !auth.isRevalidating && auth.account) {
+      document.getElementById(lastFocusedElementId.current ?? '')?.focus()
+    }
+
+    wasRevalidating.current = auth.isRevalidating
+  }, [auth.account, auth.isRevalidating])
+
+  if (auth.isLoading || auth.isRevalidating) return <SessionLoading />
   if (auth.error) return <SessionError />
 
   return auth.account ? <Outlet /> : <Navigate to="/sign-in" replace state={{ from: location }} />
@@ -49,9 +84,16 @@ function PublicOnlyRoute() {
   const auth = useAuth()
 
   if (auth.isLoading) return <SessionLoading />
-  if (auth.error) return <SessionError />
+  if (auth.isInitialError) return <SessionError />
 
-  return auth.account ? <Navigate to="/worlds" replace /> : <Outlet />
+  return auth.account ? (
+    <Navigate to="/worlds" replace />
+  ) : (
+    <>
+      {auth.error ? <SessionRefreshError /> : null}
+      <Outlet />
+    </>
+  )
 }
 
 export function AppRoutes() {

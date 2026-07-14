@@ -29,7 +29,9 @@ export function AuthProvider({ api, children }: AuthProviderProps) {
       value={{
         account: session.data ?? null,
         api,
-        isLoading: session.isPending || session.isFetching,
+        isInitialError: session.isError && session.data === undefined,
+        isLoading: session.isPending,
+        isRevalidating: session.isRefetching,
         error: session.error,
         retry: () => void session.refetch(),
       }}
