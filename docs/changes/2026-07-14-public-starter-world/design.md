@@ -83,7 +83,8 @@ No new ADR is required. The API-first backend, typed web contract, PostgreSQL pe
 - `apps/frontend/src/workspace/WorkspacePage.stories.tsx`
 - `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`
 - Automated Chromium walkthrough at desktop and mobile widths against the seeded development schema.
+- User-confirmed review of `/worlds` and `/worlds/stormbound-chapel` at desktop and mobile widths on 2026-07-14.
 
 ## Verification Gaps
 
-- Manual user UI confirmation remains pending.
+- None for this Change. The separately stacked Storybook Change retains its own review and manual-confirmation gates.

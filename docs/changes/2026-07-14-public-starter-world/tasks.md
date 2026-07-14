@@ -6,12 +6,12 @@ status: review
 
 ## Resume Here
 
-- Current state: all required implementation findings are remediated and the Change is ready for fresh independent review
-- Last completed action: reconciled LC-002 and completed two fresh-context apply self-checks with no new code or security defects
-- Next action: obtain manual UI confirmation, resolve the stacked Storybook Change, and repeat `/sdd-review`
+- Current state: fresh independent review and remediation are complete; integration remains blocked by the unfinished stacked Storybook Change
+- Last completed action: accepted manual UI confirmation, remediated the fresh review findings, and reran the complete verification union
+- Next action: independently review and integrate the Storybook Change, or restack this Change onto `develop` without it
 - Active branch/ref: `change/public-starter-world`, stacked on Storybook workbench commit `cd5604a`
 - Expected dirty files: none after the evidence ledger commit
-- Known blockers: the unfinished stacked Storybook Change and manual user confirmation remain
+- Known blockers: the unfinished stacked Storybook Change remains
 
 ## Task Checklist
 
@@ -27,7 +27,7 @@ status: review
 - [x] Enforce same-World Character Location integrity and strengthen inaccessible-World and exact-seed evidence.
 - [x] Scope cached World data to the authenticated account, handle expired sessions, and add detail retry recovery.
 - [x] Reconcile review findings, LC-002 evidence, and the implementation self-check.
-- [ ] Obtain manual UI confirmation or record an accepted gap.
+- [x] Obtain manual UI confirmation or record an accepted gap.
 - [ ] Prepare closeout only after review and explicit merge authorization.
 
 ## Implementation Ledger
@@ -39,6 +39,7 @@ status: review
 | 2026-07-14 | Web catalog and detail    | API adapter, routes, components, CSS, Storybook                                     | implemented | this branch  |
 | 2026-07-14 | Durable truth             | LC-001, LC-002, README, CHANGELOG                                                   | implemented | this branch  |
 | 2026-07-14 | Review remediation        | Data integrity, seed/API evidence, account cache/session lifecycle, detail recovery | implemented | `6b5f0a3`    |
+| 2026-07-14 | Fresh review remediation  | Seed collision safety, accessibility, touch targets, E2E, and CI                    | implemented | `76da619`    |
 
 ## Verification Ledger
 
@@ -53,10 +54,11 @@ status: review
 | 2026-07-14 | Test and development migrations              | Additive same-World integrity migration           | passed               |
 | 2026-07-14 | Dependency and changed-diff security checks  | Production packages and credential patterns       | passed               |
 | 2026-07-14 | Two delegated apply self-checks              | Code, security, verification, and artifact truth  | no new code defects  |
+| 2026-07-14 | Fresh independent review and regression pass | Full backend/frontend/browser/Storybook union     | passed               |
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: user confirmed 2026-07-14
 - Surface: `/worlds` and `/worlds/stormbound-chapel`
 - Expected result: every signed-in account sees one read-only starter World and can inspect all structured Locations and Characters without seeing author account data
 
@@ -66,10 +68,10 @@ status: review
 
 ## Review And Closeout
 
-- Review status: prior required findings resolved; fresh independent review pending
+- Review status: blocked only by the unfinished stacked Storybook Change
 - Review record: `docs/changes/2026-07-14-public-starter-world/review.md`
 - ADR status: not applicable; existing ADRs govern this slice
 - Epic reconciliation: LC-002 updated with integrity, account isolation, expired-session, retry, and exact-reconciliation evidence
 - PR / merge state: branch created; not reviewed or merged
 - Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and hidden private-knowledge policy
-- Change folder move: pending fresh review, manual status, stacked-Change resolution, merge authorization, and closeout
+- Change folder move: pending stacked-Change resolution, merge authorization, and closeout

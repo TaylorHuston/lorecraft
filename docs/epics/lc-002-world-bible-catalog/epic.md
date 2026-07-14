@@ -95,16 +95,17 @@ The system SHALL list public Worlds for every authenticated account and deny ano
 
 #### Verified By
 
-| Scenario                  | Evidence                                                                        | Status             |
-| ------------------------- | ------------------------------------------------------------------------------- | ------------------ |
-| S1/R1-S1, S1/R1-S2        | `apps/backend/tests/functional/world_catalog.spec.ts`                           | Passing 2026-07-14 |
-| S1/R1-S1, S1/R1-S3        | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorkspacePage.stories.tsx` | Passing 2026-07-14 |
-| S1/R1-S1                  | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `tuyauWorldApi.test.ts`     | Passing 2026-07-14 |
-| S1/R1-S1 through S1/R1-S3 | Automated desktop/mobile browser walkthrough                                    | Passing 2026-07-14 |
+| Scenario           | Evidence                                                                        | Status               |
+| ------------------ | ------------------------------------------------------------------------------- | -------------------- |
+| S1/R1-S1, S1/R1-S2 | `apps/backend/tests/functional/world_catalog.spec.ts`                           | Passing 2026-07-14   |
+| S1/R1-S1, S1/R1-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorkspacePage.stories.tsx` | Passing 2026-07-14   |
+| S1/R1-S1           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `tuyauWorldApi.test.ts`     | Passing 2026-07-14   |
+| S1/R1-S1           | Automated desktop/mobile browser walkthrough                                    | Passing 2026-07-14   |
+| S1/R1-S1           | User-confirmed desktop/mobile catalog review                                    | Confirmed 2026-07-14 |
 
 #### Verification Gaps
 
-- Manual user confirmation remains pending.
+- None.
 
 ### Story S2: Inspect Structured World Canon
 
@@ -141,26 +142,27 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 #### Implemented By
 
-| Path                                                                                                     | Role                                                          |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts`                          | Defines relational World, Location, and Character integrity.  |
-| `apps/backend/database/migrations/1784060400000_enforce_character_location_world_integrity.ts`           | Enforces same-World Character Location references.            |
-| `apps/backend/app/services/stormbound_chapel_seed.ts` and `database/seeders/stormbound_chapel_seeder.ts` | Reconcile the explicit starter World transactionally.         |
-| `apps/backend/app/services/world_catalog_service.ts`                                                     | Loads deterministic structured detail without account data.   |
-| `apps/frontend/src/worlds/WorldDetailPage.tsx`                                                           | Presents read-only Locations and all stable Character fields. |
+| Path                                                                                                                  | Role                                                          |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts`                                       | Defines relational World, Location, and Character integrity.  |
+| `apps/backend/database/migrations/1784060400000_enforce_character_location_world_integrity.ts`                        | Enforces same-World Character Location references.            |
+| `apps/backend/app/services/stormbound_chapel_seed.ts` and `apps/backend/database/seeders/stormbound_chapel_seeder.ts` | Reconcile the explicit starter World transactionally.         |
+| `apps/backend/app/services/world_catalog_service.ts`                                                                  | Loads deterministic structured detail without account data.   |
+| `apps/frontend/src/worlds/WorldDetailPage.tsx`                                                                        | Presents read-only Locations and all stable Character fields. |
 
 #### Verified By
 
-| Scenario                     | Evidence                                                                           | Status             |
-| ---------------------------- | ---------------------------------------------------------------------------------- | ------------------ |
-| S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts`                              | Passing 2026-07-14 |
-| S2/R1-S1                     | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Passing 2026-07-14 |
-| S2/R1-S1, S2/R1-S2           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorldDetailPage.stories.tsx`  | Passing 2026-07-14 |
-| S2/R1-S1                     | Automated desktop/mobile browser walkthrough against the seeded development schema | Passing 2026-07-14 |
+| Scenario                     | Evidence                                                                           | Status               |
+| ---------------------------- | ---------------------------------------------------------------------------------- | -------------------- |
+| S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts`                              | Passing 2026-07-14   |
+| S2/R1-S1                     | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Passing 2026-07-14   |
+| S2/R1-S1, S2/R1-S2           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorldDetailPage.stories.tsx`  | Passing 2026-07-14   |
+| S2/R1-S1                     | Automated desktop/mobile browser walkthrough against the seeded development schema | Passing 2026-07-14   |
+| S2/R1-S1                     | User-confirmed desktop/mobile structured detail review                             | Confirmed 2026-07-14 |
 
 #### Verification Gaps
 
-- Manual user confirmation remains pending.
+- None.
 
 ## Cross-Story Concerns
 

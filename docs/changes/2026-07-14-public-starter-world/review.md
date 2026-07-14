@@ -2,42 +2,42 @@
 
 ## Verdict
 
-changes-requested
+blocked
+
+The selected Change is behaviorally approved and all confirmed code, accessibility, test, security, documentation, and evidence findings are remediated. Integration remains blocked because the source branch includes the separately unfinished Storybook UI Workbench Change.
 
 ## Gate Scorecard
 
-| Gate                         | Result     | Notes                                                                                                            |
-| ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass       | Apply reconciliation now records the implemented remediation and current evidence.                               |
-| Change status                | pass       | Advanced to `review` after remediation and apply-side self-checks.                                               |
-| Epic truth                   | pass       | LC-002 maps the strengthened integrity, authorization, seed, cache, session, and recovery evidence.              |
-| Requirements and Scenarios   | pass       | S2/R1-S2 and S2/R1-S3 now have deterministic inaccessible-World and exact-seed evidence.                         |
-| Story reference traceability | pass       | LC-002/S1 and LC-002/S2 use unique Epic-scoped references with implementation maps.                              |
-| Tests and verification       | pass       | Backend 39, frontend 57, and Storybook 17 pass with the required regression coverage.                            |
-| Manual UI confirmation       | blocked    | `/worlds` and `/worlds/stormbound-chapel` remain `pending user`.                                                 |
-| Code review                  | remediated | World/account cache lifecycle, detail recovery, and relational integrity findings are resolved pending rereview. |
-| Visual / UX consistency      | remediated | Detail failure copy now has an explicit retry action and pending state.                                          |
-| Security review              | remediated | Account caches are identity-scoped and inaccessible private Worlds have minimized negative-path proof.           |
-| Documentation                | pass       | README and supporting architecture guidance match the implemented slice.                                         |
-| Release communication        | pass       | CHANGELOG contains only the user-facing catalog and detail behavior.                                             |
-| Branch and merge readiness   | blocked    | Source is stacked on an unfinished Storybook Change. Merge preview itself is clean.                              |
-| PRD alignment                | pass       | Read-only structured canon supports the creator-first World-bible direction.                                     |
+| Gate                         | Result  | Notes                                                                                         |
+| ---------------------------- | ------- | --------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass    | Proposal, design, tasks, review, and supporting truth agree.                                  |
+| Change status                | pass    | Remains `review` while its stacked dependency blocks integration.                             |
+| Epic truth                   | pass    | LC-002 implementation and scenario evidence are reconciled.                                   |
+| Requirements and Scenarios   | pass    | Catalog, detail, authorization, and exact-seed behavior have deterministic evidence.          |
+| Story reference traceability | pass    | LC-002/S1 and LC-002/S2 references are unique and mapped.                                     |
+| Tests and verification       | pass    | Backend 40, frontend 57, Storybook 17, and desktop/mobile E2E 2 pass.                         |
+| Manual UI confirmation       | pass    | User confirmed `/worlds` and `/worlds/stormbound-chapel` on 2026-07-14.                       |
+| Code review                  | pass    | Seed collision, error announcement, touch target, and stale E2E findings are resolved.        |
+| Security review              | pass    | No exploitable auth, authorization, disclosure, injection, secret, or dependency issue found. |
+| Documentation                | pass    | README and durable product/architecture documentation match the implemented slice.            |
+| Release communication        | pass    | CHANGELOG contains only user-facing catalog and structured-detail behavior.                   |
+| Branch and merge readiness   | blocked | Merge tree is clean, but the branch contains the unfinished Storybook Change.                 |
+| PRD alignment                | pass    | Read-only structured canon supports the creator-first World-bible direction.                  |
 
 ## Findings
 
 ### BLOCKING
 
-- [ ] `docs/changes/2026-07-14-storybook-ui-workbench/tasks.md:2` - The source includes `cd5604a`, but the stacked Storybook Change remains `in_progress` with review and manual acceptance pending. Integrating this branch would silently integrate both Changes. Recommendation: review and integrate Storybook first, or explicitly treat both Changes as one authorized integration unit.
-- [ ] `docs/changes/2026-07-14-public-starter-world/tasks.md:50` - Manual confirmation of the populated catalog and structured detail remains pending. Recommendation: after remediation, confirm the listed desktop/mobile walkthrough or explicitly accept the gap.
+- [ ] `docs/changes/2026-07-14-storybook-ui-workbench/tasks.md:2` - Commit `cd5604a` is part of the reviewed source while the Storybook Change remains `in_progress`, with independent review and manual confirmation incomplete. Integrating this branch would integrate both Changes. Independently review and integrate Storybook first, explicitly approve the combined integration unit, or restack Public Starter World onto `develop` without Storybook.
 
 ### REQUIRED
 
-- [x] `apps/frontend/src/workspace/WorkspacePage.tsx:21` - Resolved in apply: World query keys now include account identity, account-owned caches share a removable prefix, and catalog/detail account-switch regressions prove previous data is not reused.
-- [x] `apps/frontend/src/worlds/tuyauWorldApi.ts:29` - Resolved in apply: catalog/detail `401` responses are classified as unauthorized and end the shared session with route-level regressions.
-- [x] `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts:46` - Resolved in apply through additive migration `1784060400000_enforce_character_location_world_integrity.ts`, with clean-upgrade, rejection, rollback, and pre-existing-mismatch coverage.
-- [x] `apps/backend/tests/functional/world_catalog.spec.ts:103` - Resolved in apply: another account's private World now returns the same minimized `404` response as an unknown slug.
-- [x] `apps/backend/tests/functional/world_catalog.spec.ts:108` - Resolved in apply: seed reconciliation removes stale Location/Character rows and verifies every configured World, Location, and Character field.
-- [x] `apps/frontend/src/worlds/WorldDetailPage.tsx:17` - Resolved in apply: detail failures provide a disabled pending retry control and recover through a deterministic route test.
+- [x] `apps/backend/app/services/stormbound_chapel_seed.ts` - The seed now rejects an existing reserved slug unless the World matches the expected author and canonical starter identity; a regression proves unrelated ownership and content remain untouched.
+- [x] `apps/frontend/src/worlds/WorldDetailPage.tsx` - Detail errors now use a valid live alert region, covered by route and Storybook accessibility tests.
+- [x] `apps/frontend/src/workspace/WorkspacePage.module.css` and `apps/frontend/src/worlds/WorldDetailPage.module.css` - New catalog/detail navigation links now meet the shared 44px touch-target rule.
+- [x] `apps/frontend/e2e/account-workspace.spec.ts` - E2E assertions now match the current catalog copy and pass at desktop and mobile widths.
+- [x] `.github/workflows/ci.yml` - Storybook browser tests are now an explicit CI gate.
+- [x] Public Starter World artifacts and LC-002 - Manual approval, evidence mapping, verification gaps, and the seeder path are reconciled.
 
 ### SUGGESTION
 
@@ -45,65 +45,53 @@ changes-requested
 
 ## Verification Evidence
 
-The table below records the original independent review run. Apply remediation added 39 passing backend tests, 57 passing frontend tests, 17 passing Storybook tests, successful lint/typecheck/build gates, database migration checks, and two fresh-context self-checks. A new `/sdd-review` must create the authoritative post-remediation review bundle.
-
-| Command / Scenario                                                | Evidence Type                  | Requirement / Scenario                  | Result    | What It Proves                                                                   |
-| ----------------------------------------------------------------- | ------------------------------ | --------------------------------------- | --------- | -------------------------------------------------------------------------------- |
-| Backend full suite against `lorecraft_test_codex`                 | focused automated tests        | LC-001 and LC-002 backend Scenarios     | 36 passed | Current persistence, auth, API, and seed assertions pass on isolated PostgreSQL. |
-| `npm run test --workspace @lorecraft/frontend`                    | focused automated tests        | LC-001 and LC-002 frontend Scenarios    | 50 passed | Current route, state, and component behavior passes.                             |
-| `npm run test:storybook`                                          | browser component tests        | Catalog/detail states and accessibility | 17 passed | Storybook interaction and accessibility checks pass.                             |
-| `npm run lint`, `npm run typecheck`, `npm run build`              | broad supporting gates         | Full source                             | passed    | Static quality and production builds pass.                                       |
-| `npm audit --omit=dev` and credential-pattern diff scan           | security checks                | Dependency and secret surface           | passed    | No reported production dependency vulnerability or credential-like diff value.   |
-| `git merge-tree --write-tree develop change/public-starter-world` | integration check              | Branch mergeability                     | passed    | Git produced a clean merge tree.                                                 |
-| Prior automated Chromium walkthrough at 1440x900 and 390x844      | deterministic browser evidence | LC-002/S1/R1-S1; LC-002/S2/R1-S1        | passed    | Seeded catalog/detail rendered without horizontal overflow.                      |
+| Command / Scenario                                      | Evidence Type                    | Result    | What It Proves                                                        |
+| ------------------------------------------------------- | -------------------------------- | --------- | --------------------------------------------------------------------- |
+| Backend full suite against isolated Neon schema         | database and functional tests    | 40 passed | Auth, persistence, migrations, API, exact seed, and collision safety. |
+| `npm run test --workspace @lorecraft/frontend`          | frontend tests                   | 57 passed | Catalog/detail and account/session behavior remain correct.           |
+| `npm run test:storybook`                                | browser component and a11y tests | 17 passed | UI states and accessibility checks pass.                              |
+| `npm run test:e2e`                                      | Playwright desktop/mobile        | 2 passed  | The account journey passes at both configured viewports.              |
+| `npm run lint`, `npm run typecheck`, `npm run build`    | static and production gates      | passed    | Both applications lint, typecheck, and build.                         |
+| `npm run build:storybook` and `npx prettier --check .`  | supporting build/format gates    | passed    | Storybook packages and repository formatting are valid.               |
+| `npm audit --omit=dev` and changed-diff security review | dependency and code security     | passed    | No production advisory or confirmed changed-code vulnerability.       |
+| `git merge-tree --write-tree develop 76da619`           | integration check                | passed    | Git produced a clean merge tree.                                      |
+| User review of catalog and detail                       | manual UI confirmation           | confirmed | The selected Change's subjective UI acceptance gate is closed.        |
 
 ## Review Bundle
 
 - Source branch/ref: `change/public-starter-world`
-- Reviewed source commit: `cb4aa3eb082bf58bbab4154b5f1c0ba92f294546`
+- Reviewed source commit: `76da6198ebe384f7ecb21fdbafe600687a55bf24`
 - Target branch/ref: `develop` at `2e75b375b50f36566af94acbf405ed3681929d60`
 - Merge base: `2e75b375b50f36566af94acbf405ed3681929d60`
-- Source-only commits: `cd5604a`, `cb4aa3e`
+- Source-only commits: six, from `cd5604a` through `76da619`
 - Target-only commits: none
-- Changed files: 59 across Storybook and Public Starter World Changes
-- Diff stat: 6,088 insertions, 494 deletions
-- Conflict check: clean tree `88a9cf56a2be0e6f7baa419fefdc8527c8ee47cc`
-- Dirty state: source repository clean before review-artifact reconciliation; unrelated outer-vault changes preserved
-- Branch policy: `change/` source correctly targets local `develop`; integration is blocked by its unfinished stacked dependency
+- Changed files: 69
+- Diff stat: 7,063 insertions, 521 deletions
+- Conflict check: clean tree `6916c34fb1cc1625615e4c5c7f39845723cad758`
+- Branch policy: `change/` correctly targets `develop`; integration is blocked by the unfinished stacked Change
+- Concurrent worktree state: an unrelated `AGENTS.md` edit was preserved and excluded from review commits
 
 ## Discovery Wave
 
-| Pass                               | Reviewer                                       | Result   | Notes                                                                                                      |
-| ---------------------------------- | ---------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
-| Artifact truth                     | delegated fresh-context pass plus orchestrator | findings | Stacked Change, manual acceptance, evidence, and stale-ledger issues found.                                |
-| Code diff                          | delegated fresh-context pass plus orchestrator | findings | Integrity, session lifecycle, cache isolation, and recovery findings validated.                            |
-| Verification coverage              | orchestrator                                   | findings | Fresh suites pass; missing negative-path evidence remains.                                                 |
-| Security                           | orchestrator                                   | findings | Backend auth is enforced and DTOs minimize identity, but client cache/session isolation needs remediation. |
-| UI / visual identity               | orchestrator                                   | findings | Responsive evidence passes; detail retry affordance is incomplete.                                         |
-| Docs / release communication / PRD | orchestrator                                   | pass     | Public docs and product direction agree with the slice.                                                    |
-| Integration readiness              | delegated fresh-context pass plus orchestrator | blocked  | Merge tree clean; stacked unfinished Change and manual acceptance block closeout.                          |
-
-## Consolidated Remediation
-
-- Root causes addressed: stale LC-001 acceptance wording and contradictory selected-Change closeout wording.
-- Safe-fix batch: artifact reconciliation only.
-- Applied remediation: relational constraint, account/session query lifecycle, authorization evidence, seed evidence, and detail recovery are implemented and verified; a fresh independent `/sdd-review` is still required.
-- Affected verification union: backend full suite, frontend full suite, Storybook, lint, typecheck, build, browser walkthrough, and repeated independent review.
-- Regression-focused rereview: artifact references and source-repository dirty state rechecked after reconciliation.
-- New regressions introduced by remediation: none.
+| Pass                          | Result   | Notes                                                                                        |
+| ----------------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| Artifact and supporting truth | findings | Manual status, scenario mapping, and seeder path were corrected.                             |
+| Code diff and security        | findings | Destructive reserved-slug collision was confirmed and remediated; security otherwise passed. |
+| Verification coverage         | findings | Stale E2E assertions and missing Storybook CI coverage were corrected.                       |
+| UI / visual identity          | findings | Live error semantics and touch targets were corrected; user accepted the visual flow.        |
+| Documentation / release / PRD | pass     | Public communication and creator-first direction remain aligned.                             |
+| Integration readiness         | blocked  | Mechanical merge passes; the separate Storybook Change is not approved.                      |
 
 ## PR / Merge Readiness
 
-- Source branch: `change/public-starter-world`
-- Reviewed source commit: `cb4aa3eb082bf58bbab4154b5f1c0ba92f294546`
-- Target branch: `develop`
-- Conflict check: clean
-- Commit state: implementation committed; safe review-artifact reconciliation included in a local review commit
+- Commit state: safe review fixes committed locally at `76da619`; review artifacts follow in a separate local commit
 - PR status: not requested
 - Merge status: blocked
+- Next action: independently review and resolve the Storybook Change, then rerun the integration-readiness check
 
 ## Review Log
 
-- 2026-07-14: Independent review completed; changes requested.
-- 2026-07-14: `/sdd-apply` resolved all required findings; blocking manual confirmation and stacked-Change integration remain open pending fresh review.
-- 2026-07-14: Verified remediation committed at `6b5f0a3`; this historical verdict remains unchanged until a fresh `/sdd-review` inspects that commit.
+- 2026-07-14: User confirmed the Public Starter World manual UI flow.
+- 2026-07-14: Fresh delegated review identified a destructive seed collision, accessibility/touch-target gaps, stale E2E assertions, evidence drift, and missing Storybook CI coverage.
+- 2026-07-14: Safe remediation committed at `76da619`; the complete affected verification union passed.
+- 2026-07-14: Verdict remains blocked only by the unfinished stacked Storybook Change.
