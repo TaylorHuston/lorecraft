@@ -2,12 +2,12 @@
 
 ## Resume Here
 
-- Current state: both required rereview findings are implemented and pass isolated integration, browser, security, and static verification
-- Last completed action: committed the verified session and auth request-boundary remediation as `78bebd6`
-- Next action: run a fresh independent `/sdd-review` from the current branch head; functional remediation is `78bebd6`
+- Current state: fresh independent review of `d05d78e` returned `changes-requested` with three required implementation and verification findings
+- Last completed action: reviewed the full source-vs-`develop` diff at `d05d78e` and recorded the findings in `review.md`
+- Next action: run `/sdd-apply` to preserve public auth drafts during focus revalidation, harden disposable-database safeguards, and complete server-side CSRF mutation coverage
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: frontend auth/query tests and configuration, backend request-boundary/bodyparser tests and configuration, then this task ledger and `LC-001`
-- Known blockers: no implementation blocker remains; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
+- Expected dirty files: none at the reviewed source; this review update changes only `review.md` and `tasks.md`
+- Known blockers: three required review findings remain; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -88,17 +88,18 @@
 
 ## Implementation Ledger
 
-| Date       | Slice                                       | Agent / Guidance                                                       | Files / Areas                                                                   | Result                                                         | Commit / Ref |
-| ---------- | ------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------ |
-| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                             | `docs/changes/2026-07-12-account-workspace-entry/`, `docs/adrs/`                | Proposed                                                       | `6468754`    |
-| 2026-07-12 | Discovery and Epic establishment            | main orchestrator; SDD doctrine                                        | `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`   | Epic truth created; implementation pending                     | `6468754`    |
-| 2026-07-13 | LC-001 backend account and session boundary | delegated backend implementation; TDD and current AdonisJS guidance    | `apps/backend/`                                                                 | PostgreSQL/session implementation complete; 17 tests pass      | `6468754`    |
-| 2026-07-13 | LC-001 React account workspace              | delegated frontend implementation; TDD, component, and visual guidance | `apps/frontend/src/`, frontend config                                           | 26 focused tests pass                                          | `6468754`    |
-| 2026-07-13 | Typed contract, CI, and E2E integration     | main orchestrator                                                      | Tuyau adapter, Turbo, Playwright, CI, public docs                               | Desktop and mobile browser journeys pass against isolated Neon | `6468754`    |
-| 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | `6468754`    |
-| 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`    |
-| 2026-07-13 | Safe review fixes                           | main integration after delegated review                                | Login throttle proof, CSRF recovery, formatting, and Epic evidence              | 18 backend and 32 frontend tests pass                          | `95f7799`    |
-| 2026-07-14 | Required rereview remediation               | delegated frontend/backend implementation plus main integration        | Session focus revalidation, auth request boundary, parser policy, tests, docs   | 22 backend, 34 frontend, and 2 browser tests pass              | `78bebd6`    |
+| Date       | Slice                                       | Agent / Guidance                                                           | Files / Areas                                                                    | Result                                                         | Commit / Ref  |
+| ---------- | ------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------- |
+| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                                 | `docs/changes/2026-07-12-account-workspace-entry/`, `docs/adrs/`                 | Proposed                                                       | `6468754`     |
+| 2026-07-12 | Discovery and Epic establishment            | main orchestrator; SDD doctrine                                            | `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`    | Epic truth created; implementation pending                     | `6468754`     |
+| 2026-07-13 | LC-001 backend account and session boundary | delegated backend implementation; TDD and current AdonisJS guidance        | `apps/backend/`                                                                  | PostgreSQL/session implementation complete; 17 tests pass      | `6468754`     |
+| 2026-07-13 | LC-001 React account workspace              | delegated frontend implementation; TDD, component, and visual guidance     | `apps/frontend/src/`, frontend config                                            | 26 focused tests pass                                          | `6468754`     |
+| 2026-07-13 | Typed contract, CI, and E2E integration     | main orchestrator                                                          | Tuyau adapter, Turbo, Playwright, CI, public docs                                | Desktop and mobile browser journeys pass against isolated Neon | `6468754`     |
+| 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers                   | Rate limits, test database guards, persistence model, E2E evidence, public docs  | Findings remediated; automated verification complete           | `6468754`     |
+| 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration            | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs  | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`     |
+| 2026-07-13 | Safe review fixes                           | main integration after delegated review                                    | Login throttle proof, CSRF recovery, formatting, and Epic evidence               | 18 backend and 32 frontend tests pass                          | `95f7799`     |
+| 2026-07-14 | Required rereview remediation               | delegated frontend/backend implementation plus main integration            | Session focus revalidation, auth request boundary, parser policy, tests, docs    | 22 backend, 34 frontend, and 2 browser tests pass              | `78bebd6`     |
+| 2026-07-14 | Fresh independent review                    | delegated artifact, backend/security, frontend/UI, and verification passes | Full `develop...d05d78e` source, artifacts, tests, security, UI, and integration | Three required findings recorded; changes requested            | review commit |
 
 ## Verification Ledger
 
@@ -119,6 +120,7 @@
 | 2026-07-14 | `account_security.spec.ts` auth request boundary                            | focused integration test    | Canonical, query-string, and trailing-slash auth routes reject unsupported content; declared and chunked oversized JSON share one 413   | 22 backend tests passed against an isolated Neon schema        |
 | 2026-07-14 | Fresh root tests and Playwright journey                                     | integration and browser E2E | Current account implementation passes database-backed server, client, desktop, and mobile journeys                                      | 22 backend, 34 frontend, and 2 browser tests passed            |
 | 2026-07-14 | Lint, typecheck, forced build, Prettier, audit, and diff checks             | broad supporting gate       | The remediated tree compiles, builds, formats cleanly, and reports no dependency vulnerabilities                                        | passed; 0 vulnerabilities                                      |
+| 2026-07-14 | Fresh independent review of `d05d78e`                                       | independent review          | Artifact truth, source diff, security, UI behavior, verification coverage, supporting docs, and integration readiness                   | changes-requested; three required findings                     |
 
 ## Manual Feedback
 
@@ -143,7 +145,9 @@
 
 ## Blockers / Open Questions
 
-- No implementation blockers remain from the 2026-07-14 rereview; a fresh independent review is required because functional source changed.
+- Required: preserve partially completed signup and sign-in forms when focus triggers background session revalidation.
+- Required: prevent test and CI migration commands from accepting the normal application database or bypassing production protection.
+- Required: add exact server-side CSRF regression proof for signup, login, and logout mutations.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
@@ -156,9 +160,9 @@
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested` on 2026-07-14 at `f87cabe502f7573d239d4ae0c96006114771c4a9`
+- `sdd-review` verdict: `changes-requested` on 2026-07-14 for source `d05d78e00d1a1797544c3e5342bf91cd1338b9c2`
 - Review record: `review.md`
-- `review.md` findings resolved: required findings are implemented and locally verified; the historical verdict remains `changes-requested` until fresh independent rereview, and one non-blocking reliability suggestion remains recorded
+- `review.md` findings resolved: no; three required findings remain for `/sdd-apply`, with deployment and reliability suggestions also recorded
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started
