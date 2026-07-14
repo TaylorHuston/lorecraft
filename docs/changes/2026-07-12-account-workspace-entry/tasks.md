@@ -10,7 +10,7 @@ status: ready_to_close
 - Last completed action: removed duplicate session-focus requests, added non-destructive pending retry behavior, and passed 16 safety, 32 backend, 44 frontend, and 2 Playwright tests plus forced static/build gates
 - Next action: obtain user authorization to merge and close the Change
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: review and task reconciliation only after implementation commit `f799981`
+- Expected dirty files: none; the repository is clean after review reconciliation
 - Known blockers: none; the two accepted deferrals remain pre-production follow-ups
 
 ## Task Checklist
