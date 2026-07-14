@@ -14,7 +14,7 @@ stories:
 
 ## Product Context
 
-- Related change: `docs/changes/2026-07-12-account-workspace-entry/`
+- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/`
 - Related ADRs:
   - `docs/adrs/2026-07-12-adonisjs-api-first-backend.md`
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`

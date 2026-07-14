@@ -57,7 +57,7 @@ Lorecraft needs a real first user journey before World-building capabilities can
 
 ## Change Folder
 
-- Active location: `docs/changes/2026-07-12-account-workspace-entry/`
+- Closed location: `docs/changes/closed/2026-07-12-account-workspace-entry/`
 - Closed location: `docs/changes/closed/2026-07-12-account-workspace-entry/`
 
 ## Impact

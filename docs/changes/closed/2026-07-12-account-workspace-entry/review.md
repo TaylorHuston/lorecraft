@@ -33,7 +33,7 @@ ready
 
 - [x] `apps/frontend/src/auth/AuthProvider.tsx:14` - Removed overlapping TanStack visibility and explicit focus refresh sources; one browser return now produces one session check with regression coverage in `f799981`.
 - [x] `apps/frontend/src/app/AppRoutes.tsx:44` - Public background-refresh retry now exposes pending state, disables repeated requests, and preserves the unfinished auth draft in `f799981`.
-- [x] `docs/changes/2026-07-12-account-workspace-entry/tasks.md:82` - Runtime inspection confirmed invalid-credential and CSRF failure logs omit submitted credentials, cookies, sessions, and database values.
+- [x] `docs/changes/closed/2026-07-12-account-workspace-entry/tasks.md:82` - Runtime inspection confirmed invalid-credential and CSRF failure logs omit submitted credentials, cookies, sessions, and database values.
 - [x] Manual UI confirmation - The user confirmed the documented local flow on 2026-07-14.
 - [x] `docs/adrs/2026-07-12-postgresql-on-neon.md` - The user explicitly deferred the dedicated Lorecraft Neon smoke check until before production deployment.
 - [x] `docs/adrs/2026-07-12-browser-session-authentication.md` - The user explicitly deferred production HTTPS `Secure` cookie proof until before production deployment.
@@ -60,7 +60,7 @@ ready
 ## Review Bundle
 
 - App and workflow root: repository root
-- Change folder: `docs/changes/2026-07-12-account-workspace-entry/`
+- Change folder: `docs/changes/closed/2026-07-12-account-workspace-entry/`
 - Source branch/ref: `change/account-workspace-entry`
 - Reviewed source commit: `f799981a169fa36cdbd13935fec21d527a8582b9`
 - Target branch/ref: `develop` at `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc`
@@ -98,9 +98,9 @@ ready
 - Reviewed source: `f799981a169fa36cdbd13935fec21d527a8582b9`
 - Target branch: `develop`
 - Conflict check: clean at reviewed source
-- Commit state: implementation committed; review artifacts pending commit
-- PR status: not started and not authorized
-- Merge status: ready but not authorized
+- Commit state: implementation and review artifacts merged into `develop` as `47a7c55`; closeout reconciliation pending commit
+- PR status: not used for routine integration under repository policy
+- Merge status: merged into `develop` as `47a7c55`
 
 ## Suggested Manual UI Testing
 

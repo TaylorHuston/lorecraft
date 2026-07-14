@@ -6,11 +6,11 @@ status: ready_to_close
 
 ## Resume Here
 
-- Current state: review is ready; implementation, automated verification, manual UI, and runtime-log inspection pass, while the dedicated Neon and production HTTPS checks are accepted deployment deferrals
-- Last completed action: removed duplicate session-focus requests, added non-destructive pending retry behavior, and passed 16 safety, 32 backend, 44 frontend, and 2 Playwright tests plus forced static/build gates
-- Next action: obtain user authorization to merge and close the Change
-- Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: none; the repository is clean after review reconciliation
+- Current state: closed; implementation and review were merged into `develop`, and the Change folder is archived
+- Last completed action: merged `change/account-workspace-entry` into `develop` as `47a7c55` and moved the Change to `docs/changes/closed/`
+- Next action: none for this Change; use `/sdd-release` when promoting `develop` toward production
+- Active branch/ref: `develop`
+- Expected dirty files: none expected after the closeout commit
 - Known blockers: none; the two accepted deferrals remain pre-production follow-ups
 
 ## Task Checklist
@@ -90,8 +90,8 @@ status: ready_to_close
 - [x] 7.5 Record review outcome and resolve or explicitly defer findings.
 - [x] 7.6 Obtain manual UI confirmation or record an accepted gap.
 - [x] 7.7 Reconcile stale proposed/not-implemented/not-verified language across change and Epic artifacts.
-- [ ] 7.8 Merge only after review readiness and user authorization under repository branch policy.
-- [ ] 7.9 Move the completed change folder to `docs/changes/closed/` after acceptance and merge state are clear.
+- [x] 7.8 Merge only after review readiness and user authorization under repository branch policy.
+- [x] 7.9 Move the completed change folder to `docs/changes/closed/` after acceptance and merge state are clear.
 
 ### 8. Review Remediation
 
@@ -115,7 +115,7 @@ status: ready_to_close
 
 | Date       | Slice                                       | Agent / Guidance                                                              | Files / Areas                                                                           | Result                                                         | Commit / Ref  |
 | ---------- | ------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------- |
-| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                                    | `docs/changes/2026-07-12-account-workspace-entry/`, `docs/adrs/`                        | Proposed                                                       | `6468754`     |
+| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                                    | `docs/changes/closed/2026-07-12-account-workspace-entry/`, `docs/adrs/`                 | Proposed                                                       | `6468754`     |
 | 2026-07-12 | Discovery and Epic establishment            | main orchestrator; SDD doctrine                                               | `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`           | Epic truth created; implementation pending                     | `6468754`     |
 | 2026-07-13 | LC-001 backend account and session boundary | delegated backend implementation; TDD and current AdonisJS guidance           | `apps/backend/`                                                                         | PostgreSQL/session implementation complete; 17 tests pass      | `6468754`     |
 | 2026-07-13 | LC-001 React account workspace              | delegated frontend implementation; TDD, component, and visual guidance        | `apps/frontend/src/`, frontend config                                                   | 26 focused tests pass                                          | `6468754`     |
@@ -204,6 +204,6 @@ status: ready_to_close
 - `review.md` findings resolved: yes; deployment-specific verification is explicitly deferred
 - Planning updates resolved: current
 - Manual UI confirmation status: confirmed by user on 2026-07-14
-- PR / merge state: not started
+- PR / merge state: no routine integration PR; merged locally into `develop` as `47a7c55`
 - Deferred scope accepted: recorded in proposal and design
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: yes
