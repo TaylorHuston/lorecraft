@@ -2,12 +2,12 @@
 
 ## Resume Here
 
-- Current state: required review remediation is integrated and verified; the implementation commit remains in progress
-- Last completed action: passed 17 database-backed backend tests, 26 frontend tests, desktop/mobile same-origin Playwright journeys, and all broad quality gates
-- Next action: commit the complete verified change, record its immutable source SHA, and rerun `/sdd-review`
+- Current state: required review remediation is integrated, verified, and committed at `6468754`; independent rereview remains pending
+- Last completed action: committed the complete implementation after 17 database-backed backend tests, 26 frontend tests, desktop/mobile same-origin Playwright journeys, and all broad quality gates passed
+- Next action: rerun `/sdd-review` against immutable source commit `6468754`
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: `docs/`, backend account/auth/data files, frontend application files, root workspace configuration, tests, and release communication
-- Known blockers: no external blocker; the required implementation commit remains in progress
+- Expected dirty files: none after the implementation and evidence commits
+- Known blockers: no implementation blocker; independent rereview, manual UI confirmation, and provider-specific evidence remain pending
 
 ## Task Checklist
 
@@ -84,15 +84,15 @@
 
 ## Implementation Ledger
 
-| Date       | Slice                                       | Agent / Guidance                                                       | Files / Areas                                                                   | Result                                                         | Commit / Ref   |
-| ---------- | ------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | -------------- |
-| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                             | `docs/changes/2026-07-12-account-workspace-entry/`, `docs/adrs/`                | Proposed                                                       | uncommitted    |
-| 2026-07-12 | Discovery and Epic establishment            | main orchestrator; SDD doctrine                                        | `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`   | Epic truth created; implementation pending                     | uncommitted    |
-| 2026-07-13 | LC-001 backend account and session boundary | delegated backend implementation; TDD and current AdonisJS guidance    | `apps/backend/`                                                                 | PostgreSQL/session implementation complete; 17 tests pass      | commit pending |
-| 2026-07-13 | LC-001 React account workspace              | delegated frontend implementation; TDD, component, and visual guidance | `apps/frontend/src/`, frontend config                                           | 26 focused tests pass                                          | commit pending |
-| 2026-07-13 | Typed contract, CI, and E2E integration     | main orchestrator                                                      | Tuyau adapter, Turbo, Playwright, CI, public docs                               | Desktop and mobile browser journeys pass against isolated Neon | commit pending |
-| 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | commit pending |
-| 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | commit pending |
+| Date       | Slice                                       | Agent / Guidance                                                       | Files / Areas                                                                   | Result                                                         | Commit / Ref |
+| ---------- | ------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------ |
+| 2026-07-12 | Planning and ADR drafts                     | `/sdd-propose`, `/sdd-adr`                                             | `docs/changes/2026-07-12-account-workspace-entry/`, `docs/adrs/`                | Proposed                                                       | `6468754`    |
+| 2026-07-12 | Discovery and Epic establishment            | main orchestrator; SDD doctrine                                        | `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`   | Epic truth created; implementation pending                     | `6468754`    |
+| 2026-07-13 | LC-001 backend account and session boundary | delegated backend implementation; TDD and current AdonisJS guidance    | `apps/backend/`                                                                 | PostgreSQL/session implementation complete; 17 tests pass      | `6468754`    |
+| 2026-07-13 | LC-001 React account workspace              | delegated frontend implementation; TDD, component, and visual guidance | `apps/frontend/src/`, frontend config                                           | 26 focused tests pass                                          | `6468754`    |
+| 2026-07-13 | Typed contract, CI, and E2E integration     | main orchestrator                                                      | Tuyau adapter, Turbo, Playwright, CI, public docs                               | Desktop and mobile browser journeys pass against isolated Neon | `6468754`    |
+| 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | `6468754`    |
+| 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`    |
 
 ## Verification Ledger
 
@@ -131,7 +131,7 @@
 
 ## Blockers / Open Questions
 
-- Blocker: the complete implementation remains uncommitted until the verified commit is created.
+- No implementation blocker remains; the verified implementation is committed at `6468754`.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 

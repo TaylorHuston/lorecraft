@@ -26,7 +26,7 @@ changes-requested
 
 ### BLOCKING
 
-- [ ] `change/account-workspace-entry` at `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc` contains no source-only commits. `HEAD`, `develop`, and the merge base are identical; the proposed implementation consists of 33 modified/deleted tracked files and 43 untracked files. Merging this branch would integrate nothing. Recommendation: resolve the findings below, commit the complete intended change, and rerun `/sdd-review` against the resulting immutable source SHA.
+- [x] `change/account-workspace-entry` at `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc` contained no source-only commits. Resolved by committing the complete verified implementation as `6468754`; independent rereview must use that immutable source SHA.
 
 ### REQUIRED
 
@@ -107,3 +107,4 @@ changes-requested
 
 - 2026-07-13: Deep local review created with verdict `changes-requested`; no safe-fix commit was attempted because the complete implementation is uncommitted and required code/security work remains.
 - 2026-07-13: All required code, security, verification, documentation, and UI findings were remediated and the complete automated suite passed; immutable commit proof and independent rereview remain pending.
+- 2026-07-13: The remediated implementation was committed as `6468754`; the historical verdict remains `changes-requested` until an independent rereview evaluates that source commit.
