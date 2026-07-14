@@ -89,6 +89,7 @@ This table records evidence for the immutable reviewed source `d05d78e`; remedia
 
 - Source branch: `change/account-workspace-entry`
 - Reviewed source: `d05d78e00d1a1797544c3e5342bf91cd1338b9c2`
+- Remediation source: `c7d990b` (fresh independent rereview pending)
 - Target branch: `develop`
 - Conflict check: clean at reviewed source
 - Commit state at review start: clean
@@ -111,4 +112,4 @@ This table records evidence for the immutable reviewed source `d05d78e`; remedia
 - 2026-07-14: Apply remediation implemented both required findings at `78bebd6`; evidence and lifecycle records were committed through `d05d78e`.
 - 2026-07-14: Fresh review of `d05d78e` returned `changes-requested` for public-form focus data loss, unsafe disposable-database enforcement, and incomplete server-side CSRF route coverage.
 - 2026-07-14: Apply remediation implemented all three required findings; the historical verdict remains `changes-requested` until a fresh independent review evaluates the new source commit.
-- 2026-07-14: Independent review of the uncommitted remediation found effective-database identity gaps, failed-background-check draft loss, missing focus restoration, and artifact drift. Safe fixes pass 16 database-safety, 24 backend, 41 frontend, and 2 browser tests; they require a committed source and fresh rereview before the verdict can change.
+- 2026-07-14: Independent review of the uncommitted remediation found effective-database identity gaps, failed-background-check draft loss, missing focus restoration, and artifact drift. Safe fixes were committed as `c7d990b` after 16 database-safety, 24 backend, 41 frontend, and 2 browser tests passed; fresh rereview remains required before the verdict can change.
