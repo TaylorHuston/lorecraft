@@ -6,12 +6,12 @@ status: review
 
 ## Resume Here
 
-- Current state: all required findings from the `c22e4b6` review are implemented and independently self-checked in `33ea607`; the change is ready for fresh `/sdd-review`
-- Last completed action: restored the immutable historical users migration, added a transactional forward upgrade and disposable-schema proof, focused protected refresh recovery, added a 44px retry target, and passed 16 safety, 31 backend, 42 frontend, and 2 Playwright tests plus forced static/build gates
-- Next action: run a fresh `/sdd-review`, then obtain manual UI confirmation or record an accepted gap before merge authorization
+- Current state: fresh `/sdd-review` is complete; implementation findings are resolved in `f799981`, while manual UI, dedicated Neon provider, production HTTPS cookie, and runtime-log evidence remain acceptance gaps
+- Last completed action: removed duplicate session-focus requests, added non-destructive pending retry behavior, and passed 16 safety, 32 backend, 44 frontend, and 2 Playwright tests plus forced static/build gates
+- Next action: obtain the outstanding manual/provider evidence or record explicit user acceptance of each gap before merge authorization
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: SDD/Epic reconciliation only after implementation commit `33ea607`
-- Known blockers: no implementation blocker; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
+- Expected dirty files: review and task reconciliation only after implementation commit `f799981`
+- Known blockers: no implementation blocker; manual UI, runtime-log, dedicated Neon provider, and production HTTPS cookie evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -34,7 +34,7 @@ status: review
 
 - [x] 3.1 Compare the API-first React approach with Inertia and a bearer-token/OpenAPI-first SPA.
 - [x] 3.2 Draft the AdonisJS API-first, Neon/PostgreSQL, browser-session, and React typed-contract ADRs.
-- [ ] 3.3 Validate each ADR during implementation and update its status from `Proposed` only when evidence supports acceptance.
+- [x] 3.3 Validate each ADR during implementation and update its status from `Proposed` only when evidence supports acceptance; session and Neon ADRs intentionally remain `Proposed` pending their recorded gaps.
 
 ### 4. Enabling Work
 
@@ -75,10 +75,11 @@ status: review
 - [x] 6.3 Add deterministic Playwright coverage for signup, refresh, logout, protected access, return login, invalid credentials, duplicate signup, cookie isolation, and invalidated-cookie replay.
 - [x] 6.4 Run root lint, test, typecheck, and build gates.
 - [ ] 6.5 Validate migrations and integration behavior against disposable PostgreSQL in CI, then smoke-test the isolated Neon test branch.
-- [x] 6.6 Confirm logs and browser storage contain no passwords, connection strings, session values, or bearer tokens.
+- [x] 6.6 Confirm browser storage contains no passwords, connection strings, session values, or bearer tokens.
 - [x] 6.7 Update Story-level Verified By maps with Scenario-mapped evidence and explicit remaining manual/provider gaps.
 - [x] 6.8 Add focused Scenario evidence that an already-rendered workspace returns to sign-in after session expiry or external revocation.
 - [x] 6.9 Add deterministic evidence that auth routes reject unsupported or oversized multipart payloads before temporary-file processing.
+- [ ] 6.10 Capture representative backend auth-failure logs and confirm they contain no passwords, connection strings, session values, or bearer tokens.
 
 ### 7. Documentation, Review, And Closeout
 
@@ -107,6 +108,8 @@ status: review
 - [x] 8.11 Move focus to protected-session error recovery when background revalidation fails and add regression evidence.
 - [x] 8.12 Give the public background-refresh retry control a minimum 44px touch target.
 - [x] 8.13 Correct the unpublished `actions/checkout@v7` CI reference to the current supported major and reconcile stale change artifacts.
+- [x] 8.14 Ensure one browser return produces one session check instead of overlapping focus and visibility-triggered requests.
+- [x] 8.15 Preserve public auth drafts while a retry is pending, expose progress accessibly, and prevent repeated retry requests.
 
 ## Implementation Ledger
 
@@ -125,6 +128,7 @@ status: review
 | 2026-07-14 | Required review remediation                 | delegated frontend/backend TDD and security guidance plus main integration    | Public auth session states, disposable database launchers, CSRF proof, CI, README, Epic | 24 backend, 38 frontend, 12 safety, and 2 browser tests pass   | `c7d990b`     |
 | 2026-07-14 | Independent review fixes                    | delegated artifact, frontend, integration, and security review plus main TDD  | Effective database identity, child environments, failed revalidation, focus, artifacts  | 24 backend, 41 frontend, 16 safety, and 2 browser tests pass   | `c7d990b`     |
 | 2026-07-14 | Final required review remediation           | delegated backend/frontend TDD, independent self-review, and main integration | Forward users migration, migration harness, protected error focus, retry sizing         | All required findings resolved; full automated gates pass      | `33ea607`     |
+| 2026-07-14 | Fresh review frontend remediation           | main integration plus independent regression rereview                         | Session focus orchestration, public retry state, frontend regression tests              | 44 frontend tests and forced static/build gates pass           | `f799981`     |
 
 ## Verification Ledger
 
@@ -152,9 +156,10 @@ status: review
 | 2026-07-14 | Fresh guarded migrations, root tests, and Playwright against isolated schemas | integration and browser E2E | Guarded no-force migration, full account behavior, typed client, same-origin proxy, and desktop/mobile journeys work together                                                                                                       | 16 safety, 24 backend, 41 frontend, and 2 browser tests passed |
 | 2026-07-14 | Lint, typecheck, forced build, Prettier, audit, force scan, and diff checks   | broad supporting gate       | Final remediated source compiles, builds, formats cleanly, has no reported dependency vulnerability, and contains no forced migration command                                                                                       | passed; 0 vulnerabilities                                      |
 | 2026-07-14 | Historical users-schema upgrade and harness tests                             | focused integration         | The original schema remains immutable; existing email data normalizes transactionally, compatibility data survives, collisions roll back, and unsafe test setup performs no writes                                                  | 16 safety and 8 focused backend checks passed                  |
-| 2026-07-14 | Fresh disposable-schema backend suite                                         | integration test            | Fresh migrations, the forward upgrade, account/session behavior, request boundaries, and migration-test isolation work together                                                                                                     | 31 backend tests passed against isolated Neon                  |
+| 2026-07-14 | Fresh disposable-schema backend suite                                         | integration test            | Fresh migrations, the forward upgrade, account/session behavior, request boundaries, and migration-test isolation work together                                                                                                     | 32 backend tests passed against isolated Neon                  |
 | 2026-07-14 | Protected refresh recovery and responsive browser checks                      | focused automated and UI    | Failed authenticated revalidation focuses retry; public retry is at least 44px at 320px and desktop widths without overflow                                                                                                         | 42 frontend tests and direct Chromium checks passed            |
 | 2026-07-14 | Fresh Playwright, forced static/build gates, formatting, and audit            | browser and broad gates     | Desktop/mobile account journeys still pass; both apps compile, build, format cleanly, and report no dependency vulnerabilities                                                                                                      | 2 browser tests passed; all supporting gates passed            |
+| 2026-07-14 | Session revalidation and retry regression suite                               | focused automated           | A tab return produces one session check; public drafts survive a pending retry and the retry cannot be submitted repeatedly                                                                                                         | 44 frontend tests passed; focused independent rereview passed  |
 
 ## Manual Feedback
 
@@ -179,8 +184,10 @@ status: review
 
 ## Blockers / Open Questions
 
-- No required implementation findings remain from the `c22e4b6` review; fresh independent `/sdd-review` is required before integration.
+- No required implementation findings remain in the reviewed code at `f799981`.
+- Gap: representative backend auth-failure logs have not been captured and inspected for sensitive values.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
+- Gap: browser-session ADR acceptance still requires production HTTPS proof of the session cookie's `Secure` behavior.
 - No product or architecture questions remain open.
 
 ## Closeout
@@ -192,9 +199,9 @@ status: review
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: prior `changes-requested` findings are resolved in `33ea607`; fresh review pending
+- `sdd-review` verdict: `changes-requested`; code findings are resolved, but manual, runtime-log, and provider evidence require completion or explicit acceptance
 - Review record: `review.md`
-- `review.md` findings resolved: yes; migration-upgrade and accessibility findings are implemented and self-reviewed, with fresh independent review still required
+- `review.md` findings resolved: implementation findings yes; acceptance-evidence findings remain open
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started

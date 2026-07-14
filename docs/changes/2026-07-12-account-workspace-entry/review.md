@@ -6,22 +6,22 @@ changes-requested
 
 ## Gate Scorecard
 
-| Gate                         | Result               | Notes                                                                                                                   |
-| ---------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass after safe fix  | The Epic upgrade gap, closeout checklist, current review watermark, and public-safe paths were reconciled.              |
-| Change status                | review               | Required remediation is committed after the review watermark; fresh independent review is next.                         |
-| Epic truth                   | pass                 | `LC-001/S1-S3` match current behavior and retain explicit acceptance gaps.                                              |
-| Requirements and Scenarios   | pass                 | Story labels and local Requirement/Scenario IDs are unique and mapped.                                                  |
-| Story reference traceability | pass                 | Full Story references remain Epic-scoped and traceable.                                                                 |
-| Tests and verification       | pass after apply     | Existing-schema upgrade, collision rollback, focus recovery, touch sizing, and full automated gates now pass.           |
-| Manual UI confirmation       | pending user         | The walkthrough is current; automated desktop/mobile journeys pass.                                                     |
-| Code review                  | resolved after apply | The historical migration is restored and the additive transactional upgrade is proven in `33ea607`.                     |
-| Visual / UX consistency      | resolved after apply | Protected refresh errors focus recovery, and retry controls meet the 44px baseline in `33ea607`.                        |
-| Security review              | pass                 | Session, CSRF, request-boundary, throttling, and disposable-database safeguards pass focused review.                    |
-| Documentation                | pass after safe fix  | README, ADRs, Epic, change design, and setup guidance agree after reconciliation.                                       |
-| Release communication        | pass                 | `[Unreleased]` contains only the user-facing account/workspace capability.                                              |
-| Branch and merge readiness   | rereview required    | Required findings were resolved after this review's source watermark in `33ea607`; fresh independent review is pending. |
-| PRD alignment                | pass                 | The account boundary supports the private, creator-first world-bible direction.                                         |
+| Gate                         | Result              | Notes                                                                                                          |
+| ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass after safe fix | Current source, evidence counts, ADR status, and remaining gaps are reconciled.                                |
+| Change status                | review              | Implementation is complete; acceptance evidence remains open.                                                  |
+| Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit verification gaps.                                   |
+| Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                         |
+| Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                        |
+| Tests and verification       | pass                | Fresh database, backend, frontend, browser, static, formatting, and dependency gates pass.                     |
+| Manual UI confirmation       | pending user        | The walkthrough is current; automated desktop/mobile journeys pass.                                            |
+| Code review                  | pass after safe fix | Duplicate focus refreshes and repeatable public retries were resolved in `f799981`.                            |
+| Visual / UX consistency      | pass after safe fix | Pending retry state is visible, accessible, non-destructive, and prevents repeated requests.                   |
+| Security review              | evidence gap        | Code review is clean; representative runtime auth logs and production HTTPS cookie behavior remain unverified. |
+| Documentation                | pass after safe fix | README, ADRs, Epic, change design, and evidence ledgers agree.                                                 |
+| Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                     |
+| Branch and merge readiness   | not ready           | Merge is mechanically clean, but four acceptance gaps require evidence or explicit user acceptance.            |
+| PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                |
 
 ## Findings
 
@@ -31,87 +31,88 @@ changes-requested
 
 ### REQUIRED
 
-- [x] `apps/backend/database/migrations/1761885935168_create_users_table.ts:14` - Restored the historical migration and added transactional forward migration plus existing-schema, collision-rollback, and guarded-harness evidence in `33ea607`.
-- [x] `apps/frontend/src/app/AppRoutes.tsx:69` - Failed protected-session revalidation now focuses the retry action with regression coverage in `33ea607`.
-- [x] `apps/frontend/src/app/AppRoutes.module.css:75` - The public background-refresh retry control now has a 44px minimum target verified at narrow and desktop widths in `33ea607`.
-- [x] `.github/workflows/ci.yml:49` - Corrected the unpublished `actions/checkout@v7` reference to supported `actions/checkout@v6`, verified against the official action releases.
-- [x] `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`, and this review - Reconciled the migration-upgrade gap, unresolved-finding checklist state, current review watermark, and public-safe repository paths.
+- [x] `apps/frontend/src/auth/AuthProvider.tsx:14` - Removed overlapping TanStack visibility and explicit focus refresh sources; one browser return now produces one session check with regression coverage in `f799981`.
+- [x] `apps/frontend/src/app/AppRoutes.tsx:44` - Public background-refresh retry now exposes pending state, disables repeated requests, and preserves the unfinished auth draft in `f799981`.
+- [ ] `docs/changes/2026-07-12-account-workspace-entry/tasks.md:82` - Capture representative backend auth-failure logs and verify they omit passwords, connection strings, session values, and bearer tokens, or obtain explicit acceptance of this evidence gap.
+- [ ] Manual UI confirmation - Complete the walkthrough below or record explicit user acceptance of the gap.
+- [ ] `docs/adrs/2026-07-12-postgresql-on-neon.md` - Run the dedicated Lorecraft Neon provider smoke check or record explicit user acceptance of the gap before closeout.
+- [ ] `docs/adrs/2026-07-12-browser-session-authentication.md` - Verify the session cookie over production HTTPS or record explicit user acceptance of the gap before closeout.
 
 ### SUGGESTION
 
-- [ ] `apps/backend/config/limiter.ts:3` - Authentication throttles use a process-local memory store. Require a shared limiter store or ingress-level distributed limits before horizontal or production deployment.
-- [ ] `apps/backend/app/controllers/new_account_controller.ts:55` - The duplicate-account response reveals whether an email is registered. Retain this only as an explicit product/privacy choice.
-- [ ] `apps/backend/app/controllers/new_account_controller.ts:33` - Define a recoverable post-account/session-persistence failure outcome if operational evidence shows this rare window needs hardening.
-- [ ] `apps/frontend/src/workspace/WorkspacePage.module.css:159` - Narrow layouts hide the signed-in email; consider retaining account identity in a wrapping or secondary row.
+- [ ] `.github/workflows/ci.yml:72` - After Tuyau generation, add a generated-client diff check so CI cannot silently repair an uncommitted contract drift.
+- [ ] `apps/backend/config/limiter.ts:3` - Require a shared limiter store or ingress-level distributed limits before horizontal or production deployment.
+- [ ] `apps/backend/app/controllers/new_account_controller.ts:55` - Retain the duplicate-account response only as an explicit product/privacy choice because it reveals whether an email is registered.
+- [ ] `apps/frontend/src/workspace/WorkspacePage.module.css:159` - Consider retaining signed-in account identity on narrow layouts instead of hiding it.
 
 ## Verification Evidence
 
-| Command / Scenario                                                               | Evidence Type             | Requirement / Scenario         | Result                                   | What It Proves                                                                                                                      |
-| -------------------------------------------------------------------------------- | ------------------------- | ------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Fresh guarded migrations and backend tests against isolated Neon schema          | focused integration       | `LC-001/S1-S3`                 | 16 safety and 24 backend tests passed    | Fresh-schema persistence, authentication, session, CSRF, request, and database-tooling behavior works.                              |
-| `npm test --workspace @lorecraft/frontend`                                       | focused automated         | `LC-001/S1-S3`                 | 41 passed                                | Forms, routing, session races, draft preservation, focus success/expiry, error mapping, and empty workspace behavior pass.          |
-| `npm run test:e2e` against a separate isolated Neon schema                       | deterministic E2E         | `LC-001/S1-S3`                 | 2 passed, desktop and mobile Chromium    | Same-origin cookie/CSRF flow, refresh, login, logout, replay denial, protected routing, and empty workspace integrate successfully. |
-| `npx turbo lint typecheck build --force` and `npx prettier --check .`            | broad supporting gates    | Cross-story code quality       | passed; no cached tasks                  | Both applications lint, typecheck, build, and match configured formatting from the reviewed source.                                 |
-| `npm audit --audit-level=low` and credential-pattern scan                        | security supporting gates | Dependency and secret handling | passed; 0 vulnerabilities; fixtures only | No reported dependency issue or real credential was found.                                                                          |
-| `git diff develop...HEAD --check` and `git merge-tree --write-tree develop HEAD` | integration gates         | Branch readiness               | passed; conflict tree `b71181d2...`      | Reviewed source is whitespace-clean and mechanically integrates with `develop`.                                                     |
+| Command / Scenario                                                               | Evidence Type            | Requirement / Scenario   | Result                                 | What It Proves                                                                                                                      |
+| -------------------------------------------------------------------------------- | ------------------------ | ------------------------ | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Fresh guarded migrations and backend tests against disposable Neon schema        | focused integration      | `LC-001/S1-S3`           | 16 safety and 32 backend tests passed  | Fresh and upgraded schemas, authentication, sessions, CSRF, request boundaries, and database guards work together.                  |
+| `npm test --workspace @lorecraft/frontend`                                       | focused automated        | `LC-001/S1-S3`           | 44 passed                              | Forms, routing, session races, single focus refresh, pending retry behavior, focus recovery, and empty workspace behavior pass.     |
+| `npm run test:e2e` against a separate disposable Neon schema                     | deterministic E2E        | `LC-001/S1-S3`           | 2 passed, desktop and mobile Chromium  | Same-origin cookie/CSRF flow, refresh, login, logout, replay denial, protected routing, and empty workspace integrate successfully. |
+| `npx turbo lint typecheck build --force` and `npx prettier --check .`            | broad supporting gates   | Cross-story code quality | 6 uncached tasks and formatting passed | Both applications lint, typecheck, build, and match configured formatting.                                                          |
+| `npm audit --audit-level=low`                                                    | security supporting gate | Dependency safety        | passed; 0 reported vulnerabilities     | The current dependency graph has no reported issue at the configured threshold.                                                     |
+| `git diff develop...HEAD --check` and `git merge-tree --write-tree develop HEAD` | integration gates        | Branch readiness         | passed; conflict tree `677b3642...`    | Reviewed implementation is whitespace-clean and mechanically integrates with `develop`.                                             |
 
 ## Review Bundle
 
 - App and workflow root: repository root
 - Change folder: `docs/changes/2026-07-12-account-workspace-entry/`
 - Source branch/ref: `change/account-workspace-entry`
-- Reviewed source commit: `c22e4b65893d2411003db80135bd3d536737520e`
+- Reviewed source commit: `f799981a169fa36cdbd13935fec21d527a8582b9`
 - Target branch/ref: `develop` at `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc`
 - Merge base: `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc`
-- Source-only commits: `6468754`, `2eb5174`, `95f7799`, `f87cabe`, `5698a3f`, `78bebd6`, `d05d78e`, `aeb6627`, `c7d990b`, `b38d7b7`, `c22e4b6`
+- Source-only commits: 15, from `6468754` through `f799981`
 - Target-only commits: none
-- Changed files: 93
-- Diff stat: 8,862 insertions and 950 deletions
-- Conflict check: clean; `git merge-tree --write-tree develop HEAD` produced `b71181d208d77a642b25c932f414d43b21b52872`
-- Dirty state at review start: clean source repository; unrelated surrounding-vault changes are outside this review
+- Changed files: 96
+- Diff stat: 9,448 insertions and 948 deletions
+- Conflict check: clean; `git merge-tree --write-tree develop HEAD` produced `677b36420d5a38363c6704a82fc636bf39e6335c`
+- Dirty state at review start: clean source repository; review artifacts changed only after implementation commit `f799981`
 - Branch policy: valid `change/` branch from `develop`; local review is required before integration
 
 ## Discovery Wave
 
-| Pass                                          | Result              | Notes                                                                                |
-| --------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
-| Artifact truth and lifecycle                  | pass after safe fix | Epic gap, checklist state, review watermark, and public-safe path drift corrected.   |
-| Backend and security                          | finding             | Existing databases cannot receive edits made to the already-applied users migration. |
-| Frontend and UI                               | finding             | Protected refresh failure loses focus; public retry is undersized on mobile.         |
-| Verification and integration                  | finding             | Current gates pass; existing-database upgrade proof remains absent.                  |
-| Documentation, release communication, and PRD | pass after safe fix | Public and private direction remain aligned without a committed private path.        |
+| Pass                                          | Reviewer                          | Result              | Notes                                                                                                 |
+| --------------------------------------------- | --------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Artifact truth and lifecycle                  | delegated artifact review         | pass after safe fix | Stale watermark, counts, task state, and ADR-validation checkbox were reconciled.                     |
+| Backend and security                          | delegated backend/security review | pass                | No code finding; production/provider assumptions and evidence gaps remain explicit.                   |
+| Frontend and UI                               | delegated frontend review         | pass after safe fix | Duplicate refresh and pending retry findings were fixed and independently regression-reviewed.        |
+| Verification and integration                  | delegated verification review     | evidence gaps       | Automated gates pass; runtime-log, manual UI, dedicated Neon, and production HTTPS evidence are open. |
+| Documentation, release communication, and PRD | delegated integration review      | pass                | Public docs, changelog scope, and creator-first direction agree with implemented behavior.            |
 
 ## Consolidated Remediation
 
-- Root causes addressed: review-record drift, incomplete Epic gap inventory, and a private absolute path in a public artifact.
-- Safe-fix batch: reconciled the Epic, task ledger, and review record.
-- Applied after reviewed source: `33ea607` adds the users-schema forward migration and upgrade proof, protected-error focus recovery, and 44px public retry sizing; fresh `/sdd-review` remains required.
-- Affected verification union: artifact scans, forced static/build gates, frontend tests, database-safety tests, dependency audit, diff check, and merge-tree check.
-- Apply self-check: migration/security and frontend reviews passed; two migration-harness setup defects found by verification review were remediated before commit and passed focused rereview.
-- New regressions introduced by remediation: none remain after the apply self-check.
+- Root causes addressed: overlapping browser lifecycle handlers, retry controls without an observable pending state, and verification-ledger drift.
+- Safe-fix batch: implementation commit `f799981` plus this artifact reconciliation.
+- Deferred or unsafe findings: manual UI, dedicated Neon provider, production HTTPS cookie, and runtime-log evidence require external observation or explicit user acceptance.
+- Affected verification union: 44 frontend tests, forced lint/typecheck/build, formatting, diff, merge-tree, and independent focused frontend rereview; fresh backend/E2E evidence remains applicable because remediation is frontend-only.
+- Regression-focused rereview: passed; one focus check occurs per browser return, public retry is non-repeatable while pending, and the auth draft remains mounted.
+- New regressions introduced by remediation: none found.
 
 ## PR / Merge Readiness
 
 - Source branch: `change/account-workspace-entry`
-- Reviewed source: `c22e4b65893d2411003db80135bd3d536737520e`
+- Reviewed source: `f799981a169fa36cdbd13935fec21d527a8582b9`
 - Target branch: `develop`
 - Conflict check: clean at reviewed source
-- Commit state at review start: clean
+- Commit state: implementation committed; review artifacts pending commit
 - PR status: not started and not authorized
-- Merge status: not ready and not authorized
+- Merge status: not ready and not authorized; acceptance gaps remain open
 
 ## Suggested Manual UI Testing
 
 - Route/setup: use `http://localhost:5173` with a unique valid-looking email; email delivery and recovery are not implemented.
-- Draft preservation: partially complete `/sign-up` and `/sign-in`, switch windows or tabs, and return. Drafts should survive successful and failed background checks, and retry should not remount the form.
-- Session recovery: from `/worlds`, return focus with both a valid and expired session. Private content should be suppressed during the check; focus should return to the prior workspace control on success and move to error recovery or sign-in on failure/expiry.
+- Draft preservation: partially complete `/sign-up` and `/sign-in`, switch windows or tabs, and return. Drafts should survive both successful and failed background checks; retry should show progress without remounting the form.
+- Session recovery: from `/worlds`, return focus with both a valid and expired session. Private content should be suppressed during the check; focus should return to the prior control on success and move to recovery or sign-in on failure.
 - Account journey: create an account, refresh `/worlds`, sign out, sign back in, and revisit `/sign-up`. Expect stable transitions and no private-workspace flash.
-- Responsive layout: repeat the journey at narrow mobile and wide desktop sizes. Expect no clipping or horizontal overflow and at least 44px interactive targets.
+- Responsive layout: repeat at narrow mobile and wide desktop sizes. Expect no clipping or horizontal overflow and at least 44px interactive targets.
 - Status: pending user.
 
 ## Review Log
 
 - 2026-07-13 through 2026-07-14: Earlier independent reviews and remediation are recorded in the implementation and verification ledgers in `tasks.md`.
-- 2026-07-14: Fresh review of `b38d7b7` returned `changes-requested` for the users migration upgrade path and two accessibility defects. CI action and artifact-only findings were safely corrected; fresh review remains required after `/sdd-apply` resolves the implementation findings.
-- 2026-07-14: Comprehensive review of `c22e4b6` confirmed the same three implementation findings and corrected the complete artifact-only batch. Forced static/build gates, 41 frontend tests, 16 database-safety tests, dependency audit, diff, and merge checks pass; prior backend and E2E evidence remains applicable because intervening changes were limited to CI and artifacts.
-- 2026-07-14: `/sdd-apply` resolved all three findings in `33ea607`. Apply self-checks and fresh automated gates pass; the verdict above remains the result for reviewed source `c22e4b6` until a new independent review replaces it.
+- 2026-07-14: Fresh review of `baf0445` found two frontend defects and four acceptance-evidence gaps; backend/security review found no code defect.
+- 2026-07-14: `f799981` resolved duplicate session refresh and public pending-retry behavior. The focused independent rereview and 44-test frontend suite passed.
+- 2026-07-14: Verdict remains `changes-requested` until manual UI, runtime-log, dedicated Neon, and production HTTPS evidence are completed or explicitly accepted.
