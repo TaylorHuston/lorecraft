@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type KeyboardEvent } from 'react'
 import styles from './AdventureWorkbenchPrototype.module.css'
 
 export type AdventurePane = 'story' | 'player' | 'scene'
@@ -16,6 +16,8 @@ const paneLabels: Record<AdventurePane, string> = {
   player: 'Player',
   scene: 'Scene',
 }
+
+const paneOrder = Object.keys(paneLabels) as AdventurePane[]
 
 const modeLabels: Record<ComposerMode, string> = {
   act: 'Act',
@@ -158,7 +160,7 @@ function Composer({
 
   return (
     <form className={styles.composer} onSubmit={(event) => event.preventDefault()}>
-      <div className={styles.modeRow} aria-label="Narrative input mode">
+      <div className={styles.modeRow} role="group" aria-label="Narrative input mode">
         {Object.entries(modeLabels).map(([value, label]) => (
           <button
             key={value}
@@ -259,14 +261,36 @@ function MobileTabs({
   activePane: AdventurePane
   onChange: (pane: AdventurePane) => void
 }) {
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, pane: AdventurePane) {
+    const currentIndex = paneOrder.indexOf(pane)
+    let nextIndex: number | undefined
+
+    if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % paneOrder.length
+    if (event.key === 'ArrowLeft')
+      nextIndex = (currentIndex - 1 + paneOrder.length) % paneOrder.length
+    if (event.key === 'Home') nextIndex = 0
+    if (event.key === 'End') nextIndex = paneOrder.length - 1
+    if (nextIndex === undefined) return
+
+    event.preventDefault()
+    const nextPane = paneOrder[nextIndex]
+    onChange(nextPane)
+    document.getElementById(`adventure-tab-${nextPane}`)?.focus()
+  }
+
   return (
-    <nav className={styles.mobileTabs} aria-label="Adventure views">
+    <nav className={styles.mobileTabs} role="tablist" aria-label="Adventure views">
       {Object.entries(paneLabels).map(([value, label]) => (
         <button
           key={value}
+          id={`adventure-tab-${value}`}
           type="button"
-          aria-current={activePane === value ? 'page' : undefined}
+          role="tab"
+          aria-controls={`adventure-panel-${value}`}
+          aria-selected={activePane === value}
+          tabIndex={activePane === value ? 0 : -1}
           onClick={() => onChange(value as AdventurePane)}
+          onKeyDown={(event) => handleKeyDown(event, value as AdventurePane)}
         >
           {label}
           {value === 'scene' && activePane !== 'scene' ? (
@@ -293,11 +317,19 @@ export function AdventureWorkbenchPrototype({
         <div className={styles.mobileFrame}>
           <Header />
           <main className={styles.mobileContent}>
-            {activePane === 'story' ? (
-              <StoryPane mode={mode} onModeChange={setMode} generating={generating} />
-            ) : null}
-            {activePane === 'player' ? <PlayerPane /> : null}
-            {activePane === 'scene' ? <ScenePane /> : null}
+            <div
+              className={styles.mobilePanel}
+              id={`adventure-panel-${activePane}`}
+              role="tabpanel"
+              aria-labelledby={`adventure-tab-${activePane}`}
+              tabIndex={0}
+            >
+              {activePane === 'story' ? (
+                <StoryPane mode={mode} onModeChange={setMode} generating={generating} />
+              ) : null}
+              {activePane === 'player' ? <PlayerPane /> : null}
+              {activePane === 'scene' ? <ScenePane /> : null}
+            </div>
           </main>
           <MobileTabs activePane={activePane} onChange={setActivePane} />
         </div>

@@ -46,6 +46,26 @@
   padding: 0 var(--space-3);
 }
 
+@media (hover: hover) {
+  .quietButton:hover,
+  .secondaryActions button:hover,
+  .linkList button:hover,
+  .modeRow button:hover:not([aria-pressed='true']),
+  .mobileTabs button:hover:not([aria-selected='true']) {
+    background: var(--surface-muted);
+    color: var(--text-primary);
+  }
+}
+
+.quietButton:active,
+.secondaryActions button:active,
+.linkList button:active,
+.modeRow button:active,
+.mobileTabs button:active {
+  background: var(--surface-raised);
+  color: var(--primary);
+}
+
 .desktopGrid {
   display: grid;
   grid-template-columns: minmax(14rem, 18%) minmax(34rem, 1fr) minmax(18rem, 23%);
@@ -402,12 +422,16 @@
   overflow: hidden;
 }
 
-.mobileContent > .sidePane,
-.mobileContent > .storyPane {
+.mobilePanel {
   height: 100%;
 }
 
-.mobileContent > .sidePane {
+.mobilePanel > .sidePane,
+.mobilePanel > .storyPane {
+  height: 100%;
+}
+
+.mobilePanel > .sidePane {
   border: 0;
 }
 
@@ -448,7 +472,7 @@
   cursor: pointer;
 }
 
-.mobileTabs button[aria-current='page'] {
+.mobileTabs button[aria-selected='true'] {
   border-top-color: var(--primary);
   color: var(--primary);
 }

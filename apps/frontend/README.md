@@ -16,6 +16,7 @@ From the repository root:
 
 ```bash
 npm run storybook
+npx playwright install chromium # one-time browser setup
 npm run test:storybook
 npm run build:storybook
 ```

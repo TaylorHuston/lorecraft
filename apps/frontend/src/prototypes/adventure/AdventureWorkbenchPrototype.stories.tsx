@@ -76,10 +76,20 @@ export const MobileTabNavigation: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Player' }))
+    const storyTab = canvas.getByRole('tab', { name: 'Story' })
+    storyTab.focus()
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(canvas.getByRole('tab', { name: 'Player' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
     await expect(canvas.getByRole('heading', { name: 'Elara Vance' })).toBeVisible()
 
-    await userEvent.click(canvas.getByRole('button', { name: /^Scene/ }))
+    await userEvent.click(canvas.getByRole('tab', { name: /^Scene/ }))
+    await expect(canvas.getByRole('tabpanel')).toHaveAttribute(
+      'aria-labelledby',
+      'adventure-tab-scene'
+    )
     await expect(canvas.getByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
   },
 }
