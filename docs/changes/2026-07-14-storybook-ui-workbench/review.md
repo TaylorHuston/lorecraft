@@ -67,6 +67,9 @@ ready
 - Conflict check: clean tree `1565ec64394afc9e0a349e2b0fce61ec5b0069a1`
 - Dirty state: review remediation isolated in a temporary worktree; unrelated canonical-checkout changes preserved
 - Branch policy: `change/` correctly targets `develop`
+- Post-remediation source commit: `79f2f154ad775c57d5830ff682ba0265f927db88`
+- Post-remediation diff: 24 files, 4,428 insertions, 431 deletions
+- Post-remediation conflict check: clean tree `f28999737fd49f7cfa6d101396f034aa182a7bf0`
 
 ## Discovery Wave
 
@@ -92,10 +95,10 @@ ready
 ## PR / Merge Readiness
 
 - Source branch: `change/adventure-ui-storybook`
-- Reviewed source commit: `cd5604a414c68a1f1cdcb63e3752494cf93be45d` plus the verified local review-remediation commit
+- Reviewed source commit: `cd5604a414c68a1f1cdcb63e3752494cf93be45d` plus verified remediation at `79f2f154ad775c57d5830ff682ba0265f927db88`
 - Target branch: `develop`
 - Conflict check: clean
-- Commit state: safe review batch pending local commit
+- Commit state: safe review batch committed locally at `79f2f15`
 - PR status: not requested
 - Merge status: ready; explicit authorization required
 
@@ -104,3 +107,4 @@ ready
 - 2026-07-14: User approved the local Storybook catalog.
 - 2026-07-14: Independent delegated review completed against `develop` and consolidated CI, setup, and accessibility findings.
 - 2026-07-14: Safe remediation and the complete regression verification union passed.
+- 2026-07-14: Review remediation committed at `79f2f15`; the post-remediation merge preview is clean.

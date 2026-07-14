@@ -33,12 +33,12 @@ status: ready_to_close
 
 ## Implementation Ledger
 
-| Date       | Slice                     | Files / Areas                                                              | Result      | Commit / Ref  |
-| ---------- | ------------------------- | -------------------------------------------------------------------------- | ----------- | ------------- |
-| 2026-07-14 | Planning and branch setup | Change artifacts; change/adventure-ui-storybook                            | in progress | this branch   |
-| 2026-07-14 | Storybook workbench       | Frontend config, prototype component, stories                              | implemented | this branch   |
-| 2026-07-14 | Production UI catalog     | Auth and workspace components                                              | implemented | this branch   |
-| 2026-07-14 | Review remediation        | CI, setup docs, prototype accessibility, interaction states, and artifacts | implemented | review commit |
+| Date       | Slice                     | Files / Areas                                                              | Result      | Commit / Ref |
+| ---------- | ------------------------- | -------------------------------------------------------------------------- | ----------- | ------------ |
+| 2026-07-14 | Planning and branch setup | Change artifacts; change/adventure-ui-storybook                            | in progress | this branch  |
+| 2026-07-14 | Storybook workbench       | Frontend config, prototype component, stories                              | implemented | this branch  |
+| 2026-07-14 | Production UI catalog     | Auth and workspace components                                              | implemented | this branch  |
+| 2026-07-14 | Review remediation        | CI, setup docs, prototype accessibility, interaction states, and artifacts | implemented | `79f2f15`    |
 
 ## Verification Ledger
 
