@@ -10,7 +10,7 @@ status: review
 - Last completed action: reconciled LC-002 and completed two fresh-context apply self-checks with no new code or security defects
 - Next action: obtain manual UI confirmation, resolve the stacked Storybook Change, and repeat `/sdd-review`
 - Active branch/ref: `change/public-starter-world`, stacked on Storybook workbench commit `cd5604a`
-- Expected dirty files: remediation code and artifacts until the verified implementation commit is recorded
+- Expected dirty files: none after the evidence ledger commit
 - Known blockers: the unfinished stacked Storybook Change and manual user confirmation remain
 
 ## Task Checklist
@@ -32,13 +32,13 @@ status: review
 
 ## Implementation Ledger
 
-| Date       | Slice                     | Files / Areas                                                                       | Result      | Commit / Ref   |
-| ---------- | ------------------------- | ----------------------------------------------------------------------------------- | ----------- | -------------- |
-| 2026-07-14 | Planning and branch setup | Change artifacts; `change/public-starter-world`                                     | in progress | this branch    |
-| 2026-07-14 | Persistence and API       | Migrations, models, application queries, routes, seed                               | implemented | this branch    |
-| 2026-07-14 | Web catalog and detail    | API adapter, routes, components, CSS, Storybook                                     | implemented | this branch    |
-| 2026-07-14 | Durable truth             | LC-001, LC-002, README, CHANGELOG                                                   | implemented | this branch    |
-| 2026-07-14 | Review remediation        | Data integrity, seed/API evidence, account cache/session lifecycle, detail recovery | implemented | pending commit |
+| Date       | Slice                     | Files / Areas                                                                       | Result      | Commit / Ref |
+| ---------- | ------------------------- | ----------------------------------------------------------------------------------- | ----------- | ------------ |
+| 2026-07-14 | Planning and branch setup | Change artifacts; `change/public-starter-world`                                     | in progress | this branch  |
+| 2026-07-14 | Persistence and API       | Migrations, models, application queries, routes, seed                               | implemented | this branch  |
+| 2026-07-14 | Web catalog and detail    | API adapter, routes, components, CSS, Storybook                                     | implemented | this branch  |
+| 2026-07-14 | Durable truth             | LC-001, LC-002, README, CHANGELOG                                                   | implemented | this branch  |
+| 2026-07-14 | Review remediation        | Data integrity, seed/API evidence, account cache/session lifecycle, detail recovery | implemented | `6b5f0a3`    |
 
 ## Verification Ledger
 

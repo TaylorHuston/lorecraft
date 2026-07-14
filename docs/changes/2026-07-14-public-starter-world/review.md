@@ -106,3 +106,4 @@ The table below records the original independent review run. Apply remediation a
 
 - 2026-07-14: Independent review completed; changes requested.
 - 2026-07-14: `/sdd-apply` resolved all required findings; blocking manual confirmation and stacked-Change integration remain open pending fresh review.
+- 2026-07-14: Verified remediation committed at `6b5f0a3`; this historical verdict remains unchanged until a fresh `/sdd-review` inspects that commit.
