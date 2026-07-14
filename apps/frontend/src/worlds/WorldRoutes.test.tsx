@@ -269,7 +269,9 @@ describe('World catalog and detail routes', () => {
         },
       },
     })
-    expect(await screen.findByRole('heading', { name: 'World not found' })).toBeVisible()
+    expect(await screen.findByRole('alert')).toContainElement(
+      screen.getByRole('heading', { name: 'World not found' })
+    )
     expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
     expect(screen.queryByText(/author|owner/i)).not.toBeInTheDocument()
   })

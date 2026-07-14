@@ -67,6 +67,14 @@ const characters = [
   ],
 ] as const
 
+const starterWorld = {
+  slug: 'stormbound-chapel',
+  name: 'Stormbound Chapel',
+  description:
+    'A small persistent-world test set around a chapel, a tavern, a vestry, and a rain-lashed graveyard.',
+  visibility: 'public',
+} as const
+
 export async function seedStormboundChapel(authorEmail: string | undefined) {
   if (!authorEmail)
     throw new Error('STARTER_WORLD_AUTHOR_EMAIL is required to seed the starter World.')
@@ -74,27 +82,45 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
   if (!author) throw new Error('STARTER_WORLD_AUTHOR_EMAIL does not match an existing account.')
 
   await db.transaction(async (trx) => {
-    const [world] = await trx
-      .table('worlds')
-      .insert({
-        author_id: author.id,
-        slug: 'stormbound-chapel',
-        name: 'Stormbound Chapel',
-        description:
-          'A small persistent-world test set around a chapel, a tavern, a vestry, and a rain-lashed graveyard.',
-        visibility: 'public',
-        created_at: new Date(),
-        updated_at: new Date(),
-      })
-      .onConflict('slug')
-      .merge(['author_id', 'name', 'description', 'visibility', 'updated_at'])
-      .returning('id')
+    const existingWorld = await trx
+      .from('worlds')
+      .select('id', 'author_id', 'name', 'description', 'visibility')
+      .where('slug', starterWorld.slug)
+      .first()
+
+    if (
+      existingWorld &&
+      (String(existingWorld.author_id) !== String(author.id) ||
+        existingWorld.name !== starterWorld.name ||
+        existingWorld.description !== starterWorld.description ||
+        existingWorld.visibility !== starterWorld.visibility)
+    ) {
+      throw new Error(
+        `Cannot seed the starter World because the reserved slug "${starterWorld.slug}" is already in use.`
+      )
+    }
+
+    let worldId: number
+    if (existingWorld) {
+      worldId = existingWorld.id
+    } else {
+      const [world] = await trx
+        .table('worlds')
+        .insert({
+          author_id: author.id,
+          ...starterWorld,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning('id')
+      worldId = world.id
+    }
     const locationIds = new Map<string, number>()
     for (const [index, [key, name, description]] of locations.entries()) {
       const [row] = await trx
         .table('locations')
         .insert({
-          world_id: world.id,
+          world_id: worldId,
           key,
           name,
           description,
@@ -123,7 +149,7 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
       await trx
         .table('characters')
         .insert({
-          world_id: world.id,
+          world_id: worldId,
           location_id: locationIds.get(locationKey)!,
           key,
           name,
@@ -151,7 +177,7 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
     }
     await trx
       .from('characters')
-      .where('world_id', world.id)
+      .where('world_id', worldId)
       .whereNotIn(
         'key',
         characters.map(([key]) => key)
@@ -159,7 +185,7 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
       .delete()
     await trx
       .from('locations')
-      .where('world_id', world.id)
+      .where('world_id', worldId)
       .whereNotIn(
         'key',
         locations.map(([key]) => key)

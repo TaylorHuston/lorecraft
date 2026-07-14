@@ -75,5 +75,8 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Run Storybook browser tests
+        run: npm run test:storybook
+
       - name: Run account journey E2E
         run: npm run test:e2e

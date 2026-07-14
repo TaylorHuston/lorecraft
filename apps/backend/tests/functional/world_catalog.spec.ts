@@ -353,4 +353,44 @@ test.group('World catalog API', (group) => {
         .first()
     )
   })
+
+  test('LC-002/S2/R1-S3: starter seed rejects an unrelated reserved-slug World', async ({
+    assert,
+  }) => {
+    const existingAuthor = await User.create({
+      email: 'existing-world-author@example.com',
+      password: 'correct horse battery staple',
+    })
+    const seedAuthor = await User.create({
+      email: 'different-seed-author@example.com',
+      password: 'correct horse battery staple',
+    })
+    const existingWorld = await World.create({
+      authorId: existingAuthor.id,
+      slug: 'stormbound-chapel',
+      name: 'An Unrelated World',
+      description: 'Content that the starter seed must not replace.',
+      visibility: 'private',
+    })
+    const existingLocation = await Location.create({
+      worldId: existingWorld.id,
+      key: 'existing-location',
+      name: 'Existing Location',
+      description: 'This Location must survive the rejected seed.',
+      sortOrder: 0,
+    })
+
+    await assert.rejects(
+      () => seedStormboundChapel(seedAuthor.email),
+      /reserved slug "stormbound-chapel" is already in use/
+    )
+
+    await existingWorld.refresh()
+    assert.equal(existingWorld.authorId, existingAuthor.id)
+    assert.equal(existingWorld.name, 'An Unrelated World')
+    assert.equal(existingWorld.description, 'Content that the starter seed must not replace.')
+    assert.equal(existingWorld.visibility, 'private')
+    assert.isNotNull(await Location.find(existingLocation.id))
+    assert.lengthOf(await Character.query().where('worldId', existingWorld.id), 0)
+  })
 })

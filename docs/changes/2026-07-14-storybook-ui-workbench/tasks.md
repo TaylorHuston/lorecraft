@@ -41,15 +41,15 @@ status: in_progress
 
 ## Verification Ledger
 
-| Date       | Evidence                                               | Scope                                          | Result                                    |
-| ---------- | ------------------------------------------------------ | ---------------------------------------------- | ----------------------------------------- |
-| 2026-07-14 | Storybook Vitest browser suite                         | Seven stories, interactions, and accessibility | passed                                    |
-| 2026-07-14 | Existing frontend Vitest suite                         | Account/workspace regression behavior          | 44 tests passed                           |
-| 2026-07-14 | Lint, typecheck, app build, and static Storybook build | Source quality and bundling                    | passed                                    |
-| 2026-07-14 | Direct Chromium review                                 | Desktop 1440x900 and mobile 390x844            | passed; no overlap or horizontal overflow |
-| 2026-07-14 | Expanded Storybook Vitest browser suite                | Fourteen production and prototype stories      | passed; interactions and accessibility    |
-| 2026-07-14 | Production component visual review                     | Sign-in desktop and workspace mobile            | passed; no horizontal overflow             |
-| 2026-07-14 | Frontend regression and build gates                    | 44 tests, lint, typecheck, app and Storybook builds | passed                                |
+| Date       | Evidence                                               | Scope                                               | Result                                    |
+| ---------- | ------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------- |
+| 2026-07-14 | Storybook Vitest browser suite                         | Seven stories, interactions, and accessibility      | passed                                    |
+| 2026-07-14 | Existing frontend Vitest suite                         | Account/workspace regression behavior               | 44 tests passed                           |
+| 2026-07-14 | Lint, typecheck, app build, and static Storybook build | Source quality and bundling                         | passed                                    |
+| 2026-07-14 | Direct Chromium review                                 | Desktop 1440x900 and mobile 390x844                 | passed; no overlap or horizontal overflow |
+| 2026-07-14 | Expanded Storybook Vitest browser suite                | Fourteen production and prototype stories           | passed; interactions and accessibility    |
+| 2026-07-14 | Production component visual review                     | Sign-in desktop and workspace mobile                | passed; no horizontal overflow            |
+| 2026-07-14 | Frontend regression and build gates                    | 44 tests, lint, typecheck, app and Storybook builds | passed                                    |
 
 ## Manual UI Confirmation
 

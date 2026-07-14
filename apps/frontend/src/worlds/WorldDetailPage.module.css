@@ -110,6 +110,11 @@
   gap: var(--space-4);
   margin-top: var(--space-5);
 }
+.navigationLink {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+}
 .retry {
   min-height: 2.75rem;
   padding: 0 var(--space-4);

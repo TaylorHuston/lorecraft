@@ -40,13 +40,15 @@ export function WorldDetailPage({ worldApi }: { worldApi: WorldApi }) {
     const missing = world.error instanceof WorldApiError && world.error.code === 'not-found'
     return (
       <main className={styles.state}>
-        <p className={styles.eyebrow}>{missing ? 'Not found' : 'Connection error'}</p>
-        <h1>{missing ? 'World not found' : 'World unavailable'}</h1>
-        <p>
-          {missing
-            ? 'This World does not exist or is not available to this account.'
-            : 'Lorecraft could not load this World. Try again.'}
-        </p>
+        <div role="alert">
+          <p className={styles.eyebrow}>{missing ? 'Not found' : 'Connection error'}</p>
+          <h1>{missing ? 'World not found' : 'World unavailable'}</h1>
+          <p>
+            {missing
+              ? 'This World does not exist or is not available to this account.'
+              : 'Lorecraft could not load this World. Try again.'}
+          </p>
+        </div>
         <div className={styles.stateActions}>
           {!missing ? (
             <button
@@ -58,7 +60,9 @@ export function WorldDetailPage({ worldApi }: { worldApi: WorldApi }) {
               {isRetrying ? 'Trying again…' : 'Try again'}
             </button>
           ) : null}
-          <Link to="/worlds">Back to Worlds</Link>
+          <Link className={styles.navigationLink} to="/worlds">
+            Back to Worlds
+          </Link>
         </div>
       </main>
     )
@@ -77,7 +81,9 @@ export function WorldDetailPage({ worldApi }: { worldApi: WorldApi }) {
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
-        <Link to="/worlds">Back to Worlds</Link>
+        <Link className={styles.navigationLink} to="/worlds">
+          Back to Worlds
+        </Link>
         <span>Read only</span>
       </header>
       <article className={styles.content}>
