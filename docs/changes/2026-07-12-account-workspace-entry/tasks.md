@@ -6,12 +6,12 @@ status: in_progress
 
 ## Resume Here
 
-- Current state: fresh review of `b38d7b7` found required migration-upgrade and accessibility remediation; CI and artifact-only findings were safely corrected during review
-- Last completed action: verified 24 backend, 41 frontend, 16 database-safety, and 2 Playwright tests against fresh isolated schemas, plus static and dependency gates; review findings are recorded in `review.md`
+- Current state: comprehensive review of `c22e4b6` confirms required migration-upgrade and accessibility remediation; all current findings are consolidated in `review.md`
+- Last completed action: forced lint, typecheck, build, formatting, 41 frontend tests, 16 database-safety tests, dependency audit, diff, and merge checks passed; prior 24-backend-test and 2-Playwright-test evidence remains applicable because `c22e4b6` changed only CI and artifacts after `b38d7b7`
 - Next action: run `/sdd-apply` to add a forward users-schema migration with upgrade-path proof, focus the protected-session error recovery surface, and provide a 44px retry touch target
 - Active branch/ref: `change/account-workspace-entry`
 - Expected dirty files: none after the safe review-fix commit
-- Known blockers: three required implementation findings, followed by fresh review; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
+- Known blockers: three required implementation findings; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -86,7 +86,7 @@ status: in_progress
 - [x] 7.2 Update `[Unreleased]` in `CHANGELOG.md` with only the user-facing account/workspace capability.
 - [x] 7.3 Review ADR validation and status.
 - [x] 7.4 Run `/sdd-review` as the local integration gate.
-- [x] 7.5 Record review outcome and resolve or explicitly defer findings.
+- [ ] 7.5 Record review outcome and resolve or explicitly defer findings.
 - [ ] 7.6 Obtain manual UI confirmation or record an accepted gap.
 - [x] 7.7 Reconcile stale proposed/not-implemented/not-verified language across change and Epic artifacts.
 - [ ] 7.8 Merge only after review readiness and user authorization under repository branch policy.
@@ -174,22 +174,22 @@ status: in_progress
 
 ## Blockers / Open Questions
 
-- Required remediation from the `b38d7b7` review remains in the users migration upgrade path and frontend error-recovery accessibility.
+- Required remediation confirmed by the `c22e4b6` review remains in the users migration upgrade path and frontend error-recovery accessibility.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
 ## Closeout
 
-- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, and complete CSRF proof are implemented, while manual UI confirmation and dedicated Neon branch smoke remain explicit gaps
+- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, and complete CSRF proof are implemented, while the users migration upgrade path, frontend accessibility, manual UI confirmation, and dedicated Neon branch smoke remain explicit gaps
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; remaining gaps are dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
+- Scenario-mapped Verified By maps current: yes; remaining gaps are the users migration upgrade path, protected-error focus, public retry touch sizing, dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested` on 2026-07-14 for source `b38d7b7a0f620b4be978b28f45ae50dc1181f0e3`
+- `sdd-review` verdict: `changes-requested` on 2026-07-14 for source `c22e4b65893d2411003db80135bd3d536737520e`
 - Review record: `review.md`
-- `review.md` findings resolved: CI and artifact findings were safely fixed; migration-upgrade and accessibility findings remain for `/sdd-apply`
+- `review.md` findings resolved: review-record and Epic-gap drift were safely fixed; migration-upgrade and accessibility findings remain for `/sdd-apply`
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started

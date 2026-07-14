@@ -8,7 +8,7 @@ changes-requested
 
 | Gate                         | Result              | Notes                                                                                                                 |
 | ---------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass after safe fix | The stale handoff and copied Scenario drift were reconciled during review.                                            |
+| Change artifacts             | pass after safe fix | The Epic upgrade gap, closeout checklist, current review watermark, and public-safe paths were reconciled.            |
 | Change status                | in_progress         | Required implementation remediation remains.                                                                          |
 | Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit acceptance gaps.                                            |
 | Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                                |
@@ -35,7 +35,7 @@ changes-requested
 - [ ] `apps/frontend/src/app/AppRoutes.tsx:69` - Failed protected-session revalidation replaces the workspace with `SessionError`, but keyboard focus falls to the document body. Focus the error recovery surface and add a regression test.
 - [ ] `apps/frontend/src/app/AppRoutes.module.css:75` - The public background-refresh retry control measures below the project's 44px touch-target baseline at mobile width. Add minimum sizing or equivalent padding and verify it at the narrow viewport.
 - [x] `.github/workflows/ci.yml:49` - Corrected the unpublished `actions/checkout@v7` reference to supported `actions/checkout@v6`, verified against the official action releases.
-- [x] `docs/changes/2026-07-12-account-workspace-entry/tasks.md` and `design.md` - Reconciled the stale resume handoff and copied Scenario details with committed source and Epic truth.
+- [x] `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`, and this review - Reconciled the migration-upgrade gap, unresolved-finding checklist state, current review watermark, and public-safe repository paths.
 
 ### SUGGESTION
 
@@ -51,40 +51,49 @@ changes-requested
 | Fresh guarded migrations and backend tests against isolated Neon schema          | focused integration       | `LC-001/S1-S3`                 | 16 safety and 24 backend tests passed    | Fresh-schema persistence, authentication, session, CSRF, request, and database-tooling behavior works.                              |
 | `npm test --workspace @lorecraft/frontend`                                       | focused automated         | `LC-001/S1-S3`                 | 41 passed                                | Forms, routing, session races, draft preservation, focus success/expiry, error mapping, and empty workspace behavior pass.          |
 | `npm run test:e2e` against a separate isolated Neon schema                       | deterministic E2E         | `LC-001/S1-S3`                 | 2 passed, desktop and mobile Chromium    | Same-origin cookie/CSRF flow, refresh, login, logout, replay denial, protected routing, and empty workspace integrate successfully. |
-| `npm run lint`, `npm run typecheck`, and `npm run build`                         | broad supporting gates    | Cross-story code quality       | passed                                   | Both applications lint, typecheck, and build.                                                                                       |
-| `npm audit --audit-level=high` and credential-pattern scan                       | security supporting gates | Dependency and secret handling | passed; 0 vulnerabilities; fixtures only | No high-severity dependency issue or real credential was found.                                                                     |
-| `git diff develop...HEAD --check` and `git merge-tree --write-tree develop HEAD` | integration gates         | Branch readiness               | passed; conflict tree `b39e40d8...`      | Reviewed source is whitespace-clean and mechanically integrates with `develop`.                                                     |
+| `npx turbo lint typecheck build --force` and `npx prettier --check .`            | broad supporting gates    | Cross-story code quality       | passed; no cached tasks                  | Both applications lint, typecheck, build, and match configured formatting from the reviewed source.                                 |
+| `npm audit --audit-level=low` and credential-pattern scan                        | security supporting gates | Dependency and secret handling | passed; 0 vulnerabilities; fixtures only | No reported dependency issue or real credential was found.                                                                          |
+| `git diff develop...HEAD --check` and `git merge-tree --write-tree develop HEAD` | integration gates         | Branch readiness               | passed; conflict tree `b71181d2...`      | Reviewed source is whitespace-clean and mechanically integrates with `develop`.                                                     |
 
 ## Review Bundle
 
-- App and workflow root: `/Users/taylor/src/my-life/my-vault/03-spaces/code/lorecraft`
+- App and workflow root: repository root
 - Change folder: `docs/changes/2026-07-12-account-workspace-entry/`
 - Source branch/ref: `change/account-workspace-entry`
-- Reviewed source commit: `b38d7b7a0f620b4be978b28f45ae50dc1181f0e3`
+- Reviewed source commit: `c22e4b65893d2411003db80135bd3d536737520e`
 - Target branch/ref: `develop` at `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc`
 - Merge base: `4d9aefeeeee5c7765fad47875bd2c065a91e7cbc`
-- Source-only commits: `6468754`, `2eb5174`, `95f7799`, `f87cabe`, `5698a3f`, `78bebd6`, `d05d78e`, `aeb6627`, `c7d990b`, `b38d7b7`
+- Source-only commits: `6468754`, `2eb5174`, `95f7799`, `f87cabe`, `5698a3f`, `78bebd6`, `d05d78e`, `aeb6627`, `c7d990b`, `b38d7b7`, `c22e4b6`
 - Target-only commits: none
 - Changed files: 93
-- Diff stat: 8,865 insertions and 950 deletions
-- Conflict check: clean; `git merge-tree --write-tree develop HEAD` produced `b39e40d8f5a56f5ea98d08b0f84cd1f7d6e885d6`
+- Diff stat: 8,862 insertions and 950 deletions
+- Conflict check: clean; `git merge-tree --write-tree develop HEAD` produced `b71181d208d77a642b25c932f414d43b21b52872`
 - Dirty state at review start: clean source repository; unrelated surrounding-vault changes are outside this review
 - Branch policy: valid `change/` branch from `develop`; local review is required before integration
 
-## Delegated Review Passes
+## Discovery Wave
 
 | Pass                                          | Result              | Notes                                                                                |
 | --------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
-| Artifact truth and lifecycle                  | finding             | Stale resume handoff; safely corrected.                                              |
+| Artifact truth and lifecycle                  | pass after safe fix | Epic gap, checklist state, review watermark, and public-safe path drift corrected.   |
 | Backend and security                          | finding             | Existing databases cannot receive edits made to the already-applied users migration. |
 | Frontend and UI                               | finding             | Protected refresh failure loses focus; public retry is undersized on mobile.         |
-| Verification and integration                  | finding             | Local suites pass; invalid Checkout major was safely corrected.                      |
-| Documentation, release communication, and PRD | pass after safe fix | Public and private direction remain aligned.                                         |
+| Verification and integration                  | finding             | Current gates pass; existing-database upgrade proof remains absent.                  |
+| Documentation, release communication, and PRD | pass after safe fix | Public and private direction remain aligned without a committed private path.        |
+
+## Consolidated Remediation
+
+- Root causes addressed: review-record drift, incomplete Epic gap inventory, and a private absolute path in a public artifact.
+- Safe-fix batch: reconciled the Epic, task ledger, and review record.
+- Deferred or unsafe findings: users-schema forward migration plus upgrade test, protected-error focus recovery, and 44px public retry sizing require `/sdd-apply`.
+- Affected verification union: artifact scans, forced static/build gates, frontend tests, database-safety tests, dependency audit, diff check, and merge-tree check.
+- Regression-focused rereview: artifact, documentation, branch, and integration surfaces pass after the safe batch; the three implementation findings remain unchanged.
+- New regressions introduced by remediation: none.
 
 ## PR / Merge Readiness
 
 - Source branch: `change/account-workspace-entry`
-- Reviewed source: `b38d7b7a0f620b4be978b28f45ae50dc1181f0e3`
+- Reviewed source: `c22e4b65893d2411003db80135bd3d536737520e`
 - Target branch: `develop`
 - Conflict check: clean at reviewed source
 - Commit state at review start: clean
@@ -104,3 +113,4 @@ changes-requested
 
 - 2026-07-13 through 2026-07-14: Earlier independent reviews and remediation are recorded in the implementation and verification ledgers in `tasks.md`.
 - 2026-07-14: Fresh review of `b38d7b7` returned `changes-requested` for the users migration upgrade path and two accessibility defects. CI action and artifact-only findings were safely corrected; fresh review remains required after `/sdd-apply` resolves the implementation findings.
+- 2026-07-14: Comprehensive review of `c22e4b6` confirmed the same three implementation findings and corrected the complete artifact-only batch. Forced static/build gates, 41 frontend tests, 16 database-safety tests, dependency audit, diff, and merge checks pass; prior backend and E2E evidence remains applicable because intervening changes were limited to CI and artifacts.

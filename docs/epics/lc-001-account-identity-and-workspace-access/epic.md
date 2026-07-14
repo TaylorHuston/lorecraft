@@ -130,6 +130,7 @@ The system SHALL establish an authenticated browser session after successful acc
 
 #### Verification Gaps
 
+- Existing databases that already ran the original users migration do not yet receive the normalized-email check through a forward migration; upgrade-path proof remains required.
 - Manual confirmation remains pending for validation clarity, focus behavior, responsive layout, and workspace transition.
 - Production HTTPS verification remains pending for the session cookie's `Secure` attribute.
 
