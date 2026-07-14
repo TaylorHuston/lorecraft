@@ -6,12 +6,12 @@ status: review
 
 ## Resume Here
 
-- Current state: fresh `/sdd-review` is complete; implementation findings are resolved in `f799981`, while manual UI, dedicated Neon provider, production HTTPS cookie, and runtime-log evidence remain acceptance gaps
+- Current state: fresh `/sdd-review` is complete and manual UI is confirmed; implementation findings are resolved in `f799981`, while dedicated Neon provider, production HTTPS cookie, and runtime-log evidence remain acceptance gaps
 - Last completed action: removed duplicate session-focus requests, added non-destructive pending retry behavior, and passed 16 safety, 32 backend, 44 frontend, and 2 Playwright tests plus forced static/build gates
-- Next action: obtain the outstanding manual/provider evidence or record explicit user acceptance of each gap before merge authorization
+- Next action: obtain the outstanding runtime/provider evidence or record explicit user acceptance of each gap before merge authorization
 - Active branch/ref: `change/account-workspace-entry`
 - Expected dirty files: review and task reconciliation only after implementation commit `f799981`
-- Known blockers: no implementation blocker; manual UI, runtime-log, dedicated Neon provider, and production HTTPS cookie evidence remain explicit acceptance gaps
+- Known blockers: no implementation blocker; runtime-log, dedicated Neon provider, and production HTTPS cookie evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -88,7 +88,7 @@ status: review
 - [x] 7.3 Review ADR validation and status.
 - [x] 7.4 Run `/sdd-review` as the local integration gate.
 - [x] 7.5 Record review outcome and resolve or explicitly defer findings.
-- [ ] 7.6 Obtain manual UI confirmation or record an accepted gap.
+- [x] 7.6 Obtain manual UI confirmation or record an accepted gap.
 - [x] 7.7 Reconcile stale proposed/not-implemented/not-verified language across change and Epic artifacts.
 - [ ] 7.8 Merge only after review readiness and user authorization under repository branch policy.
 - [ ] 7.9 Move the completed change folder to `docs/changes/closed/` after acceptance and merge state are clear.
@@ -175,7 +175,7 @@ status: review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: confirmed by user on 2026-07-14
 - App URL / route: local frontend URL and account/workspace routes established during implementation
 - Required setup or test data: migrated disposable PostgreSQL database and a unique test email
 - Steps for the user: partially complete signup and sign-in, switch away and return focus, confirm drafts survive; then create an account, observe automatic workspace entry, refresh, sign out, sign back in, and inspect the empty workspace at desktop and mobile widths
@@ -192,18 +192,18 @@ status: review
 
 ## Closeout
 
-- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, users migration upgrade behavior, CSRF proof, and frontend accessibility are implemented; manual UI confirmation and dedicated Neon branch smoke remain explicit gaps
+- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, users migration upgrade behavior, CSRF proof, frontend accessibility, and manual UI confirmation are current; dedicated Neon branch smoke remains an explicit gap
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; remaining gaps are the dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
+- Scenario-mapped Verified By maps current: yes; remaining gaps are the dedicated Neon provider smoke and production HTTPS cookie proof
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested`; code findings are resolved, but manual, runtime-log, and provider evidence require completion or explicit acceptance
+- `sdd-review` verdict: `changes-requested`; code and manual UI findings are resolved, but runtime-log and provider evidence require completion or explicit acceptance
 - Review record: `review.md`
 - `review.md` findings resolved: implementation findings yes; acceptance-evidence findings remain open
 - Planning updates resolved: current
-- Manual UI confirmation status: pending user
+- Manual UI confirmation status: confirmed by user on 2026-07-14
 - PR / merge state: not started
 - Deferred scope accepted: recorded in proposal and design
 - Change moved to `docs/changes/closed/`: no

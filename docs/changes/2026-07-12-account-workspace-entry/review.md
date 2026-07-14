@@ -14,13 +14,13 @@ changes-requested
 | Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                         |
 | Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                        |
 | Tests and verification       | pass                | Fresh database, backend, frontend, browser, static, formatting, and dependency gates pass.                     |
-| Manual UI confirmation       | pending user        | The walkthrough is current; automated desktop/mobile journeys pass.                                            |
+| Manual UI confirmation       | pass                | The user confirmed the local account, session, focus, empty-state, and responsive flow on 2026-07-14.          |
 | Code review                  | pass after safe fix | Duplicate focus refreshes and repeatable public retries were resolved in `f799981`.                            |
 | Visual / UX consistency      | pass after safe fix | Pending retry state is visible, accessible, non-destructive, and prevents repeated requests.                   |
 | Security review              | evidence gap        | Code review is clean; representative runtime auth logs and production HTTPS cookie behavior remain unverified. |
 | Documentation                | pass after safe fix | README, ADRs, Epic, change design, and evidence ledgers agree.                                                 |
 | Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                     |
-| Branch and merge readiness   | not ready           | Merge is mechanically clean, but four acceptance gaps require evidence or explicit user acceptance.            |
+| Branch and merge readiness   | not ready           | Merge is mechanically clean, but three acceptance gaps require evidence or explicit user acceptance.           |
 | PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                |
 
 ## Findings
@@ -34,7 +34,7 @@ changes-requested
 - [x] `apps/frontend/src/auth/AuthProvider.tsx:14` - Removed overlapping TanStack visibility and explicit focus refresh sources; one browser return now produces one session check with regression coverage in `f799981`.
 - [x] `apps/frontend/src/app/AppRoutes.tsx:44` - Public background-refresh retry now exposes pending state, disables repeated requests, and preserves the unfinished auth draft in `f799981`.
 - [ ] `docs/changes/2026-07-12-account-workspace-entry/tasks.md:82` - Capture representative backend auth-failure logs and verify they omit passwords, connection strings, session values, and bearer tokens, or obtain explicit acceptance of this evidence gap.
-- [ ] Manual UI confirmation - Complete the walkthrough below or record explicit user acceptance of the gap.
+- [x] Manual UI confirmation - The user confirmed the documented local flow on 2026-07-14.
 - [ ] `docs/adrs/2026-07-12-postgresql-on-neon.md` - Run the dedicated Lorecraft Neon provider smoke check or record explicit user acceptance of the gap before closeout.
 - [ ] `docs/adrs/2026-07-12-browser-session-authentication.md` - Verify the session cookie over production HTTPS or record explicit user acceptance of the gap before closeout.
 
@@ -74,19 +74,19 @@ changes-requested
 
 ## Discovery Wave
 
-| Pass                                          | Reviewer                          | Result              | Notes                                                                                                 |
-| --------------------------------------------- | --------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------------- |
-| Artifact truth and lifecycle                  | delegated artifact review         | pass after safe fix | Stale watermark, counts, task state, and ADR-validation checkbox were reconciled.                     |
-| Backend and security                          | delegated backend/security review | pass                | No code finding; production/provider assumptions and evidence gaps remain explicit.                   |
-| Frontend and UI                               | delegated frontend review         | pass after safe fix | Duplicate refresh and pending retry findings were fixed and independently regression-reviewed.        |
-| Verification and integration                  | delegated verification review     | evidence gaps       | Automated gates pass; runtime-log, manual UI, dedicated Neon, and production HTTPS evidence are open. |
-| Documentation, release communication, and PRD | delegated integration review      | pass                | Public docs, changelog scope, and creator-first direction agree with implemented behavior.            |
+| Pass                                          | Reviewer                          | Result              | Notes                                                                                                    |
+| --------------------------------------------- | --------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------- |
+| Artifact truth and lifecycle                  | delegated artifact review         | pass after safe fix | Stale watermark, counts, task state, and ADR-validation checkbox were reconciled.                        |
+| Backend and security                          | delegated backend/security review | pass                | No code finding; production/provider assumptions and evidence gaps remain explicit.                      |
+| Frontend and UI                               | delegated frontend review         | pass after safe fix | Duplicate refresh and pending retry findings were fixed and independently regression-reviewed.           |
+| Verification and integration                  | delegated verification review     | evidence gaps       | Automated and manual UI gates pass; runtime-log, dedicated Neon, and production HTTPS evidence are open. |
+| Documentation, release communication, and PRD | delegated integration review      | pass                | Public docs, changelog scope, and creator-first direction agree with implemented behavior.               |
 
 ## Consolidated Remediation
 
 - Root causes addressed: overlapping browser lifecycle handlers, retry controls without an observable pending state, and verification-ledger drift.
 - Safe-fix batch: implementation commit `f799981` plus this artifact reconciliation.
-- Deferred or unsafe findings: manual UI, dedicated Neon provider, production HTTPS cookie, and runtime-log evidence require external observation or explicit user acceptance.
+- Deferred or unsafe findings: dedicated Neon provider, production HTTPS cookie, and runtime-log evidence require external observation or explicit user acceptance.
 - Affected verification union: 44 frontend tests, forced lint/typecheck/build, formatting, diff, merge-tree, and independent focused frontend rereview; fresh backend/E2E evidence remains applicable because remediation is frontend-only.
 - Regression-focused rereview: passed; one focus check occurs per browser return, public retry is non-repeatable while pending, and the auth draft remains mounted.
 - New regressions introduced by remediation: none found.
@@ -108,11 +108,11 @@ changes-requested
 - Session recovery: from `/worlds`, return focus with both a valid and expired session. Private content should be suppressed during the check; focus should return to the prior control on success and move to recovery or sign-in on failure.
 - Account journey: create an account, refresh `/worlds`, sign out, sign back in, and revisit `/sign-up`. Expect stable transitions and no private-workspace flash.
 - Responsive layout: repeat at narrow mobile and wide desktop sizes. Expect no clipping or horizontal overflow and at least 44px interactive targets.
-- Status: pending user.
+- Status: confirmed by user on 2026-07-14.
 
 ## Review Log
 
 - 2026-07-13 through 2026-07-14: Earlier independent reviews and remediation are recorded in the implementation and verification ledgers in `tasks.md`.
 - 2026-07-14: Fresh review of `baf0445` found two frontend defects and four acceptance-evidence gaps; backend/security review found no code defect.
 - 2026-07-14: `f799981` resolved duplicate session refresh and public pending-retry behavior. The focused independent rereview and 44-test frontend suite passed.
-- 2026-07-14: Verdict remains `changes-requested` until manual UI, runtime-log, dedicated Neon, and production HTTPS evidence are completed or explicitly accepted.
+- 2026-07-14: The user confirmed the manual UI flow. Verdict remains `changes-requested` until runtime-log, dedicated Neon, and production HTTPS evidence are completed or explicitly accepted.

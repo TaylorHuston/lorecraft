@@ -2,7 +2,7 @@
 
 ## Context
 
-The repository began this change as an AdonisJS 7 API-first monorepo scaffold with an empty frontend workspace, SQLite persistence, and a partial token-oriented account API. The change now contains a Vite React client, PostgreSQL configuration, and a session-based browser account flow. Disposable PostgreSQL and browser verification pass; manual UI confirmation, a dedicated Neon provider smoke check, and production HTTPS cookie proof remain pending.
+The repository began this change as an AdonisJS 7 API-first monorepo scaffold with an empty frontend workspace, SQLite persistence, and a partial token-oriented account API. The change now contains a Vite React client, PostgreSQL configuration, and a session-based browser account flow. Disposable PostgreSQL, browser automation, and manual UI verification pass; a dedicated Neon provider smoke check and production HTTPS cookie proof remain pending.
 
 This change establishes the smallest secure application shell onto which the private World bible can be built. The server remains authoritative and reusable; the initial React client is one delivery adapter.
 
@@ -87,11 +87,11 @@ Implemented on `change/account-workspace-entry`; the current code map lives in `
 
 ##### Verified By
 
-Verified by focused frontend behavior tests, PostgreSQL-backed backend route tests, and the desktop/mobile Playwright account journey recorded in `LC-001/S1`.
+Verified by focused frontend behavior tests, PostgreSQL-backed backend route tests, the desktop/mobile Playwright account journey, and the user-confirmed local walkthrough recorded in `LC-001/S1`.
 
 ##### Verification Gaps
 
-- Manual UI confirmation and production HTTPS cookie verification remain pending.
+- Production HTTPS cookie verification remains pending.
 
 #### Story S2: Returning User Resumes Their Workspace
 
@@ -141,11 +141,11 @@ Implemented on `change/account-workspace-entry`; the current code map lives in `
 
 ##### Verified By
 
-Verified by focused frontend behavior tests, PostgreSQL-backed credential/session tests, and the desktop/mobile Playwright account journey recorded in `LC-001/S2`.
+Verified by focused frontend behavior tests, PostgreSQL-backed credential/session tests, the desktop/mobile Playwright account journey, and the user-confirmed local walkthrough recorded in `LC-001/S2`.
 
 ##### Verification Gaps
 
-- Manual UI confirmation and production HTTPS cookie verification remain pending.
+- Production HTTPS cookie verification remains pending.
 
 #### Story S3: User Controls Protected Workspace Access
 
@@ -205,11 +205,7 @@ Implemented on `change/account-workspace-entry`; the current code map lives in `
 
 ##### Verified By
 
-Verified by focused client behavior and anonymous API protection tests plus PostgreSQL-backed Playwright proof of logout invalidation and invalidated-cookie replay, as recorded in `LC-001/S3`.
-
-##### Verification Gaps
-
-- Manual UI confirmation remains pending.
+Verified by focused client behavior and anonymous API protection tests, PostgreSQL-backed Playwright proof of logout invalidation and invalidated-cookie replay, and the user-confirmed local walkthrough recorded in `LC-001/S3`.
 
 ## Epic File Rules
 

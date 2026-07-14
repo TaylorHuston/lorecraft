@@ -56,7 +56,7 @@ A user can create an account, return through a secure browser session, reach a p
 | ----- | ----------- | --------------------------------------------------- | ------------- | ------------------------------------------- |
 | S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes. |
 | S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes. |
-| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-14    | Manual UI confirmation remains pending.     |
+| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-14    | Automated and manual UI proof passes.       |
 
 ## Stories
 
@@ -129,10 +129,10 @@ The system SHALL establish an authenticated browser session after successful acc
 | S1/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                                                                           | Signup rejects missing and forged CSRF tokens without creating an account or authenticating the browser session.                                                  | Passing 2026-07-14 |
 | S1/R2-S1                               | `apps/frontend/src/app/App.test.tsx`                                                                                               | Successful signup cancels an older anonymous session read before publishing the authenticated account.                                                            | Passing 2026-07-14 |
 | S1/R1-S1, S1/R1-S3                     | `apps/backend/tests/database/users_email_normalization_migration.spec.ts` and `apps/backend/tests/unit/migration_database.spec.ts` | Existing historical schemas upgrade transactionally, preserve compatibility data, reject collisions without partial writes, and use a guarded disposable harness. | Passing 2026-07-14 |
+| S1/R1-S1 through S1/R2-S1              | User-confirmed local walkthrough                                                                                                   | Validation clarity, responsive layout, signup, and automatic workspace transition behave as intended.                                                             | Passing 2026-07-14 |
 
 #### Verification Gaps
 
-- Manual confirmation remains pending for validation clarity, focus behavior, responsive layout, and workspace transition.
 - Production HTTPS verification remains pending for the session cookie's `Secure` attribute.
 
 #### Story Notes
@@ -213,10 +213,10 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 | S2/R1-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Login rejects missing and forged CSRF tokens without changing account or browser-session ownership.                                                           | Passing 2026-07-14 |
 | S2/R2-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Real window focus keeps signup and sign-in drafts mounted during pending, successful, and failed anonymous revalidation and exposes retry without remounting. | Passing 2026-07-14 |
 | S2/R1-S1                               | `apps/frontend/src/app/App.test.tsx`                                                   | Successful sign-in cancels an older anonymous session read before publishing the authenticated account.                                                       | Passing 2026-07-14 |
+| S2/R1-S1 through S2/R2-S3              | User-confirmed local walkthrough                                                       | Sign-in, refresh, focus revalidation, draft preservation, and recovery behavior work as intended.                                                             | Passing 2026-07-14 |
 
 #### Verification Gaps
 
-- Manual UI confirmation remains pending.
 - Production HTTPS verification remains pending for the session cookie's `Secure` attribute.
 
 #### Story Notes
@@ -304,10 +304,7 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 | S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                                                       | Passing 2026-07-13 |
 | S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14 |
 | S3/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14 |
-
-#### Verification Gaps
-
-- Manual confirmation is needed for the protected transition, empty workspace, responsive layout, and logout flow.
+| S3/R1-S1 through S3/R3-S1              | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, logout, responsive layout, and the empty workspace behave as intended.                                               | Passing 2026-07-14 |
 
 #### Story Notes
 
