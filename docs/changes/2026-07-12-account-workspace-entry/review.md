@@ -6,22 +6,22 @@ changes-requested
 
 ## Gate Scorecard
 
-| Gate                         | Result              | Notes                                                                                                                 |
-| ---------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass after safe fix | The Epic upgrade gap, closeout checklist, current review watermark, and public-safe paths were reconciled.            |
-| Change status                | in_progress         | Required implementation remediation remains.                                                                          |
-| Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit acceptance gaps.                                            |
-| Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                                |
-| Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                               |
-| Tests and verification       | findings            | Fresh-database proof passes, but no upgrade-path test covers databases that already ran the original users migration. |
-| Manual UI confirmation       | pending user        | The walkthrough is current; automated desktop/mobile journeys pass.                                                   |
-| Code review                  | findings            | The existing-database migration path is incorrect.                                                                    |
-| Visual / UX consistency      | findings            | Protected refresh errors lose focus, and the public retry control is below the 44px touch-target baseline.            |
-| Security review              | pass                | Session, CSRF, request-boundary, throttling, and disposable-database safeguards pass focused review.                  |
-| Documentation                | pass after safe fix | README, ADRs, Epic, change design, and setup guidance agree after reconciliation.                                     |
-| Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                            |
-| Branch and merge readiness   | changes-requested   | The branch is clean and conflict-free, but three required implementation findings remain.                             |
-| PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                       |
+| Gate                         | Result               | Notes                                                                                                                   |
+| ---------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass after safe fix  | The Epic upgrade gap, closeout checklist, current review watermark, and public-safe paths were reconciled.              |
+| Change status                | review               | Required remediation is committed after the review watermark; fresh independent review is next.                         |
+| Epic truth                   | pass                 | `LC-001/S1-S3` match current behavior and retain explicit acceptance gaps.                                              |
+| Requirements and Scenarios   | pass                 | Story labels and local Requirement/Scenario IDs are unique and mapped.                                                  |
+| Story reference traceability | pass                 | Full Story references remain Epic-scoped and traceable.                                                                 |
+| Tests and verification       | pass after apply     | Existing-schema upgrade, collision rollback, focus recovery, touch sizing, and full automated gates now pass.           |
+| Manual UI confirmation       | pending user         | The walkthrough is current; automated desktop/mobile journeys pass.                                                     |
+| Code review                  | resolved after apply | The historical migration is restored and the additive transactional upgrade is proven in `33ea607`.                     |
+| Visual / UX consistency      | resolved after apply | Protected refresh errors focus recovery, and retry controls meet the 44px baseline in `33ea607`.                        |
+| Security review              | pass                 | Session, CSRF, request-boundary, throttling, and disposable-database safeguards pass focused review.                    |
+| Documentation                | pass after safe fix  | README, ADRs, Epic, change design, and setup guidance agree after reconciliation.                                       |
+| Release communication        | pass                 | `[Unreleased]` contains only the user-facing account/workspace capability.                                              |
+| Branch and merge readiness   | rereview required    | Required findings were resolved after this review's source watermark in `33ea607`; fresh independent review is pending. |
+| PRD alignment                | pass                 | The account boundary supports the private, creator-first world-bible direction.                                         |
 
 ## Findings
 
@@ -31,9 +31,9 @@ changes-requested
 
 ### REQUIRED
 
-- [ ] `apps/backend/database/migrations/1761885935168_create_users_table.ts:14` - The change edits a migration already present on `develop`. Existing databases will not rerun it, so they retain `full_name` and do not receive the normalized-email constraint and named unique index. Restore the original migration, add a forward migration, and prove migration from the target schema to the source schema.
-- [ ] `apps/frontend/src/app/AppRoutes.tsx:69` - Failed protected-session revalidation replaces the workspace with `SessionError`, but keyboard focus falls to the document body. Focus the error recovery surface and add a regression test.
-- [ ] `apps/frontend/src/app/AppRoutes.module.css:75` - The public background-refresh retry control measures below the project's 44px touch-target baseline at mobile width. Add minimum sizing or equivalent padding and verify it at the narrow viewport.
+- [x] `apps/backend/database/migrations/1761885935168_create_users_table.ts:14` - Restored the historical migration and added transactional forward migration plus existing-schema, collision-rollback, and guarded-harness evidence in `33ea607`.
+- [x] `apps/frontend/src/app/AppRoutes.tsx:69` - Failed protected-session revalidation now focuses the retry action with regression coverage in `33ea607`.
+- [x] `apps/frontend/src/app/AppRoutes.module.css:75` - The public background-refresh retry control now has a 44px minimum target verified at narrow and desktop widths in `33ea607`.
 - [x] `.github/workflows/ci.yml:49` - Corrected the unpublished `actions/checkout@v7` reference to supported `actions/checkout@v6`, verified against the official action releases.
 - [x] `docs/epics/lc-001-account-identity-and-workspace-access/epic.md`, `tasks.md`, and this review - Reconciled the migration-upgrade gap, unresolved-finding checklist state, current review watermark, and public-safe repository paths.
 
@@ -85,10 +85,10 @@ changes-requested
 
 - Root causes addressed: review-record drift, incomplete Epic gap inventory, and a private absolute path in a public artifact.
 - Safe-fix batch: reconciled the Epic, task ledger, and review record.
-- Deferred or unsafe findings: users-schema forward migration plus upgrade test, protected-error focus recovery, and 44px public retry sizing require `/sdd-apply`.
+- Applied after reviewed source: `33ea607` adds the users-schema forward migration and upgrade proof, protected-error focus recovery, and 44px public retry sizing; fresh `/sdd-review` remains required.
 - Affected verification union: artifact scans, forced static/build gates, frontend tests, database-safety tests, dependency audit, diff check, and merge-tree check.
-- Regression-focused rereview: artifact, documentation, branch, and integration surfaces pass after the safe batch; the three implementation findings remain unchanged.
-- New regressions introduced by remediation: none.
+- Apply self-check: migration/security and frontend reviews passed; two migration-harness setup defects found by verification review were remediated before commit and passed focused rereview.
+- New regressions introduced by remediation: none remain after the apply self-check.
 
 ## PR / Merge Readiness
 
@@ -114,3 +114,4 @@ changes-requested
 - 2026-07-13 through 2026-07-14: Earlier independent reviews and remediation are recorded in the implementation and verification ledgers in `tasks.md`.
 - 2026-07-14: Fresh review of `b38d7b7` returned `changes-requested` for the users migration upgrade path and two accessibility defects. CI action and artifact-only findings were safely corrected; fresh review remains required after `/sdd-apply` resolves the implementation findings.
 - 2026-07-14: Comprehensive review of `c22e4b6` confirmed the same three implementation findings and corrected the complete artifact-only batch. Forced static/build gates, 41 frontend tests, 16 database-safety tests, dependency audit, diff, and merge checks pass; prior backend and E2E evidence remains applicable because intervening changes were limited to CI and artifacts.
+- 2026-07-14: `/sdd-apply` resolved all three findings in `33ea607`. Apply self-checks and fresh automated gates pass; the verdict above remains the result for reviewed source `c22e4b6` until a new independent review replaces it.
