@@ -2,11 +2,11 @@
 
 ## Resume Here
 
-- Current state: required review remediation is integrated, verified, and committed at `6468754`; independent rereview remains pending
-- Last completed action: committed the complete implementation after 17 database-backed backend tests, 26 frontend tests, desktop/mobile same-origin Playwright journeys, and all broad quality gates passed
-- Next action: rerun `/sdd-review` against immutable source commit `6468754`
+- Current state: fresh review findings were safely remediated in `95f7799`; that functional commit requires independent rereview
+- Last completed action: added exact login-throttle proof and CSRF-expiry recovery, passing 18 database-backed backend tests and 32 frontend tests
+- Next action: rerun `/sdd-review` against immutable functional source commit `95f7799`
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: none after the implementation and evidence commits
+- Expected dirty files: none after the review-record commit
 - Known blockers: no implementation blocker; independent rereview, manual UI confirmation, and provider-specific evidence remain pending
 
 ## Task Checklist
@@ -93,20 +93,21 @@
 | 2026-07-13 | Typed contract, CI, and E2E integration     | main orchestrator                                                      | Tuyau adapter, Turbo, Playwright, CI, public docs                               | Desktop and mobile browser journeys pass against isolated Neon | `6468754`    |
 | 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | `6468754`    |
 | 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`    |
+| 2026-07-13 | Safe review fixes                           | main integration after delegated review                                | Login throttle proof, CSRF recovery, formatting, and Epic evidence              | 18 backend and 32 frontend tests pass                          | `95f7799`    |
 
 ## Verification Ledger
 
 | Date       | Check                                                                       | Evidence Type              | What It Proves                                                                                                                          | Result                                                         |
 | ---------- | --------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | 2026-07-12 | `git diff --check`, artifact/reference checks, and credential-fragment scan | planning verification      | Proposal, design, tasks, and ADR references are coherent and contain no credential                                                      | passed                                                         |
-| 2026-07-13 | `account_security.spec.ts`                                                  | focused automated test     | S1/R1-S2, S1/R2-S1, S3/R1-S2, safe anonymous reads and logout, CSRF, CORS, and exact throttle boundaries                                | 11 passed                                                      |
-| 2026-07-13 | `App.test.tsx` and `tuyauAuthApi.test.ts`                                   | focused automated test     | Client behavior across all Stories, transient private-content protection, and auth error mapping                                        | 25 passed                                                      |
+| 2026-07-13 | `account_security.spec.ts`                                                  | focused automated test     | S1/R1-S2, S1/R2-S1, S3/R1-S2, safe anonymous reads and logout, CSRF, CORS, and exact throttle boundaries                                | 12 passed                                                      |
+| 2026-07-13 | `App.test.tsx` and `tuyauAuthApi.test.ts`                                   | focused automated test     | Client behavior across all Stories, transient private-content protection, and auth error mapping                                        | 31 passed                                                      |
 | 2026-07-13 | `vite.config.test.ts`                                                       | focused configuration test | Same-origin `/api` proxy uses a server-only backend target                                                                              | 1 passed                                                       |
 | 2026-07-13 | migrated root test, lint, typecheck, forced uncached build, and diff check  | broad supporting gate      | Current backend/frontend tree passes the same ordered database and code-quality gates used by CI                                        | passed                                                         |
 | 2026-07-13 | backend test database guard                                                 | safety gate                | Backend tests refuse to write unless a separate disposable database is acknowledged                                                     | passed                                                         |
-| 2026-07-13 | PostgreSQL-backed backend suite                                             | integration test           | Account persistence, hashing, duplicate handling, real database sessions, safe anonymous reads and logout, CSRF, CORS, and exact limits | 17 passed against an isolated Neon schema                      |
+| 2026-07-13 | PostgreSQL-backed backend suite                                             | integration test           | Account persistence, hashing, duplicate handling, real database sessions, safe anonymous reads and logout, CSRF, CORS, and exact limits | 18 passed against an isolated Neon schema                      |
 | 2026-07-13 | Playwright account workspace journey                                        | deterministic browser E2E  | Same-origin proxy, real cookie/CSRF flow, storage isolation, refresh, replay denial, auth routing, and empty state                      | 2 passed on desktop and mobile against an isolated Neon schema |
-| 2026-07-13 | Deep local integration review                                               | independent review         | Artifact truth, code/security, verification, UI, documentation, and integration readiness                                               | changes-requested                                              |
+| 2026-07-13 | Fresh local integration review of `2eb5174`                                 | independent review         | Artifact truth, code/security, verification, UI, documentation, and integration readiness                                               | changes-requested; safe fixes committed as `95f7799`           |
 
 ## Manual Feedback
 
@@ -131,7 +132,7 @@
 
 ## Blockers / Open Questions
 
-- No implementation blocker remains; the verified implementation is committed at `6468754`.
+- Blocker: safe functional review fixes at `95f7799` require a fresh independent review before integration.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
@@ -146,7 +147,7 @@
 - Release communication current: yes for implemented user-facing scope
 - `sdd-review` verdict: `changes-requested` on 2026-07-13
 - Review record: `review.md`
-- `review.md` findings resolved: apply remediation complete; independent rereview pending
+- `review.md` findings resolved: required findings fixed in `95f7799`; independent rereview pending
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started
