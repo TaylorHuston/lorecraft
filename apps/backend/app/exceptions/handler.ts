@@ -1,6 +1,17 @@
 import app from '@adonisjs/core/services/app'
+import {
+  authPayloadTooLargeResponse,
+  isAuthRequestPath,
+} from '#middleware/auth_request_boundary_middleware'
 import { type HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import { errors as shieldErrors } from '@adonisjs/shield'
+
+function hasStatus(error: unknown, status: number) {
+  if (typeof error !== 'object' || error === null) return false
+
+  const statusLike = error as { status?: unknown; statusCode?: unknown }
+  return statusLike.status === status || statusLike.statusCode === status
+}
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -23,6 +34,14 @@ export default class HttpExceptionHandler extends ExceptionHandler {
           },
         ],
       })
+    }
+
+    if (
+      hasStatus(error, 413) &&
+      ctx.request.intended() === 'POST' &&
+      isAuthRequestPath(ctx.request.url())
+    ) {
+      return ctx.response.requestEntityTooLarge(authPayloadTooLargeResponse)
     }
 
     return super.handle(error, ctx)

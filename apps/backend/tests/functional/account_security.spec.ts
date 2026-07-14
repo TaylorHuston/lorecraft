@@ -1,9 +1,40 @@
 import { test } from '@japa/runner'
+import { request as sendHttpRequest } from 'node:http'
 import db from '@adonisjs/lucid/services/db'
 import testUtils from '@adonisjs/core/services/test_utils'
 import limiter from '@adonisjs/limiter/services/main'
 import { sessionCookieName } from '#config/session'
 import { bootstrapBrowserSession, withBrowserSession } from '#tests/helpers/browser_session'
+
+function sendChunkedJson(url: string, chunks: string[]) {
+  return new Promise<{
+    body: unknown
+    headers: Record<string, string | string[] | undefined>
+    status: number
+  }>((resolve, reject) => {
+    const request = sendHttpRequest(
+      url,
+      {
+        method: 'POST',
+        headers: { 'accept': 'application/json', 'content-type': 'application/json' },
+      },
+      (response) => {
+        const bodyChunks: Buffer[] = []
+        response.on('data', (chunk) => bodyChunks.push(Buffer.from(chunk)))
+        response.on('end', () => {
+          resolve({
+            body: JSON.parse(Buffer.concat(bodyChunks).toString('utf8')),
+            headers: response.headers,
+            status: response.statusCode ?? 0,
+          })
+        })
+      }
+    )
+    request.on('error', reject)
+    chunks.forEach((chunk) => request.write(chunk))
+    request.end()
+  })
+}
 
 test.group('Account API security', (group) => {
   group.each.setup(async () => {
@@ -105,6 +136,7 @@ test.group('Account API security', (group) => {
 
   test('LC-001/Cross-Story: state-changing account requests require a CSRF token', async ({
     client,
+    assert,
   }) => {
     const browser = await bootstrapBrowserSession(client)
     const response = await withBrowserSession(
@@ -117,7 +149,7 @@ test.group('Account API security', (group) => {
     })
 
     response.assertStatus(403)
-    response.assertBody({
+    assert.deepEqual(response.body(), {
       errors: [{ code: 'INVALID_CSRF_TOKEN', message: 'Invalid or expired CSRF token.' }],
     })
     response.assertBodyNotContains({ password: 'correct horse battery staple' })
@@ -158,6 +190,113 @@ test.group('Account API security', (group) => {
 
     const accountsAfter = await db.from('users').count('* as total').firstOrFail()
     assert.equal(Number(accountsAfter.total), Number(accountsBefore.total))
+  })
+
+  test('LC-001/Cross-Story: auth routes reject multipart before session and CSRF processing', async ({
+    client,
+    assert,
+  }) => {
+    const oversizedAuthFile = Buffer.alloc(17 * 1024, 'x')
+
+    for (const path of [
+      '/api/v1/auth/signup',
+      '/api/v1/auth/signup/',
+      '/api/v1/auth/signup?source=security-test',
+      '/api/v1/auth/login',
+      '/api/v1/auth/login/',
+      '/api/v1/auth/login?source=security-test',
+    ]) {
+      const response = await client.post(path).file('attachment', oversizedAuthFile, {
+        filename: 'oversized-auth-payload.txt',
+        contentType: 'text/plain',
+      })
+
+      response.assertStatus(415)
+      assert.deepEqual(response.body(), {
+        errors: [
+          {
+            code: 'UNSUPPORTED_AUTH_CONTENT_TYPE',
+            message: 'Signup and login requests require application/json.',
+          },
+        ],
+      })
+      response.assertCookieMissing('adonis-session')
+      response.assertCookieMissing('XSRF-TOKEN')
+    }
+  })
+
+  test('LC-001/Cross-Story: auth routes reject URL-encoded forms before body parsing', async ({
+    client,
+    assert,
+  }) => {
+    for (const path of [
+      '/api/v1/auth/signup',
+      '/api/v1/auth/signup/',
+      '/api/v1/auth/login',
+      '/api/v1/auth/login/',
+    ]) {
+      const response = await client.post(path).form({
+        email: 'unsupported@example.com',
+        password: 'unsupported',
+      })
+
+      response.assertStatus(415)
+      assert.deepEqual(response.body(), {
+        errors: [
+          {
+            code: 'UNSUPPORTED_AUTH_CONTENT_TYPE',
+            message: 'Signup and login requests require application/json.',
+          },
+        ],
+      })
+      response.assertCookieMissing('adonis-session')
+      response.assertCookieMissing('XSRF-TOKEN')
+    }
+  })
+
+  test('LC-001/Cross-Story: auth routes reject oversized JSON before session and CSRF processing', async ({
+    client,
+    assert,
+  }) => {
+    const response = await client.post('/api/v1/auth/login?source=security-test').json({
+      email: 'x'.repeat(17 * 1024),
+      password: 'irrelevant',
+    })
+
+    response.assertStatus(413)
+    assert.deepEqual(response.body(), {
+      errors: [
+        {
+          code: 'AUTH_PAYLOAD_TOO_LARGE',
+          message: 'Signup and login request bodies must not exceed 16 KB.',
+        },
+      ],
+    })
+    response.assertCookieMissing('adonis-session')
+    response.assertCookieMissing('XSRF-TOKEN')
+  })
+
+  test('LC-001/Cross-Story: auth routes normalize oversized chunked JSON rejection', async ({
+    client,
+    assert,
+  }) => {
+    const endpoint = client.post('/api/v1/auth/login').request.url
+    const response = await sendChunkedJson(endpoint, [
+      '{"email":"',
+      'x'.repeat(17 * 1024),
+      '","password":"irrelevant"}',
+    ])
+
+    assert.equal(response.status, 413)
+    assert.deepEqual(response.body, {
+      errors: [
+        {
+          code: 'AUTH_PAYLOAD_TOO_LARGE',
+          message: 'Signup and login request bodies must not exceed 16 KB.',
+        },
+      ],
+    })
+    assert.isUndefined(response.headers['set-cookie'])
   })
 
   test('LC-001/Cross-Story: anonymous CSRF throttling isolates forwarded clients', async ({

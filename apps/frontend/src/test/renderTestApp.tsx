@@ -21,7 +21,7 @@ export function renderTestApp({ route, session, api: overrides }: RenderTestAppO
   }
   const queryClient = new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
+      queries: { refetchOnWindowFocus: false, retry: false },
       mutations: { retry: false },
     },
   })

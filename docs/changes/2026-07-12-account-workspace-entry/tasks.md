@@ -2,12 +2,12 @@
 
 ## Resume Here
 
-- Current state: independent review found missing open-workspace session revalidation and unauthenticated multipart processing before auth throttles
-- Last completed action: added exact login-throttle proof and CSRF-expiry recovery, passing 18 database-backed backend tests and 32 frontend tests
-- Next action: return to `/sdd-apply` for session revalidation, restricted auth request parsing, and focused verification
+- Current state: both required rereview findings are implemented and pass isolated integration, browser, security, and static verification
+- Last completed action: added open-workspace session focus revalidation plus a JSON-only signup/login boundary with consistent declared-length and streaming size enforcement
+- Next action: commit the verified implementation and run a fresh independent `/sdd-review`
 - Active branch/ref: `change/account-workspace-entry`
-- Expected dirty files: none after the review-record commit
-- Known blockers: session-expiry revalidation and pre-throttle multipart restriction are required before integration; manual UI confirmation and provider-specific evidence remain explicit gaps
+- Expected dirty files: frontend auth/query tests and configuration, backend request-boundary/bodyparser tests and configuration, then this task ledger and `LC-001`
+- Known blockers: no implementation blocker remains; manual UI confirmation and provider-specific evidence remain explicit acceptance gaps
 
 ## Task Checklist
 
@@ -59,8 +59,8 @@
   - [x] R2/R2-S2: the invalidated session cannot be reused.
   - [x] R3/R3-S1: an account with no Worlds sees an intentional empty state and no incomplete creation control.
 - [x] 5.4 Update Story-level Implemented By maps with current code locations.
-- [ ] 5.5 Revalidate the current account session when an open workspace regains focus and remove protected UI when the session has expired or been revoked.
-- [ ] 5.6 Prevent signup and login requests from triggering unused multipart file processing before rate limiting and validation.
+- [x] 5.5 Revalidate the current account session when an open workspace regains focus and remove protected UI when the session has expired or been revoked.
+- [x] 5.6 Prevent signup and login requests from triggering unused multipart file processing before rate limiting and validation.
 
 ### 6. Verification
 
@@ -71,8 +71,8 @@
 - [ ] 6.5 Validate migrations and integration behavior against disposable PostgreSQL in CI, then smoke-test the isolated Neon test branch.
 - [x] 6.6 Confirm logs and browser storage contain no passwords, connection strings, session values, or bearer tokens.
 - [x] 6.7 Update Story-level Verified By maps with Scenario-mapped evidence and explicit remaining manual/provider gaps.
-- [ ] 6.8 Add focused Scenario evidence that an already-rendered workspace returns to sign-in after session expiry or external revocation.
-- [ ] 6.9 Add deterministic evidence that auth routes reject unsupported or oversized multipart payloads before temporary-file processing.
+- [x] 6.8 Add focused Scenario evidence that an already-rendered workspace returns to sign-in after session expiry or external revocation.
+- [x] 6.9 Add deterministic evidence that auth routes reject unsupported or oversized multipart payloads before temporary-file processing.
 
 ### 7. Documentation, Review, And Closeout
 
@@ -98,22 +98,27 @@
 | 2026-07-13 | Apply self-check remediation                | security, coverage, architecture, and artifact reviewers               | Rate limits, test database guards, persistence model, E2E evidence, public docs | Findings remediated; automated verification complete           | `6468754`    |
 | 2026-07-13 | Independent review remediation              | delegated backend/frontend implementation plus main integration        | Scoped session/CSRF middleware, same-origin proxy, auth errors, tests, CI, docs | 17 backend, 26 frontend, and 2 browser tests pass              | `6468754`    |
 | 2026-07-13 | Safe review fixes                           | main integration after delegated review                                | Login throttle proof, CSRF recovery, formatting, and Epic evidence              | 18 backend and 32 frontend tests pass                          | `95f7799`    |
+| 2026-07-14 | Required rereview remediation               | delegated frontend/backend implementation plus main integration        | Session focus revalidation, auth request boundary, parser policy, tests, docs   | 22 backend, 34 frontend, and 2 browser tests pass              | pending      |
 
 ## Verification Ledger
 
-| Date       | Check                                                                       | Evidence Type              | What It Proves                                                                                                                          | Result                                                         |
-| ---------- | --------------------------------------------------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 2026-07-12 | `git diff --check`, artifact/reference checks, and credential-fragment scan | planning verification      | Proposal, design, tasks, and ADR references are coherent and contain no credential                                                      | passed                                                         |
-| 2026-07-13 | `account_security.spec.ts`                                                  | focused automated test     | S1/R1-S2, S1/R2-S1, S3/R1-S2, safe anonymous reads and logout, CSRF, CORS, and exact throttle boundaries                                | 12 passed                                                      |
-| 2026-07-13 | `App.test.tsx` and `tuyauAuthApi.test.ts`                                   | focused automated test     | Client behavior across all Stories, transient private-content protection, and auth error mapping                                        | 31 passed                                                      |
-| 2026-07-13 | `vite.config.test.ts`                                                       | focused configuration test | Same-origin `/api` proxy uses a server-only backend target                                                                              | 1 passed                                                       |
-| 2026-07-13 | migrated root test, lint, typecheck, forced uncached build, and diff check  | broad supporting gate      | Current backend/frontend tree passes the same ordered database and code-quality gates used by CI                                        | passed                                                         |
-| 2026-07-13 | backend test database guard                                                 | safety gate                | Backend tests refuse to write unless a separate disposable database is acknowledged                                                     | passed                                                         |
-| 2026-07-13 | PostgreSQL-backed backend suite                                             | integration test           | Account persistence, hashing, duplicate handling, real database sessions, safe anonymous reads and logout, CSRF, CORS, and exact limits | 18 passed against an isolated Neon schema                      |
-| 2026-07-13 | Playwright account workspace journey                                        | deterministic browser E2E  | Same-origin proxy, real cookie/CSRF flow, storage isolation, refresh, replay denial, auth routing, and empty state                      | 2 passed on desktop and mobile against an isolated Neon schema |
-| 2026-07-13 | Fresh local integration review of `2eb5174`                                 | independent review         | Artifact truth, code/security, verification, UI, documentation, and integration readiness                                               | changes-requested; safe fixes committed as `95f7799`           |
-| 2026-07-14 | Independent rereview of `f87cabe`                                           | independent review         | Corrected auth behavior, Scenario evidence, security, docs, conflict state, and integration readiness                                   | changes-requested; open workspaces need session revalidation   |
-| 2026-07-14 | Safe review fix                                                             | main integration           | Backend CSRF error contract test                                                                                                        | exact `INVALID_CSRF_TOKEN` response shape asserted             |
+| Date       | Check                                                                       | Evidence Type               | What It Proves                                                                                                                          | Result                                                         |
+| ---------- | --------------------------------------------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 2026-07-12 | `git diff --check`, artifact/reference checks, and credential-fragment scan | planning verification       | Proposal, design, tasks, and ADR references are coherent and contain no credential                                                      | passed                                                         |
+| 2026-07-13 | `account_security.spec.ts`                                                  | focused automated test      | S1/R1-S2, S1/R2-S1, S3/R1-S2, safe anonymous reads and logout, CSRF, CORS, and exact throttle boundaries                                | 12 passed                                                      |
+| 2026-07-13 | `App.test.tsx` and `tuyauAuthApi.test.ts`                                   | focused automated test      | Client behavior across all Stories, transient private-content protection, and auth error mapping                                        | 31 passed                                                      |
+| 2026-07-13 | `vite.config.test.ts`                                                       | focused configuration test  | Same-origin `/api` proxy uses a server-only backend target                                                                              | 1 passed                                                       |
+| 2026-07-13 | migrated root test, lint, typecheck, forced uncached build, and diff check  | broad supporting gate       | Current backend/frontend tree passes the same ordered database and code-quality gates used by CI                                        | passed                                                         |
+| 2026-07-13 | backend test database guard                                                 | safety gate                 | Backend tests refuse to write unless a separate disposable database is acknowledged                                                     | passed                                                         |
+| 2026-07-13 | PostgreSQL-backed backend suite                                             | integration test            | Account persistence, hashing, duplicate handling, real database sessions, safe anonymous reads and logout, CSRF, CORS, and exact limits | 18 passed against an isolated Neon schema                      |
+| 2026-07-13 | Playwright account workspace journey                                        | deterministic browser E2E   | Same-origin proxy, real cookie/CSRF flow, storage isolation, refresh, replay denial, auth routing, and empty state                      | 2 passed on desktop and mobile against an isolated Neon schema |
+| 2026-07-13 | Fresh local integration review of `2eb5174`                                 | independent review          | Artifact truth, code/security, verification, UI, documentation, and integration readiness                                               | changes-requested; safe fixes committed as `95f7799`           |
+| 2026-07-14 | Independent rereview of `f87cabe`                                           | independent review          | Corrected auth behavior, Scenario evidence, security, docs, conflict state, and integration readiness                                   | changes-requested; open workspaces need session revalidation   |
+| 2026-07-14 | Safe review fix                                                             | main integration            | Backend CSRF error contract test                                                                                                        | exact `INVALID_CSRF_TOKEN` response shape asserted             |
+| 2026-07-14 | `App.test.tsx` session-focus Scenario                                       | focused automated test      | `LC-001/S3/R1-S3` uses real window focus, immediately suppresses private UI, and prevents sign-out races                                | 22 focused and 34 full frontend tests passed                   |
+| 2026-07-14 | `account_security.spec.ts` auth request boundary                            | focused integration test    | Canonical, query-string, and trailing-slash auth routes reject unsupported content; declared and chunked oversized JSON share one 413   | 22 backend tests passed against an isolated Neon schema        |
+| 2026-07-14 | Fresh root tests and Playwright journey                                     | integration and browser E2E | Current account implementation passes database-backed server, client, desktop, and mobile journeys                                      | 22 backend, 34 frontend, and 2 browser tests passed            |
+| 2026-07-14 | Lint, typecheck, forced build, Prettier, audit, and diff checks             | broad supporting gate       | The remediated tree compiles, builds, formats cleanly, and reports no dependency vulnerabilities                                        | passed; 0 vulnerabilities                                      |
 
 ## Manual Feedback
 
@@ -138,23 +143,22 @@
 
 ## Blockers / Open Questions
 
-- Blocker: an already-rendered workspace can remain visible after server-session expiry or external revocation because session focus revalidation is disabled.
-- Blocker: signup and login parse and write unsupported multipart uploads before their route-level throttles execute.
+- No implementation blockers remain from the 2026-07-14 rereview; a fresh independent review is required because functional source changed.
 - Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
 - No product or architecture questions remain open.
 
 ## Closeout
 
-- Epic files updated: yes; session revalidation and auth multipart handling block acceptance, while manual UI confirmation and dedicated Neon branch smoke remain explicit gaps
+- Epic files updated: yes; session revalidation and auth multipart handling are implemented, while manual UI confirmation and dedicated Neon branch smoke remain explicit gaps
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; remaining gaps include `S3/R1-S3`, auth multipart handling, dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
+- Scenario-mapped Verified By maps current: yes; remaining gaps are dedicated Neon provider smoke, production HTTPS cookie proof, and manual UI confirmation
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
 - ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
 - Release communication current: yes for implemented user-facing scope
 - `sdd-review` verdict: `changes-requested` on 2026-07-14 at `f87cabe502f7573d239d4ae0c96006114771c4a9`
 - Review record: `review.md`
-- `review.md` findings resolved: no; session revalidation and auth multipart handling are required, and one non-blocking reliability suggestion remains recorded
+- `review.md` findings resolved: required findings are implemented and locally verified; the historical verdict remains `changes-requested` until fresh independent rereview, and one non-blocking reliability suggestion remains recorded
 - Planning updates resolved: current
 - Manual UI confirmation status: pending user
 - PR / merge state: not started

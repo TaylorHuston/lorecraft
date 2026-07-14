@@ -337,6 +337,73 @@ describe('account workspace entry', () => {
     expect(restoreSession).toHaveBeenCalledTimes(1)
   })
 
+  it('LC-001/S3/R1-S3 returns an open workspace to sign in when its session ends', async () => {
+    let resolveRevalidation: (account: null) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce({ id: 4, email: 'member@example.com' })
+      .mockImplementationOnce(
+        () =>
+          new Promise<null>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
+
+    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
+    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+
+    await act(async () => resolveRevalidation(null))
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+    expect(restoreSession).toHaveBeenCalledTimes(2)
+  })
+
+  it('LC-001/S3/R2-S1 ignores a late focus revalidation after sign-out succeeds', async () => {
+    const user = userEvent.setup()
+    let resolveRevalidation: (account: { id: number; email: string }) => void = () => undefined
+    let resolveSignOut: () => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce({ id: 4, email: 'member@example.com' })
+      .mockImplementationOnce(
+        () =>
+          new Promise<{ id: number; email: string }>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    const signOut = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveSignOut = resolve
+        })
+    )
+    renderTestApp({
+      route: '/worlds',
+      session: null,
+      api: { restoreSession, signOut },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Sign out' }))
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(restoreSession).toHaveBeenCalledTimes(2)
+
+    await act(async () => resolveSignOut())
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+
+    await act(async () => resolveRevalidation({ id: 4, email: 'member@example.com' }))
+
+    expect(screen.getByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+  })
+
   it('LC-001/S3/R1-S1 never inserts private workspace content while session restoration is pending or redirecting', async () => {
     let resolveSession: (account: null) => void = () => undefined
     const restoreSession = vi.fn(

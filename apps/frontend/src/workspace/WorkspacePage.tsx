@@ -11,7 +11,8 @@ export function WorkspacePage() {
   const signOut = useMutation({
     mutationFn: () => api.signOut(),
     retry: false,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.cancelQueries({ queryKey: sessionQueryKey })
       queryClient.setQueryData(sessionQueryKey, null)
       navigate('/sign-in', { replace: true })
     },

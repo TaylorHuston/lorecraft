@@ -158,6 +158,13 @@ The system SHALL deny unauthenticated access to both the workspace UI and protec
 - WHEN a request without a valid session calls a protected account endpoint
 - THEN the API returns an authentication failure without private account data.
 
+###### Scenario R1-S3: Open Workspace Session Ends
+
+- WHEN an authenticated user leaves the workspace open and the server session later expires or is revoked elsewhere
+- AND the user returns focus to the workspace
+- THEN the client revalidates the session
+- AND the workspace returns to sign-in without continuing to render private account state.
+
 ##### Requirement R2: Logout Invalidation
 
 The system SHALL invalidate the active server-side session when the user signs out.
@@ -256,7 +263,9 @@ Configure Lucid for PostgreSQL through `DATABASE_URL` using the standard `pg` dr
 
 Signup validates email, password, and confirmation, creates the account transactionally, establishes a session, and returns the authenticated account representation. Sign-in, current-account, and sign-out endpoints form the browser auth contract. Existing opaque-token capability may remain for future clients, but SPA routes and client storage must not consume it.
 
-The React client uses route guards based on the current-account query, dedicated signup/sign-in forms, and an authenticated `Your Worlds` route. CSS Modules and shared CSS custom properties follow workspace styling defaults. The workspace intentionally contains no World-creation action in this change.
+The React client uses route guards based on the current-account query, dedicated signup/sign-in forms, and an authenticated `Your Worlds` route. The current-account query revalidates whenever the window regains focus, suppressing protected UI while the check is unresolved so an expired or externally revoked session cannot leave stale private state visible. Successful sign-out cancels any in-flight session query before clearing its cache. CSS Modules and shared CSS custom properties follow workspace styling defaults. The workspace intentionally contains no World-creation action in this change.
+
+Signup and sign-in accept JSON only. A server middleware boundary rejects unsupported auth content types and declared payloads over 16 KB before the router body parser, session, CSRF, and route-level throttles run. The JSON parser enforces the same limit for unknown-length streams, and the exception handler normalizes that rejection to the same auth error contract. Multipart auto-processing is disabled unless a future change explicitly names an upload route.
 
 ## Client And API Boundary
 
@@ -304,6 +313,8 @@ It delivers the smallest complete user journey while preserving the architecture
 - Use one `User`/account concept with no role or account-type column.
 - Keep server-side validation and authorization authoritative.
 - Enable CSRF protection for state-changing session-authenticated browser requests.
+- Revalidate the current-account query whenever an open browser window regains focus.
+- Reject non-JSON and declared-oversized signup and sign-in requests before body parsing, enforce the same bound while parsing unknown-length streams, and do not enable multipart auto-processing without an explicit upload route.
 - Keep browser API traffic on the Lorecraft web origin and proxy `/api` to the AdonisJS service in development and deployment.
 - Configure cookie security appropriately for local development and production, including HTTP-only, secure-in-production, and an intentional SameSite policy.
 - Do not build nonfunctional World controls to imply later behavior.
@@ -311,8 +322,8 @@ It delivers the smallest complete user journey while preserving the architecture
 ## Verification Strategy
 
 - Focused automated tests:
-  - Backend route/integration tests for validation, normalization, duplicate handling, generic credential failure, session creation/restoration/invalidation, and protected APIs.
-  - Frontend tests for form validation presentation, auth-state routing, loading/error states, and the intentional empty workspace.
+  - Backend route/integration tests for validation, normalization, duplicate handling, generic credential failure, session creation/restoration/invalidation, protected APIs, pre-parser auth request rejection, and normalized unknown-length stream limits.
+  - Frontend tests for form validation presentation, auth-state routing, focus-triggered session revalidation, loading/error states, and the intentional empty workspace.
 - Broad supporting gates:
   - Root lint, test, typecheck, and build commands.
   - Migration checks against disposable PostgreSQL in CI, followed by a focused smoke check against the resettable Neon test database.

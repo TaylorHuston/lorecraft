@@ -105,14 +105,16 @@ The system SHALL establish an authenticated browser session after successful acc
 
 #### Implemented By
 
-| Path                                                                   | Role                                                                          | Recheck Trigger                                          |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `apps/backend/app/controllers/new_account_controller.ts`               | Creates a normalized account transactionally and establishes its web session. | Recheck when signup or transaction behavior changes.     |
-| `apps/backend/app/validators/user.ts`                                  | Defines the email, password, and confirmation trust boundary.                 | Recheck when account input policy changes.               |
-| `apps/backend/app/models/user.ts`                                      | Persists and hashes account credentials.                                      | Recheck when account identity or hashing changes.        |
-| `apps/backend/database/migrations/1761885935168_create_users_table.ts` | Defines normalized unique account storage.                                    | Recheck for account schema changes.                      |
-| `apps/frontend/src/auth/SignUpPage.tsx`                                | Presents signup, local validation, errors, and automatic workspace entry.     | Recheck when the signup journey changes.                 |
-| `apps/frontend/src/auth/tuyauAuthApi.ts`                               | Uses the generated Tuyau contract with credentialed session requests.         | Recheck when account routes or client transport changes. |
+| Path                                                                   | Role                                                                            | Recheck Trigger                                          |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `apps/backend/app/controllers/new_account_controller.ts`               | Creates a normalized account transactionally and establishes its web session.   | Recheck when signup or transaction behavior changes.     |
+| `apps/backend/app/validators/user.ts`                                  | Defines the email, password, and confirmation trust boundary.                   | Recheck when account input policy changes.               |
+| `apps/backend/app/models/user.ts`                                      | Persists and hashes account credentials.                                        | Recheck when account identity or hashing changes.        |
+| `apps/backend/database/migrations/1761885935168_create_users_table.ts` | Defines normalized unique account storage.                                      | Recheck for account schema changes.                      |
+| `apps/frontend/src/auth/SignUpPage.tsx`                                | Presents signup, local validation, errors, and automatic workspace entry.       | Recheck when the signup journey changes.                 |
+| `apps/frontend/src/auth/tuyauAuthApi.ts`                               | Uses the generated Tuyau contract with credentialed session requests.           | Recheck when account routes or client transport changes. |
+| `apps/backend/app/middleware/auth_request_boundary_middleware.ts`      | Rejects unsupported and declared-oversized signup payloads before body parsing. | Recheck when signup request formats or limits change.    |
+| `apps/backend/app/exceptions/handler.ts`                               | Normalizes unknown-length oversized auth streams to the auth 413 contract.      | Recheck when parser errors or auth limits change.        |
 
 #### Verified By
 
@@ -122,6 +124,7 @@ The system SHALL establish an authenticated browser session after successful acc
 | S1/R1-S2, S1/R2-S1                     | `apps/backend/tests/functional/account_security.spec.ts`                               | Server validation omits credentials; XSRF bootstrap creates the intended database session while anonymous safe reads do not. | Passing 2026-07-13 |
 | S1/R1-S1, S1/R1-S3, S1/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Account normalization, hashing, uniqueness, and database-backed session state.                                               | Passing 2026-07-13 |
 | S1/R1-S1 through S1/R2-S1              | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin browser signup, HTTP-only cookie behavior, empty bearer storage, and workspace entry.                            | Passing 2026-07-13 |
+| S1 cross-story request boundary        | `apps/backend/tests/functional/account_security.spec.ts`                               | Signup rejects unsupported content before parsing and applies one 16 KB contract to declared and streamed JSON payloads.     | Passing 2026-07-14 |
 
 #### Verification Gaps
 
@@ -175,14 +178,16 @@ The system SHALL restore a valid existing session across page refreshes and keep
 
 #### Implemented By
 
-| Path                                                  | Role                                                                                              | Recheck Trigger                             |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `apps/backend/app/controllers/sessions_controller.ts` | Verifies credentials, establishes the web session, and invalidates it on logout.                  | Recheck when session behavior changes.      |
-| `apps/backend/app/controllers/profile_controller.ts`  | Returns the authenticated account for session restoration.                                        | Recheck when account serialization changes. |
-| `apps/backend/config/auth.ts`                         | Defines web sessions as the browser authentication guard while retaining future token capability. | Recheck when guards change.                 |
-| `apps/frontend/src/auth/SignInPage.tsx`               | Presents generic credential errors and resumes the attempted protected route.                     | Recheck when sign-in changes.               |
-| `apps/frontend/src/auth/AuthProvider.tsx`             | Restores current-account server state through TanStack Query.                                     | Recheck when session restoration changes.   |
-| `apps/frontend/src/app/AppRoutes.tsx`                 | Keeps authenticated users out of public-only auth routes.                                         | Recheck when routing changes.               |
+| Path                                                              | Role                                                                                              | Recheck Trigger                                      |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `apps/backend/app/controllers/sessions_controller.ts`             | Verifies credentials, establishes the web session, and invalidates it on logout.                  | Recheck when session behavior changes.               |
+| `apps/backend/app/controllers/profile_controller.ts`              | Returns the authenticated account for session restoration.                                        | Recheck when account serialization changes.          |
+| `apps/backend/config/auth.ts`                                     | Defines web sessions as the browser authentication guard while retaining future token capability. | Recheck when guards change.                          |
+| `apps/frontend/src/auth/SignInPage.tsx`                           | Presents generic credential errors and resumes the attempted protected route.                     | Recheck when sign-in changes.                        |
+| `apps/frontend/src/auth/AuthProvider.tsx`                         | Restores current-account server state through TanStack Query.                                     | Recheck when session restoration changes.            |
+| `apps/frontend/src/app/AppRoutes.tsx`                             | Keeps authenticated users out of public-only auth routes.                                         | Recheck when routing changes.                        |
+| `apps/backend/app/middleware/auth_request_boundary_middleware.ts` | Rejects unsupported and declared-oversized login payloads before body parsing.                    | Recheck when login request formats or limits change. |
+| `apps/backend/app/exceptions/handler.ts`                          | Normalizes unknown-length oversized auth streams to the auth 413 contract.                        | Recheck when parser errors or auth limits change.    |
 
 #### Verified By
 
@@ -192,6 +197,7 @@ The system SHALL restore a valid existing session across page refreshes and keep
 | S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Generic credential failure and database-backed session behavior.                                                            | Passing 2026-07-13 |
 | S2/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | The exact login throttle boundary and forwarded-client key isolation.                                                       | Passing 2026-07-13 |
 | S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass.                            | Passing 2026-07-13 |
+| S2 cross-story request boundary        | `apps/backend/tests/functional/account_security.spec.ts`                               | Login rejects unsupported content before parsing and applies one 16 KB contract to declared and streamed JSON payloads.     | Passing 2026-07-14 |
 
 #### Verification Gaps
 
@@ -257,14 +263,15 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 
 #### Implemented By
 
-| Path                                                                      | Role                                                                       | Recheck Trigger                           |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------- |
-| `apps/backend/start/routes.ts`                                            | Applies the web guard to protected account routes.                         | Recheck when API routes or guards change. |
-| `apps/backend/config/shield.ts`                                           | Enforces CSRF protection and exposes the XSRF cookie.                      | Recheck when browser security changes.    |
-| `apps/backend/config/cors.ts`                                             | Restricts credentialed browser requests to the configured frontend origin. | Recheck when deployment origins change.   |
-| `apps/backend/database/migrations/1768620764697_create_sessions_table.ts` | Defines durable server-side session storage.                               | Recheck when session persistence changes. |
-| `apps/frontend/src/app/AppRoutes.tsx`                                     | Prevents anonymous private-content rendering.                              | Recheck when protected routing changes.   |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty workspace.    | Recheck when workspace behavior changes.  |
+| Path                                                                      | Role                                                                       | Recheck Trigger                              |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
+| `apps/backend/start/routes.ts`                                            | Applies the web guard to protected account routes.                         | Recheck when API routes or guards change.    |
+| `apps/backend/config/shield.ts`                                           | Enforces CSRF protection and exposes the XSRF cookie.                      | Recheck when browser security changes.       |
+| `apps/backend/config/cors.ts`                                             | Restricts credentialed browser requests to the configured frontend origin. | Recheck when deployment origins change.      |
+| `apps/backend/database/migrations/1768620764697_create_sessions_table.ts` | Defines durable server-side session storage.                               | Recheck when session persistence changes.    |
+| `apps/frontend/src/app/AppRoutes.tsx`                                     | Prevents anonymous private-content rendering.                              | Recheck when protected routing changes.      |
+| `apps/frontend/src/auth/AuthProvider.tsx`                                 | Revalidates the server session whenever an open workspace regains focus.   | Recheck when session query behavior changes. |
+| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty workspace.    | Recheck when workspace behavior changes.     |
 
 #### Verified By
 
@@ -274,10 +281,10 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 | S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.               | Passing 2026-07-13 |
 | S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                   | Passing 2026-07-13 |
 | S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                    | Passing 2026-07-13 |
+| S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation immediately suppresses private UI and returns the workspace to sign-in when the server reports no session. | Passing 2026-07-14 |
 
 #### Verification Gaps
 
-- `S3/R1-S3` is not implemented: an already-rendered workspace does not currently revalidate when its server session expires or is revoked elsewhere.
 - Manual confirmation is needed for the protected transition, empty workspace, responsive layout, and logout flow.
 
 ## Cross-Story Concerns
@@ -286,7 +293,7 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 - The browser uses HTTP-only session cookies with CSRF protection and does not store bearer tokens.
 - PostgreSQL migrations and integration tests must use explicitly acknowledged disposable databases and never target production or shared development data.
 - Public auth and CSRF bootstrap routes are rate-limited in-process; a shared ingress or distributed limit remains a deployment requirement before horizontal scaling.
-- Auth endpoints currently inherit global multipart auto-processing before their route-level throttles; this unsupported request path must be restricted before the Epic is accepted.
+- Signup and login accept only JSON; unsupported and declared-oversized requests fail before parsing, while unknown-length streams use the same parser limit and normalized 413 contract. Multipart auto-processing remains disabled until an explicit upload route is designed.
 - Browser API traffic stays on the frontend origin and reaches AdonisJS through the `/api` proxy; split-host browser deployment is not supported by this session/CSRF contract.
 - The React client consumes the typed Tuyau contract while keeping presentation and form state client-specific.
 
@@ -306,4 +313,4 @@ This Epic is healthy when:
 
 ## Notes
 
-- Independent SDD review found session-revalidation and pre-throttle multipart-processing gaps. The Epic remains draft until those gaps are resolved and the change is accepted and merged.
+- The 2026-07-14 apply pass resolved the independent review's session-revalidation and pre-throttle multipart-processing findings. Fresh independent review, manual UI confirmation, and the recorded provider gaps remain before acceptance and merge.
