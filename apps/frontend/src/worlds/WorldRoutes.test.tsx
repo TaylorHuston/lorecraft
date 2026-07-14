@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
@@ -51,6 +51,51 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(1)
   })
 
+  it('isolates the catalog across account changes and purges the previous account cache', async () => {
+    const firstAccount = { id: 4, email: 'first@example.com' }
+    const secondAccount = { id: 9, email: 'second@example.com' }
+    const firstCatalog = {
+      ...stormboundChapel,
+      description: 'First account catalog response.',
+    }
+    const secondCatalog = {
+      ...stormboundChapel,
+      description: 'Second account catalog response.',
+    }
+    const refreshedFirstCatalog = {
+      ...stormboundChapel,
+      description: 'Refreshed first account catalog response.',
+    }
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(firstAccount)
+      .mockResolvedValueOnce(secondAccount)
+      .mockResolvedValueOnce(firstAccount)
+    const listWorlds = vi
+      .fn()
+      .mockResolvedValueOnce([firstCatalog])
+      .mockResolvedValueOnce([secondCatalog])
+      .mockResolvedValueOnce([refreshedFirstCatalog])
+
+    renderTestApp({
+      route: '/worlds',
+      session: null,
+      api: { restoreSession },
+      worldApi: { listWorlds },
+    })
+
+    expect(await screen.findByText(firstCatalog.description)).toBeVisible()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByText(secondCatalog.description)).toBeVisible()
+    expect(screen.queryByText(firstCatalog.description)).not.toBeInTheDocument()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByText(refreshedFirstCatalog.description)).toBeVisible()
+    expect(screen.queryByText(firstCatalog.description)).not.toBeInTheDocument()
+    expect(listWorlds).toHaveBeenCalledTimes(3)
+  })
+
   it('LC-002/S1/R1-S3 explains when no Worlds are currently available', async () => {
     renderTestApp({
       route: '/worlds',
@@ -94,6 +139,30 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(2)
   })
 
+  it('ends the shared session when the catalog reports unauthorized', async () => {
+    const user = userEvent.setup()
+    const listWorlds = vi
+      .fn()
+      .mockResolvedValueOnce([stormboundChapel])
+      .mockRejectedValueOnce(new WorldApiError('unauthorized', 'Session ended'))
+
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { listWorlds, getWorld: async () => stormboundDetail },
+    })
+
+    await user.click(await screen.findByRole('link', { name: 'Stormbound Chapel' }))
+    expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
+
+    await user.click(screen.getByRole('link', { name: 'Back to Worlds' }))
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByText(stormboundChapel.description)).not.toBeInTheDocument()
+    expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+    expect(listWorlds).toHaveBeenCalledTimes(2)
+  })
+
   it('LC-002/S2/R1-S1 renders structured World detail without a byline', async () => {
     renderTestApp({
       route: '/worlds/stormbound-chapel',
@@ -106,6 +175,88 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByText('The bell rang at midnight.')).toBeVisible()
     expect(screen.getByText('Chapel', { selector: 'span' })).toBeVisible()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+  })
+
+  it('ends the shared session when World detail reports unauthorized', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        getWorld: async () => {
+          throw new WorldApiError('unauthorized', 'Session ended')
+        },
+      },
+    })
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+    expect(screen.queryByText('The bell rang at midnight.')).not.toBeInTheDocument()
+  })
+
+  it('retries a failed World detail request with visible pending and recovery states', async () => {
+    const user = userEvent.setup()
+    let resolveRetry!: (world: WorldDetail) => void
+    const retry = new Promise<WorldDetail>((resolve) => {
+      resolveRetry = resolve
+    })
+    const getWorld = vi
+      .fn()
+      .mockRejectedValueOnce(new WorldApiError('network', 'Unavailable'))
+      .mockReturnValueOnce(retry)
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Try again' }))
+    expect(screen.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
+
+    await act(async () => resolveRetry(stormboundDetail))
+
+    expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
+    expect(getWorld).toHaveBeenCalledTimes(2)
+  })
+
+  it('isolates World detail across account changes and purges the previous account cache', async () => {
+    const firstAccount = { id: 4, email: 'first@example.com' }
+    const secondAccount = { id: 9, email: 'second@example.com' }
+    const detailFor = (privateKnowledge: string): WorldDetail => ({
+      ...stormboundDetail,
+      characters: [{ ...stormboundDetail.characters[0], privateKnowledge }],
+    })
+    const firstDetail = detailFor('First account detail response.')
+    const secondDetail = detailFor('Second account detail response.')
+    const refreshedFirstDetail = detailFor('Refreshed first account detail response.')
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(firstAccount)
+      .mockResolvedValueOnce(secondAccount)
+      .mockResolvedValueOnce(firstAccount)
+    const getWorld = vi
+      .fn()
+      .mockResolvedValueOnce(firstDetail)
+      .mockResolvedValueOnce(secondDetail)
+      .mockResolvedValueOnce(refreshedFirstDetail)
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: null,
+      api: { restoreSession },
+      worldApi: { getWorld },
+    })
+
+    expect(await screen.findByText('First account detail response.')).toBeVisible()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByText('Second account detail response.')).toBeVisible()
+    expect(screen.queryByText('First account detail response.')).not.toBeInTheDocument()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByText('Refreshed first account detail response.')).toBeVisible()
+    expect(screen.queryByText('First account detail response.')).not.toBeInTheDocument()
+    expect(getWorld).toHaveBeenCalledTimes(3)
   })
 
   it('LC-002/S2/R1-S2 presents an unknown World without ownership details', async () => {

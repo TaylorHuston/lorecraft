@@ -104,6 +104,26 @@
   color: var(--text-secondary);
   line-height: 1.6;
 }
+.stateActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+.retry {
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.retry:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
 @media (max-width: 40rem) {
   .entry dl {
     grid-template-columns: 1fr;

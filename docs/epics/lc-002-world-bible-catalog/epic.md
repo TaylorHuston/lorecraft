@@ -85,12 +85,13 @@ The system SHALL list public Worlds for every authenticated account and deny ano
 
 #### Implemented By
 
-| Path                                                                                   | Role                                                            |
-| -------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `apps/backend/app/services/world_catalog_service.ts`                                   | Enforces visibility and returns minimized catalog DTOs.         |
-| `apps/backend/app/controllers/worlds_controller.ts` and `apps/backend/start/routes.ts` | Expose authenticated catalog and detail reads.                  |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                                        | Presents loading, failure, empty, and populated catalog states. |
-| `apps/frontend/src/worlds/worldApi.ts` and `apps/frontend/src/worlds/tuyauWorldApi.ts` | Define and implement the typed client boundary.                 |
+| Path                                                                                       | Role                                                            |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `apps/backend/app/services/world_catalog_service.ts`                                       | Enforces visibility and returns minimized catalog DTOs.         |
+| `apps/backend/app/controllers/worlds_controller.ts` and `apps/backend/start/routes.ts`     | Expose authenticated catalog and detail reads.                  |
+| `apps/frontend/src/workspace/WorkspacePage.tsx`                                            | Presents loading, failure, empty, and populated catalog states. |
+| `apps/frontend/src/worlds/worldApi.ts` and `apps/frontend/src/worlds/tuyauWorldApi.ts`     | Define and implement the typed client boundary.                 |
+| `apps/frontend/src/auth/accountQueryKeys.ts` and `apps/frontend/src/auth/AuthProvider.tsx` | Scope account-owned data and clear it when the session changes. |
 
 #### Verified By
 
@@ -98,6 +99,7 @@ The system SHALL list public Worlds for every authenticated account and deny ano
 | ------------------------- | ------------------------------------------------------------------------------- | ------------------ |
 | S1/R1-S1, S1/R1-S2        | `apps/backend/tests/functional/world_catalog.spec.ts`                           | Passing 2026-07-14 |
 | S1/R1-S1, S1/R1-S3        | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorkspacePage.stories.tsx` | Passing 2026-07-14 |
+| S1/R1-S1                  | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `tuyauWorldApi.test.ts`     | Passing 2026-07-14 |
 | S1/R1-S1 through S1/R1-S3 | Automated desktop/mobile browser walkthrough                                    | Passing 2026-07-14 |
 
 #### Verification Gaps
@@ -142,6 +144,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 | Path                                                                                                     | Role                                                          |
 | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts`                          | Defines relational World, Location, and Character integrity.  |
+| `apps/backend/database/migrations/1784060400000_enforce_character_location_world_integrity.ts`           | Enforces same-World Character Location references.            |
 | `apps/backend/app/services/stormbound_chapel_seed.ts` and `database/seeders/stormbound_chapel_seeder.ts` | Reconcile the explicit starter World transactionally.         |
 | `apps/backend/app/services/world_catalog_service.ts`                                                     | Loads deterministic structured detail without account data.   |
 | `apps/frontend/src/worlds/WorldDetailPage.tsx`                                                           | Presents read-only Locations and all stable Character fields. |
@@ -151,6 +154,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 | Scenario                     | Evidence                                                                           | Status             |
 | ---------------------------- | ---------------------------------------------------------------------------------- | ------------------ |
 | S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts`                              | Passing 2026-07-14 |
+| S2/R1-S1                     | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Passing 2026-07-14 |
 | S2/R1-S1, S2/R1-S2           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorldDetailPage.stories.tsx`  | Passing 2026-07-14 |
 | S2/R1-S1                     | Automated desktop/mobile browser walkthrough against the seeded development schema | Passing 2026-07-14 |
 
@@ -162,6 +166,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 - AdonisJS owns authentication, authorization, visibility filtering, persistence, and response minimization.
 - React owns catalog/detail presentation and client-local loading, error, and navigation state.
+- Account-owned client cache entries are scoped by account identity and cleared when the shared session ends or changes.
 - The typed HTTP contract is reusable by future clients; no World rule lives only in the web UI.
 - `private knowledge` is visible in this testing phase by explicit scope decision and must not be mistaken for a durable audience policy.
 - Normal server startup never creates or rewrites canonical World data.

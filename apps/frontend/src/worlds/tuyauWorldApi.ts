@@ -30,6 +30,9 @@ export function createTuyauWorldApi(baseUrl: string): WorldApi {
       try {
         return dataOf<WorldSummary[]>(await client.api.worlds.index({}))
       } catch (error) {
+        if (statusOf(error) === 401) {
+          throw new WorldApiError('unauthorized', 'Your Lorecraft session has ended.')
+        }
         if (error instanceof WorldApiError) throw error
         throw new WorldApiError('network', 'Lorecraft could not load Worlds.')
       }
@@ -38,6 +41,9 @@ export function createTuyauWorldApi(baseUrl: string): WorldApi {
       try {
         return dataOf<WorldDetail>(await client.api.worlds.show({ params: { slug } }))
       } catch (error) {
+        if (statusOf(error) === 401) {
+          throw new WorldApiError('unauthorized', 'Your Lorecraft session has ended.')
+        }
         if (statusOf(error) === 404) throw new WorldApiError('not-found', 'World not found.')
         if (error instanceof WorldApiError) throw error
         throw new WorldApiError('network', 'Lorecraft could not load this World.')

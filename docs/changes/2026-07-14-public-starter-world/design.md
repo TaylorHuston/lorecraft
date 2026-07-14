@@ -30,9 +30,9 @@ The system SHALL return and render a selected accessible World with deterministi
 
 ## Chosen Approach
 
-Use normalized PostgreSQL tables for `worlds`, `locations`, and `characters`. `worlds.author_id` records ownership and `worlds.visibility` establishes the first access rule. Locations and Characters use stable keys unique within a World. Characters reference a canonical seed Location and store stable descriptive fields; no mutable Adventure state is introduced.
+Use normalized PostgreSQL tables for `worlds`, `locations`, and `characters`. `worlds.author_id` records ownership and `worlds.visibility` establishes the first access rule. Locations and Characters use stable keys unique within a World. Characters reference a canonical seed Location and store stable descriptive fields; a follow-up integrity migration enforces that each referenced Location belongs to the same World as its Character. No mutable Adventure state is introduced.
 
-An application query service owns visibility filtering and intentional DTOs. Thin authenticated AdonisJS controllers expose `GET /api/v1/worlds` and `GET /api/v1/worlds/:slug`. The React client consumes the typed Tuyau contract through a World-specific API adapter. `/worlds` renders the catalog and `/worlds/:slug` renders read-only detail. Storybook covers loaded, empty, and detail presentation without a live backend.
+An application query service owns visibility filtering and intentional DTOs. Thin authenticated AdonisJS controllers expose `GET /api/v1/worlds` and `GET /api/v1/worlds/:slug`. The React client consumes the typed Tuyau contract through a World-specific API adapter. World query keys include the authenticated account identity and all account-owned cache entries share a removable prefix. A World API `401` ends the shared browser session and clears account-owned data; detail network failures expose an explicit retry state. `/worlds` renders the catalog and `/worlds/:slug` renders read-only detail. Storybook covers loaded, empty, and detail presentation without a live backend.
 
 The explicit `db:seed` workflow reads `STARTER_WORLD_AUTHOR_EMAIL` from validated optional server configuration. The seeder fails clearly when the value is absent or does not match an account, and reconciles the starter graph transactionally so reruns are idempotent. Application startup never mutates World data.
 
@@ -46,13 +46,14 @@ The explicit `db:seed` workflow reads `STARTER_WORLD_AUTHOR_EMAIL` from validate
 
 - Existing browser-session authentication protects both routes.
 - Access filtering occurs in the backend query service; client-side routing is not an authorization boundary.
+- Account-scoped query keys and session teardown prevent cached World data from crossing account boundaries in one browser.
 - API DTOs omit author email and other account data.
 - Character private knowledge is visible by explicit temporary product decision, not by accidental model serialization.
 
 ## Verification Plan
 
-- Backend functional tests cover authenticated visibility, anonymous denial, not-found behavior, response minimization, structured content, and seed idempotency.
-- Frontend behavior tests cover loading, loaded, empty, failure, navigation, and detail rendering.
+- Backend migration and functional tests cover authenticated visibility, anonymous denial, indistinguishable unknown/private not-found behavior, response minimization, same-World Character Location integrity, structured content, and exact seed reconciliation.
+- Frontend behavior tests cover loading, loaded, empty, failure, navigation, detail rendering, account-switch cache isolation, expired-session handling, and detail retry recovery.
 - Storybook tests cover representative catalog and detail states plus accessibility.
 - Broad gates include migrations, generated Tuyau registry, lint, typecheck, tests, builds, and a manual browser walkthrough.
 
@@ -63,17 +64,22 @@ No new ADR is required. The API-first backend, typed web contract, PostgreSQL pe
 ## Implemented By
 
 - `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts`
+- `apps/backend/database/migrations/1784060400000_enforce_character_location_world_integrity.ts`
 - `apps/backend/app/services/world_catalog_service.ts`
 - `apps/backend/app/services/stormbound_chapel_seed.ts`
 - `apps/backend/app/controllers/worlds_controller.ts`
 - `apps/frontend/src/workspace/WorkspacePage.tsx`
 - `apps/frontend/src/worlds/WorldDetailPage.tsx`
 - `apps/frontend/src/worlds/tuyauWorldApi.ts`
+- `apps/frontend/src/auth/accountQueryKeys.ts`
+- `apps/frontend/src/auth/AuthProvider.tsx`
 
 ## Verified By
 
 - `apps/backend/tests/functional/world_catalog.spec.ts`
+- `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts`
 - `apps/frontend/src/worlds/WorldRoutes.test.tsx`
+- `apps/frontend/src/worlds/tuyauWorldApi.test.ts`
 - `apps/frontend/src/workspace/WorkspacePage.stories.tsx`
 - `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`
 - Automated Chromium walkthrough at desktop and mobile widths against the seeded development schema.

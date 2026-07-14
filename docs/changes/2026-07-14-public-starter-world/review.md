@@ -6,22 +6,22 @@ changes-requested
 
 ## Gate Scorecard
 
-| Gate                         | Result   | Notes                                                                                                        |
-| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
-| Change artifacts             | findings | Safe ledger contradictions were reconciled; implementation findings remain below.                            |
-| Change status                | pass     | Returned to `in_progress` for remediation.                                                                   |
-| Epic truth                   | findings | LC-002 overstates inaccessible-World and exact-seed evidence.                                                |
-| Requirements and Scenarios   | findings | S2/R1-S2 and S2/R1-S3 need stronger deterministic evidence.                                                  |
-| Story reference traceability | pass     | LC-002/S1 and LC-002/S2 use unique Epic-scoped references with implementation maps.                          |
-| Tests and verification       | findings | All current suites pass, but important authorization, integrity, and reconciliation cases are absent.        |
-| Manual UI confirmation       | blocked  | `/worlds` and `/worlds/stormbound-chapel` remain `pending user`.                                             |
-| Code review                  | findings | World/account cache lifecycle, detail recovery, and relational integrity require remediation.                |
-| Visual / UX consistency      | findings | Detail failure copy promises retry without providing a retry control.                                        |
-| Security review              | findings | Account-agnostic cached World data can survive account changes; inaccessible-private-World proof is missing. |
-| Documentation                | pass     | README and supporting architecture guidance match the implemented slice.                                     |
-| Release communication        | pass     | CHANGELOG contains only the user-facing catalog and detail behavior.                                         |
-| Branch and merge readiness   | blocked  | Source is stacked on an unfinished Storybook Change. Merge preview itself is clean.                          |
-| PRD alignment                | pass     | Read-only structured canon supports the creator-first World-bible direction.                                 |
+| Gate                         | Result     | Notes                                                                                                            |
+| ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass       | Apply reconciliation now records the implemented remediation and current evidence.                               |
+| Change status                | pass       | Advanced to `review` after remediation and apply-side self-checks.                                               |
+| Epic truth                   | pass       | LC-002 maps the strengthened integrity, authorization, seed, cache, session, and recovery evidence.              |
+| Requirements and Scenarios   | pass       | S2/R1-S2 and S2/R1-S3 now have deterministic inaccessible-World and exact-seed evidence.                         |
+| Story reference traceability | pass       | LC-002/S1 and LC-002/S2 use unique Epic-scoped references with implementation maps.                              |
+| Tests and verification       | pass       | Backend 39, frontend 57, and Storybook 17 pass with the required regression coverage.                            |
+| Manual UI confirmation       | blocked    | `/worlds` and `/worlds/stormbound-chapel` remain `pending user`.                                                 |
+| Code review                  | remediated | World/account cache lifecycle, detail recovery, and relational integrity findings are resolved pending rereview. |
+| Visual / UX consistency      | remediated | Detail failure copy now has an explicit retry action and pending state.                                          |
+| Security review              | remediated | Account caches are identity-scoped and inaccessible private Worlds have minimized negative-path proof.           |
+| Documentation                | pass       | README and supporting architecture guidance match the implemented slice.                                         |
+| Release communication        | pass       | CHANGELOG contains only the user-facing catalog and detail behavior.                                             |
+| Branch and merge readiness   | blocked    | Source is stacked on an unfinished Storybook Change. Merge preview itself is clean.                              |
+| PRD alignment                | pass       | Read-only structured canon supports the creator-first World-bible direction.                                     |
 
 ## Findings
 
@@ -32,18 +32,20 @@ changes-requested
 
 ### REQUIRED
 
-- [ ] `apps/frontend/src/workspace/WorkspacePage.tsx:21` - World queries use account-agnostic cache keys, and sign-out clears only the session query. A private catalog or detail cached for one account can render briefly for the next account in the same browser while React Query refetches. Recommendation: scope World query keys to account identity and/or purge all account-owned World queries whenever the authenticated account changes; add an account-switch regression test for catalog and detail.
-- [ ] `apps/frontend/src/worlds/tuyauWorldApi.ts:29` - Catalog and detail map `401` responses to generic network failures, leaving stale account state active instead of revalidating or ending the expired session. Recommendation: classify unauthorized responses, connect them to the shared session lifecycle, and test both routes after server-session expiry.
-- [ ] `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts:46` - Independent foreign keys allow a Character's `world_id` and `location_id` to point at different Worlds; the detail DTO then exposes the mismatched Location. Recommendation: add a database-level same-World constraint and a regression test that rejects cross-World assignment.
-- [ ] `apps/backend/tests/functional/world_catalog.spec.ts:103` - LC-002/S2/R1-S2 claims unknown and inaccessible Worlds are indistinguishable, but the test exercises only an unknown slug. Recommendation: create another account's private World and assert the same minimized `404` response.
-- [ ] `apps/backend/tests/functional/world_catalog.spec.ts:108` - LC-002/S2/R1-S3 claims an exact reconciled graph, but the test checks counts and two repaired fields without inserting stale rows or validating the complete configured graph. Recommendation: add stale Location/Character fixtures, assert their removal, and verify every seeded stable field or narrow the Scenario claim.
-- [ ] `apps/frontend/src/worlds/WorldDetailPage.tsx:17` - The detail error state says “Try again” but offers no retry action. Recommendation: provide a `refetch` control with pending state and a recovery test.
+- [x] `apps/frontend/src/workspace/WorkspacePage.tsx:21` - Resolved in apply: World query keys now include account identity, account-owned caches share a removable prefix, and catalog/detail account-switch regressions prove previous data is not reused.
+- [x] `apps/frontend/src/worlds/tuyauWorldApi.ts:29` - Resolved in apply: catalog/detail `401` responses are classified as unauthorized and end the shared session with route-level regressions.
+- [x] `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts:46` - Resolved in apply through additive migration `1784060400000_enforce_character_location_world_integrity.ts`, with clean-upgrade, rejection, rollback, and pre-existing-mismatch coverage.
+- [x] `apps/backend/tests/functional/world_catalog.spec.ts:103` - Resolved in apply: another account's private World now returns the same minimized `404` response as an unknown slug.
+- [x] `apps/backend/tests/functional/world_catalog.spec.ts:108` - Resolved in apply: seed reconciliation removes stale Location/Character rows and verifies every configured World, Location, and Character field.
+- [x] `apps/frontend/src/worlds/WorldDetailPage.tsx:17` - Resolved in apply: detail failures provide a disabled pending retry control and recover through a deterministic route test.
 
 ### SUGGESTION
 
 - None.
 
 ## Verification Evidence
+
+The table below records the original independent review run. Apply remediation added 39 passing backend tests, 57 passing frontend tests, 17 passing Storybook tests, successful lint/typecheck/build gates, database migration checks, and two fresh-context self-checks. A new `/sdd-review` must create the authoritative post-remediation review bundle.
 
 | Command / Scenario                                                | Evidence Type                  | Requirement / Scenario                  | Result    | What It Proves                                                                   |
 | ----------------------------------------------------------------- | ------------------------------ | --------------------------------------- | --------- | -------------------------------------------------------------------------------- |
@@ -85,7 +87,7 @@ changes-requested
 
 - Root causes addressed: stale LC-001 acceptance wording and contradictory selected-Change closeout wording.
 - Safe-fix batch: artifact reconciliation only.
-- Deferred or unsafe findings: relational constraint, account/session query lifecycle, authorization evidence, seed evidence, and detail recovery require `/sdd-apply`.
+- Applied remediation: relational constraint, account/session query lifecycle, authorization evidence, seed evidence, and detail recovery are implemented and verified; a fresh independent `/sdd-review` is still required.
 - Affected verification union: backend full suite, frontend full suite, Storybook, lint, typecheck, build, browser walkthrough, and repeated independent review.
 - Regression-focused rereview: artifact references and source-repository dirty state rechecked after reconciliation.
 - New regressions introduced by remediation: none.
@@ -103,3 +105,4 @@ changes-requested
 ## Review Log
 
 - 2026-07-14: Independent review completed; changes requested.
+- 2026-07-14: `/sdd-apply` resolved all required findings; blocking manual confirmation and stacked-Change integration remain open pending fresh review.

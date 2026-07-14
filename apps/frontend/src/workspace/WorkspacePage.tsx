@@ -1,27 +1,33 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthApiError } from '../auth/authApi'
-import { sessionQueryKey, useAuth } from '../auth/authContext'
-import type { WorldApi } from '../worlds/worldApi'
+import { useAuth } from '../auth/authContext'
+import { WorldApiError, worldQueryKeys, type WorldApi } from '../worlds/worldApi'
 import styles from './WorkspacePage.module.css'
 
 export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
-  const { account, api } = useAuth()
-  const queryClient = useQueryClient()
+  const { account, api, endSession } = useAuth()
   const navigate = useNavigate()
   const signOut = useMutation({
     mutationFn: () => api.signOut(),
     retry: false,
-    onSuccess: async () => {
-      await queryClient.cancelQueries({ queryKey: sessionQueryKey })
-      queryClient.setQueryData(sessionQueryKey, null)
+    onSuccess: () => {
+      endSession()
       navigate('/sign-in', { replace: true })
     },
   })
   const worlds = useQuery({
-    queryKey: ['worlds'],
+    queryKey: worldQueryKeys.catalog(account?.id ?? 0),
     queryFn: () => worldApi.listWorlds(),
+    enabled: account !== null,
   })
+
+  useEffect(() => {
+    if (worlds.error instanceof WorldApiError && worlds.error.code === 'unauthorized') {
+      endSession()
+    }
+  }, [endSession, worlds.error])
 
   return (
     <main className={styles.shell}>

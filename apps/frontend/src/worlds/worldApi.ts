@@ -1,3 +1,5 @@
+import { accountOwnedQueryKeyFor } from '../auth/accountQueryKeys'
+
 export type WorldVisibility = 'public' | 'private'
 
 export type WorldSummary = {
@@ -36,7 +38,14 @@ export interface WorldApi {
   getWorld(slug: string): Promise<WorldDetail>
 }
 
-export type WorldApiErrorCode = 'not-found' | 'network'
+export const worldQueryKeys = {
+  catalog: (accountId: number) =>
+    [...accountOwnedQueryKeyFor(accountId), 'worlds', 'catalog'] as const,
+  detail: (accountId: number, slug: string) =>
+    [...accountOwnedQueryKeyFor(accountId), 'worlds', 'detail', slug] as const,
+}
+
+export type WorldApiErrorCode = 'not-found' | 'unauthorized' | 'network'
 
 export class WorldApiError extends Error {
   constructor(

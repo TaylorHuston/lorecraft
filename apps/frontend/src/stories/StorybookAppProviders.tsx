@@ -50,6 +50,7 @@ export function StorybookAppProviders({
           isLoading: false,
           isRevalidating: false,
           error: null,
+          endSession: () => undefined,
           retry: () => undefined,
         }}
       >
