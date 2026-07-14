@@ -1,6 +1,6 @@
 # ADR: Browser Session Authentication
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-12
 - Related change: `docs/changes/2026-07-12-account-workspace-entry/`
 - Related Epics / Stories: `LC-001/S1`, `LC-001/S2`, and `LC-001/S3`
@@ -41,7 +41,7 @@ Use AdonisJS server-side sessions carried by secure HTTP-only cookies for the br
 
 ## Validation
 
-Automated browser tests must prove the same-origin proxy topology, session creation, restoration, protection, CSRF behavior, logout invalidation, and denial when an invalidated cookie is replayed. Browser inspection must confirm the session cookie is HTTP-only and no bearer token is stored in localStorage, sessionStorage, or readable cookies. Production HTTPS verification must confirm the cookie is marked `Secure` before this ADR is accepted.
+Automated browser tests prove the same-origin proxy topology, session creation, restoration, protection, CSRF behavior, logout invalidation, and denial when an invalidated cookie is replayed. Browser inspection confirms the session cookie is HTTP-only and no bearer token is stored in localStorage, sessionStorage, or readable cookies. Production HTTPS verification of the cookie's `Secure` attribute was explicitly deferred by the user on 2026-07-14 and remains required before production deployment.
 
 ## Reconsider When
 

@@ -131,9 +131,9 @@ The system SHALL establish an authenticated browser session after successful acc
 | S1/R1-S1, S1/R1-S3                     | `apps/backend/tests/database/users_email_normalization_migration.spec.ts` and `apps/backend/tests/unit/migration_database.spec.ts` | Existing historical schemas upgrade transactionally, preserve compatibility data, reject collisions without partial writes, and use a guarded disposable harness. | Passing 2026-07-14 |
 | S1/R1-S1 through S1/R2-S1              | User-confirmed local walkthrough                                                                                                   | Validation clarity, responsive layout, signup, and automatic workspace transition behave as intended.                                                             | Passing 2026-07-14 |
 
-#### Verification Gaps
+#### Deferred Verification
 
-- Production HTTPS verification remains pending for the session cookie's `Secure` attribute.
+- Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
 
 #### Story Notes
 
@@ -215,9 +215,9 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 | S2/R1-S1                               | `apps/frontend/src/app/App.test.tsx`                                                   | Successful sign-in cancels an older anonymous session read before publishing the authenticated account.                                                       | Passing 2026-07-14 |
 | S2/R1-S1 through S2/R2-S3              | User-confirmed local walkthrough                                                       | Sign-in, refresh, focus revalidation, draft preservation, and recovery behavior work as intended.                                                             | Passing 2026-07-14 |
 
-#### Verification Gaps
+#### Deferred Verification
 
-- Production HTTPS verification remains pending for the session cookie's `Secure` attribute.
+- Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
 
 #### Story Notes
 
@@ -331,9 +331,9 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 | `apps/backend/tests/helpers/migration_database.ts` and `tests/unit/migration_database.spec.ts` | Guard per-test PostgreSQL schemas before any write and prove cleanup across setup and callback failures.                                                                                                            |
 | `apps/backend/tests/functional/account_security.spec.ts`                                       | Proves exact missing/forged CSRF rejection and unchanged account/session state for signup, login, and logout.                                                                                                       |
 
-### Cross-Story Verification Gaps
+### Cross-Story Deferred Verification
 
-- A dedicated Lorecraft Neon test branch and provider smoke check remain pending; current database-backed evidence uses fresh isolated schemas on the available Neon service.
+- A dedicated Lorecraft Neon test branch and provider smoke check are explicitly deferred until before production deployment; current database-backed evidence uses fresh isolated schemas on the available Neon service.
 
 ## Open Decisions
 

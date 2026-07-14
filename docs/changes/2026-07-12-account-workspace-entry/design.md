@@ -2,7 +2,7 @@
 
 ## Context
 
-The repository began this change as an AdonisJS 7 API-first monorepo scaffold with an empty frontend workspace, SQLite persistence, and a partial token-oriented account API. The change now contains a Vite React client, PostgreSQL configuration, and a session-based browser account flow. Disposable PostgreSQL, browser automation, and manual UI verification pass; a dedicated Neon provider smoke check and production HTTPS cookie proof remain pending.
+The repository began this change as an AdonisJS 7 API-first monorepo scaffold with an empty frontend workspace, SQLite persistence, and a partial token-oriented account API. The change now contains a Vite React client, PostgreSQL configuration, and a session-based browser account flow. Disposable PostgreSQL, browser automation, and manual UI verification pass; a dedicated Neon provider smoke check and production HTTPS cookie proof are accepted pre-production follow-ups.
 
 This change establishes the smallest secure application shell onto which the private World bible can be built. The server remains authoritative and reusable; the initial React client is one delivery adapter.
 
@@ -89,9 +89,9 @@ Implemented on `change/account-workspace-entry`; the current code map lives in `
 
 Verified by focused frontend behavior tests, PostgreSQL-backed backend route tests, the desktop/mobile Playwright account journey, and the user-confirmed local walkthrough recorded in `LC-001/S1`.
 
-##### Verification Gaps
+##### Deferred Verification
 
-- Production HTTPS cookie verification remains pending.
+- Production HTTPS cookie verification is explicitly deferred until before production deployment.
 
 #### Story S2: Returning User Resumes Their Workspace
 
@@ -143,9 +143,9 @@ Implemented on `change/account-workspace-entry`; the current code map lives in `
 
 Verified by focused frontend behavior tests, PostgreSQL-backed credential/session tests, the desktop/mobile Playwright account journey, and the user-confirmed local walkthrough recorded in `LC-001/S2`.
 
-##### Verification Gaps
+##### Deferred Verification
 
-- Production HTTPS cookie verification remains pending.
+- Production HTTPS cookie verification is explicitly deferred until before production deployment.
 
 #### Story S3: User Controls Protected Workspace Access
 

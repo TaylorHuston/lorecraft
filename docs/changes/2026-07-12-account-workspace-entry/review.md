@@ -2,26 +2,26 @@
 
 ## Verdict
 
-changes-requested
+ready
 
 ## Gate Scorecard
 
-| Gate                         | Result              | Notes                                                                                                          |
-| ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass after safe fix | Current source, evidence counts, ADR status, and remaining gaps are reconciled.                                |
-| Change status                | review              | Implementation is complete; acceptance evidence remains open.                                                  |
-| Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit verification gaps.                                   |
-| Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                         |
-| Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                        |
-| Tests and verification       | pass                | Fresh database, backend, frontend, browser, static, formatting, and dependency gates pass.                     |
-| Manual UI confirmation       | pass                | The user confirmed the local account, session, focus, empty-state, and responsive flow on 2026-07-14.          |
-| Code review                  | pass after safe fix | Duplicate focus refreshes and repeatable public retries were resolved in `f799981`.                            |
-| Visual / UX consistency      | pass after safe fix | Pending retry state is visible, accessible, non-destructive, and prevents repeated requests.                   |
-| Security review              | evidence gap        | Code review is clean; representative runtime auth logs and production HTTPS cookie behavior remain unverified. |
-| Documentation                | pass after safe fix | README, ADRs, Epic, change design, and evidence ledgers agree.                                                 |
-| Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                     |
-| Branch and merge readiness   | not ready           | Merge is mechanically clean, but three acceptance gaps require evidence or explicit user acceptance.           |
-| PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                |
+| Gate                         | Result              | Notes                                                                                                            |
+| ---------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass after safe fix | Current source, evidence counts, ADR status, and accepted deployment follow-ups are reconciled.                  |
+| Change status                | ready_to_close      | Implementation and acceptance are complete; two deployment checks are explicitly deferred.                       |
+| Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit deferred verification.                                 |
+| Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                           |
+| Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                          |
+| Tests and verification       | pass                | Fresh database, backend, frontend, browser, static, formatting, and dependency gates pass.                       |
+| Manual UI confirmation       | pass                | The user confirmed the local account, session, focus, empty-state, and responsive flow on 2026-07-14.            |
+| Code review                  | pass after safe fix | Duplicate focus refreshes and repeatable public retries were resolved in `f799981`.                              |
+| Visual / UX consistency      | pass after safe fix | Pending retry state is visible, accessible, non-destructive, and prevents repeated requests.                     |
+| Security review              | pass                | Runtime auth logs omit submitted credentials; production HTTPS cookie proof is an accepted pre-production check. |
+| Documentation                | pass after safe fix | README, ADRs, Epic, change design, and evidence ledgers agree.                                                   |
+| Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                       |
+| Branch and merge readiness   | ready               | Merge is mechanically clean; closeout still requires explicit user authorization.                                |
+| PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                  |
 
 ## Findings
 
@@ -33,10 +33,10 @@ changes-requested
 
 - [x] `apps/frontend/src/auth/AuthProvider.tsx:14` - Removed overlapping TanStack visibility and explicit focus refresh sources; one browser return now produces one session check with regression coverage in `f799981`.
 - [x] `apps/frontend/src/app/AppRoutes.tsx:44` - Public background-refresh retry now exposes pending state, disables repeated requests, and preserves the unfinished auth draft in `f799981`.
-- [ ] `docs/changes/2026-07-12-account-workspace-entry/tasks.md:82` - Capture representative backend auth-failure logs and verify they omit passwords, connection strings, session values, and bearer tokens, or obtain explicit acceptance of this evidence gap.
+- [x] `docs/changes/2026-07-12-account-workspace-entry/tasks.md:82` - Runtime inspection confirmed invalid-credential and CSRF failure logs omit submitted credentials, cookies, sessions, and database values.
 - [x] Manual UI confirmation - The user confirmed the documented local flow on 2026-07-14.
-- [ ] `docs/adrs/2026-07-12-postgresql-on-neon.md` - Run the dedicated Lorecraft Neon provider smoke check or record explicit user acceptance of the gap before closeout.
-- [ ] `docs/adrs/2026-07-12-browser-session-authentication.md` - Verify the session cookie over production HTTPS or record explicit user acceptance of the gap before closeout.
+- [x] `docs/adrs/2026-07-12-postgresql-on-neon.md` - The user explicitly deferred the dedicated Lorecraft Neon smoke check until before production deployment.
+- [x] `docs/adrs/2026-07-12-browser-session-authentication.md` - The user explicitly deferred production HTTPS `Secure` cookie proof until before production deployment.
 
 ### SUGGESTION
 
@@ -54,6 +54,7 @@ changes-requested
 | `npm run test:e2e` against a separate disposable Neon schema                     | deterministic E2E        | `LC-001/S1-S3`           | 2 passed, desktop and mobile Chromium  | Same-origin cookie/CSRF flow, refresh, login, logout, replay denial, protected routing, and empty workspace integrate successfully. |
 | `npx turbo lint typecheck build --force` and `npx prettier --check .`            | broad supporting gates   | Cross-story code quality | 6 uncached tasks and formatting passed | Both applications lint, typecheck, build, and match configured formatting.                                                          |
 | `npm audit --audit-level=low`                                                    | security supporting gate | Dependency safety        | passed; 0 reported vulnerabilities     | The current dependency graph has no reported issue at the configured threshold.                                                     |
+| Invalid-credential login plus backend log inspection                             | runtime inspection       | Sensitive-value handling | passed; generic/no auth-failure output | Submitted credentials, cookies, sessions, connection strings, and database values were absent from observed runtime logs.           |
 | `git diff develop...HEAD --check` and `git merge-tree --write-tree develop HEAD` | integration gates        | Branch readiness         | passed; conflict tree `677b3642...`    | Reviewed implementation is whitespace-clean and mechanically integrates with `develop`.                                             |
 
 ## Review Bundle
@@ -79,14 +80,14 @@ changes-requested
 | Artifact truth and lifecycle                  | delegated artifact review         | pass after safe fix | Stale watermark, counts, task state, and ADR-validation checkbox were reconciled.                        |
 | Backend and security                          | delegated backend/security review | pass                | No code finding; production/provider assumptions and evidence gaps remain explicit.                      |
 | Frontend and UI                               | delegated frontend review         | pass after safe fix | Duplicate refresh and pending retry findings were fixed and independently regression-reviewed.           |
-| Verification and integration                  | delegated verification review     | evidence gaps       | Automated and manual UI gates pass; runtime-log, dedicated Neon, and production HTTPS evidence are open. |
+| Verification and integration                  | delegated verification review     | pass                | Automated, manual UI, and runtime-log gates pass; two deployment-specific checks are accepted deferrals. |
 | Documentation, release communication, and PRD | delegated integration review      | pass                | Public docs, changelog scope, and creator-first direction agree with implemented behavior.               |
 
 ## Consolidated Remediation
 
 - Root causes addressed: overlapping browser lifecycle handlers, retry controls without an observable pending state, and verification-ledger drift.
 - Safe-fix batch: implementation commit `f799981` plus this artifact reconciliation.
-- Deferred or unsafe findings: dedicated Neon provider, production HTTPS cookie, and runtime-log evidence require external observation or explicit user acceptance.
+- Deferred or unsafe findings: dedicated Neon provider and production HTTPS cookie checks are explicitly accepted pre-production follow-ups.
 - Affected verification union: 44 frontend tests, forced lint/typecheck/build, formatting, diff, merge-tree, and independent focused frontend rereview; fresh backend/E2E evidence remains applicable because remediation is frontend-only.
 - Regression-focused rereview: passed; one focus check occurs per browser return, public retry is non-repeatable while pending, and the auth draft remains mounted.
 - New regressions introduced by remediation: none found.
@@ -99,7 +100,7 @@ changes-requested
 - Conflict check: clean at reviewed source
 - Commit state: implementation committed; review artifacts pending commit
 - PR status: not started and not authorized
-- Merge status: not ready and not authorized; acceptance gaps remain open
+- Merge status: ready but not authorized
 
 ## Suggested Manual UI Testing
 
@@ -115,4 +116,4 @@ changes-requested
 - 2026-07-13 through 2026-07-14: Earlier independent reviews and remediation are recorded in the implementation and verification ledgers in `tasks.md`.
 - 2026-07-14: Fresh review of `baf0445` found two frontend defects and four acceptance-evidence gaps; backend/security review found no code defect.
 - 2026-07-14: `f799981` resolved duplicate session refresh and public pending-retry behavior. The focused independent rereview and 44-test frontend suite passed.
-- 2026-07-14: The user confirmed the manual UI flow. Verdict remains `changes-requested` until runtime-log, dedicated Neon, and production HTTPS evidence are completed or explicitly accepted.
+- 2026-07-14: Runtime auth-log inspection passed, and the user explicitly accepted dedicated Neon and production HTTPS checks as pre-production deferrals. Verdict advanced to `ready`.

@@ -1,6 +1,6 @@
 # ADR: PostgreSQL On Neon
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-12
 - Related change: `docs/changes/2026-07-12-account-workspace-entry/`
 - Related Epics / Stories: `LC-001/S1`, `LC-001/S2`, and `LC-001/S3`
@@ -41,7 +41,7 @@ Use standard PostgreSQL through Lucid and the `pg` driver, hosted in a dedicated
 
 ## Validation
 
-Routine migration, integration, and browser tests must pass against disposable standard PostgreSQL, including the isolated database provisioned by CI. A separate smoke check must run migrations and the account journey against an isolated Neon test branch before this ADR is accepted. No connection string may appear in source, logs, frontend bundles, or public artifacts.
+Routine migration, integration, and browser tests must pass against disposable standard PostgreSQL, including the isolated database provisioned by CI. That evidence passes. A separate smoke check against an isolated Lorecraft Neon test branch was explicitly deferred by the user on 2026-07-14 and remains required before production deployment. No connection string may appear in source, logs, frontend bundles, or public artifacts.
 
 ## Reconsider When
 

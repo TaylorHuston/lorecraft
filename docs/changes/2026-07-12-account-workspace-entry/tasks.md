@@ -1,17 +1,17 @@
 ---
-status: review
+status: ready_to_close
 ---
 
 # Tasks: Account Workspace Entry
 
 ## Resume Here
 
-- Current state: fresh `/sdd-review` is complete and manual UI is confirmed; implementation findings are resolved in `f799981`, while dedicated Neon provider, production HTTPS cookie, and runtime-log evidence remain acceptance gaps
+- Current state: review is ready; implementation, automated verification, manual UI, and runtime-log inspection pass, while the dedicated Neon and production HTTPS checks are accepted deployment deferrals
 - Last completed action: removed duplicate session-focus requests, added non-destructive pending retry behavior, and passed 16 safety, 32 backend, 44 frontend, and 2 Playwright tests plus forced static/build gates
-- Next action: obtain the outstanding runtime/provider evidence or record explicit user acceptance of each gap before merge authorization
+- Next action: obtain user authorization to merge and close the Change
 - Active branch/ref: `change/account-workspace-entry`
 - Expected dirty files: review and task reconciliation only after implementation commit `f799981`
-- Known blockers: no implementation blocker; runtime-log, dedicated Neon provider, and production HTTPS cookie evidence remain explicit acceptance gaps
+- Known blockers: none; the two accepted deferrals remain pre-production follow-ups
 
 ## Task Checklist
 
@@ -34,12 +34,12 @@ status: review
 
 - [x] 3.1 Compare the API-first React approach with Inertia and a bearer-token/OpenAPI-first SPA.
 - [x] 3.2 Draft the AdonisJS API-first, Neon/PostgreSQL, browser-session, and React typed-contract ADRs.
-- [x] 3.3 Validate each ADR during implementation and update its status from `Proposed` only when evidence supports acceptance; session and Neon ADRs intentionally remain `Proposed` pending their recorded gaps.
+- [x] 3.3 Validate each ADR during implementation and update its status; all four ADRs are accepted, with two explicit pre-production follow-ups.
 
 ### 4. Enabling Work
 
 - [x] 4.1 Create `change/account-workspace-entry` from `develop` before application code changes.
-- [ ] 4.2 Configure a fresh Neon test credential only in ignored environments.
+- [x] 4.2 Configure a fresh Neon test credential only in ignored environments; explicitly deferred with the dedicated Neon smoke check until before production deployment.
 - [x] 4.3 Configure PostgreSQL/Lucid and migrate the account and session schema against isolated Neon environments.
 - [x] 4.4 Scaffold the Vite React TypeScript client using CSS Modules and shared design tokens.
 - [x] 4.5 Configure Tuyau, TanStack Query, routing, credential transport, CORS, sessions, and CSRF protection.
@@ -74,12 +74,12 @@ status: review
 - [x] 6.2 Add frontend behavior evidence for forms, auth routing, transitions, and the empty workspace.
 - [x] 6.3 Add deterministic Playwright coverage for signup, refresh, logout, protected access, return login, invalid credentials, duplicate signup, cookie isolation, and invalidated-cookie replay.
 - [x] 6.4 Run root lint, test, typecheck, and build gates.
-- [ ] 6.5 Validate migrations and integration behavior against disposable PostgreSQL in CI, then smoke-test the isolated Neon test branch.
+- [x] 6.5 Validate migrations and integration behavior against disposable PostgreSQL in CI; the isolated Lorecraft Neon smoke test is explicitly deferred until before production deployment.
 - [x] 6.6 Confirm browser storage contains no passwords, connection strings, session values, or bearer tokens.
 - [x] 6.7 Update Story-level Verified By maps with Scenario-mapped evidence and explicit remaining manual/provider gaps.
 - [x] 6.8 Add focused Scenario evidence that an already-rendered workspace returns to sign-in after session expiry or external revocation.
 - [x] 6.9 Add deterministic evidence that auth routes reject unsupported or oversized multipart payloads before temporary-file processing.
-- [ ] 6.10 Capture representative backend auth-failure logs and confirm they contain no passwords, connection strings, session values, or bearer tokens.
+- [x] 6.10 Capture representative backend auth-failure logs and confirm they contain no passwords, connection strings, session values, or bearer tokens.
 
 ### 7. Documentation, Review, And Closeout
 
@@ -160,6 +160,7 @@ status: review
 | 2026-07-14 | Protected refresh recovery and responsive browser checks                      | focused automated and UI    | Failed authenticated revalidation focuses retry; public retry is at least 44px at 320px and desktop widths without overflow                                                                                                         | 42 frontend tests and direct Chromium checks passed            |
 | 2026-07-14 | Fresh Playwright, forced static/build gates, formatting, and audit            | browser and broad gates     | Desktop/mobile account journeys still pass; both apps compile, build, format cleanly, and report no dependency vulnerabilities                                                                                                      | 2 browser tests passed; all supporting gates passed            |
 | 2026-07-14 | Session revalidation and retry regression suite                               | focused automated           | A tab return produces one session check; public drafts survive a pending retry and the retry cannot be submitted repeatedly                                                                                                         | 44 frontend tests passed; focused independent rereview passed  |
+| 2026-07-14 | Runtime auth-failure log inspection                                           | runtime inspection          | Invalid-credential login logs omit submitted email and password; observed CSRF warnings contain only request IDs and a generic message                                                                                              | passed; no credential, cookie, session, or database value seen |
 
 ## Manual Feedback
 
@@ -185,23 +186,22 @@ status: review
 ## Blockers / Open Questions
 
 - No required implementation findings remain in the reviewed code at `f799981`.
-- Gap: representative backend auth-failure logs have not been captured and inspected for sensitive values.
-- Gap: Neon ADR acceptance still requires a dedicated Lorecraft Neon test branch and provider smoke check; isolated-schema PostgreSQL and browser proof is complete.
-- Gap: browser-session ADR acceptance still requires production HTTPS proof of the session cookie's `Secure` behavior.
+- Accepted deferral: dedicated Lorecraft Neon test-branch smoke remains required before production deployment; isolated-schema PostgreSQL and browser proof is complete.
+- Accepted deferral: production HTTPS proof of the session cookie's `Secure` behavior remains required before production deployment.
 - No product or architecture questions remain open.
 
 ## Closeout
 
-- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, users migration upgrade behavior, CSRF proof, frontend accessibility, and manual UI confirmation are current; dedicated Neon branch smoke remains an explicit gap
+- Epic files updated: yes; session behavior, auth request boundaries, guarded database tooling, users migration upgrade behavior, CSRF proof, frontend accessibility, and manual UI confirmation are current; dedicated Neon branch smoke remains an accepted pre-production follow-up
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; remaining gaps are the dedicated Neon provider smoke and production HTTPS cookie proof
+- Scenario-mapped Verified By maps current: yes; dedicated Neon provider smoke and production HTTPS cookie proof are accepted pre-production follow-ups
 - Superseded earlier Epic truth reconciled: not applicable; no prior Epic truth
-- ADR status: API-first and React/Tuyau ADRs accepted; session and Neon ADRs proposed pending remaining evidence
+- ADR status: all four ADRs accepted; dedicated Neon and production HTTPS verification remain explicit pre-production follow-ups
 - Release communication current: yes for implemented user-facing scope
-- `sdd-review` verdict: `changes-requested`; code and manual UI findings are resolved, but runtime-log and provider evidence require completion or explicit acceptance
+- `sdd-review` verdict: `ready`; code, automated evidence, manual UI, and runtime-log inspection pass, and both deployment-specific gaps are explicitly accepted deferrals
 - Review record: `review.md`
-- `review.md` findings resolved: implementation findings yes; acceptance-evidence findings remain open
+- `review.md` findings resolved: yes; deployment-specific verification is explicitly deferred
 - Planning updates resolved: current
 - Manual UI confirmation status: confirmed by user on 2026-07-14
 - PR / merge state: not started
