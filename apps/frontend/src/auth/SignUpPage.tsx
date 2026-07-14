@@ -58,6 +58,11 @@ export function SignUpPage() {
         return
       }
 
+      if (error instanceof AuthApiError && error.code === 'csrf-expired') {
+        setFormError(error.message)
+        return
+      }
+
       if (error instanceof AuthApiError && Object.keys(error.fieldErrors).length > 0) {
         setErrors(error.fieldErrors)
         const firstField = Object.keys(error.fieldErrors)[0] as SignUpField

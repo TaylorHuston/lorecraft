@@ -97,6 +97,29 @@ describe('account workspace entry', () => {
     expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
   })
 
+  it('LC-001/S1/R2-S1 gives actionable recovery guidance when signup CSRF expires', async () => {
+    const user = userEvent.setup()
+    const signUp = vi
+      .fn()
+      .mockRejectedValue(
+        new AuthApiError(
+          'csrf-expired',
+          'Your secure signup form expired. Refresh the page and try again.'
+        )
+      )
+    renderTestApp({ route: '/sign-up', session: null, api: { signUp } })
+
+    await user.type(await screen.findByLabelText('Email'), 'member@example.com')
+    await user.type(screen.getByLabelText('Password'), 'correct horse')
+    await user.type(screen.getByLabelText('Confirm password'), 'correct horse')
+    await user.click(screen.getByRole('button', { name: 'Create account' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Your secure signup form expired. Refresh the page and try again.'
+    )
+    expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
+  })
+
   it('LC-001/S1/R1-S2 presents backend-only signup validation on the affected field', async () => {
     const user = userEvent.setup()
     const password = 'x'.repeat(129)
@@ -174,6 +197,28 @@ describe('account workspace entry', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Too many sign-in attempts. Wait a few minutes and try again.'
+    )
+    expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
+  })
+
+  it('LC-001/S2/R1-S1 gives actionable recovery guidance when sign-in CSRF expires', async () => {
+    const user = userEvent.setup()
+    const signIn = vi
+      .fn()
+      .mockRejectedValue(
+        new AuthApiError(
+          'csrf-expired',
+          'Your secure sign-in form expired. Refresh the page and try again.'
+        )
+      )
+    renderTestApp({ route: '/sign-in', session: null, api: { signIn } })
+
+    await user.type(await screen.findByLabelText('Email'), 'member@example.com')
+    await user.type(screen.getByLabelText('Password'), 'incorrect')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Your secure sign-in form expired. Refresh the page and try again.'
     )
     expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
   })
@@ -256,6 +301,30 @@ describe('account workspace entry', () => {
       'Too many sign-out attempts. Wait a few minutes and try again.'
     )
     expect(screen.queryByText('We couldn’t sign you out. Try again.')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+  })
+
+  it('LC-001/S3/R2-S1 gives actionable recovery guidance when sign-out CSRF expires', async () => {
+    const user = userEvent.setup()
+    const signOut = vi
+      .fn()
+      .mockRejectedValue(
+        new AuthApiError(
+          'csrf-expired',
+          'Your secure session could not be verified. Refresh the page and try again.'
+        )
+      )
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      api: { signOut },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Sign out' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Your secure session could not be verified. Refresh the page and try again.'
+    )
     expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
   })
 

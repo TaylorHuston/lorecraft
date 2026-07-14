@@ -87,6 +87,25 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
+  it('classifies an expired signup CSRF token with recovery guidance', async () => {
+    tuyau.signUp.mockRejectedValue({
+      status: 403,
+      response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
+    })
+    const api = createTuyauAuthApi('http://frontend.example.test')
+
+    await expect(
+      api.signUp({
+        email: 'member@example.com',
+        password: 'correct horse',
+        passwordConfirmation: 'correct horse',
+      })
+    ).rejects.toMatchObject({
+      code: 'csrf-expired',
+      message: 'Your secure signup form expired. Refresh the page and try again.',
+    })
+  })
+
   it('classifies a throttled sign-in response as rate limited', async () => {
     tuyau.signIn.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
@@ -112,6 +131,21 @@ describe('Tuyau auth adapter', () => {
     expect(tuyau.signIn).not.toHaveBeenCalled()
   })
 
+  it('classifies an expired sign-in CSRF token with recovery guidance', async () => {
+    tuyau.signIn.mockRejectedValue({
+      status: 403,
+      response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
+    })
+    const api = createTuyauAuthApi('http://frontend.example.test')
+
+    await expect(
+      api.signIn({ email: 'member@example.com', password: 'correct horse' })
+    ).rejects.toMatchObject({
+      code: 'csrf-expired',
+      message: 'Your secure sign-in form expired. Refresh the page and try again.',
+    })
+  })
+
   it('classifies a throttled sign-out response as rate limited', async () => {
     tuyau.signOut.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
@@ -133,6 +167,19 @@ describe('Tuyau auth adapter', () => {
     expect(tuyau.signOut).not.toHaveBeenCalled()
   })
 
+  it('classifies an expired sign-out CSRF token with recovery guidance', async () => {
+    tuyau.signOut.mockRejectedValue({
+      status: 403,
+      response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
+    })
+    const api = createTuyauAuthApi('http://frontend.example.test')
+
+    await expect(api.signOut()).rejects.toMatchObject({
+      code: 'csrf-expired',
+      message: 'Your secure session could not be verified. Refresh the page and try again.',
+    })
+  })
+
   it('translates server sign-in validation into field guidance', async () => {
     tuyau.signIn.mockRejectedValue({
       status: 422,
@@ -142,9 +189,7 @@ describe('Tuyau auth adapter', () => {
     })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
-    await expect(
-      api.signIn({ email: 'invalid', password: 'short' })
-    ).rejects.toMatchObject({
+    await expect(api.signIn({ email: 'invalid', password: 'short' })).rejects.toMatchObject({
       code: 'validation',
       message: 'Correct the highlighted fields.',
       fieldErrors: {

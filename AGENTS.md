@@ -2,8 +2,6 @@
 
 Lorecraft is the production-oriented successor to the `lorecraft-mvp` prototype. It is a creator-first, API-oriented application for maintaining authoritative, time-aware fictional Worlds. The initial product is a private world bible for individual creators; AI assistance, publishing, collaboration, and playable Adventures remain later capabilities.
 
-
-
 When private workspace planning context is available, resolve it through the workspace's idea-to-repository metadata. Do not copy private PRDs, planning notes, or vault paths into this public repository.
 
 ## Product Boundaries

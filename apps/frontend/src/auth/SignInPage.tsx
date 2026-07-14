@@ -46,6 +46,11 @@ export function SignInPage() {
         return
       }
 
+      if (error instanceof AuthApiError && error.code === 'csrf-expired') {
+        setFormError(error.message)
+        return
+      }
+
       if (error instanceof AuthApiError && error.code === 'validation') {
         const nextFieldErrors = {
           email: error.fieldErrors.email,

@@ -215,4 +215,35 @@ test.group('Account API security', (group) => {
     })
     overQuota.assertStatus(429)
   })
+
+  test('LC-001/Cross-Story: repeated login attempts are throttled per forwarded client', async ({
+    client,
+  }) => {
+    const browser = await bootstrapBrowserSession(client)
+    const firstClientIp = '203.0.113.20'
+    const secondClientIp = '203.0.113.21'
+
+    for (let request = 1; request <= 20; request += 1) {
+      const response = await withBrowserSession(
+        client.post('/api/v1/auth/login').header('x-forwarded-for', firstClientIp),
+        browser.session,
+        { csrf: true }
+      ).json({ email: 'unknown@example.com', password: 'incorrect password' })
+      response.assertStatus(401)
+    }
+
+    const overQuota = await withBrowserSession(
+      client.post('/api/v1/auth/login').header('x-forwarded-for', firstClientIp),
+      browser.session,
+      { csrf: true }
+    ).json({ email: 'unknown@example.com', password: 'incorrect password' })
+    overQuota.assertStatus(429)
+
+    const distinctClient = await withBrowserSession(
+      client.post('/api/v1/auth/login').header('x-forwarded-for', secondClientIp),
+      browser.session,
+      { csrf: true }
+    ).json({ email: 'unknown@example.com', password: 'incorrect password' })
+    distinctClient.assertStatus(401)
+  })
 })

@@ -45,7 +45,9 @@ export function WorkspacePage() {
           <p className={styles.error} role="alert">
             {signOut.error instanceof AuthApiError && signOut.error.code === 'rate-limited'
               ? signOut.error.message
-              : 'We couldn’t sign you out. Try again.'}
+              : signOut.error instanceof AuthApiError && signOut.error.code === 'csrf-expired'
+                ? signOut.error.message
+                : 'We couldn’t sign you out. Try again.'}
           </p>
         ) : null}
         <section className={styles.emptyState} aria-labelledby="empty-worlds-title">

@@ -116,12 +116,12 @@ The system SHALL establish an authenticated browser session after successful acc
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                 | Proves                                                                                            | Status             |
-| -------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------ |
-| S1/R1-S1, S1/R1-S2, S1/R1-S3, S1/R2-S1 | `apps/frontend/src/app/App.test.tsx`                     | Client normalization, validation, duplicate presentation, and workspace transition.               | Passing 2026-07-13 |
-| S1/R1-S2, S1/R2-S1                     | `apps/backend/tests/functional/account_security.spec.ts` | Server validation omits credentials; XSRF bootstrap creates the intended database session while anonymous safe reads do not. | Passing 2026-07-13 |
-| S1/R1-S1, S1/R1-S3, S1/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`     | Account normalization, hashing, uniqueness, and database-backed session state.                    | Passing 2026-07-13 |
-| S1/R1-S1 through S1/R2-S1              | `apps/frontend/e2e/account-workspace.spec.ts`            | Same-origin browser signup, HTTP-only cookie behavior, empty bearer storage, and workspace entry. | Passing 2026-07-13 |
+| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                       | Status             |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| S1/R1-S1, S1/R1-S2, S1/R1-S3, S1/R2-S1 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Client normalization, validation, duplicate presentation, CSRF-expiry recovery, and workspace transition.                    | Passing 2026-07-13 |
+| S1/R1-S2, S1/R2-S1                     | `apps/backend/tests/functional/account_security.spec.ts`                               | Server validation omits credentials; XSRF bootstrap creates the intended database session while anonymous safe reads do not. | Passing 2026-07-13 |
+| S1/R1-S1, S1/R1-S3, S1/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Account normalization, hashing, uniqueness, and database-backed session state.                                               | Passing 2026-07-13 |
+| S1/R1-S1 through S1/R2-S1              | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin browser signup, HTTP-only cookie behavior, empty bearer storage, and workspace entry.                            | Passing 2026-07-13 |
 
 #### Verification Gaps
 
@@ -186,11 +186,12 @@ The system SHALL restore a valid existing session across page refreshes and keep
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                             | Proves                                                                               | Status             |
-| -------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------ |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1, S2/R2-S2 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Sign-in success, validation/rate-limit/credential error presentation, session restoration, and auth-route redirection. | Passing 2026-07-13 |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts` | Generic credential failure and database-backed session behavior.                     | Passing 2026-07-13 |
-| S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`        | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass. | Passing 2026-07-13 |
+| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                      | Status             |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| S2/R1-S1, S2/R1-S2, S2/R2-S1, S2/R2-S2 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Sign-in success, validation/rate-limit/CSRF/credential error presentation, session restoration, and auth-route redirection. | Passing 2026-07-13 |
+| S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Generic credential failure and database-backed session behavior.                                                            | Passing 2026-07-13 |
+| S2/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | The exact login throttle boundary and forwarded-client key isolation.                                                       | Passing 2026-07-13 |
+| S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass.                            | Passing 2026-07-13 |
 
 #### Verification Gaps
 
@@ -260,12 +261,12 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 
 #### Verified By
 
-| Requirement / Scenario       | Evidence                                                 | Proves                                                                            | Status             |
-| ---------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------ |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1 | `apps/frontend/src/app/App.test.tsx`                     | Deferred-session observation proves no private-content flash, plus logout transitions and empty workspace content. | Passing 2026-07-13 |
-| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts` | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection. | Passing 2026-07-13 |
-| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`     | Logout removes authentication from the active database-backed test session.       | Passing 2026-07-13 |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts` | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state. | Passing 2026-07-13 |
+| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                        | Status             |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| S3/R1-S1, S3/R2-S1, S3/R3-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout, CSRF-expiry recovery, and empty workspace content. | Passing 2026-07-13 |
+| S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.               | Passing 2026-07-13 |
+| S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                   | Passing 2026-07-13 |
+| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                    | Passing 2026-07-13 |
 
 #### Verification Gaps
 

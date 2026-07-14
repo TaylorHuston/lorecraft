@@ -19,7 +19,12 @@ export interface AuthApi {
 }
 
 export type AuthErrorCode =
-  'duplicate-email' | 'invalid-credentials' | 'rate-limited' | 'validation' | 'network'
+  | 'csrf-expired'
+  | 'duplicate-email'
+  | 'invalid-credentials'
+  | 'rate-limited'
+  | 'validation'
+  | 'network'
 
 export class AuthApiError extends Error {
   constructor(

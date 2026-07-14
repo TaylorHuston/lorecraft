@@ -32,10 +32,24 @@ const rateLimitMessages = {
   signOut: 'Too many sign-out attempts. Wait a few minutes and try again.',
 } as const
 
+const csrfMessages = {
+  signUp: 'Your secure signup form expired. Refresh the page and try again.',
+  signIn: 'Your secure sign-in form expired. Refresh the page and try again.',
+  signOut: 'Your secure session could not be verified. Refresh the page and try again.',
+} as const
+
 function rateLimitError(error: unknown, operation: keyof typeof rateLimitMessages) {
   return readStatus(error) === 429
     ? new AuthApiError('rate-limited', rateLimitMessages[operation])
     : null
+}
+
+function csrfError(error: unknown, operation: keyof typeof csrfMessages) {
+  const rejected =
+    readStatus(error) === 403 &&
+    readErrorEntries(error).some((entry) => entry.code === 'INVALID_CSRF_TOKEN')
+
+  return rejected ? new AuthApiError('csrf-expired', csrfMessages[operation]) : null
 }
 
 function accountFromResponse(response: unknown): Account {
@@ -109,6 +123,8 @@ export function createTuyauAuthApi(baseUrl: string): AuthApi {
       } catch (error) {
         const throttled = rateLimitError(error, 'signUp')
         if (throttled) throw throttled
+        const csrfRejected = csrfError(error, 'signUp')
+        if (csrfRejected) throw csrfRejected
         const entries = readErrorEntries(error)
         if (
           readStatus(error) === 409 ||
@@ -132,6 +148,8 @@ export function createTuyauAuthApi(baseUrl: string): AuthApi {
       } catch (error) {
         const throttled = rateLimitError(error, 'signIn')
         if (throttled) throw throttled
+        const csrfRejected = csrfError(error, 'signIn')
+        if (csrfRejected) throw csrfRejected
         if (readStatus(error) === 401) {
           throw new AuthApiError('invalid-credentials', 'Invalid email or password.')
         }
@@ -148,6 +166,8 @@ export function createTuyauAuthApi(baseUrl: string): AuthApi {
       } catch (error) {
         const throttled = rateLimitError(error, 'signOut')
         if (throttled) throw throttled
+        const csrfRejected = csrfError(error, 'signOut')
+        if (csrfRejected) throw csrfRejected
         if (readStatus(error) === 401) return
         if (error instanceof AuthApiError) throw error
         throw new AuthApiError('network', 'Lorecraft could not sign out.')
