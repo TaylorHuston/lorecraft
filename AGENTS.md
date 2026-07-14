@@ -34,7 +34,7 @@ These are deferred capabilities, not necessarily permanent product non-goals.
 ## Repository Boundaries
 
 - `apps/backend/` is the AdonisJS API and authoritative application backend.
-- `apps/frontend/` is reserved for the creator-facing web client; its framework has not been selected.
+- `apps/frontend/` is the Vite, React, and TypeScript creator-facing web client.
 - `docs/` owns public architecture guidance and canonical SDD artifacts for implemented behavior.
 - Future reusable libraries belong under `packages/` only when a concrete shared boundary exists.
 - Keep domain and application behavior independent of HTTP controllers, UI frameworks, persistence models, and AI provider SDKs.
@@ -74,4 +74,4 @@ Use the root npm workspace and Turborepo commands. Do not run repository-wide Gi
 - Add boundary and integration tests for persistence, API contracts, authorization, and external adapters where those concerns become real.
 - Add focused end-to-end coverage for critical creator workflows once a frontend exists.
 - Run the smallest relevant lint, test, typecheck, build, and manual checks before declaring work complete.
-- Report honestly when a command succeeds without executing meaningful tests; the scaffold currently has no test cases.
+- Report honestly when a command succeeds without executing meaningful tests; verification must identify which backend, frontend, or browser behavior actually ran.

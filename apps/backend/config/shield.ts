@@ -1,4 +1,12 @@
 import { defineConfig } from '@adonisjs/shield'
+import type { CsrfOptions } from '@adonisjs/shield/types'
+
+export const browserCsrfOptions = {
+  enabled: true,
+  exceptRoutes: [],
+  enableXsrfCookie: true,
+  methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+} satisfies CsrfOptions
 
 const shieldConfig = defineConfig({
   /**
@@ -36,17 +44,17 @@ const shieldConfig = defineConfig({
      * Route patterns to exclude from CSRF checks.
      * Useful for external webhooks or API endpoints.
      */
-    exceptRoutes: [],
+    exceptRoutes: browserCsrfOptions.exceptRoutes,
 
     /**
      * Expose an encrypted XSRF-TOKEN cookie for frontend HTTP clients.
      */
-    enableXsrfCookie: true,
+    enableXsrfCookie: browserCsrfOptions.enableXsrfCookie,
 
     /**
      * HTTP methods protected by CSRF validation.
      */
-    methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+    methods: browserCsrfOptions.methods,
   },
 
   /**

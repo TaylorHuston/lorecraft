@@ -1,5 +1,6 @@
 import app from '@adonisjs/core/services/app'
 import { type HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { errors as shieldErrors } from '@adonisjs/shield'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -13,6 +14,17 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof shieldErrors.E_BAD_CSRF_TOKEN) {
+      return ctx.response.status(403).send({
+        errors: [
+          {
+            code: 'INVALID_CSRF_TOKEN',
+            message: 'Invalid or expired CSRF token.',
+          },
+        ],
+      })
+    }
+
     return super.handle(error, ctx)
   }
 
