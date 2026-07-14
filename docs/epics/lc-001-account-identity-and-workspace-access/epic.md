@@ -25,7 +25,7 @@ Lorecraft needs a secure private account boundary before an individual can creat
 
 ## Outcome
 
-A user can create an account, return through a secure browser session, reach a protected private workspace, and end that session. The workspace clearly communicates when the account has no Worlds without presenting unavailable World behavior.
+A user can create an account, return through a secure browser session, reach a protected workspace, and end that session. The workspace clearly communicates when no Worlds are available without presenting unavailable World-creation behavior.
 
 ## Current Scope
 
@@ -34,11 +34,11 @@ A user can create an account, return through a secure browser session, reach a p
 - Returning sign-in and session restoration.
 - Protected browser and API access.
 - Server-side session invalidation on sign-out.
-- An intentional empty `Your Worlds` workspace.
+- An intentional empty World catalog when no Worlds are accessible.
 
 ## Deferred Scope
 
-- World creation, listing, and editing.
+- World creation and editing.
 - Account roles or creator/player account types.
 - Display names, profiles, email verification, password recovery, social login, and multi-factor authentication.
 - Public API documentation, mobile clients, and collaboration permissions.
@@ -56,7 +56,7 @@ A user can create an account, return through a secure browser session, reach a p
 | ----- | ----------- | --------------------------------------------------- | ------------- | ------------------------------------------- |
 | S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes. |
 | S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes. |
-| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-14    | Automated and manual UI proof passes.       |
+| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-14    | Automated and manual UI proof passes.       |
 
 ## Stories
 
@@ -272,14 +272,14 @@ The system SHALL invalidate the active server-side session when the user signs o
 - WHEN the signed-out browser refreshes the former workspace route or calls a protected endpoint
 - THEN it remains unauthenticated and cannot access private data.
 
-##### Requirement R3: Intentional Empty Workspace
+##### Requirement R3: Intentional Empty World Catalog
 
-The system SHALL present an intentional `Your Worlds` empty state when an account has no Worlds.
+The system SHALL present an intentional empty state when an authenticated account has no accessible Worlds.
 
-###### Scenario R3-S1: Account With No Worlds
+###### Scenario R3-S1: Account With No Accessible Worlds
 
-- WHEN an authenticated account with no Worlds opens the workspace
-- THEN the user sees that they have no Worlds yet
+- WHEN an authenticated account with no accessible Worlds opens the World catalog
+- THEN the user sees that no Worlds are available yet
 - AND no disabled or nonfunctional World-creation control is shown.
 
 #### Implemented By
@@ -292,7 +292,7 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 | `apps/backend/database/migrations/1768620764697_create_sessions_table.ts` | Defines durable server-side session storage.                               | Recheck when session persistence changes.    |
 | `apps/frontend/src/app/AppRoutes.tsx`                                     | Prevents anonymous private-content rendering.                              | Recheck when protected routing changes.      |
 | `apps/frontend/src/auth/AuthProvider.tsx`                                 | Revalidates the server session whenever an open workspace regains focus.   | Recheck when session query behavior changes. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty workspace.    | Recheck when workspace behavior changes.     |
+| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty catalog.      | Recheck when workspace behavior changes.     |
 
 #### Verified By
 

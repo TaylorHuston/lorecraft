@@ -4,6 +4,8 @@ import { useAuth } from '../auth/authContext'
 import { SignInPage } from '../auth/SignInPage'
 import { SignUpPage } from '../auth/SignUpPage'
 import { WorkspacePage } from '../workspace/WorkspacePage'
+import type { WorldApi } from '../worlds/worldApi'
+import { WorldDetailPage } from '../worlds/WorldDetailPage'
 import styles from './AppRoutes.module.css'
 
 function SessionLoading() {
@@ -106,7 +108,7 @@ function PublicOnlyRoute() {
   )
 }
 
-export function AppRoutes() {
+export function AppRoutes({ worldApi }: { worldApi: WorldApi }) {
   return (
     <Routes>
       <Route element={<PublicOnlyRoute />}>
@@ -114,7 +116,8 @@ export function AppRoutes() {
         <Route path="/sign-in" element={<SignInPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="/worlds" element={<WorkspacePage />} />
+        <Route path="/worlds" element={<WorkspacePage worldApi={worldApi} />} />
+        <Route path="/worlds/:slug" element={<WorldDetailPage worldApi={worldApi} />} />
       </Route>
       <Route path="*" element={<Navigate to="/worlds" replace />} />
     </Routes>

@@ -56,5 +56,15 @@ router
       })
       .prefix('account')
       .as('account')
+
+    router
+      .group(() => {
+        router.get('', [controllers.Worlds, 'index'])
+        router.get(':slug', [controllers.Worlds, 'show'])
+      })
+      .prefix('worlds')
+      .use(middleware.requireSessionCookie())
+      .use(middleware.session())
+      .use(middleware.auth({ guards: ['web'] }))
   })
   .prefix('/api/v1')

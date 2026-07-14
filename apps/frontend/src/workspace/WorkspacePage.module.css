@@ -108,6 +108,121 @@
   letter-spacing: 0;
 }
 
+.loading {
+  margin: var(--space-8) 0 0;
+  color: var(--text-secondary);
+}
+
+.catalogError {
+  max-width: 36rem;
+  margin-top: var(--space-8);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--danger);
+}
+
+.catalogError p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.retryWorlds {
+  min-height: 2.75rem;
+  margin-top: var(--space-4);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.retryWorlds:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.catalog {
+  padding-top: var(--space-8);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.worldList {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+
+.worldRow {
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.worldHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.worldName {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.worldLink {
+  color: var(--text-primary);
+  text-decoration-color: var(--border-strong);
+  text-decoration-thickness: 1px;
+}
+
+.worldLink:hover {
+  color: var(--primary-hover);
+  text-decoration-color: currentColor;
+}
+
+.worldFlags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-family:
+    Geist Mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.worldFlags span {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.worldDescription {
+  max-width: 48rem;
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
 .emptyState {
   max-width: 32rem;
   padding: clamp(var(--space-8), 8vw, 5rem) 0;
@@ -159,5 +274,14 @@
   .separator,
   .account {
     display: none;
+  }
+
+  .worldHeading {
+    display: block;
+  }
+
+  .worldFlags {
+    justify-content: flex-start;
+    margin-top: var(--space-3);
   }
 }

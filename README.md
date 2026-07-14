@@ -17,7 +17,7 @@ The initial product is a private workspace for individual worldbuilders. It trea
 
 ## Status
 
-This repository is the production-oriented successor to the experimental `lorecraft-mvp` prototype. Users can create an account, sign in, and enter a private `Your Worlds` workspace. World creation and editing have not been implemented yet.
+This repository is the production-oriented successor to the experimental `lorecraft-mvp` prototype. Users can create an account, sign in, browse Worlds available to them, and inspect structured read-only World canon. World creation and editing have not been implemented yet.
 
 The current product boundary is the creator-facing world bible. A complete writing environment, collaboration, public publishing, source ingestion, AI assistance, and playable Adventures are not part of the initial implementation unless introduced through later planned changes.
 
@@ -65,6 +65,14 @@ Apply migrations and run the workspace:
 npm run migrate --workspace @lorecraft/backend
 npm run dev
 ```
+
+To install the shared `Stormbound Chapel` starter World for local testing, set `STARTER_WORLD_AUTHOR_EMAIL` to an existing account in the ignored backend environment, then run:
+
+```bash
+npm run seed:starter-world --workspace @lorecraft/backend
+```
+
+The seed is explicit and idempotent. Normal application startup does not create or modify World content.
 
 Run verification:
 

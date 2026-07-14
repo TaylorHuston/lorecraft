@@ -25,6 +25,7 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   // Database
   DATABASE_URL: Env.schema.string(),
+  STARTER_WORLD_AUTHOR_EMAIL: Env.schema.string.optional(),
 
   // Session
   SESSION_DRIVER: Env.schema.enum(['memory', 'database'] as const),

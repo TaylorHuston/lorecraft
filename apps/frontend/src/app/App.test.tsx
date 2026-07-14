@@ -9,7 +9,7 @@ describe('account workspace entry', () => {
     renderTestApp({ route: '/worlds', session: null })
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
   })
 
   it('LC-001/S1/R1-S2 identifies invalid signup fields without submitting sensitive values', async () => {
@@ -34,7 +34,7 @@ describe('account workspace entry', () => {
     expect(signUp).not.toHaveBeenCalled()
   })
 
-  it('LC-001/S1/R1-S1 + R2-S1 submits a normalized account and enters Your Worlds without bearer storage', async () => {
+  it('LC-001/S1/R1-S1 + R2-S1 submits a normalized account and enters Worlds without bearer storage', async () => {
     const user = userEvent.setup()
     const signUp = vi.fn().mockResolvedValue({ id: 7, email: 'new@example.com' })
     renderTestApp({ route: '/sign-up', session: null, api: { signUp } })
@@ -44,7 +44,7 @@ describe('account workspace entry', () => {
     await user.type(screen.getByLabelText('Confirm password'), 'correct horse')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     expect(signUp).toHaveBeenCalledWith({
       email: 'new@example.com',
       password: 'correct horse',
@@ -145,7 +145,7 @@ describe('account workspace entry', () => {
     })
   })
 
-  it('LC-001/S2/R1-S1 signs in with valid credentials and opens Your Worlds', async () => {
+  it('LC-001/S2/R1-S1 signs in with valid credentials and opens Worlds', async () => {
     const user = userEvent.setup()
     const signIn = vi.fn().mockResolvedValue({ id: 4, email: 'member@example.com' })
     renderTestApp({ route: '/sign-in', session: null, api: { signIn } })
@@ -154,7 +154,7 @@ describe('account workspace entry', () => {
     await user.type(screen.getByLabelText('Password'), 'correct horse')
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     expect(signIn).toHaveBeenCalledWith({
       email: 'member@example.com',
       password: 'correct horse',
@@ -246,18 +246,18 @@ describe('account workspace entry', () => {
     const restoreSession = vi.fn().mockResolvedValue({ id: 4, email: 'member@example.com' })
     renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     expect(screen.queryByRole('heading', { name: 'Sign in to Lorecraft' })).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(1)
   })
 
-  it('LC-001/S2/R2-S2 returns an authenticated account from auth routes to Your Worlds', async () => {
+  it('LC-001/S2/R2-S2 returns an authenticated account from auth routes to Worlds', async () => {
     renderTestApp({
       route: '/sign-up',
       session: { id: 4, email: 'member@example.com' },
     })
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     expect(
       screen.queryByRole('heading', { name: 'Create your Lorecraft account' })
     ).not.toBeInTheDocument()
@@ -414,9 +414,9 @@ describe('account workspace entry', () => {
     await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     await act(async () => resolveRevalidation(null))
-    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   })
 
   it('LC-001/S2/R1-S1 keeps successful sign-in authoritative over an older anonymous revalidation', async () => {
@@ -440,9 +440,9 @@ describe('account workspace entry', () => {
     await waitFor(() => expect(restoreSession).toHaveBeenCalledTimes(2))
     await user.click(screen.getByRole('button', { name: 'Sign in' }))
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     await act(async () => resolveRevalidation(null))
-    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   })
 
   it('LC-001/S3/R2-S1 signs out and returns the account to sign in', async () => {
@@ -458,7 +458,7 @@ describe('account workspace entry', () => {
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
     expect(signOut).toHaveBeenCalledTimes(1)
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
   })
 
   it('LC-001/S3/R2-S1 gives actionable recovery guidance when sign-out is throttled', async () => {
@@ -483,7 +483,7 @@ describe('account workspace entry', () => {
       'Too many sign-out attempts. Wait a few minutes and try again.'
     )
     expect(screen.queryByText('We couldn’t sign you out. Try again.')).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   })
 
   it('LC-001/S3/R2-S1 gives actionable recovery guidance when sign-out CSRF expires', async () => {
@@ -507,7 +507,7 @@ describe('account workspace entry', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Your secure session could not be verified. Refresh the page and try again.'
     )
-    expect(screen.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   })
 
   it('LC-001/S3/R1-S1 redirects when session restoration returns unauthenticated', async () => {
@@ -515,7 +515,7 @@ describe('account workspace entry', () => {
     renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(1)
   })
 
@@ -532,21 +532,23 @@ describe('account workspace entry', () => {
       )
     renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
 
     screen.getByRole('button', { name: 'Sign out' }).focus()
     expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus()
 
     await act(async () => window.dispatchEvent(new Event('focus')))
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(
+      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
 
     await act(async () => resolveRevalidation(null))
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(2)
     expect(screen.getByLabelText('Email')).toHaveFocus()
@@ -571,11 +573,13 @@ describe('account workspace entry', () => {
     signOutButton.focus()
     expect(signOutButton).toHaveFocus()
     await act(async () => window.dispatchEvent(new Event('focus')))
-    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
+    expect(
+      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+    ).toBeInTheDocument()
 
     await act(async () => resolveRevalidation(account))
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus())
   })
 
@@ -597,7 +601,9 @@ describe('account workspace entry', () => {
     signOutButton.focus()
     expect(signOutButton).toHaveFocus()
     await act(async () => window.dispatchEvent(new Event('focus')))
-    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
+    expect(
+      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+    ).toBeInTheDocument()
 
     await act(async () => rejectRevalidation(new Error('Service unavailable')))
 
@@ -642,7 +648,7 @@ describe('account workspace entry', () => {
     await act(async () => resolveRevalidation({ id: 4, email: 'member@example.com' }))
 
     expect(screen.getByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
   })
 
   it('LC-001/S3/R1-S1 never inserts private workspace content while session restoration is pending or redirecting', async () => {
@@ -663,7 +669,7 @@ describe('account workspace entry', () => {
       for (const record of records) {
         for (const node of record.addedNodes) {
           const text = node.textContent ?? ''
-          if (/Your Worlds|No Worlds yet|Private workspace|member@example\.com/.test(text)) {
+          if (/No Worlds available|World library|member@example\.com/.test(text)) {
             insertedPrivateContent.push(text)
           }
         }
@@ -671,14 +677,16 @@ describe('account workspace entry', () => {
     })
     observer.observe(container, { childList: true, subtree: true })
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
-    expect(screen.queryByText('Private workspace')).not.toBeInTheDocument()
+    expect(
+      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByText('World library')).not.toBeInTheDocument()
 
     await act(async () => resolveSession(null))
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Your Worlds' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(insertedPrivateContent).toEqual([])
     observer.disconnect()
   })
@@ -689,9 +697,9 @@ describe('account workspace entry', () => {
       session: { id: 4, email: 'member@example.com' },
     })
 
-    expect(await screen.findByRole('heading', { name: 'Your Worlds' })).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'No Worlds yet' })).toBeVisible()
-    expect(screen.getByText("You don't have any Worlds yet.")).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'No Worlds available' })).toBeVisible()
+    expect(screen.getByText('There are no Worlds available to this account yet.')).toBeVisible()
     expect(screen.queryByRole('button', { name: /create.*world/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('link', { name: /create.*world/i })).not.toBeInTheDocument()
   })
