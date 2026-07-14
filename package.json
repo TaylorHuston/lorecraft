@@ -15,6 +15,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "test:e2e": "playwright test --config apps/frontend/playwright.config.ts",
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck"

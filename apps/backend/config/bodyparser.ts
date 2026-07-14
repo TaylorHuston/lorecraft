@@ -33,6 +33,12 @@ const bodyParserConfig = defineConfig({
     convertEmptyStringsToNull: true,
 
     /**
+     * Keep credential payload parsing tightly bounded, including requests
+     * that use chunked transfer encoding without a Content-Length header.
+     */
+    limit: '16kb',
+
+    /**
      * Content types handled by the JSON parser.
      */
     types: [
@@ -49,9 +55,10 @@ const bodyParserConfig = defineConfig({
    */
   multipart: {
     /**
-     * Automatically process uploaded files into the system tmp directory.
+     * No current route accepts file uploads. Add exact route patterns here
+     * only when an upload contract is implemented.
      */
-    autoProcess: true,
+    autoProcess: [],
 
     /**
      * Normalize empty string values to null.

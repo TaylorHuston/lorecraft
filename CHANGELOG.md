@@ -8,4 +8,4 @@ The format is based on Keep a Changelog 1.1.0.
 
 ### Added
 
-- Initial API-first application scaffold with an AdonisJS backend and an empty frontend workspace.
+- Account creation, sign-in, persistent browser sessions, sign-out, and a protected empty `Your Worlds` workspace.
