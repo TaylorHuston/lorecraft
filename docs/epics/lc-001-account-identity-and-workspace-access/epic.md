@@ -52,11 +52,11 @@ A user can create an account, return through a secure browser session, reach a p
 
 ## Story Index
 
-| Story | Status      | Capability                                          | Last Verified | Notes                                       |
-| ----- | ----------- | --------------------------------------------------- | ------------- | ------------------------------------------- |
-| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes. |
-| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes. |
-| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-14    | Automated and manual UI proof passes.       |
+| Story | Status      | Capability                                          | Last Verified | Notes                                                                         |
+| ----- | ----------- | --------------------------------------------------- | ------------- | ----------------------------------------------------------------------------- |
+| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes.                                   |
+| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes.                                   |
+| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-14    | Automated proof passes; current catalog UI confirmation is tracked in LC-002. |
 
 ## Stories
 
@@ -296,19 +296,20 @@ The system SHALL present an intentional empty state when an authenticated accoun
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                                                           | Status             |
-| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout, CSRF-expiry recovery, and empty workspace content.                                    | Passing 2026-07-13 |
-| S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13 |
-| S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13 |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                                                       | Passing 2026-07-13 |
-| S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14 |
-| S3/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14 |
-| S3/R1-S1 through S3/R3-S1              | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, logout, responsive layout, and the empty workspace behave as intended.                                               | Passing 2026-07-14 |
+| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                                                           | Status                |
+| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| S3/R1-S1, S3/R2-S1, S3/R3-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout, CSRF-expiry recovery, and empty workspace content.                                    | Passing 2026-07-13    |
+| S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13    |
+| S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13    |
+| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                                                       | Passing 2026-07-13    |
+| S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14    |
+| S3/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14    |
+| S3/R1-S1 through S3/R3-S1              | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, logout, and the original empty-workspace presentation behaved as intended before LC-002 revised the catalog UI.      | Historical 2026-07-14 |
 
 #### Story Notes
 
 - Background session revalidation preserves public auth forms but continues to suppress protected workspace content until the server session is confirmed.
+- Manual confirmation of the current empty-catalog presentation is tracked by LC-002.
 
 ## Cross-Story Concerns
 
@@ -351,4 +352,4 @@ This Epic is healthy when:
 
 ## Notes
 
-- The 2026-07-14 apply passes resolved the independent reviews' session-revalidation, pre-throttle multipart-processing, public-auth draft-preservation, disposable-database, and complete CSRF-proof findings. Fresh independent review, manual UI confirmation, and the recorded provider gaps remain before acceptance and merge.
+- The closed account-workspace Change accepted the account and session capability. LC-002 owns review and manual confirmation for the later World-catalog presentation.
