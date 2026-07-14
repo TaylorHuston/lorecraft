@@ -17,8 +17,13 @@ function SessionLoading() {
   )
 }
 
-function SessionError() {
+function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
   const { retry } = useAuth()
+  const retryRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (focusRetry) retryRef.current?.focus()
+  }, [focusRetry])
 
   return (
     <main className={styles.stateShell}>
@@ -28,7 +33,7 @@ function SessionError() {
         <p className={styles.stateCopy}>
           Your session could not be checked. Try again when the service is available.
         </p>
-        <button className={styles.retry} type="button" onClick={retry}>
+        <button ref={retryRef} className={styles.retry} type="button" onClick={retry}>
           Try again
         </button>
       </div>
@@ -67,15 +72,15 @@ function ProtectedRoute() {
   }, [])
 
   useEffect(() => {
-    if (wasRevalidating.current && !auth.isRevalidating && auth.account) {
+    if (wasRevalidating.current && !auth.isRevalidating && auth.account && !auth.error) {
       document.getElementById(lastFocusedElementId.current ?? '')?.focus()
     }
 
     wasRevalidating.current = auth.isRevalidating
-  }, [auth.account, auth.isRevalidating])
+  }, [auth.account, auth.error, auth.isRevalidating])
 
   if (auth.isLoading || auth.isRevalidating) return <SessionLoading />
-  if (auth.error) return <SessionError />
+  if (auth.error) return <SessionError focusRetry={Boolean(auth.account)} />
 
   return auth.account ? <Outlet /> : <Navigate to="/sign-in" replace state={{ from: location }} />
 }

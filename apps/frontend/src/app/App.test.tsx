@@ -516,6 +516,34 @@ describe('account workspace entry', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus())
   })
 
+  it('LC-001/S3/R1-S3 focuses retry after an authenticated session revalidation fails', async () => {
+    const account = { id: 4, email: 'member@example.com' }
+    let rejectRevalidation: (error: Error) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(account)
+      .mockImplementationOnce(
+        () =>
+          new Promise<typeof account>((_resolve, reject) => {
+            rejectRevalidation = reject
+          })
+      )
+    renderTestApp({ route: '/worlds', session: null, api: { restoreSession } })
+
+    const signOutButton = await screen.findByRole('button', { name: 'Sign out' })
+    signOutButton.focus()
+    expect(signOutButton).toHaveFocus()
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(await screen.findByRole('status')).toHaveTextContent('Checking your session...')
+
+    await act(async () => rejectRevalidation(new Error('Service unavailable')))
+
+    expect(
+      await screen.findByRole('heading', { name: "We couldn't reach Lorecraft" })
+    ).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Try again' })).toHaveFocus())
+  })
+
   it('LC-001/S3/R2-S1 ignores a late focus revalidation after sign-out succeeds', async () => {
     const user = userEvent.setup()
     let resolveRevalidation: (account: { id: number; email: string }) => void = () => undefined
