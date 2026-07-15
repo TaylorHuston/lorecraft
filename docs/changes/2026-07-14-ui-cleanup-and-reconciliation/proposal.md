@@ -16,7 +16,7 @@ An account holder can move from sign-in or sign-up through session handling, the
 - Reconcile session loading, initial failure, background-refresh failure, and recovery states with the same component and token language.
 - Reconcile the populated, empty, loading, error, retry, and sign-out states of the World catalog.
 - Reconcile the loaded, loading, unavailable, not-found, retry, navigation, Location, and Character states of World detail.
-- Adopt a dark-only Zinc hierarchy, Geist Sans interface typography, Geist Mono for technical metadata, Steel Blue interaction states, and restrained Burnished Orange identity accents.
+- Adopt a dark-only Zinc hierarchy, Geist Sans interface typography, Geist Mono for technical metadata, and Burnished Orange interaction and identity accents, while retaining Steel Blue only for semantic information.
 - Normalize spacing, control dimensions, focus, motion, icon use, borders, and radii across current surfaces.
 - Refresh Storybook coverage and focused browser/component evidence for the reconciled desktop and mobile states.
 - Update Lorecraft's private visual identity note so it describes the official creator-first application rather than the archived gameplay MVP.
@@ -74,11 +74,11 @@ An account holder can move from sign-in or sign-up through session handling, the
 - Remain dark-mode-only.
 - Use `#09090B` for the canvas, `#18181B` for primary work surfaces, and `#27272A` for raised, selected, interactive, or overlay surfaces.
 - Use Geist Sans for controls and general interface text, and Geist Mono only for technical metadata.
-- Use Steel Blue for actions, links, focus, information, and neutral technical emphasis.
-- Use Burnished Orange sparingly for Lorecraft identity and moments of deliberate emphasis; do not retain Verdigris.
-- Use Burnished Orange `#E58A3A` when that identity accent is needed.
+- Use Burnished Orange for actions, links, focus, Lorecraft identity, and moments of deliberate emphasis; do not retain Verdigris.
+- Retain Steel Blue only for semantic information where it needs to remain distinct from interaction.
+- Use canonical Burnished Orange `#E58A3A` for those interaction and identity roles.
 - Use `2px` row radii, `4px` control/input radii, no more than `6px` for floating panels/dialogs, and `0` for flush structural surfaces.
-- Use a `4px` spacing rhythm, restrained motion, Lucide icons for familiar actions, and visible Steel Blue keyboard focus.
+- Use a `4px` spacing rhythm, restrained motion, Lucide icons for familiar actions, and visible Burnished Orange keyboard focus.
 
 ## Success Signals
 

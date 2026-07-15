@@ -29,7 +29,7 @@ The official product is now a creator-first world bible, while the private Lorec
 - Authentication: use a centered, cardless composition; omit an upper-right utility with no real destination; retain visible password confirmation.
 - Authentication interactions: preserve the current password-field behavior; password reveal controls remain deferred rather than entering through visual cleanup.
 - Theme: dark-only for this Change.
-- Identity: Steel Blue owns interaction and focus; Burnished Orange is a sparse Lorecraft identity accent.
+- Identity: Burnished Orange owns interaction, focus, and Lorecraft identity; Steel Blue is reserved for semantic information.
 - Epic ownership: account and session presentation remains under `LC-001`; catalog and structured detail presentation remains under `LC-002`.
 - Deferred: light mode, authoring composition, persistent navigation, and new capabilities.
 - Open questions that block implementation: none.
@@ -219,12 +219,12 @@ The Adventure workbench under `src/prototypes/adventure/` remains a deferred des
 ## Implementation Constraints
 
 - Dark-only canvas `#09090B`, primary surface `#18181B`, and raised/interactive surface `#27272A`.
-- Steel Blue `#5D8DB8` for actions, links, focus, information, and neutral technical emphasis.
-- Burnished Orange `#E58A3A` as a sparse app-owned identity accent; no Verdigris.
+- Burnished Orange `#E58A3A` for actions, links, focus, and app-owned identity; no Verdigris.
+- Steel Blue `#5D8DB8` only for semantic information that must remain distinct from interaction.
 - Geist Sans for interface text; Geist Mono only for paths, IDs, timestamps, commands, code, logs, structured values, and genuinely technical metadata. Load both deterministically from app-local assets or an installed dependency in the application and Storybook; do not depend on a runtime font CDN.
 - `2px` row, `4px` control/input, maximum `6px` floating-panel, and `0` structural radii.
 - `4px` spacing rhythm; `28px` dense controls, `32px` normal toolbar controls, `36px` standard inputs/buttons, and at least `44px` touch hit areas.
-- `2px` Steel Blue `:focus-visible` ring with `2px` offset, distinct from hover and selection.
+- `2px` Burnished Orange `:focus-visible` ring with `2px` offset, distinct from hover and selection.
 - `150ms` direct-control and `200ms` panel/disclosure motion; reduced motion removes nonessential transitions.
 - Lucide for familiar actions when an icon improves comprehension; do not add icon-only controls without accessible names.
 - Use spacing and tonal contrast before borders. Use no shadows, decorative gradients, or atmospheric backgrounds.
@@ -275,7 +275,7 @@ The Adventure workbench under `src/prototypes/adventure/` remains a deferred des
 - Preserve simple navigation and current route structure.
 - Use a centered cardless auth composition with no empty utility area.
 - Stay dark-mode-only.
-- Use Steel Blue for interaction and Burnished Orange for restrained identity.
+- Use Burnished Orange as the main interaction and identity accent, with Steel Blue reserved for semantic information.
 - Keep CSS Modules and centralized semantic tokens.
 - Update both `LC-001` and `LC-002` without changing capability boundaries.
 - Refresh the private visual identity to the official creator-first product.

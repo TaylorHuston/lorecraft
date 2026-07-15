@@ -15,9 +15,9 @@
   --text-primary: #f4f4f5;
   --text-secondary: #d4d4d8;
   --text-muted: #a1a1aa;
-  --action: #5d8db8;
-  --action-hover: #79a5cc;
-  --action-foreground: #09090b;
+  --action: #e58a3a;
+  --action-hover: #f2a15a;
+  --action-foreground: #18130a;
   --identity: #e58a3a;
   --identity-hover: #f2a15a;
   --identity-foreground: #18130a;
@@ -30,7 +30,7 @@
   --warning: #fbbf24;
   --danger: #f87171;
   --danger-muted: #321c1d;
-  --info: var(--action);
+  --info: #5d8db8;
   --focus-ring: var(--action);
 
   --space-1: 0.25rem;
