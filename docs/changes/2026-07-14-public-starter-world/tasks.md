@@ -1,36 +1,56 @@
 ---
-status: review
+status: in_review
 ---
 
 # Tasks: Public Starter World
 
 ## Resume Here
 
-- Current state: consolidated review remediation is committed, verified, and ready for independent rereview
-- Last completed action: committed remediation as `f9e6faa` and verified a clean synthetic merge with current `develop`
-- Next action: rerun independent `/sdd-review`
-- Active branch/ref: `change/public-starter-world` at `f9e6faa`
-- Expected dirty files: pre-existing port, ADR, and supporting-document edits plus this review update
-- Known blockers: none within implementation; independent rereview remains required
+- Current state: independent review is reconciling safe artifact findings before the regression rereview
+- Last completed action: completed code, security, verification, documentation, and merge-readiness discovery against `af25c06`
+- Next action: commit the safe review batch, run the regression rereview, and set the final closeout verdict
+- Active branch/ref: `change/public-starter-world` at `af25c06`
+- Expected dirty files: review-scoped SDD artifacts plus unrelated pre-existing port, guidance, and supporting-document edits
+- Known blockers: none outside the current safe artifact batch
 
 ## Task Checklist
 
-- [x] Resolve scope, data boundary, visibility, ownership, and seed behavior.
-- [x] Create canonical Change artifacts and remove the superseded private draft.
-- [x] Implement and verify the World persistence and explicit idempotent seed.
-- [x] Implement and verify authenticated catalog/detail API behavior.
-- [x] Implement and verify catalog/detail web behavior and Storybook states.
-- [x] Seed the local starter World for the configured author and run automated browser verification.
-- [x] Reconcile LC-001, create LC-002, and update user-facing release communication.
-- [x] Run the implementation self-check.
-- [x] Run the initial independent `/sdd-review`.
-- [x] Enforce same-World Character Location integrity and strengthen inaccessible-World and exact-seed evidence.
-- [x] Scope cached World data to the authenticated account, handle expired sessions, and add detail retry recovery.
-- [x] Reconcile review findings, LC-002 evidence, and the implementation self-check.
-- [x] Obtain manual UI confirmation or record an accepted gap.
-- [x] Address the consolidated 2026-07-15 independent-review findings.
-- [ ] Rerun independent `/sdd-review` against current `develop`.
-- [ ] Prepare closeout only after review and explicit merge authorization.
+### 1. Planning Quality
+
+- [x] Confirm scope, user decisions, assumptions, deferred behavior, and Story boundaries.
+- [x] Refine LC-002 Requirements and Scenarios for catalog, detail, access, failure, and repeat-installation behavior.
+- [x] Confirm material experience direction through existing Lorecraft conventions and user feedback.
+
+### 2. Epic Artifacts
+
+- [x] Create LC-002 with stable Story, Requirement, and Scenario references.
+- [x] Reconcile LC-001 so LC-002 exclusively owns World-catalog empty-state behavior.
+- [x] Update Implemented By, Verified By, Verification Gaps, and superseded truth.
+
+### 3. Architecture Decisions
+
+- [x] Compare relational, document, and startup-seeding options.
+- [x] Record relational aggregate, disposable database automation, and World/Adventure isolation ADRs.
+
+### 4. Implementation
+
+- [x] Implement LC-002/S1 catalog persistence, API, typed client, and web states.
+- [x] Implement LC-002/S2 structured detail, safe not-found behavior, and explicit seed installation.
+- [x] Add immutable seed provenance, exact legacy adoption, same-World Character Location integrity, runtime response validation, and account-scoped cache/session handling.
+
+### 5. Verification
+
+- [x] Add scenario-mapped backend, frontend, Storybook, migration, adapter, and deterministic E2E evidence.
+- [x] Verify the real seed command twice, populated desktop/mobile paths, and rerun safety.
+- [x] Run broad static, build, format, audit, SDD validation, and synthetic merge gates.
+
+### 6. Review And Closeout
+
+- [x] Update `CHANGELOG.md` and supporting public documentation.
+- [x] Record user-confirmed manual UI acceptance.
+- [x] Run initial review, apply consolidated findings, and complete the final independent discovery wave.
+- [ ] Commit the safe final-review artifact batch and record the regression rereview watermark.
+- [ ] Merge and close only after explicit user authorization.
 
 ## Implementation Ledger
 
@@ -43,6 +63,7 @@ status: review
 | 2026-07-14 | Review remediation        | Data integrity, seed/API evidence, account cache/session lifecycle, detail recovery | implemented | `6b5f0a3`    |
 | 2026-07-14 | Fresh review remediation  | Seed collision safety, accessibility, touch targets, E2E, and CI                    | implemented | `76da619`    |
 | 2026-07-15 | Consolidated remediation  | Immutable seed identity, runtime DTO validation, populated E2E, and SDD artifacts   | implemented | `f9e6faa`    |
+| 2026-07-15 | Final review safe batch   | Current templates, LC-001 ownership, review truth, and closeout ledger              | in progress | pending      |
 
 ## Verification Ledger
 
@@ -67,13 +88,27 @@ status: review
 ## Manual UI Confirmation
 
 - Status: user confirmed 2026-07-14
-- Surface: `/worlds` and `/worlds/stormbound-chapel`
-- Expected result: every signed-in account sees one read-only starter World and can inspect all structured Locations and Characters without seeing author account data
+- App URL / route: `/worlds` and `/worlds/stormbound-chapel`
+- Required setup or test data: signed-in account and installed `Stormbound Chapel` starter World.
+- Steps for the user: open the catalog at desktop and mobile widths, select the starter World, inspect all Locations and Characters, and return to Worlds.
+- Expected result: one public read-only starter World appears; detail remains readable without overflow and exposes structured canon without author account data.
+- Feedback that would change artifacts: inaccessible content, missing/duplicated entities, author data exposure, layout overflow, or confusing navigation.
+
+## Manual Feedback
+
+| Date       | Feedback                                           | Classification   | Action / Artifact Updates                                              | Status   |
+| ---------- | -------------------------------------------------- | ---------------- | ---------------------------------------------------------------------- | -------- |
+| 2026-07-14 | Catalog and structured detail behaved as intended. | verification gap | Recorded user-confirmed desktop/mobile acceptance in tasks and LC-002. | resolved |
+
+## Planning Updates
+
+| Date       | Discovery                                          | Classification        | Planning Updates                                       | Next Apply Starting Point |
+| ---------- | -------------------------------------------------- | --------------------- | ------------------------------------------------------ | ------------------------- |
+| 2026-07-15 | Empty-catalog truth remained duplicated in LC-001. | Epic ownership change | LC-002 owns catalog behavior; LC-001 owns access only. | resolved in review batch  |
 
 ## Blockers / Open Questions
 
-- No implementation or product question blocks independent rereview.
-- The obsolete active Storybook task-ledger edit has been removed to match its closed state on `develop`.
+- None.
 
 ## Release Communication
 
@@ -81,10 +116,19 @@ status: review
 
 ## Closeout
 
-- Review status: ready for independent rereview
+- Change status: in_review; final safe artifact batch and regression rereview in progress.
+- Epic files updated: LC-001 and LC-002.
+- Story labels/references and Requirement/Scenario IDs current: yes.
+- Implemented By maps current: yes.
+- Scenario-mapped Verified By maps current: yes.
+- Superseded earlier Epic truth reconciled: LC-001/S3/R3 moved to LC-002/S1/R1-S3.
 - Review record: `docs/changes/2026-07-14-public-starter-world/review.md`
 - ADR status: accepted; relational World aggregate and disposable database automation ADRs govern this slice, while the World/Adventure isolation ADR records future scope
-- Epic reconciliation: LC-002 updated with integrity, account isolation, expired-session, retry, and exact-reconciliation evidence
-- PR / merge state: remediation verified; independent rereview required before closeout
+- Release communication current: yes; `CHANGELOG.md` contains the public catalog/detail summary.
+- `sdd-review` verdict: pending regression rereview after safe artifact fixes.
+- `review.md` findings resolved: implementation findings resolved; final artifact findings in progress.
+- Planning updates resolved: yes.
+- Manual UI confirmation status: user confirmed.
+- PR / merge state: no PR requested; local merge not yet authorized.
 - Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and hidden private-knowledge policy
-- Change folder move: pending required remediation, a clean rereview, merge authorization, and closeout
+- Change moved to `docs/changes/closed/`: no; pending a ready verdict, merge authorization, integration, and closeout.

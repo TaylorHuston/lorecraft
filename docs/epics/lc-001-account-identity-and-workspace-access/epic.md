@@ -20,6 +20,7 @@ stories:
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
   - `docs/adrs/2026-07-12-browser-session-authentication.md`
   - `docs/adrs/2026-07-12-react-web-client-and-typed-api-contract.md`
+  - `docs/adrs/2026-07-14-disposable-database-automation.md`
 
 Lorecraft needs a secure private account boundary before an individual can create and maintain authoritative Worlds. Accounts are not divided into creator, player, or other types; client surfaces may support different activities without changing the account model.
 
@@ -272,16 +273,6 @@ The system SHALL invalidate the active server-side session when the user signs o
 - WHEN the signed-out browser refreshes the former workspace route or calls a protected endpoint
 - THEN it remains unauthenticated and cannot access private data.
 
-##### Requirement R3: Intentional Empty World Catalog
-
-The system SHALL present an intentional empty state when an authenticated account has no accessible Worlds.
-
-###### Scenario R3-S1: Account With No Accessible Worlds
-
-- WHEN an authenticated account with no accessible Worlds opens the World catalog
-- THEN the user sees that no Worlds are available yet
-- AND no disabled or nonfunctional World-creation control is shown.
-
 #### Implemented By
 
 | Path                                                                      | Role                                                                       | Recheck Trigger                              |
@@ -292,24 +283,24 @@ The system SHALL present an intentional empty state when an authenticated accoun
 | `apps/backend/database/migrations/1768620764697_create_sessions_table.ts` | Defines durable server-side session storage.                               | Recheck when session persistence changes.    |
 | `apps/frontend/src/app/AppRoutes.tsx`                                     | Prevents anonymous private-content rendering.                              | Recheck when protected routing changes.      |
 | `apps/frontend/src/auth/AuthProvider.tsx`                                 | Revalidates the server session whenever an open workspace regains focus.   | Recheck when session query behavior changes. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty catalog.      | Recheck when workspace behavior changes.     |
+| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity and logout within the protected workspace.       | Recheck when workspace behavior changes.     |
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                                                           | Status                |
-| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout, CSRF-expiry recovery, and empty workspace content.                                    | Passing 2026-07-13    |
-| S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13    |
-| S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13    |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                                                       | Passing 2026-07-13    |
-| S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14    |
-| S3/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14    |
-| S3/R1-S1 through S3/R3-S1              | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, logout, and the original empty-workspace presentation behaved as intended before LC-002 revised the catalog UI.      | Historical 2026-07-14 |
+| Requirement / Scenario       | Evidence                                                                               | Proves                                                                                                                                                           | Status               |
+| ---------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| S3/R1-S1, S3/R2-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout and CSRF-expiry recovery.                                                              | Passing 2026-07-13   |
+| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13   |
+| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13   |
+| S3/R1-S2, S3/R2-S1, S3/R2-S2 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, and invalidated-cookie replay.                                                                    | Passing 2026-07-13   |
+| S3/R1-S3                     | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14   |
+| S3/R2-S1 CSRF boundary       | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14   |
+| S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, and logout behaved as intended.                                                                                      | Confirmed 2026-07-14 |
 
 #### Story Notes
 
 - Background session revalidation preserves public auth forms but continues to suppress protected workspace content until the server session is confirmed.
-- Manual confirmation of the current empty-catalog presentation is tracked by LC-002.
+- World-catalog content and empty-state behavior are owned and verified by `LC-002/S1`.
 
 ## Cross-Story Concerns
 
