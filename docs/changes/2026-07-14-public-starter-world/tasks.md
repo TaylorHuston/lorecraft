@@ -6,12 +6,12 @@ status: in_review
 
 ## Resume Here
 
-- Current state: independent review is reconciling safe artifact findings before the regression rereview
-- Last completed action: completed code, security, verification, documentation, and merge-readiness discovery against `af25c06`
-- Next action: commit the safe review batch, run the regression rereview, and set the final closeout verdict
-- Active branch/ref: `change/public-starter-world` at `af25c06`
-- Expected dirty files: review-scoped SDD artifacts plus unrelated pre-existing port, guidance, and supporting-document edits
-- Known blockers: none outside the current safe artifact batch
+- Current state: independent review is ready with no unresolved finding
+- Last completed action: committed safe artifact fixes as `a706fd3` and completed the regression rereview
+- Next action: obtain explicit authorization to merge into `develop` and close the Change
+- Active branch/ref: reviewed `change/public-starter-world` at `a706fd3`
+- Expected dirty files: this review outcome plus unrelated pre-existing port, guidance, and supporting-document edits
+- Known blockers: merge and closeout authorization only
 
 ## Task Checklist
 
@@ -49,7 +49,7 @@ status: in_review
 - [x] Update `CHANGELOG.md` and supporting public documentation.
 - [x] Record user-confirmed manual UI acceptance.
 - [x] Run initial review, apply consolidated findings, and complete the final independent discovery wave.
-- [ ] Commit the safe final-review artifact batch and record the regression rereview watermark.
+- [x] Commit the safe final-review artifact batch and record the regression rereview watermark.
 - [ ] Merge and close only after explicit user authorization.
 
 ## Implementation Ledger
@@ -63,7 +63,7 @@ status: in_review
 | 2026-07-14 | Review remediation        | Data integrity, seed/API evidence, account cache/session lifecycle, detail recovery | implemented | `6b5f0a3`    |
 | 2026-07-14 | Fresh review remediation  | Seed collision safety, accessibility, touch targets, E2E, and CI                    | implemented | `76da619`    |
 | 2026-07-15 | Consolidated remediation  | Immutable seed identity, runtime DTO validation, populated E2E, and SDD artifacts   | implemented | `f9e6faa`    |
-| 2026-07-15 | Final review safe batch   | Current templates, LC-001 ownership, review truth, and closeout ledger              | in progress | pending      |
+| 2026-07-15 | Final review safe batch   | Current templates, LC-001 ownership, review truth, and closeout ledger              | implemented | `a706fd3`    |
 
 ## Verification Ledger
 
@@ -84,6 +84,8 @@ status: in_review
 | 2026-07-15 | Repeat E2E verification                      | Two consecutive runs on one schema, including two real seed commands in each setup   | 5 passed twice                          |
 | 2026-07-15 | Current SDD validator                        | Change, LC-002, and private-planning collision                                       | passed; 0 errors and 0 warnings         |
 | 2026-07-15 | Synthetic merge                              | Current `develop` plus `f9e6faa`                                                     | clean                                   |
+| 2026-07-15 | Final independent review                     | Backend 43; frontend 59; Storybook 17; E2E 5; static/build/format/audit/security     | ready; no findings                      |
+| 2026-07-15 | Regression rereview                          | Safe documentation batch `a706fd3`, SDD validator, diff check, and synthetic merge   | passed                                  |
 
 ## Manual UI Confirmation
 
@@ -116,7 +118,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: in_review; final safe artifact batch and regression rereview in progress.
+- Change status: in_review; locally ready for authorized integration and closeout.
 - Epic files updated: LC-001 and LC-002.
 - Story labels/references and Requirement/Scenario IDs current: yes.
 - Implemented By maps current: yes.
@@ -125,10 +127,10 @@ status: in_review
 - Review record: `docs/changes/2026-07-14-public-starter-world/review.md`
 - ADR status: accepted; relational World aggregate and disposable database automation ADRs govern this slice, while the World/Adventure isolation ADR records future scope
 - Release communication current: yes; `CHANGELOG.md` contains the public catalog/detail summary.
-- `sdd-review` verdict: pending regression rereview after safe artifact fixes.
-- `review.md` findings resolved: implementation findings resolved; final artifact findings in progress.
+- `sdd-review` verdict: ready.
+- `review.md` findings resolved: yes; no unresolved finding.
 - Planning updates resolved: yes.
 - Manual UI confirmation status: user confirmed.
-- PR / merge state: no PR requested; local merge not yet authorized.
+- PR / merge state: local merge to `develop` is ready but not yet authorized.
 - Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and hidden private-knowledge policy
-- Change moved to `docs/changes/closed/`: no; pending a ready verdict, merge authorization, integration, and closeout.
+- Change moved to `docs/changes/closed/`: no; pending merge authorization, integration, and closeout.

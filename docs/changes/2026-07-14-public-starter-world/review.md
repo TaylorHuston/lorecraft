@@ -2,41 +2,38 @@
 
 ## Verdict
 
-changes-requested
+ready
 
-The core catalog and detail behavior passes its existing automated and manual checks, and the formal security review found no exploitable issue. Integration is not ready: the source conflicts with the now-closed Storybook Change on `develop`, deterministic SDD validation fails, and the discovery wave found four implementation/evidence gaps that require `/sdd-apply`.
+The committed implementation and reconciled SDD truth satisfy LC-002. All required automated, manual, security, documentation, and integration gates pass; no blocking or required finding remains.
 
 ## Gate Scorecard
 
-| Gate                         | Result   | Notes                                                                                                                          |
-| ---------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Change artifacts             | findings | Current SDD template validation reports missing required sections and an empty private planning-path collision.                |
-| Change status                | pass     | Returned to `in_progress` while remediation remains.                                                                           |
-| Epic truth                   | findings | LC-002 behavior is mapped, but the Epic does not satisfy the current canonical section and evidence-table shape.               |
-| Requirements and Scenarios   | findings | Existing scenarios pass, but destructive seed provenance and malformed successful API responses are not represented or proved. |
-| Story reference traceability | pass     | LC-002/S1 and LC-002/S2 references remain unique and mapped.                                                                   |
-| Tests and verification       | findings | Existing suites pass; populated-world E2E and the documented seed command adapter are not exercised.                           |
-| Manual UI confirmation       | pass     | User confirmed `/worlds` and `/worlds/stormbound-chapel` on 2026-07-14.                                                        |
-| Code review                  | findings | Seed provenance and successful-response validation require implementation changes.                                             |
-| Security review              | pass     | No exploitable authentication, authorization, disclosure, injection, secret, or dependency issue was found.                    |
-| Documentation                | pass     | README and CHANGELOG accurately describe the user-facing slice.                                                                |
-| Release communication        | pass     | CHANGELOG contains the catalog and structured-detail behavior.                                                                 |
-| Branch and merge readiness   | blocked  | `git merge-tree --write-tree develop HEAD` reports a modify/delete conflict in the former active Storybook tasks file.         |
-| PRD alignment                | pass     | Read-only structured canon supports the creator-first World-bible direction.                                                   |
+| Gate                         | Result | Notes                                                                                                            |
+| ---------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass   | Current proposal, design, tasks, and review shapes are reconciled and deterministic validation is clean.         |
+| Change status                | pass   | `in_review` matches the installed validator's active-review vocabulary.                                          |
+| Epic truth                   | pass   | LC-002 owns catalog/detail behavior; duplicate empty-catalog ownership was removed from LC-001.                  |
+| Requirements and Scenarios   | pass   | All six LC-002 Scenarios have implementation and scenario-mapped evidence.                                       |
+| Story reference traceability | pass   | LC-002/S1 and LC-002/S2 labels and local Requirement/Scenario references are unique and current.                 |
+| Tests and verification       | pass   | Backend 43, frontend 59, Storybook 17, E2E 5, static/build/format/audit gates, and SDD validation pass.          |
+| Manual UI confirmation       | pass   | User confirmed catalog/detail behavior at desktop and mobile widths on 2026-07-14.                               |
+| Code review                  | pass   | Seed safety, visibility, DTO validation, session/cache behavior, and UI state handling are correct in the diff.  |
+| Visual / UX consistency      | pass   | Catalog/detail follow project styling and current Web Interface Guidelines; Storybook and browser evidence pass. |
+| Security review              | pass   | No confirmed auth, authorization, disclosure, injection, secret, dependency, or destructive-data vulnerability.  |
+| Documentation                | pass   | README, ADRs, generated contract files, and Epic maps agree with implementation.                                 |
+| Release communication        | pass   | `CHANGELOG.md` contains the user-facing catalog/detail summary.                                                  |
+| Branch and merge readiness   | pass   | `change/public-starter-world` correctly targets `develop`; synthetic merge is clean.                             |
+| PRD alignment                | pass   | Structured read-only canon advances the creator-first World-bible direction without introducing deferred scope.  |
 
 ## Findings
 
 ### BLOCKING
 
-- [x] `docs/changes/2026-07-14-storybook-ui-workbench/tasks.md` - Removed the obsolete active ledger so the branch matches the Change's closed state on `develop`.
+- None.
 
 ### REQUIRED
 
-- [x] `apps/backend/app/services/stormbound_chapel_seed.ts` - Added a unique immutable seed identity, safe upgrade migration, and tests proving an unmarked same-author lookalike remains untouched.
-- [x] `apps/frontend/src/worlds/tuyauWorldApi.ts` - Added runtime catalog/detail validation with malformed-success tests.
-- [x] `apps/frontend/e2e/starter-world.spec.ts` - Added deterministic populated starter-world setup and desktop/mobile catalog/detail coverage.
-- [x] `apps/backend/database/seeders/stormbound_chapel_seeder.ts` and the `seed:starter-world` script - Playwright setup now invokes the real workspace command and configuration adapter.
-- [x] SDD artifacts - Reconciled current templates, normalized LC-002 evidence, removed the stale private planning collision, and passed deterministic validation.
+- None.
 
 ### SUGGESTION
 
@@ -44,45 +41,72 @@ The core catalog and detail behavior passes its existing automated and manual ch
 
 ## Verification Evidence
 
-| Command / Scenario                                                                                                                | Evidence Type                             | Result                            | What It Proves                                                                                        |
-| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Test migrations plus `npm run test`                                                                                               | database, backend, and frontend tests     | 40 backend and 57 frontend passed | Existing auth, persistence, migration, API, seed-service, client, and session behavior remains green. |
-| `npm run test:storybook`                                                                                                          | browser component and accessibility tests | 17 passed                         | Existing catalog/detail states and accessibility assertions pass.                                     |
-| `npm run test:e2e`                                                                                                                | Playwright desktop/mobile                 | 2 passed                          | The account journey passes, but not the populated LC-002 path.                                        |
-| `npm run lint`, `npm run typecheck`, `npm run build`                                                                              | broad static and production gates         | passed                            | Both applications lint, typecheck, and build.                                                         |
-| `npm run build:storybook`, `npx prettier --check .`                                                                               | supporting build and format gates         | passed                            | Storybook builds and repository formatting is valid.                                                  |
-| `npm audit --omit=dev` plus delegated security review                                                                             | dependency and code security              | passed                            | No production advisory or confirmed changed-code vulnerability.                                       |
-| `sdd validate lorecraft --change 2026-07-14-public-starter-world --repo spaces/code/lorecraft --workspace <workspaceRoot> --json` | deterministic artifact validation         | failed                            | Fourteen current-template and planning-collision errors remain.                                       |
-| `git merge-tree --write-tree develop HEAD`                                                                                        | integration check                         | failed                            | The former active Storybook tasks file conflicts with its closed state on `develop`.                  |
+| Command / Scenario                                                                                        | Evidence Type                         | Requirement / Scenario                     | Result         | What It Proves                                                                                      |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------ | -------------- | --------------------------------------------------------------------------------------------------- |
+| Fresh isolated migration plus backend suite                                                               | focused automated and adapter tests   | LC-002/S1/R1-S1-S2; LC-002/S2/R1-S1-S3     | 43 passed      | Persistence, visibility, minimization, integrity, provenance, legacy adoption, and repeat seed.     |
+| Frontend Vitest suite                                                                                     | focused automated tests               | LC-002/S1/R1-S1-S3; LC-002/S2/R1-S1-S2     | 59 passed      | Catalog/detail states, navigation, response validation, cache isolation, session expiry, and retry. |
+| `npm run test:storybook`                                                                                  | browser component/accessibility tests | LC-002/S1/R1-S1-S3; LC-002/S2/R1-S1-S2     | 17 passed      | Representative catalog/detail UI states and accessibility assertions.                               |
+| Fresh-schema `npm run test:e2e`                                                                           | deterministic E2E                     | LC-002/S1/R1-S1; LC-002/S2/R1-S1 and R1-S3 | 5 passed       | Real seed command twice, populated desktop/mobile catalog/detail, and protected account journey.    |
+| `npm run lint`, `npm run typecheck`, `npm run build`, `npm run build:storybook`, `npx prettier --check .` | broad supporting gates                | Whole Change                               | passed         | Static correctness, production compilation, Storybook generation, and repository formatting.        |
+| `npm audit --omit=dev` and diff-focused security inspection                                               | security evidence                     | Whole Change                               | passed         | No production advisory or confirmed changed-code security vulnerability.                            |
+| Scoped `sdd validate ... --json`                                                                          | deterministic artifact validation     | Change and LC-002                          | 0 findings     | Canonical artifact structure and references satisfy the installed validator.                        |
+| `git merge-tree --write-tree develop a706fd3`                                                             | integration evidence                  | Branch readiness                           | clean          | Source integrates with current `develop`, including the target-only Storybook closeout.             |
+| User-confirmed `/worlds` and `/worlds/stormbound-chapel` walkthrough                                      | manual UI confirmation                | LC-002/S1/R1-S1; LC-002/S2/R1-S1           | user confirmed | Catalog and structured detail are understandable and usable at desktop and mobile widths.           |
 
 ## Review Bundle
 
 - Source branch/ref: `change/public-starter-world`
-- Reviewed source commit: `4f34572122ea24a59e46b5d2562a08348f3b1ef6`
+- Reviewed source commit: `a706fd33618c6c600c8aa1ef77ed4713ae488361`
 - Target branch/ref: `develop` at `55de34ca126c9aece70fb41c13cf5a6f94d09994`
 - Merge base: `cd5604a414c68a1f1cdcb63e3752494cf93be45d`
-- Source-only commits: six, from `cb4aa3e` through `4f34572`
-- Target-only commits: Storybook review and closeout commits through `55de34c`
-- Changed files: 51 in the PR-style `develop...HEAD` surface
-- Conflict check: failed on the former active Storybook `tasks.md`
-- Branch policy: `change/` correctly targets `develop`
-- Concurrent worktree state: uncommitted port, ADR, and supporting-document edits were preserved and excluded from the reviewed source commit
+- Source-only commits: nine, from `cb4aa3e` through `a706fd3`
+- Target-only commits: three Storybook review/closeout commits through `55de34c`
+- Changed files: 59
+- Diff stat: 3,749 insertions and 171 deletions before this review outcome record
+- Conflict check: clean; merge-tree object `29f198b4a8de1a8cae2f2d0eb97f0d92d09da8c7`
+- Dirty state: unrelated pre-existing port, guidance, environment-example, README, CI, and test-support edits remain unstaged and were excluded from review commits
+- Branch policy: valid `change/` source targeting non-production `develop`
+
+## Discovery Wave
+
+| Pass                               | Reviewer                    | Result   | Notes                                                                                              |
+| ---------------------------------- | --------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| Artifact truth                     | delegated plus orchestrator | findings | Stale review truth, expanded template shape, and duplicate LC-001 ownership were safely fixed.     |
+| Code diff                          | orchestrator                | pass     | Slow delegated passes were bounded and closed; local full-diff inspection found no defect.         |
+| Verification coverage              | orchestrator                | pass     | Scenario evidence and fresh backend/frontend/Storybook/E2E gates pass.                             |
+| Risk-shaped evidence               | orchestrator                | pass     | Existing-data upgrade, rollback, lookalike, malformed response, retry, and repeat-run risks pass.  |
+| Security                           | orchestrator                | pass     | Diff-focused auth, disclosure, seed, migration, secret, and dependency review found no issue.      |
+| UI / visual identity               | orchestrator                | pass     | Current Web Interface Guidelines, responsive code, Storybook, E2E, and prior user acceptance pass. |
+| Docs / release communication / PRD | delegated plus orchestrator | pass     | README, CHANGELOG, ADRs, Epics, and creator-first product direction agree.                         |
+| Integration readiness              | delegated plus orchestrator | pass     | Branch policy, committed diff, target-only history, and synthetic merge are clean.                 |
+
+## Consolidated Remediation
+
+- Root causes addressed: stale post-apply review truth, older Change template shape, and duplicate empty-catalog Epic ownership.
+- Safe-fix batch: `a706fd3` updates proposal, design, tasks, and LC-001 without changing runtime behavior.
+- Deferred or unsafe findings: none.
+- Affected verification union: SDD validation, artifact/traceability inspection, diff check, and synthetic merge; runtime suites were also rerun for the final gate.
+- Regression-focused rereview: the safe batch changes documentation only, validates cleanly, preserves all LC-002 evidence, and merges cleanly.
+- New regressions introduced by remediation: none.
 
 ## Manual UI Confirmation
 
-- Status: user confirmed 2026-07-14
-- Previously confirmed: signed-in catalog and structured detail at desktop and mobile widths
-- Suggested manual UI testing after remediation: none beyond rerunning the same catalog/detail walkthrough; the new gaps should first be closed deterministically.
+- Status: user confirmed 2026-07-14.
+- Suggested manual UI testing: none; the final remediation changed documentation only and the populated desktop/mobile E2E remains green.
 
 ## PR / Merge Readiness
 
-- PR status: not requested
-- Merge status: blocked by required remediation and the merge conflict
-- Closeout status: not ready
-- Next action: run `/sdd-apply` once for the consolidated implementation, evidence, artifact-template, and integration-remediation batch, then rerun `/sdd-review`.
+- Source branch: `change/public-starter-world`
+- Reviewed source commit: `a706fd33618c6c600c8aa1ef77ed4713ae488361`
+- Target branch: `develop`
+- Conflict check: clean
+- Commit state: all Change code and safe review fixes committed; unrelated pre-existing edits remain unstaged
+- PR status: not requested and not required for routine integration
+- Merge status: locally ready; merge-and-close requires explicit user authorization
+- Closeout status: ready after the authorized merge; active folder remains in place
 
 ## Review Log
 
-- 2026-07-15: Fresh delegated artifact, backend, frontend, security, and verification passes reviewed source `4f34572` against current `develop`.
-- 2026-07-15: Existing migration, unit, functional, frontend, Storybook, E2E, lint, typecheck, build, formatting, and dependency gates passed.
-- 2026-07-15: Review consolidated seed-provenance, response-validation, populated-E2E, seed-command, SDD-template, and integration-conflict findings for one `/sdd-apply` pass.
+- 2026-07-15: Reviewed source `af25c06` against current `develop` through delegated and local artifact, code, verification, security, UI, documentation, PRD, and integration passes.
+- 2026-07-15: Safely reconciled current Change templates, LC-001/LC-002 ownership, and stale review/closeout truth in `a706fd3`.
+- 2026-07-15: Regression rereview passed backend 43, frontend 59, Storybook 17, E2E 5, static/build/format/audit gates, SDD validation, and synthetic merge checks.
