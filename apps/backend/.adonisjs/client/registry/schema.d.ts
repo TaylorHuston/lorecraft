@@ -67,4 +67,28 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/sessions_controller').default['destroy']>>>
     }
   }
+  'worlds.index': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/worlds'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['index']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['index']>>>
+    }
+  }
+  'worlds.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/worlds/:slug'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { slug: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['show']>>>
+    }
+  }
 }

@@ -35,11 +35,19 @@ export default defineConfig({
   },
   projects: [
     {
+      name: 'starter-world-setup',
+      testMatch: /starter-world\.setup\.ts/,
+    },
+    {
       name: 'desktop-chromium',
+      dependencies: ['starter-world-setup'],
+      testIgnore: /starter-world\.setup\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'mobile-chromium',
+      dependencies: ['starter-world-setup'],
+      testIgnore: /starter-world\.setup\.ts/,
       use: { ...devices['Pixel 7'] },
     },
   ],

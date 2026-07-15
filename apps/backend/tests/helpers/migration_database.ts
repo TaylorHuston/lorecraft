@@ -99,6 +99,22 @@ export async function runMigration(
   }
 }
 
+export async function rollbackMigration(
+  client: QueryClientContract,
+  Migration: MigrationConstructor,
+  fileName: string
+) {
+  const transaction = await client.transaction()
+
+  try {
+    await new Migration(transaction, fileName).execDown()
+    await transaction.commit()
+  } catch (error) {
+    await transaction.rollback()
+    throw error
+  }
+}
+
 export const withIsolatedMigrationDatabase = createMigrationDatabaseHarness({
   database: db as MigrationDatabaseAdapter,
   environment: {

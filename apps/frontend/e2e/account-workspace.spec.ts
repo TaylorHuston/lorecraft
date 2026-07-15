@@ -25,8 +25,8 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await page.getByRole('button', { name: 'Create account' }).click()
 
   await expect(page).toHaveURL(/\/worlds$/)
-  await expect(page.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'No Worlds yet' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Stormbound Chapel' })).toBeVisible()
   await expect(page.getByRole('button', { name: /create.*world/i })).toHaveCount(0)
 
   const browserSession = (await page.context().cookies()).find(
@@ -38,7 +38,7 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   expect(await page.evaluate(() => Object.keys(sessionStorage))).toEqual([])
 
   await page.reload()
-  await expect(page.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toBeVisible()
 
   await page.getByRole('button', { name: 'Sign out' }).click()
   await expect(page).toHaveURL(/\/sign-in$/)
@@ -83,7 +83,7 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Sign in' }).click()
-  await expect(page.getByRole('heading', { name: 'Your Worlds' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toBeVisible()
 
   await page.goto('/sign-up')
   await expect(page).toHaveURL(/\/worlds$/)
@@ -92,5 +92,5 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await expect(page).toHaveURL(/\/sign-in$/)
   await page.goto('/worlds')
   await expect(page).toHaveURL(/\/sign-in$/)
-  await expect(page.getByRole('heading', { name: 'Your Worlds' })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toHaveCount(0)
 })

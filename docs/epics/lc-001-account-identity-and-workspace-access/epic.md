@@ -20,12 +20,13 @@ stories:
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
   - `docs/adrs/2026-07-12-browser-session-authentication.md`
   - `docs/adrs/2026-07-12-react-web-client-and-typed-api-contract.md`
+  - `docs/adrs/2026-07-14-disposable-database-automation.md`
 
 Lorecraft needs a secure private account boundary before an individual can create and maintain authoritative Worlds. Accounts are not divided into creator, player, or other types; client surfaces may support different activities without changing the account model.
 
 ## Outcome
 
-A user can create an account, return through a secure browser session, reach a protected private workspace, and end that session. The workspace clearly communicates when the account has no Worlds without presenting unavailable World behavior.
+A user can create an account, return through a secure browser session, reach a protected workspace, and end that session. The workspace clearly communicates when no Worlds are available without presenting unavailable World-creation behavior.
 
 ## Current Scope
 
@@ -34,11 +35,11 @@ A user can create an account, return through a secure browser session, reach a p
 - Returning sign-in and session restoration.
 - Protected browser and API access.
 - Server-side session invalidation on sign-out.
-- An intentional empty `Your Worlds` workspace.
+- An intentional empty World catalog when no Worlds are accessible.
 
 ## Deferred Scope
 
-- World creation, listing, and editing.
+- World creation and editing.
 - Account roles or creator/player account types.
 - Display names, profiles, email verification, password recovery, social login, and multi-factor authentication.
 - Public API documentation, mobile clients, and collaboration permissions.
@@ -52,11 +53,11 @@ A user can create an account, return through a secure browser session, reach a p
 
 ## Story Index
 
-| Story | Status      | Capability                                          | Last Verified | Notes                                       |
-| ----- | ----------- | --------------------------------------------------- | ------------- | ------------------------------------------- |
-| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes. |
-| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes. |
-| S3    | implemented | Protected access, sign-out, and empty workspace.    | 2026-07-14    | Automated and manual UI proof passes.       |
+| Story | Status      | Capability                                          | Last Verified | Notes                                                                         |
+| ----- | ----------- | --------------------------------------------------- | ------------- | ----------------------------------------------------------------------------- |
+| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes.                                   |
+| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes.                                   |
+| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-14    | Automated proof passes; current catalog UI confirmation is tracked in LC-002. |
 
 ## Stories
 
@@ -272,16 +273,6 @@ The system SHALL invalidate the active server-side session when the user signs o
 - WHEN the signed-out browser refreshes the former workspace route or calls a protected endpoint
 - THEN it remains unauthenticated and cannot access private data.
 
-##### Requirement R3: Intentional Empty Workspace
-
-The system SHALL present an intentional `Your Worlds` empty state when an account has no Worlds.
-
-###### Scenario R3-S1: Account With No Worlds
-
-- WHEN an authenticated account with no Worlds opens the workspace
-- THEN the user sees that they have no Worlds yet
-- AND no disabled or nonfunctional World-creation control is shown.
-
 #### Implemented By
 
 | Path                                                                      | Role                                                                       | Recheck Trigger                              |
@@ -292,23 +283,24 @@ The system SHALL present an intentional `Your Worlds` empty state when an accoun
 | `apps/backend/database/migrations/1768620764697_create_sessions_table.ts` | Defines durable server-side session storage.                               | Recheck when session persistence changes.    |
 | `apps/frontend/src/app/AppRoutes.tsx`                                     | Prevents anonymous private-content rendering.                              | Recheck when protected routing changes.      |
 | `apps/frontend/src/auth/AuthProvider.tsx`                                 | Revalidates the server session whenever an open workspace regains focus.   | Recheck when session query behavior changes. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity, logout, and the intentional empty workspace.    | Recheck when workspace behavior changes.     |
+| `apps/frontend/src/workspace/WorkspacePage.tsx`                           | Presents account identity and logout within the protected workspace.       | Recheck when workspace behavior changes.     |
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                                                           | Status             |
-| -------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout, CSRF-expiry recovery, and empty workspace content.                                    | Passing 2026-07-13 |
-| S3/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13 |
-| S3/R2-S1                               | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13 |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, invalidated-cookie replay, and empty state.                                                       | Passing 2026-07-13 |
-| S3/R1-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14 |
-| S3/R2-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14 |
-| S3/R1-S1 through S3/R3-S1              | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, logout, responsive layout, and the empty workspace behave as intended.                                               | Passing 2026-07-14 |
+| Requirement / Scenario       | Evidence                                                                               | Proves                                                                                                                                                           | Status               |
+| ---------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| S3/R1-S1, S3/R2-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout and CSRF-expiry recovery.                                                              | Passing 2026-07-13   |
+| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13   |
+| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13   |
+| S3/R1-S2, S3/R2-S1, S3/R2-S2 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, and invalidated-cookie replay.                                                                    | Passing 2026-07-13   |
+| S3/R1-S3                     | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14   |
+| S3/R2-S1 CSRF boundary       | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14   |
+| S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, and logout behaved as intended.                                                                                      | Confirmed 2026-07-14 |
 
 #### Story Notes
 
 - Background session revalidation preserves public auth forms but continues to suppress protected workspace content until the server session is confirmed.
+- World-catalog content and empty-state behavior are owned and verified by `LC-002/S1`.
 
 ## Cross-Story Concerns
 
@@ -351,4 +343,4 @@ This Epic is healthy when:
 
 ## Notes
 
-- The 2026-07-14 apply passes resolved the independent reviews' session-revalidation, pre-throttle multipart-processing, public-auth draft-preservation, disposable-database, and complete CSRF-proof findings. Fresh independent review, manual UI confirmation, and the recorded provider gaps remain before acceptance and merge.
+- The closed account-workspace Change accepted the account and session capability. LC-002 owns review and manual confirmation for the later World-catalog presentation.

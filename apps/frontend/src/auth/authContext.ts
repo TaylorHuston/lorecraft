@@ -10,6 +10,7 @@ export type AuthContextValue = {
   isLoading: boolean
   isRevalidating: boolean
   error: Error | null
+  endSession(): void
   retry(): void
 }
 

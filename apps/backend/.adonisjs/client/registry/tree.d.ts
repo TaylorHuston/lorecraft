@@ -19,4 +19,8 @@ export interface ApiDefinition {
       destroy: typeof routes['account.sessions.destroy']
     }
   }
+  worlds: {
+    index: typeof routes['worlds.index']
+    show: typeof routes['worlds.show']
+  }
 }

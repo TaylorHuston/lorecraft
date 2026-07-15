@@ -15,6 +15,7 @@
     "migrate": "node ace migration:run",
     "migrate:ci": "node scripts/run-migrations.mjs test",
     "migrate:e2e": "node scripts/run-migrations.mjs e2e",
+    "seed:starter-world": "node ace db:seed --files database/seeders/stormbound_chapel_seeder.ts",
     "test": "npm run test:database-safety && node scripts/run-tests.mjs",
     "test:database-safety": "node --test scripts/database-safety.test.mjs",
     "lint": "eslint .",
