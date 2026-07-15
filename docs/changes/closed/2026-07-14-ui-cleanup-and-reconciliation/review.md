@@ -6,22 +6,22 @@ ready
 
 ## Gate Scorecard
 
-| Gate                         | Result | Notes                                                                                                   |
-| ---------------------------- | ------ | ------------------------------------------------------------------------------------------------------- |
-| Change artifacts             | pass   | Proposal, design, tasks, and implementation agree after review remediation.                             |
-| Change status                | ready  | Deterministic review, manual confirmation, and supporting-truth reconciliation are complete.            |
-| Epic truth                   | pass   | `LC-001` and `LC-002` independently pass current validation.                                            |
-| Requirements and Scenarios   | pass   | Presentation Requirements remain observable and scenario-scoped.                                        |
-| Story reference traceability | pass   | Current frontend and evidence references resolve to accepted Stories and Scenarios.                     |
-| Tests and verification       | pass   | Frontend, Storybook/a11y, lint, typecheck, builds, audit, and merge preview pass.                       |
-| Manual UI confirmation       | pass   | The user confirmed the current desktop/mobile walkthrough on 2026-07-15.                                |
-| Code review                  | pass   | Short-window recovery, control contrast, long-content, and evidence findings were remediated.           |
-| Visual / UX consistency      | pass   | Deterministic checks and final human visual acceptance pass.                                            |
-| Security review              | pass   | No exploitable issue, exposed secret, unsafe redirect, or known shipped dependency vulnerability found. |
-| Documentation                | pass   | Canonical public and private truth is current; obsolete visual-identity conflict copies are absent.     |
-| Release communication        | pass   | `CHANGELOG.md` contains a concise user-facing reconciliation entry.                                     |
-| Branch and merge readiness   | pass   | The accepted stylesheet refinement is committed and the merge preview is clean.                         |
-| PRD alignment                | pass   | The result remains a creator-first World-bible interface without adding capability or new navigation.   |
+| Gate                         | Result | Notes                                                                                                           |
+| ---------------------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| Change artifacts             | pass   | Proposal, design, tasks, and implementation agree after review remediation.                                     |
+| Change status                | closed | Deterministic review, manual confirmation, supporting-truth reconciliation, and local integration are complete. |
+| Epic truth                   | pass   | `LC-001` and `LC-002` independently pass current validation.                                                    |
+| Requirements and Scenarios   | pass   | Presentation Requirements remain observable and scenario-scoped.                                                |
+| Story reference traceability | pass   | Current frontend and evidence references resolve to accepted Stories and Scenarios.                             |
+| Tests and verification       | pass   | Frontend, Storybook/a11y, lint, typecheck, builds, audit, and merge preview pass.                               |
+| Manual UI confirmation       | pass   | The user confirmed the current desktop/mobile walkthrough on 2026-07-15.                                        |
+| Code review                  | pass   | Short-window recovery, control contrast, long-content, and evidence findings were remediated.                   |
+| Visual / UX consistency      | pass   | Deterministic checks and final human visual acceptance pass.                                                    |
+| Security review              | pass   | No exploitable issue, exposed secret, unsafe redirect, or known shipped dependency vulnerability found.         |
+| Documentation                | pass   | Canonical public and private truth is current; obsolete visual-identity conflict copies are absent.             |
+| Release communication        | pass   | `CHANGELOG.md` contains a concise user-facing reconciliation entry.                                             |
+| Branch and merge readiness   | pass   | The accepted stylesheet refinement is committed and the merge preview is clean.                                 |
+| PRD alignment                | pass   | The result remains a creator-first World-bible interface without adding capability or new navigation.           |
 
 ## Findings
 
@@ -100,7 +100,7 @@ ready
 - Conflict check: clean
 - Commit state: safe code and Epic remediation committed at `cbc127d`
 - PR status: not requested
-- Merge status: ready; explicit authorization required
+- Merge status: fast-forwarded into local `develop`; no push performed
 
 ## Review Log
 
@@ -110,3 +110,4 @@ ready
 - 2026-07-15: Review remains `changes-requested` for manual confirmation and explicit disposition of preserved dirty files.
 - 2026-07-15: User confirmed the desktop/mobile walkthrough and accepted the World-link refinement; canonical private guidance was committed and obsolete conflict copies were confirmed absent.
 - 2026-07-15: Verdict advanced to `ready`; explicit merge-and-close authorization is next.
+- 2026-07-15: User authorized merge and close; the branch fast-forwarded into local `develop` and the Change moved to closed history through `sdd change close`.

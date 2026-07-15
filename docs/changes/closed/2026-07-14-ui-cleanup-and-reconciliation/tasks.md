@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: recorded the user's desktop/mobile approval, committed the accepted World-link refinement at `efef5b1`, confirmed the obsolete sync-conflict copies are absent, and committed canonical private visual guidance at vault ref `10363dae`.
-- Next action: obtain explicit merge-and-close authorization.
-- Active branch/ref: `change/ui-cleanup-and-reconciliation` from `develop` at `8c1af39`; implementation worktree is `spaces/code/lorecraft-ui-cleanup`.
-- Expected dirty files: none after review closeout artifacts are committed.
+- Last completed action: fast-forwarded the reviewed Change into local `develop` and closed it through `sdd change close` after explicit user authorization.
+- Next action: none; push or release work requires a separate request.
+- Active branch/ref: local `develop`; the closed record is `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation`.
+- Expected dirty files: closeout artifact movement until the final closeout commit is created.
 - Known blockers: none.
 
 ## Task Checklist
@@ -68,8 +68,8 @@ status: in_review
 - [x] 8.1 Run `/sdd-review` as the independent local integration gate and record remaining manual/integration blockers.
 - [x] 8.2 Address the consolidated code, UI, evidence-map, and artifact-validation findings as one remediation set and rerun regression-focused verification.
 - [x] 8.3 Confirm proposal, design, tasks, both Epics, visual guidance, tests, release communication, review state, and manual status agree.
-- [ ] 8.4 Obtain explicit authorization before merge, close, push, or any remote mutation.
-- [ ] 8.5 Close the Change through `sdd change close` only after review and integration gates pass; do not invent a terminal status value.
+- [x] 8.4 Obtain explicit authorization before merge, close, push, or any remote mutation.
+- [x] 8.5 Close the Change through `sdd change close` only after review and integration gates pass; do not invent a terminal status value.
 
 ## Implementation Ledger
 
@@ -140,7 +140,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: in_review and ready to close; implementation, review remediation, deterministic validation, manual confirmation, and supporting-truth reconciliation are complete.
+- Change status: closed by artifact location; implementation, review remediation, deterministic validation, manual confirmation, supporting-truth reconciliation, and local integration are complete.
 - Epic files updated: presentation Requirements, Scenarios, implementation maps, evidence, and remaining manual gaps are current in `LC-001` and `LC-002`.
 - Story labels/references and Requirement/Scenario IDs current: yes; additions preserve existing IDs.
 - Implemented By maps current: yes.
@@ -151,6 +151,6 @@ status: in_review
 - `/sdd-review` verdict: ready.
 - Review record: `docs/changes/2026-07-14-ui-cleanup-and-reconciliation/review.md`.
 - Manual UI confirmation status: user confirmed 2026-07-15.
-- PR / merge state: ready for explicit merge-and-close authorization.
+- PR / merge state: fast-forwarded into local `develop`; no push or remote mutation performed.
 - Deferred scope accepted: creator shell, new capability, light mode, and general component package.
-- Change moved to `docs/changes/closed/`: no.
+- Change moved to `docs/changes/closed/`: yes.
