@@ -19,8 +19,8 @@ assertDisposableDatabase({
 })
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-const frontendUrl = 'http://localhost:4173'
-const backendUrl = 'http://localhost:3335'
+const frontendUrl = 'http://localhost:4313'
+const backendUrl = 'http://localhost:4314'
 
 export default defineConfig({
   testDir: './e2e',
@@ -61,7 +61,7 @@ export default defineConfig({
         ...databaseChildEnvironment(process.env),
         CORS_ORIGIN: frontendUrl,
         NODE_ENV: 'development',
-        PORT: '3335',
+        PORT: '4314',
         SESSION_DRIVER: 'database',
       },
       url: backendUrl,
@@ -72,7 +72,7 @@ export default defineConfig({
       name: 'frontend',
       cwd: repositoryRoot,
       command:
-        'npm run dev --workspace @lorecraft/frontend -- --host localhost --port 4173 --strictPort',
+        'npm run dev --workspace @lorecraft/frontend -- --host localhost --port 4313 --strictPort',
       env: {
         API_SERVER_URL: backendUrl,
       },

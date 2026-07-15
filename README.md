@@ -1,8 +1,23 @@
 # Lorecraft
 
-Lorecraft is a creator-first world bible for building and maintaining coherent fictional universes across novels, games, animation, and other media.
+Lorecraft is a creator-first application for building and maintaining coherent fictional Worlds across novels, games, animation, and other media. It treats each World as an authoritative, time-aware body of canon rather than a loose collection of notes.
 
-The initial product is a private workspace for individual worldbuilders. It treats the World as an authoritative, time-aware body of canon rather than a loose collection of notes. Future capabilities may use that foundation for source-backed AI assistance, continuity analysis, selective publishing, and non-canonical playable Adventures.
+The initial product is a private workspace for individual worldbuilders. The same foundation may later support source-backed AI assistance, continuity analysis, selective publishing, and non-canonical playable Adventures.
+
+## Status
+
+This repository is the production-oriented successor to the experimental `lorecraft-mvp` prototype.
+
+Implemented now:
+
+- Account creation, sign-in, session restoration, protected workspace access, and sign-out.
+- An authenticated catalog of Worlds available to the current account.
+- Read-only inspection of structured World metadata, Locations, and Characters.
+- Explicit, repeatable installation of the shared `Stormbound Chapel` starter World for local testing.
+
+World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, and playable Adventures. Combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics are likewise deferred.
+
+The [Epics](#documentation) are the canonical source for detailed implemented behavior, scenarios, and verification evidence. This section is only a current summary.
 
 ## Product Principles
 
@@ -15,12 +30,6 @@ The initial product is a private workspace for individual worldbuilders. It trea
 - Playable Adventures may consume canon later, but their events remain separate from it by default.
 - The world bible should remain useful without AI.
 
-## Status
-
-This repository is the production-oriented successor to the experimental `lorecraft-mvp` prototype. Users can create an account, sign in, browse Worlds available to them, and inspect structured read-only World canon. World creation and editing have not been implemented yet.
-
-The current product boundary is the creator-facing world bible. A complete writing environment, collaboration, public publishing, source ingestion, AI assistance, and playable Adventures are not part of the initial implementation unless introduced through later planned changes.
-
 ## Architecture
 
 Lorecraft is an API-first TypeScript monorepo:
@@ -29,61 +38,145 @@ Lorecraft is an API-first TypeScript monorepo:
 apps/
   backend/   AdonisJS API and authoritative application backend
   frontend/  Vite and React creator-facing web client
-docs/        Architecture and product implementation documentation
+docs/
+  adrs/      Accepted architecture decisions
+  changes/   Active and closed implementation change records
+  epics/     Canonical product behavior and verification evidence
 ```
 
-The backend is designed as a stable product API so future web, mobile, administrative, automation, and game clients can share the same authoritative behavior. Domain and application logic should remain independent of HTTP controllers, persistence libraries, UI frameworks, and AI provider SDKs.
+The backend owns product rules, validation, authorization, persistence, and use-case orchestration. The React client owns presentation, routing, and client-local state and consumes the backend through Tuyau-generated TypeScript contracts and TanStack Query. Browser authentication uses server-side sessions in HTTP-only cookies; browser requests stay on the web origin and reach AdonisJS through a same-origin `/api` proxy.
 
-Shared packages will be added under `packages/` only when a concrete cross-application contract requires one.
+This boundary is intended to support future web, mobile, administrative, automation, and game clients without moving authoritative behavior into any one client. Domain and application logic should remain independent of HTTP controllers, persistence libraries, UI frameworks, and AI provider SDKs. Shared packages will be added under `packages/` only when a concrete cross-application contract requires one.
 
 ## Requirements
 
-- Node.js 24 or newer
-- npm 11 or newer
-- A PostgreSQL database. Neon is the selected hosted provider, but the application uses the standard PostgreSQL driver.
+- Node.js 24 or newer.
+- npm 11. The workspace currently pins npm 11.12.1.
+- A PostgreSQL database. Neon is the selected hosted provider, but Lorecraft connects through the standard PostgreSQL driver.
 
-## Development
+## Getting Started
 
-Install dependencies:
+Install dependencies and create ignored local environment files:
 
 ```bash
 npm install
-```
-
-Create local environment files:
-
-```bash
 cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 ```
 
-Set `DATABASE_URL` in `apps/backend/.env` to a development database, set `APP_KEY` with `node ace generate:key` from `apps/backend/`, and keep `CORS_ORIGIN` aligned with the frontend URL. Set `API_SERVER_URL` in `apps/frontend/.env` to the AdonisJS server used by Vite's development-only `/api` proxy. Browser code always calls same-origin `/api` routes; deployments must provide the equivalent reverse proxy. Never commit either environment file.
-
-Apply migrations and run the workspace:
+Configure the environment values described below. Then generate the AdonisJS application key, apply development migrations, and start both applications:
 
 ```bash
+cd apps/backend
+node ace generate:key
+cd ../..
 npm run migrate --workspace @lorecraft/backend
 npm run dev
 ```
 
-To install the shared `Stormbound Chapel` starter World for local testing, set `STARTER_WORLD_AUTHOR_EMAIL` to an existing account in the ignored backend environment, then run:
+Lorecraft reserves a dedicated local port block:
+
+| Surface        | URL                     |
+| -------------- | ----------------------- |
+| Web client     | `http://localhost:4310` |
+| API server     | `http://localhost:4311` |
+| Storybook      | `http://localhost:4312` |
+| Playwright web | `http://localhost:4313` |
+| Playwright API | `http://localhost:4314` |
+
+Vite and Storybook fail when their reserved port is unavailable rather than silently selecting another port.
+
+Create an account through the web client. A new account may initially see an empty World catalog until the optional starter World is installed.
+
+## Configuration
+
+Backend configuration lives in `apps/backend/.env`:
+
+- `DATABASE_URL` is the normal development database.
+- `APP_KEY` is generated by `node ace generate:key`.
+- `HOST` and `PORT` default to `localhost` and `4311` in the example file.
+- `CORS_ORIGIN` must match the frontend origin, normally `http://localhost:4310`.
+- `STARTER_WORLD_AUTHOR_EMAIL` is optional and is used only by the explicit starter-World seed.
+
+Frontend configuration lives in `apps/frontend/.env`:
+
+- `API_SERVER_URL` identifies the AdonisJS server used by Vite's development-only `/api` proxy. It defaults to `http://localhost:4311` in the example file.
+
+Browser code always calls same-origin `/api` routes. A deployment must provide the equivalent reverse proxy rather than exposing a different browser API origin. Never commit either environment file, database credentials, application keys, or provider secrets.
+
+See the [backend environment example](apps/backend/.env.example) and [frontend environment example](apps/frontend/.env.example) for the checked-in defaults.
+
+## Development
+
+Root commands use npm workspaces and Turborepo:
+
+```bash
+npm run dev
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Use a workspace selector when only one application is relevant. For example:
+
+```bash
+npm run dev --workspace @lorecraft/backend
+npm run dev --workspace @lorecraft/frontend
+```
+
+### Starter World
+
+`Stormbound Chapel` is shared, read-only starter canon for authenticated local accounts. It is not created during normal application startup.
+
+To install it, first create the intended author account, set `STARTER_WORLD_AUTHOR_EMAIL` to that account's email in the ignored backend environment, and run:
 
 ```bash
 npm run seed:starter-world --workspace @lorecraft/backend
 ```
 
-The seed is explicit and idempotent. Normal application startup does not create or modify World content.
+The command reconciles the starter World transactionally and is idempotent for the configured author. Repeated runs preserve exactly one starter World and one copy of each canonical Location and Character. It fails when the author is missing and refuses to overwrite an unrelated World that already uses the reserved starter slug. The API does not expose the author's account data.
 
-Run verification:
+## Verification
+
+Run the non-database quality gates from the repository root:
 
 ```bash
 npm run lint
-npm run test
 npm run typecheck
 npm run build
+npm run build:storybook
 ```
 
-Backend migrations and functional tests refuse to run unless a disposable PostgreSQL database is supplied separately from the development database, explicitly acknowledged, and identifiable by a test-oriented database or schema name:
+The full test commands are:
+
+```bash
+npm run test
+npm run test:storybook
+npm run test:e2e
+```
+
+`npm run test` includes PostgreSQL-backed backend tests, and `npm run test:e2e` starts isolated frontend and backend services for desktop and mobile Playwright projects. Both require the guarded database configuration below. A successful command should be interpreted together with the suites it actually executed.
+
+## Storybook
+
+Storybook is the local isolated UI workbench for production components, responsive states, interactions, and accessibility checks:
+
+```bash
+npm run storybook
+```
+
+Open `http://localhost:4312`. The catalog includes current authentication and World-workspace surfaces as well as explicitly future-facing prototypes. Prototype stories are not application routes, persisted behavior, or accepted Epic scope. Storybook complements frontend tests and routed Playwright journeys; it does not replace them.
+
+Use these supporting commands:
+
+```bash
+npm run test:storybook
+npm run build:storybook
+```
+
+## Database And E2E Safety
+
+Backend migrations and functional tests refuse to run unless a disposable PostgreSQL target is supplied separately from the development database, explicitly acknowledged, and identifiable by a test-oriented database or schema name:
 
 ```bash
 DATABASE_URL='postgresql://.../lorecraft' \
@@ -97,7 +190,7 @@ ALLOW_TEST_DATABASE_WRITES=1 \
 npm run test
 ```
 
-The Playwright account journey has the same safety boundary through separate variables:
+The Playwright account journey has the same boundary through separate variables:
 
 ```bash
 DATABASE_URL='postgresql://.../lorecraft' \
@@ -106,4 +199,25 @@ ALLOW_E2E_DATABASE_WRITES=1 \
 npm run test:e2e
 ```
 
-The guarded commands require `DATABASE_URL` so they can reject a target that resolves to the application database, require a disposable identifier such as `test`, `e2e`, `ci`, or `preview` in the database or effective schema name, and do not bypass Lucid's production migration protection. Schema-isolated Neon runs must use the direct endpoint with PostgreSQL `options=-csearch_path=...`; the pooled endpoint does not accept that startup option. Do not point these commands at production or shared development data. CI provisions an isolated PostgreSQL service for migrations, backend tests, and desktop/mobile Playwright verification. A separate Neon smoke check remains required before accepting hosted-database behavior.
+The guarded commands require `DATABASE_URL` so they can reject a target that resolves to the application database. The disposable target must include an identifier such as `test`, `e2e`, `ci`, or `preview` in the effective database or schema name. These safeguards do not bypass Lucid's production migration protection.
+
+Do not point guarded commands at production or shared development data. Schema-isolated Neon runs must use the direct endpoint with PostgreSQL `options=-csearch_path=...`; the pooled endpoint does not accept that startup option. CI provisions an isolated PostgreSQL service for migrations, backend tests, and desktop/mobile Playwright verification. A separate smoke check against an isolated Lorecraft Neon test branch remains required before production deployment.
+
+## Documentation
+
+Epics define canonical implemented behavior, scenario evidence, and explicit gaps:
+
+- [LC-001 Account Identity And Workspace Access](docs/epics/lc-001-account-identity-and-workspace-access/epic.md)
+- [LC-002 World Bible Catalog](docs/epics/lc-002-world-bible-catalog/epic.md)
+
+Accepted architecture decisions:
+
+- [AdonisJS API-First Backend](docs/adrs/2026-07-12-adonisjs-api-first-backend.md)
+- [Browser Session Authentication](docs/adrs/2026-07-12-browser-session-authentication.md)
+- [PostgreSQL On Neon](docs/adrs/2026-07-12-postgresql-on-neon.md)
+- [React Web Client And Typed API Contract](docs/adrs/2026-07-12-react-web-client-and-typed-api-contract.md)
+- [World Canon And Adventure Isolation](docs/adrs/2026-07-14-world-canon-and-adventure-isolation.md)
+- [Relational World Aggregate](docs/adrs/2026-07-14-relational-world-aggregate.md)
+- [Disposable Database Targets For Automation](docs/adrs/2026-07-14-disposable-database-automation.md)
+
+Application-specific workflow details are available in the [backend README](apps/backend/README.md) and [frontend README](apps/frontend/README.md). See the [changelog](CHANGELOG.md) for user-facing changes.

@@ -13,13 +13,18 @@ afterEach(() => {
 
 describe('development browser topology', () => {
   it('proxies same-origin API requests without exposing the backend address to browser code', async () => {
-    process.env.API_SERVER_URL = 'http://backend.internal:3333'
+    process.env.API_SERVER_URL = 'http://backend.internal:4311'
 
     const config = await resolveConfig({ mode: 'test' }, 'serve')
 
+    expect(config.server).toMatchObject({
+      host: 'localhost',
+      port: 4310,
+      strictPort: true,
+    })
     expect(config.server.proxy).toMatchObject({
       '/api': {
-        target: 'http://backend.internal:3333',
+        target: 'http://backend.internal:4311',
       },
     })
     expect(config.env).not.toHaveProperty('API_SERVER_URL')

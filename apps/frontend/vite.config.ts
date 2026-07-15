@@ -4,11 +4,14 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const apiServerUrl = env.API_SERVER_URL || 'http://localhost:3333'
+  const apiServerUrl = env.API_SERVER_URL || 'http://localhost:4311'
 
   return {
     plugins: [react()],
     server: {
+      host: 'localhost',
+      port: 4310,
+      strictPort: true,
       proxy: {
         '/api': {
           target: apiServerUrl,
@@ -21,7 +24,7 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       environmentOptions: {
         jsdom: {
-          url: 'http://localhost:5173',
+          url: 'http://localhost:4310',
         },
       },
       setupFiles: ['./src/test/setup.ts'],

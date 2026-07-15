@@ -145,11 +145,11 @@ test.group('Account API security', (group) => {
   }) => {
     const response = await client
       .options('/api/v1/auth/signup')
-      .header('origin', 'http://localhost:5173')
+      .header('origin', 'http://localhost:4310')
       .header('access-control-request-method', 'POST')
 
     response.assertStatus(204)
-    response.assertHeader('access-control-allow-origin', 'http://localhost:5173')
+    response.assertHeader('access-control-allow-origin', 'http://localhost:4310')
     response.assertHeader('access-control-allow-credentials', 'true')
   })
 
