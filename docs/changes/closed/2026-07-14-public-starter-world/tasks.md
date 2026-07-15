@@ -1,17 +1,17 @@
 ---
-status: in_review
+status: ready_to_close
 ---
 
 # Tasks: Public Starter World
 
 ## Resume Here
 
-- Current state: independent review is ready with no unresolved finding
-- Last completed action: committed safe artifact fixes as `a706fd3` and completed the regression rereview
-- Next action: obtain explicit authorization to merge into `develop` and close the Change
-- Active branch/ref: reviewed `change/public-starter-world` at `a706fd3`
-- Expected dirty files: this review outcome plus unrelated pre-existing port, guidance, and supporting-document edits
-- Known blockers: merge and closeout authorization only
+- Current state: closed; reviewed implementation was merged into `develop` and the Change folder is archived
+- Last completed action: merged as `ab3796f` and moved the Change to `docs/changes/closed/2026-07-14-public-starter-world/`
+- Next action: none for this Change; use `/sdd-release` for future production promotion
+- Active branch/ref: `develop`
+- Expected dirty files: none after the closeout commit
+- Known blockers: none
 
 ## Task Checklist
 
@@ -50,7 +50,8 @@ status: in_review
 - [x] Record user-confirmed manual UI acceptance.
 - [x] Run initial review, apply consolidated findings, and complete the final independent discovery wave.
 - [x] Commit the safe final-review artifact batch and record the regression rereview watermark.
-- [ ] Merge and close only after explicit user authorization.
+- [x] Merge into `develop` after explicit user authorization.
+- [x] Close the canonical Change folder and commit the closeout on `develop`.
 
 ## Implementation Ledger
 
@@ -118,19 +119,19 @@ status: in_review
 
 ## Closeout
 
-- Change status: in_review; locally ready for authorized integration and closeout.
+- Change status: ready_to_close; folder location records the completed closeout.
 - Epic files updated: LC-001 and LC-002.
 - Story labels/references and Requirement/Scenario IDs current: yes.
 - Implemented By maps current: yes.
 - Scenario-mapped Verified By maps current: yes.
 - Superseded earlier Epic truth reconciled: LC-001/S3/R3 moved to LC-002/S1/R1-S3.
-- Review record: `docs/changes/2026-07-14-public-starter-world/review.md`
+- Review record: `docs/changes/closed/2026-07-14-public-starter-world/review.md`
 - ADR status: accepted; relational World aggregate and disposable database automation ADRs govern this slice, while the World/Adventure isolation ADR records future scope
 - Release communication current: yes; `CHANGELOG.md` contains the public catalog/detail summary.
 - `sdd-review` verdict: ready.
 - `review.md` findings resolved: yes; no unresolved finding.
 - Planning updates resolved: yes.
 - Manual UI confirmation status: user confirmed.
-- PR / merge state: local merge to `develop` is ready but not yet authorized.
+- PR / merge state: merged locally into `develop` as `ab3796f`; no PR was required or requested.
 - Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and hidden private-knowledge policy
-- Change moved to `docs/changes/closed/`: no; pending merge authorization, integration, and closeout.
+- Change moved to `docs/changes/closed/`: yes, on 2026-07-15.
