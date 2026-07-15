@@ -191,6 +191,11 @@ test.group('World catalog API', (group) => {
       privateKnowledge: 'Temporary.',
       sortOrder: 99,
     })
+    await World.query().where('id', world.id).update({
+      name: 'Drifted World',
+      description: 'Drifted World metadata.',
+      visibility: 'private',
+    })
     await Location.query()
       .where('worldId', world.id)
       .where('key', 'chapel')
@@ -213,6 +218,7 @@ test.group('World catalog API', (group) => {
     assert.deepEqual(
       {
         authorId: seededWorld.authorId,
+        seedIdentity: seededWorld.seedIdentity,
         slug: seededWorld.slug,
         name: seededWorld.name,
         description: seededWorld.description,
@@ -220,6 +226,7 @@ test.group('World catalog API', (group) => {
       },
       {
         authorId: author.id,
+        seedIdentity: 'starter-world:stormbound-chapel',
         slug: 'stormbound-chapel',
         name: 'Stormbound Chapel',
         description:
@@ -352,6 +359,58 @@ test.group('World catalog API', (group) => {
         .where('key', 'stale-character')
         .first()
     )
+  })
+
+  test('LC-002/S2/R1-S3: an exact legacy starter graph receives immutable provenance', async ({
+    assert,
+  }) => {
+    const author = await User.create({
+      email: 'legacy-seed-author@example.com',
+      password: 'correct horse battery staple',
+    })
+    await seedStormboundChapel(author.email)
+    const world = await World.findByOrFail('slug', 'stormbound-chapel')
+    await World.query().where('id', world.id).update({ seedIdentity: null })
+
+    await seedStormboundChapel(author.email)
+
+    await world.refresh()
+    assert.equal(world.seedIdentity, 'starter-world:stormbound-chapel')
+  })
+
+  test('LC-002/S2/R1-S3: starter seed rejects a same-author unmarked lookalike', async ({
+    assert,
+  }) => {
+    const author = await User.create({
+      email: 'lookalike-author@example.com',
+      password: 'correct horse battery staple',
+    })
+    const lookalike = await World.create({
+      authorId: author.id,
+      slug: 'stormbound-chapel',
+      name: 'Stormbound Chapel',
+      description:
+        'A small persistent-world test set around a chapel, a tavern, a vestry, and a rain-lashed graveyard.',
+      visibility: 'public',
+    })
+    const existingLocation = await Location.create({
+      worldId: lookalike.id,
+      key: 'existing-location',
+      name: 'Existing Location',
+      description: 'This Location belongs to the unmarked World and must remain untouched.',
+      sortOrder: 0,
+    })
+
+    await assert.rejects(
+      () => seedStormboundChapel(author.email),
+      /reserved slug "stormbound-chapel" does not have the required seed identity/
+    )
+
+    await lookalike.refresh()
+    assert.isNull(lookalike.seedIdentity)
+    assert.equal(lookalike.name, 'Stormbound Chapel')
+    assert.isNotNull(await Location.find(existingLocation.id))
+    assert.lengthOf(await Character.query().where('worldId', lookalike.id), 0)
   })
 
   test('LC-002/S2/R1-S3: starter seed rejects an unrelated reserved-slug World', async ({

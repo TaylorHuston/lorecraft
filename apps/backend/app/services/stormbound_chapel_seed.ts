@@ -1,5 +1,6 @@
 import User from '#models/user'
 import db from '@adonisjs/lucid/services/db'
+import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
 const locations = [
   [
@@ -67,6 +68,8 @@ const characters = [
   ],
 ] as const
 
+const starterWorldSeedIdentity = 'starter-world:stormbound-chapel'
+
 const starterWorld = {
   slug: 'stormbound-chapel',
   name: 'Stormbound Chapel',
@@ -74,6 +77,69 @@ const starterWorld = {
     'A small persistent-world test set around a chapel, a tavern, a vestry, and a rain-lashed graveyard.',
   visibility: 'public',
 } as const
+
+async function isExactLegacyStarterWorld(trx: TransactionClientContract, worldId: number) {
+  const persistedLocations = await trx
+    .from('locations')
+    .where('world_id', worldId)
+    .orderBy('sort_order')
+    .orderBy('id')
+    .select('key', 'name', 'description', 'sort_order')
+  const persistedCharacters = await trx
+    .from('characters as characters')
+    .join('locations as locations', 'locations.id', 'characters.location_id')
+    .where('characters.world_id', worldId)
+    .orderBy('characters.sort_order')
+    .orderBy('characters.id')
+    .select(
+      'characters.key',
+      'characters.name',
+      'locations.key as location_key',
+      'characters.physical_description',
+      'characters.background',
+      'characters.personality',
+      'characters.voice',
+      'characters.private_knowledge',
+      'characters.sort_order'
+    )
+
+  const expectedLocations = locations.map(([key, name, description], sortOrder) => ({
+    key,
+    name,
+    description,
+    sort_order: sortOrder,
+  }))
+  const expectedCharacters = characters.map(
+    (
+      [
+        key,
+        name,
+        locationKey,
+        physicalDescription,
+        background,
+        personality,
+        voice,
+        privateKnowledge,
+      ],
+      sortOrder
+    ) => ({
+      key,
+      name,
+      location_key: locationKey,
+      physical_description: physicalDescription,
+      background,
+      personality,
+      voice,
+      private_knowledge: privateKnowledge,
+      sort_order: sortOrder,
+    })
+  )
+
+  return (
+    JSON.stringify(persistedLocations) === JSON.stringify(expectedLocations) &&
+    JSON.stringify(persistedCharacters) === JSON.stringify(expectedCharacters)
+  )
+}
 
 export async function seedStormboundChapel(authorEmail: string | undefined) {
   if (!authorEmail)
@@ -84,30 +150,50 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
   await db.transaction(async (trx) => {
     const existingWorld = await trx
       .from('worlds')
-      .select('id', 'author_id', 'name', 'description', 'visibility')
+      .select('id', 'author_id', 'seed_identity', 'name', 'description', 'visibility')
       .where('slug', starterWorld.slug)
       .first()
 
-    if (
-      existingWorld &&
-      (String(existingWorld.author_id) !== String(author.id) ||
-        existingWorld.name !== starterWorld.name ||
-        existingWorld.description !== starterWorld.description ||
-        existingWorld.visibility !== starterWorld.visibility)
-    ) {
+    if (existingWorld && String(existingWorld.author_id) !== String(author.id)) {
       throw new Error(
         `Cannot seed the starter World because the reserved slug "${starterWorld.slug}" is already in use.`
       )
     }
 
+    if (existingWorld && existingWorld.seed_identity !== starterWorldSeedIdentity) {
+      const matchesLegacySeed =
+        existingWorld.seed_identity === null &&
+        existingWorld.name === starterWorld.name &&
+        existingWorld.description === starterWorld.description &&
+        existingWorld.visibility === starterWorld.visibility &&
+        (await isExactLegacyStarterWorld(trx, existingWorld.id))
+
+      if (!matchesLegacySeed) {
+        throw new Error(
+          `Cannot seed the starter World because the reserved slug "${starterWorld.slug}" does not have the required seed identity.`
+        )
+      }
+
+      await trx
+        .from('worlds')
+        .where('id', existingWorld.id)
+        .update({ seed_identity: starterWorldSeedIdentity, updated_at: new Date() })
+      existingWorld.seed_identity = starterWorldSeedIdentity
+    }
+
     let worldId: number
     if (existingWorld) {
       worldId = existingWorld.id
+      await trx
+        .from('worlds')
+        .where('id', worldId)
+        .update({ ...starterWorld, updated_at: new Date() })
     } else {
       const [world] = await trx
         .table('worlds')
         .insert({
           author_id: author.id,
+          seed_identity: starterWorldSeedIdentity,
           ...starterWorld,
           created_at: new Date(),
           updated_at: new Date(),

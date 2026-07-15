@@ -1,6 +1,6 @@
 # Design: Public Starter World
 
-## Target Capability
+## Context
 
 Create `LC-002 World Bible Catalog` with two user paths:
 
@@ -28,7 +28,7 @@ The system SHALL return and render a selected accessible World with deterministi
 - **R1-S2:** WHEN a signed-in account requests an unknown or inaccessible World slug, THEN the system returns a not-found result without leaking ownership details.
 - **R1-S3:** WHEN the seed command is run repeatedly for the same configured author, THEN exactly one starter World and one copy of each canonical Location and Character remain.
 
-## Chosen Approach
+## Selected Approach
 
 Use normalized PostgreSQL tables for `worlds`, `locations`, and `characters`. `worlds.author_id` records ownership and `worlds.visibility` establishes the first access rule. Locations and Characters use stable keys unique within a World. Characters reference a canonical seed Location and store stable descriptive fields; a follow-up integrity migration enforces that each referenced Location belongs to the same World as its Character. No mutable Adventure state is introduced.
 
@@ -41,6 +41,12 @@ The explicit `db:seed` workflow reads `STARTER_WORLD_AUTHOR_EMAIL` from validate
 - **One JSON World document:** simpler initially, but weakens relational integrity and makes stable Location/Character identity and future targeted authoring harder. Rejected.
 - **Hard-coded frontend fixture:** useful for a prototype but does not prove persistence, authorization, typed API contracts, or author ownership. Rejected.
 - **Startup seeding:** operationally convenient but couples normal server boot to production data mutation. Rejected.
+
+## Risks / Trade-Offs
+
+- The explicit seed reconciles canonical rows destructively, so it must rely on immutable seed provenance rather than mutable World metadata before deleting stale children.
+- Runtime validation at the typed client boundary duplicates a small amount of contract shape, but prevents malformed successful responses from reaching React as trusted data.
+- The shared starter is intentionally public to authenticated accounts during testing; anonymous publishing and reader-specific private-knowledge policy remain deferred.
 
 ## Security And Privacy
 
@@ -59,7 +65,7 @@ The explicit `db:seed` workflow reads `STARTER_WORLD_AUTHOR_EMAIL` from validate
 
 ## ADR Assessment
 
-No new ADR is required. The API-first backend, typed web contract, PostgreSQL persistence, and browser-session decisions are already governed by existing ADRs. This change applies those decisions to the first World capability.
+This change establishes the relational World aggregate decision recorded in `docs/adrs/2026-07-14-relational-world-aggregate.md`. Its PostgreSQL-backed verification follows `docs/adrs/2026-07-14-disposable-database-automation.md`. The separate `docs/adrs/2026-07-14-world-canon-and-adventure-isolation.md` constrains future Adventure work without adding mutable Adventure state to this Change.
 
 ## Implemented By
 

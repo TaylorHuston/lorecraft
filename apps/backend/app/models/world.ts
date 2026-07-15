@@ -15,6 +15,9 @@ export default class World extends BaseModel {
   declare authorId: number
 
   @column()
+  declare seedIdentity: string | null
+
+  @column()
   declare slug: string
 
   @column()

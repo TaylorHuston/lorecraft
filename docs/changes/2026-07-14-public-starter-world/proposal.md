@@ -30,6 +30,14 @@ Lorecraft's authenticated workspace has no World content. A shared starter World
 - Adventures, mutable gameplay state, mood, status, memory, inventory, objects, players, exits, or opening narration.
 - Dynamic content generation or automatic seeding during application startup.
 
+## Impact
+
+- Product: authenticated accounts gain a shared read-only World to browse and inspect.
+- Code: adds the first World catalog persistence, API, typed client, and creator-facing read views.
+- Tests: adds database, API, frontend, Storybook, and populated browser evidence for LC-002.
+- Docs: creates LC-002 and updates public release communication.
+- ADRs: records the relational World aggregate and disposable database automation decisions.
+
 ## Release Communication Impact
 
 - Required: yes. This is the first user-visible World catalog and structured world-bible content.

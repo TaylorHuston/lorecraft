@@ -26,7 +26,7 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
 
   await expect(page).toHaveURL(/\/worlds$/)
   await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'No Worlds available' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Stormbound Chapel' })).toBeVisible()
   await expect(page.getByRole('button', { name: /create.*world/i })).toHaveCount(0)
 
   const browserSession = (await page.context().cookies()).find(
