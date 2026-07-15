@@ -153,10 +153,12 @@
 }
 
 .characterHeading span {
-  flex-shrink: 0;
+  min-width: 0;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .entry dl {
@@ -214,7 +216,7 @@
 .retry {
   min-height: var(--control-touch);
   padding: 0 var(--space-4);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--control-boundary);
   border-radius: var(--radius-control);
   background: var(--surface-interactive);
   color: var(--text-primary);
@@ -261,6 +263,7 @@
   .characterHeading span {
     display: block;
     margin-top: var(--space-2);
+    text-align: left;
   }
 
   .entry dl {

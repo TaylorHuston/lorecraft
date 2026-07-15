@@ -136,7 +136,7 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 | S1/R1-S1                     | `apps/frontend/e2e/starter-world.setup.ts` and `starter-world.spec.ts`                                      | Real seed command and populated catalog path at desktop and mobile sizes.                            | Passing 2026-07-15   |
 | S1/R1-S1                     | User-confirmed desktop/mobile catalog review                                                                | Visual acceptance of the populated catalog.                                                          | Confirmed 2026-07-14 |
 | S1/R2-S1, S1/R2-S2, S1/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated, empty, loading, failure, retry, sign-out, responsive, and Storybook accessibility states. | Passing 2026-07-15   |
-| S1/R2-S1, S1/R2-S3           | `apps/frontend/e2e/starter-world.spec.ts` and `account-workspace.spec.ts`                                   | Catalog navigation, no horizontal overflow, and representative mobile touch targets.                 | Passing 2026-07-15   |
+| S1/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts` and `account-workspace.spec.ts`                                   | Catalog navigation, no horizontal overflow, and representative mobile touch targets.                 | Passing 2026-07-15   |
 
 #### Verification Gaps
 
@@ -226,7 +226,7 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 | S2/R1-S1, S2/R1-S3           | `apps/frontend/e2e/starter-world.setup.ts` and `starter-world.spec.ts`             | Real seed command, catalog navigation, and structured detail at desktop and mobile sizes.                                   | Passing 2026-07-15   |
 | S2/R1-S1                     | User-confirmed desktop/mobile structured detail review                             | Visual acceptance of structured detail.                                                                                     | Confirmed 2026-07-14 |
 | S2/R2-S1, S2/R2-S2, S2/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `WorldDetailPage.stories.tsx`  | Responsive structured detail, independent empty collections, missing/unavailable/retry states, and Storybook accessibility. | Passing 2026-07-15   |
-| S2/R2-S1, S2/R2-S2           | `apps/frontend/e2e/starter-world.spec.ts`                                          | Loaded detail and return navigation remain readable, overflow-free, and touch accessible at desktop and mobile sizes.       | Passing 2026-07-15   |
+| S2/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts`                                          | Loaded detail and return navigation remain readable, overflow-free, and touch accessible at desktop and mobile sizes.       | Passing 2026-07-15   |
 
 #### Verification Gaps
 

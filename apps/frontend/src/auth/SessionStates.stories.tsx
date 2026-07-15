@@ -15,6 +15,7 @@ const api = {
 }
 
 const mobileRefreshRetry = fn()
+const shortDesktopRefreshRetry = fn()
 
 function withAuthState(children: ReactNode, overrides: Partial<AuthContextValue> = {}) {
   return (
@@ -137,5 +138,41 @@ export const BackgroundRefreshErrorMobile: Story = {
     await expect(mobileRefreshRetry).toHaveBeenCalledTimes(1)
     await expect(retry).toHaveFocus()
     await expect(email).toHaveValue('unfinished@lorecraft.test')
+  },
+}
+
+export const BackgroundRefreshErrorShortDesktop: Story = {
+  render: () =>
+    withAuthState(
+      <>
+        <SessionRefreshError />
+        <UnfinishedSignIn />
+      </>,
+      { retry: shortDesktopRefreshRetry }
+    ),
+  parameters: {
+    viewport: {
+      options: {
+        shortDesktop: {
+          name: 'Short desktop',
+          styles: { width: '800px', height: '480px' },
+        },
+      },
+      defaultViewport: 'shortDesktop',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const alert = canvas.getByRole('alert')
+    const brand = canvas.getByText('Lorecraft')
+    const email = canvas.getByLabelText('Email')
+
+    await expect(email).toHaveValue('unfinished@lorecraft.test')
+    await expect(alert.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      brand.getBoundingClientRect().top
+    )
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      canvasElement.ownerDocument.documentElement.clientWidth
+    )
   },
 }

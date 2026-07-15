@@ -20,7 +20,6 @@
 .brand {
   margin: 0 0 var(--space-10);
   color: var(--identity);
-  font-family: var(--font-mono);
   font-size: 0.8125rem;
   font-weight: 650;
 }

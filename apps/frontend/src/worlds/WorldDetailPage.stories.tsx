@@ -60,6 +60,15 @@ const unavailableApi: WorldApi = {
     throw new WorldApiError('network', 'Unavailable')
   },
 }
+const longLocationName =
+  'SanctuaryOfTheUnbrokenStormBeyondTheLastRecordedBoundaryOfTheNorthernMarches'
+const longContentDetail: WorldDetail = {
+  ...detail,
+  characters: detail.characters.map((character) => ({
+    ...character,
+    location: { key: 'long-location', name: longLocationName },
+  })),
+}
 
 const meta = {
   title: 'Application/Worlds/Detail',
@@ -80,6 +89,11 @@ export const Loading: Story = {
   },
 }
 
+export const LoadingMobile: Story = {
+  ...Loading,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
 export const Loaded: Story = {
   args: { worldApi: loadedApi },
   render: () => renderDetail(loadedApi),
@@ -98,6 +112,19 @@ export const Loaded: Story = {
 export const LoadedMobile: Story = {
   ...Loaded,
   parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
+export const LongCharacterLocationMobile: Story = {
+  args: { worldApi: detailApi(longContentDetail) },
+  render: () => renderDetail(detailApi(longContentDetail)),
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByText(longLocationName)).resolves.toBeVisible()
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      canvasElement.ownerDocument.documentElement.clientWidth
+    )
+  },
 }
 
 export const EmptyLocations: Story = {
@@ -167,6 +194,25 @@ export const Unavailable: Story = {
   },
 }
 
+export const UnavailableMobile: Story = {
+  args: { worldApi: unavailableApi },
+  render: () => renderDetail(unavailableApi),
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByRole('heading', { name: 'World unavailable' })).resolves.toBeVisible()
+    const retry = canvas.getByRole('button', { name: 'Try again' })
+    retry.focus()
+    await expect(retry).toHaveFocus()
+    const bounds = retry.getBoundingClientRect()
+    await expect(bounds.width).toBeGreaterThanOrEqual(44)
+    await expect(bounds.height).toBeGreaterThanOrEqual(44)
+    await expect(canvasElement.ownerDocument.documentElement.scrollWidth).toBeLessThanOrEqual(
+      canvasElement.ownerDocument.documentElement.clientWidth
+    )
+  },
+}
+
 export const RetryPending: Story = {
   args: { worldApi: unavailableApi },
   render: () => {
@@ -188,4 +234,9 @@ export const RetryPending: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Try again' }))
     await expect(canvas.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
   },
+}
+
+export const RetryPendingMobile: Story = {
+  ...RetryPending,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
 }

@@ -86,7 +86,7 @@ export function SessionLoading() {
         aria-busy="true"
       >
         <p className={styles.stateLabel}>Lorecraft</p>
-        <p className={styles.stateTitle}>Checking your session...</p>
+        <p className={styles.stateTitle}>Checking your session…</p>
       </div>
     </main>
   )

@@ -52,7 +52,7 @@
 .retryWorlds {
   min-height: var(--control-touch);
   padding: 0 var(--space-4);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--control-boundary);
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--text-secondary);

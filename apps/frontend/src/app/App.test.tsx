@@ -588,7 +588,7 @@ describe('account workspace entry', () => {
     await act(async () => window.dispatchEvent(new Event('focus')))
 
     expect(
-      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+      (await screen.findByText('Checking your session…')).closest('[role="status"]')
     ).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
@@ -622,7 +622,7 @@ describe('account workspace entry', () => {
     expect(signOutButton).toHaveFocus()
     await act(async () => window.dispatchEvent(new Event('focus')))
     expect(
-      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+      (await screen.findByText('Checking your session…')).closest('[role="status"]')
     ).toBeInTheDocument()
 
     await act(async () => resolveRevalidation(account))
@@ -668,7 +668,7 @@ describe('account workspace entry', () => {
 
     await act(async () => window.dispatchEvent(new Event('focus')))
     expect(
-      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+      (await screen.findByText('Checking your session…')).closest('[role="status"]')
     ).toBeInTheDocument()
 
     await act(async () => resolveRevalidation(account))
@@ -698,7 +698,7 @@ describe('account workspace entry', () => {
     expect(signOutButton).toHaveFocus()
     await act(async () => window.dispatchEvent(new Event('focus')))
     expect(
-      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+      (await screen.findByText('Checking your session…')).closest('[role="status"]')
     ).toBeInTheDocument()
 
     await act(async () => rejectRevalidation(new Error('Service unavailable')))
@@ -774,7 +774,7 @@ describe('account workspace entry', () => {
     observer.observe(container, { childList: true, subtree: true })
 
     expect(
-      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+      (await screen.findByText('Checking your session…')).closest('[role="status"]')
     ).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('World library')).not.toBeInTheDocument()
