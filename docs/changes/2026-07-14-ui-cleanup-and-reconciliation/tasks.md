@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: completed independent review, remediated the consolidated UI/evidence findings at `cbc127d`, reran the regression union, and recorded a `changes-requested` review.
-- Next action: obtain the user's desktop/mobile visual confirmation and explicit disposition of the excluded World-link stylesheet edit and private vault sync-conflict copies.
+- Last completed action: recorded the user's desktop/mobile approval, committed the accepted World-link refinement at `efef5b1`, confirmed the obsolete sync-conflict copies are absent, and committed canonical private visual guidance at vault ref `10363dae`.
+- Next action: obtain explicit merge-and-close authorization.
 - Active branch/ref: `change/ui-cleanup-and-reconciliation` from `develop` at `8c1af39`; implementation worktree is `spaces/code/lorecraft-ui-cleanup`.
-- Expected dirty files: only the separately excluded World-link underline edit remains in the app worktree; the private visual identity note and sync-conflict copies remain outside this repository in the vault.
-- Known blockers: manual UI confirmation and explicit dirty-state disposition.
+- Expected dirty files: none after review closeout artifacts are committed.
+- Known blockers: none.
 
 ## Task Checklist
 
@@ -59,29 +59,30 @@ status: in_review
 ### 7. Manual Confirmation And Release Communication
 
 - [x] 7.1 Keep the Lorecraft development servers and Storybook on their reserved ports for manual review unless the user asks otherwise.
-- [ ] 7.2 Walk the user through sign-up, sign-in, session recovery, catalog, and World detail at desktop and mobile widths.
-- [ ] 7.3 Record manual confirmation using `pending user`, `user confirmed`, or `accepted gap`, and classify feedback before changing scope.
+- [x] 7.2 Walk the user through sign-up, sign-in, session recovery, catalog, and World detail at desktop and mobile widths.
+- [x] 7.3 Record manual confirmation using `pending user`, `user confirmed`, or `accepted gap`, and classify feedback before changing scope.
 - [x] 7.4 Add the concise user-facing reconciliation summary to the next release's `CHANGELOG.md` `Changed` section without exposing private planning context.
 
 ### 8. Review And Closeout
 
 - [x] 8.1 Run `/sdd-review` as the independent local integration gate and record remaining manual/integration blockers.
 - [x] 8.2 Address the consolidated code, UI, evidence-map, and artifact-validation findings as one remediation set and rerun regression-focused verification.
-- [ ] 8.3 Confirm proposal, design, tasks, both Epics, visual guidance, tests, release communication, review state, and manual status agree.
+- [x] 8.3 Confirm proposal, design, tasks, both Epics, visual guidance, tests, release communication, review state, and manual status agree.
 - [ ] 8.4 Obtain explicit authorization before merge, close, push, or any remote mutation.
 - [ ] 8.5 Close the Change through `sdd change close` only after review and integration gates pass; do not invent a terminal status value.
 
 ## Implementation Ledger
 
-| Date       | Slice                                               | Agent / Guidance                                                                                     | Files / Areas                                                                             | Result                                                                                                                                                                      | Commit / Ref |
-| ---------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 2026-07-15 | Promotion, baseline, and Requirement reconciliation | main orchestrator plus delegated component/test discovery using building-components and TDD guidance | active Change, LC-001, LC-002, current frontend/Storybook/test surfaces                   | Clean worktree established; Requirements promoted; implementation gaps and test-map drift identified                                                                        | `65f8b60`    |
-| 2026-07-15 | Visual foundation and private identity guidance     | main orchestrator using building-components guidance and current Fontsource documentation            | frontend token/font entry points, package dependencies, private Lorecraft visual identity | Bundled Geist variable fonts for app and Storybook; normalized creator-first semantic tokens and interaction defaults; replaced stale gameplay-MVP guidance                 | `65f8b60`    |
-| 2026-07-15 | Account and session surfaces                        | delegated frontend implementer, integrated by main orchestrator                                      | auth pages and stories, shared session states, route focus and recovery, component tests  | Centered cardless auth, responsive recovery, accessible state semantics, focus restoration without ID dependence, and protected-return race fix                             | `65f8b60`    |
-| 2026-07-15 | World catalog and detail surfaces                   | delegated frontend implementer using TDD, integrated by main orchestrator                            | Workspace and World detail components, styles, stories, and route tests                   | Unified populated/empty/failure states; explicit Location/Character empties; responsive read-only hierarchy                                                                 | `65f8b60`    |
-| 2026-07-15 | Cross-cutting responsive proof and integration      | main orchestrator                                                                                    | E2E UI assertions, full test/build gates, browser screenshots, Epics, changelog           | Desktop/mobile overflow and touch-target proof added; all configured deterministic gates pass                                                                               | `65f8b60`    |
-| 2026-07-15 | Canonical orange accent refinement                  | main orchestrator                                                                                    | semantic presentation tokens, Change artifacts, private visual identity guidance          | Burnished Orange now owns interaction, focus, selection, and identity; Steel Blue remains available only for semantic information                                           | `4273e29`    |
-| 2026-07-15 | Independent review remediation                      | main orchestrator plus delegated artifact, React, verification, security, and UI passes              | session recovery, control contrast, long content, Storybook proof, LC-001, LC-002         | Removed short-window overlap, met control-boundary contrast, protected long metadata, added mobile recovery proof, corrected evidence maps, and passed both Epic validators | `cbc127d`    |
+| Date       | Slice                                               | Agent / Guidance                                                                                     | Files / Areas                                                                             | Result                                                                                                                                                                      | Commit / Ref                |
+| ---------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| 2026-07-15 | Promotion, baseline, and Requirement reconciliation | main orchestrator plus delegated component/test discovery using building-components and TDD guidance | active Change, LC-001, LC-002, current frontend/Storybook/test surfaces                   | Clean worktree established; Requirements promoted; implementation gaps and test-map drift identified                                                                        | `65f8b60`                   |
+| 2026-07-15 | Visual foundation and private identity guidance     | main orchestrator using building-components guidance and current Fontsource documentation            | frontend token/font entry points, package dependencies, private Lorecraft visual identity | Bundled Geist variable fonts for app and Storybook; normalized creator-first semantic tokens and interaction defaults; replaced stale gameplay-MVP guidance                 | `65f8b60`                   |
+| 2026-07-15 | Account and session surfaces                        | delegated frontend implementer, integrated by main orchestrator                                      | auth pages and stories, shared session states, route focus and recovery, component tests  | Centered cardless auth, responsive recovery, accessible state semantics, focus restoration without ID dependence, and protected-return race fix                             | `65f8b60`                   |
+| 2026-07-15 | World catalog and detail surfaces                   | delegated frontend implementer using TDD, integrated by main orchestrator                            | Workspace and World detail components, styles, stories, and route tests                   | Unified populated/empty/failure states; explicit Location/Character empties; responsive read-only hierarchy                                                                 | `65f8b60`                   |
+| 2026-07-15 | Cross-cutting responsive proof and integration      | main orchestrator                                                                                    | E2E UI assertions, full test/build gates, browser screenshots, Epics, changelog           | Desktop/mobile overflow and touch-target proof added; all configured deterministic gates pass                                                                               | `65f8b60`                   |
+| 2026-07-15 | Canonical orange accent refinement                  | main orchestrator                                                                                    | semantic presentation tokens, Change artifacts, private visual identity guidance          | Burnished Orange now owns interaction, focus, selection, and identity; Steel Blue remains available only for semantic information                                           | `4273e29`                   |
+| 2026-07-15 | Independent review remediation                      | main orchestrator plus delegated artifact, React, verification, security, and UI passes              | session recovery, control contrast, long content, Storybook proof, LC-001, LC-002         | Removed short-window overlap, met control-boundary contrast, protected long metadata, added mobile recovery proof, corrected evidence maps, and passed both Epic validators | `cbc127d`                   |
+| 2026-07-15 | Manual acceptance and supporting-truth closeout     | user confirmation plus main orchestrator                                                             | current UI walkthrough, World-link styling, both Epics, private visual identity           | User accepted desktop/mobile UI; link refinement committed; manual gaps closed; canonical private guidance committed and obsolete conflict copies confirmed absent          | `efef5b1`, vault `10363dae` |
 
 ## Verification Ledger
 
@@ -107,13 +108,15 @@ status: in_review
 | 2026-07-15 | Post-review root test invocation                                                         | guarded broad test attempt             | Database safety unit tests pass and the backend integration runner refuses to write without explicit disposable-database acknowledgement; frontend and backend product code changed only on the frontend side                   | Guard stopped integration tests as designed |
 | 2026-07-15 | Explicit Change, `LC-001`, and `LC-002` validation                                       | deterministic artifact validation      | The active Change and each declared Epic independently pass the current validator after evidence-label and section remediation                                                                                                  | Passing: 0 errors, 0 warnings               |
 | 2026-07-15 | Dependency audit, diff check, and merge-tree preview                                     | security/integration gate              | No known shipped dependency vulnerability, malformed patch, or mechanical conflict with `develop` remains                                                                                                                       | Passing                                     |
-| TBD        | User walkthrough                                                                         | manual UI confirmation                 | Visual coherence, responsive behavior, focus, density, and state clarity                                                                                                                                                        | pending user                                |
+| 2026-07-15 | User walkthrough                                                                         | manual UI confirmation                 | Visual coherence, responsive behavior, focus, density, and state clarity                                                                                                                                                        | user confirmed                              |
 
 ## Manual Feedback
 
 | Date       | Feedback                                                                                           | Classification         | Action / Artifact Updates                                                                                                                                                                         | Status   |
 | ---------- | -------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | 2026-07-15 | Make the main accent the canonical orange rather than blue for a warmer tavern-adjacent character. | requirement refinement | Made Burnished Orange own action, link, selection, focus, and identity roles; retained Steel Blue only for semantic information; reconciled proposal, design, tasks, and private visual guidance. | resolved |
+| 2026-07-15 | Approve the current desktop/mobile UI walkthrough.                                                 | manual confirmation    | Reconciled manual evidence in `LC-001`, `LC-002`, tasks, and review truth.                                                                                                                        | resolved |
+| 2026-07-15 | Keep the simplified World-link styling without an underline.                                       | visual refinement      | Committed the previously excluded stylesheet change at `efef5b1`.                                                                                                                                 | resolved |
 
 ## Planning Updates
 
@@ -124,7 +127,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: user confirmed on 2026-07-15
 - App URLs / routes: `/sign-up`, `/sign-in`, `/worlds`, `/worlds/stormbound-chapel`, and controlled session/error/empty-collection states through Storybook.
 - Required setup or test data: a test account, the installed Stormbound Chapel starter World, deterministic Storybook APIs, and supported desktop/mobile viewports.
 - Steps for the user: traverse account access, session recovery, populated and empty catalog, and loaded/empty-collection/missing World detail; use keyboard and pointer at desktop and mobile widths.
@@ -133,13 +136,11 @@ status: in_review
 
 ## Blockers / Open Questions
 
-- User confirmation of the desktop/mobile account, session, catalog, and World-detail walkthrough remains pending.
-- The app worktree contains an excluded World-link underline edit that requires explicit include/discard direction before integration.
-- The private visual identity note is modified in the vault, where two untracked sync-conflict copies still preserve obsolete MVP guidance; they require separate explicit reconciliation because review must not delete them implicitly.
+- None.
 
 ## Closeout
 
-- Change status: in_review; implementation, independent review remediation, and deterministic validation are complete pending user confirmation and dirty-state reconciliation.
+- Change status: in_review and ready to close; implementation, review remediation, deterministic validation, manual confirmation, and supporting-truth reconciliation are complete.
 - Epic files updated: presentation Requirements, Scenarios, implementation maps, evidence, and remaining manual gaps are current in `LC-001` and `LC-002`.
 - Story labels/references and Requirement/Scenario IDs current: yes; additions preserve existing IDs.
 - Implemented By maps current: yes.
@@ -147,9 +148,9 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes.
 - ADR status: not applicable; no new ADR planned.
 - Release communication current: yes; concise user-facing entry added under `Unreleased / Changed`.
-- `/sdd-review` verdict: changes-requested; deterministic findings are remediated, with manual confirmation and dirty-state disposition still open.
+- `/sdd-review` verdict: ready.
 - Review record: `docs/changes/2026-07-14-ui-cleanup-and-reconciliation/review.md`.
-- Manual UI confirmation status: pending user.
-- PR / merge state: not started.
+- Manual UI confirmation status: user confirmed 2026-07-15.
+- PR / merge state: ready for explicit merge-and-close authorization.
 - Deferred scope accepted: creator shell, new capability, light mode, and general component package.
 - Change moved to `docs/changes/closed/`: no.
