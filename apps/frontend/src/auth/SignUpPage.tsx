@@ -82,6 +82,7 @@ export function SignUpPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (signUp.isPending) return
     setFormError(null)
     const nextErrors = validateSignUp(event.currentTarget)
     setErrors(nextErrors)
@@ -114,9 +115,15 @@ export function SignUpPage() {
         </p>
       }
     >
-      <form className={formStyles.form} noValidate onSubmit={handleSubmit}>
+      <form
+        className={formStyles.form}
+        noValidate
+        onSubmit={handleSubmit}
+        aria-describedby={formError ? 'signup-error' : undefined}
+        aria-busy={signUp.isPending}
+      >
         {formError ? (
-          <p className={formStyles.formError} role="alert">
+          <p className={formStyles.formError} id="signup-error" role="alert" aria-atomic="true">
             {formError}
           </p>
         ) : null}
@@ -142,7 +149,12 @@ export function SignUpPage() {
             valid-looking email address will work.
           </p>
           {errors.email ? (
-            <p className={formStyles.fieldError} id="signup-email-error" role="alert">
+            <p
+              className={formStyles.fieldError}
+              id="signup-email-error"
+              role="alert"
+              aria-atomic="true"
+            >
               {errors.email}
             </p>
           ) : null}
@@ -164,7 +176,12 @@ export function SignUpPage() {
             aria-describedby={errors.password ? 'signup-password-error' : 'signup-password-help'}
           />
           {errors.password ? (
-            <p className={formStyles.fieldError} id="signup-password-error" role="alert">
+            <p
+              className={formStyles.fieldError}
+              id="signup-password-error"
+              role="alert"
+              aria-atomic="true"
+            >
               {errors.password}
             </p>
           ) : (
@@ -190,7 +207,12 @@ export function SignUpPage() {
             aria-describedby={errors.passwordConfirmation ? 'signup-confirmation-error' : undefined}
           />
           {errors.passwordConfirmation ? (
-            <p className={formStyles.fieldError} id="signup-confirmation-error" role="alert">
+            <p
+              className={formStyles.fieldError}
+              id="signup-confirmation-error"
+              role="alert"
+              aria-atomic="true"
+            >
               {errors.passwordConfirmation}
             </p>
           ) : null}

@@ -1,34 +1,37 @@
 :root {
   color-scheme: dark;
-  font-family:
-    Geist,
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+  font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 
   --background: #09090b;
-  --surface: #111113;
+  --surface: #18181b;
   --surface-muted: #18181b;
-  --surface-raised: #202023;
-  --border: #2a2a2e;
+  --surface-raised: #27272a;
+  --surface-interactive: #27272a;
+  --border: #27272a;
   --border-strong: #3f3f46;
+  --control-boundary: #71717a;
   --text-primary: #f4f4f5;
-  --text-secondary: #c4c4cc;
-  --text-muted: #8f8f99;
-  --primary: #d6a756;
-  --primary-hover: #e3b86f;
-  --primary-foreground: #18130a;
-  --accent: #78917a;
-  --accent-foreground: #eef5ee;
-  --danger: #ef8d8d;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --action: #5d8db8;
+  --action-hover: #79a5cc;
+  --action-foreground: #09090b;
+  --identity: #e58a3a;
+  --identity-hover: #f2a15a;
+  --identity-foreground: #18130a;
+  --primary: var(--action);
+  --primary-hover: var(--action-hover);
+  --primary-foreground: var(--action-foreground);
+  --accent: var(--identity);
+  --accent-foreground: var(--identity-foreground);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
   --danger-muted: #321c1d;
-  --focus-ring: #edbd6b;
+  --info: var(--action);
+  --focus-ring: var(--action);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -40,13 +43,24 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
 
-  --radius-sm: 0.25rem;
-  --radius: 0.5rem;
+  --radius-row: 2px;
+  --radius-control: 4px;
+  --radius-panel: 6px;
+  --radius-sm: var(--radius-row);
+  --radius: var(--radius-control);
+  --control-dense: 28px;
+  --control-toolbar: 32px;
+  --control-standard: 36px;
+  --control-touch: 44px;
   --motion-fast: 150ms;
+  --motion-standard: 200ms;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 }
 
 * {
   box-sizing: border-box;
+  letter-spacing: 0;
 }
 
 html {
@@ -64,32 +78,50 @@ body {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+
+button:not(:disabled),
+a {
+  cursor: pointer;
 }
 
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
-  color: var(--primary);
+  color: var(--action-hover);
   text-underline-offset: 0.2em;
 }
 
 a:hover {
-  color: var(--primary-hover);
+  color: var(--text-primary);
 }
 
 :focus-visible {
   outline: 2px solid var(--focus-ring);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 ::selection {
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: var(--action);
+  color: var(--action-foreground);
 }
 
 @media (prefers-reduced-motion: reduce) {

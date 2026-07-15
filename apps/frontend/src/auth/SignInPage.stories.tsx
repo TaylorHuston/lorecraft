@@ -21,6 +21,11 @@ export const Default: Story = {
   ),
 }
 
+export const Mobile: Story = {
+  ...Default,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
 export const InvalidCredentials: Story = {
   render: () => (
     <StorybookAppProviders
@@ -43,5 +48,25 @@ export const InvalidCredentials: Story = {
     await expect(canvas.getByRole('alert')).toHaveTextContent(
       'Email or password is incorrect. Try again.'
     )
+  },
+}
+
+export const Pending: Story = {
+  render: () => (
+    <StorybookAppProviders
+      account={null}
+      route="/sign-in"
+      api={{ signIn: () => new Promise(() => undefined) }}
+    >
+      <SignInPage />
+    </StorybookAppProviders>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.type(canvas.getByLabelText('Email'), 'keeper@lorecraft.test')
+    await userEvent.type(canvas.getByLabelText('Password'), 'correct horse')
+    await userEvent.click(canvas.getByRole('button', { name: 'Sign in' }))
+    await expect(canvas.getByRole('button', { name: 'Signing in…' })).toBeDisabled()
+    await expect(canvasElement.querySelector('form')).toHaveAttribute('aria-busy', 'true')
   },
 }

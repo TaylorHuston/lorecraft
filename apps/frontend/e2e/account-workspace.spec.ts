@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { randomUUID } from 'node:crypto'
+import { expectMobileTouchTarget, expectNoHorizontalOverflow } from './uiAssertions'
 
 test('LC-001 completes the account and protected workspace journey', async ({ page }, testInfo) => {
   const email = `e2e-${testInfo.project.name}-${randomUUID()}@example.com`
@@ -10,6 +11,8 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   expect(await anonymousProfile.json()).not.toHaveProperty('data')
 
   await page.goto('/sign-up')
+  await expectNoHorizontalOverflow(page)
+  await expectMobileTouchTarget(page.getByRole('button', { name: 'Create account' }), testInfo)
   await page.getByLabel('Email').fill('not-an-email')
   await page.getByLabel('Password', { exact: true }).fill('short')
   await page.getByLabel('Confirm password').fill('different')
@@ -18,6 +21,10 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await expect(page.getByText('Enter a valid email address.')).toBeVisible()
   await expect(page.getByText('Use at least 12 characters.')).toBeVisible()
   await expect(page.getByText('Passwords must match.')).toBeVisible()
+  await expect(page.getByLabel('Email')).toHaveValue('not-an-email')
+  await expect(page.getByLabel('Password', { exact: true })).toHaveValue('short')
+  await expect(page.getByLabel('Confirm password')).toHaveValue('different')
+  await expectNoHorizontalOverflow(page)
 
   await page.getByLabel('Email').fill(` ${email.toUpperCase()} `)
   await page.getByLabel('Password', { exact: true }).fill(password)
@@ -26,6 +33,8 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
 
   await expect(page).toHaveURL(/\/worlds$/)
   await expect(page.getByRole('heading', { name: 'Worlds', exact: true })).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+  await expectMobileTouchTarget(page.getByRole('button', { name: 'Sign out' }), testInfo)
   await expect(page.getByRole('link', { name: 'Stormbound Chapel' })).toBeVisible()
   await expect(page.getByRole('button', { name: /create.*world/i })).toHaveCount(0)
 
@@ -57,6 +66,8 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   expect(await reusedSession.json()).not.toHaveProperty('data')
   await page.context().clearCookies()
   await page.goto('/sign-in')
+  await expectNoHorizontalOverflow(page)
+  await expectMobileTouchTarget(page.getByRole('button', { name: 'Sign in' }), testInfo)
 
   await page.getByLabel('Email').fill('unknown@example.com')
   await page.getByLabel('Password', { exact: true }).fill('incorrect password')

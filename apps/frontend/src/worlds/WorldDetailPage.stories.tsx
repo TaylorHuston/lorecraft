@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Route, Routes } from 'react-router-dom'
-import { expect, within } from 'storybook/test'
+import { expect, userEvent, within } from 'storybook/test'
 import { StorybookAppProviders } from '../stories/StorybookAppProviders'
 import { WorldDetailPage } from './WorldDetailPage'
 import { WorldApiError, type WorldApi, type WorldDetail } from './worldApi'
@@ -27,9 +27,18 @@ const detail: WorldDetail = {
   ],
 }
 
-function render(api: WorldApi) {
+const emptyApi: WorldApi = {
+  listWorlds: async () => [],
+  getWorld: async () => detail,
+}
+
+function detailApi(world: WorldDetail): WorldApi {
+  return { ...emptyApi, getWorld: async () => world }
+}
+
+function renderDetail(api: WorldApi, route = '/worlds/stormbound-chapel') {
   return (
-    <StorybookAppProviders route="/worlds/stormbound-chapel">
+    <StorybookAppProviders route={route}>
       <Routes>
         <Route path="/worlds/:slug" element={<WorldDetailPage worldApi={api} />} />
       </Routes>
@@ -37,37 +46,146 @@ function render(api: WorldApi) {
   )
 }
 
+const loadedApi = detailApi(detail)
+const loadingApi: WorldApi = { ...emptyApi, getWorld: () => new Promise(() => undefined) }
+const missingApi: WorldApi = {
+  ...emptyApi,
+  getWorld: async () => {
+    throw new WorldApiError('not-found', 'Missing')
+  },
+}
+const unavailableApi: WorldApi = {
+  ...emptyApi,
+  getWorld: async () => {
+    throw new WorldApiError('network', 'Unavailable')
+  },
+}
+
 const meta = {
   title: 'Application/Worlds/Detail',
   component: WorldDetailPage,
   parameters: { controls: { disable: true } },
 } satisfies Meta<typeof WorldDetailPage>
+
 export default meta
 type Story = StoryObj<typeof meta>
 
-const loadedApi: WorldApi = { listWorlds: async () => [detail], getWorld: async () => detail }
+export const Loading: Story = {
+  args: { worldApi: loadingApi },
+  render: () => renderDetail(loadingApi),
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).findByRole('status')).resolves.toHaveTextContent(
+      'Loading World…'
+    )
+  },
+}
+
 export const Loaded: Story = {
   args: { worldApi: loadedApi },
-  render: () => render(loadedApi),
+  render: () => renderDetail(loadedApi),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.findByRole('heading', { name: 'Stormbound Chapel' })).resolves.toBeVisible()
     await expect(canvas.getByText('The bell rang at midnight.')).toBeVisible()
+    await expect(canvas.getByText('Read only')).toBeVisible()
+    await expect(canvas.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute(
+      'href',
+      '/worlds'
+    )
   },
 }
 
-const missingApi: WorldApi = {
-  listWorlds: async () => [],
-  getWorld: async () => {
-    throw new WorldApiError('not-found', 'Missing')
+export const LoadedMobile: Story = {
+  ...Loaded,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
+export const EmptyLocations: Story = {
+  args: { worldApi: detailApi({ ...detail, locations: [] }) },
+  render: () => renderDetail(detailApi({ ...detail, locations: [] })),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.findByText('No Locations are recorded for this World.')
+    ).resolves.toBeVisible()
+    await expect(canvas.getByRole('heading', { name: 'Mira' })).toBeVisible()
   },
 }
+
+export const EmptyCharacters: Story = {
+  args: { worldApi: detailApi({ ...detail, characters: [] }) },
+  render: () => renderDetail(detailApi({ ...detail, characters: [] })),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.findByText('No Characters are recorded for this World.')
+    ).resolves.toBeVisible()
+    await expect(canvas.getByRole('heading', { name: 'Chapel' })).toBeVisible()
+  },
+}
+
+const fullyEmptyDetail = { ...detail, locations: [], characters: [] }
+export const EmptyCollections: Story = {
+  args: { worldApi: detailApi(fullyEmptyDetail) },
+  render: () => renderDetail(detailApi(fullyEmptyDetail)),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.findByText('No Locations are recorded for this World.')
+    ).resolves.toBeVisible()
+    await expect(canvas.getByText('No Characters are recorded for this World.')).toBeVisible()
+  },
+}
+
+export const EmptyCollectionsMobile: Story = {
+  ...EmptyCollections,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
 export const NotFound: Story = {
   args: { worldApi: missingApi },
-  render: () => render(missingApi),
+  render: () => renderDetail(missingApi, '/worlds/missing'),
   play: async ({ canvasElement }) => {
-    await expect(
-      within(canvasElement).findByRole('heading', { name: 'World not found' })
-    ).resolves.toBeVisible()
+    const canvas = within(canvasElement)
+    await expect(canvas.findByRole('heading', { name: 'World not found' })).resolves.toBeVisible()
+    await expect(canvas.getByRole('link', { name: 'Back to Worlds' })).toBeVisible()
+  },
+}
+
+export const NotFoundMobile: Story = {
+  ...NotFound,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
+export const Unavailable: Story = {
+  args: { worldApi: unavailableApi },
+  render: () => renderDetail(unavailableApi),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByRole('heading', { name: 'World unavailable' })).resolves.toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Try again' })).toBeEnabled()
+  },
+}
+
+export const RetryPending: Story = {
+  args: { worldApi: unavailableApi },
+  render: () => {
+    let requests = 0
+    const retryPendingApi: WorldApi = {
+      ...emptyApi,
+      getWorld: () => {
+        requests += 1
+        return requests === 1
+          ? Promise.reject(new WorldApiError('network', 'Unavailable'))
+          : new Promise(() => undefined)
+      },
+    }
+
+    return renderDetail(retryPendingApi)
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Try again' }))
+    await expect(canvas.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
   },
 }

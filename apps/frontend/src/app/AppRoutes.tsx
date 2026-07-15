@@ -8,10 +8,83 @@ import type { WorldApi } from '../worlds/worldApi'
 import { WorldDetailPage } from '../worlds/WorldDetailPage'
 import styles from './AppRoutes.module.css'
 
-function SessionLoading() {
+type FocusSnapshot = {
+  element: HTMLElement
+  id: string | null
+  tagName: string
+  name: string | null
+  href: string | null
+  type: string | null
+  ariaLabel: string | null
+  text: string
+  matchingIndex: number
+}
+
+function normalizedText(element: HTMLElement) {
+  return (element.textContent ?? '').replace(/\s+/g, ' ').trim()
+}
+
+function hasSameFocusIdentity(element: HTMLElement, snapshot: FocusSnapshot) {
   return (
-    <main className={styles.stateShell} aria-busy="true">
-      <div className={styles.stateContent} role="status">
+    element.getAttribute('name') === snapshot.name &&
+    element.getAttribute('href') === snapshot.href &&
+    element.getAttribute('type') === snapshot.type &&
+    element.getAttribute('aria-label') === snapshot.ariaLabel &&
+    normalizedText(element) === snapshot.text
+  )
+}
+
+function captureFocus(element: HTMLElement): FocusSnapshot {
+  const tagName = element.tagName.toLowerCase()
+  const identity = {
+    element,
+    id: element.id || null,
+    tagName,
+    name: element.getAttribute('name'),
+    href: element.getAttribute('href'),
+    type: element.getAttribute('type'),
+    ariaLabel: element.getAttribute('aria-label'),
+    text: normalizedText(element),
+  }
+  const matches = Array.from(document.querySelectorAll<HTMLElement>(tagName)).filter((candidate) =>
+    hasSameFocusIdentity(candidate, { ...identity, matchingIndex: 0 })
+  )
+
+  return {
+    ...identity,
+    matchingIndex: Math.max(0, matches.indexOf(element)),
+  }
+}
+
+function restoreFocus(snapshot: FocusSnapshot | null) {
+  if (!snapshot) return
+  if (snapshot.element.isConnected) {
+    snapshot.element.focus()
+    return
+  }
+
+  const elementById = snapshot.id ? document.getElementById(snapshot.id) : null
+  if (elementById) {
+    elementById.focus()
+    return
+  }
+
+  const matches = Array.from(document.querySelectorAll<HTMLElement>(snapshot.tagName)).filter(
+    (candidate) => hasSameFocusIdentity(candidate, snapshot)
+  )
+  matches[snapshot.matchingIndex]?.focus()
+}
+
+export function SessionLoading() {
+  return (
+    <main className={styles.stateShell}>
+      <div
+        className={styles.stateContent}
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-busy="true"
+      >
         <p className={styles.stateLabel}>Lorecraft</p>
         <p className={styles.stateTitle}>Checking your session...</p>
       </div>
@@ -19,7 +92,7 @@ function SessionLoading() {
   )
 }
 
-function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
+export function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
   const { retry } = useAuth()
   const retryRef = useRef<HTMLButtonElement>(null)
 
@@ -29,9 +102,16 @@ function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
 
   return (
     <main className={styles.stateShell}>
-      <div className={styles.stateContent}>
+      <div
+        className={styles.stateContent}
+        role="alert"
+        aria-labelledby="session-error-title"
+        aria-atomic="true"
+      >
         <p className={styles.stateLabel}>Connection error</p>
-        <h1 className={styles.stateTitle}>We couldn't reach Lorecraft</h1>
+        <h1 className={styles.stateTitle} id="session-error-title">
+          We couldn't reach Lorecraft
+        </h1>
         <p className={styles.stateCopy}>
           Your session could not be checked. Try again when the service is available.
         </p>
@@ -43,11 +123,17 @@ function SessionError({ focusRetry = false }: { focusRetry?: boolean }) {
   )
 }
 
-function SessionRefreshError() {
+export function SessionRefreshError() {
   const { isRevalidating, retry } = useAuth()
 
   return (
-    <aside className={styles.refreshError} role="alert" aria-busy={isRevalidating}>
+    <div
+      className={styles.refreshError}
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      aria-busy={isRevalidating}
+    >
       <span>We couldn't refresh your session.</span>
       <button
         className={styles.refreshRetry}
@@ -55,32 +141,34 @@ function SessionRefreshError() {
         disabled={isRevalidating}
         onClick={retry}
       >
-        {isRevalidating ? 'Trying again...' : 'Try again'}
+        {isRevalidating ? 'Trying again…' : 'Try again'}
       </button>
-    </aside>
+    </div>
   )
 }
 
 function ProtectedRoute() {
   const auth = useAuth()
   const location = useLocation()
-  const lastFocusedElementId = useRef<string | null>(null)
+  const lastFocusedElement = useRef<FocusSnapshot | null>(null)
   const wasRevalidating = useRef(false)
 
   useEffect(() => {
+    if (!auth.account || auth.isRevalidating || auth.error) return
+
     const rememberFocus = (event: FocusEvent) => {
-      if (event.target instanceof HTMLElement && event.target.id) {
-        lastFocusedElementId.current = event.target.id
+      if (event.target instanceof HTMLElement) {
+        lastFocusedElement.current = captureFocus(event.target)
       }
     }
 
     document.addEventListener('focusin', rememberFocus)
     return () => document.removeEventListener('focusin', rememberFocus)
-  }, [])
+  }, [auth.account, auth.error, auth.isRevalidating])
 
   useEffect(() => {
     if (wasRevalidating.current && !auth.isRevalidating && auth.account && !auth.error) {
-      document.getElementById(lastFocusedElementId.current ?? '')?.focus()
+      restoreFocus(lastFocusedElement.current)
     }
 
     wasRevalidating.current = auth.isRevalidating
@@ -94,12 +182,22 @@ function ProtectedRoute() {
 
 function PublicOnlyRoute() {
   const auth = useAuth()
+  const location = useLocation()
 
   if (auth.isLoading) return <SessionLoading />
   if (auth.isInitialError) return <SessionError />
 
+  const returnLocation = (
+    location.state as {
+      from?: { pathname: string; search?: string; hash?: string }
+    } | null
+  )?.from
+  const authenticatedDestination = returnLocation
+    ? `${returnLocation.pathname}${returnLocation.search ?? ''}${returnLocation.hash ?? ''}`
+    : '/worlds'
+
   return auth.account ? (
-    <Navigate to="/worlds" replace />
+    <Navigate to={authenticatedDestination} replace />
   ) : (
     <>
       {auth.error ? <SessionRefreshError /> : null}

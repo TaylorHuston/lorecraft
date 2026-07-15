@@ -1,141 +1,69 @@
 .shell {
-  display: grid;
-  grid-template-columns: minmax(16rem, 0.8fr) minmax(24rem, 1.2fr);
-  min-height: 100vh;
-}
-
-.context {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(var(--space-6), 5vw, var(--space-12));
-  border-right: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  font-weight: 650;
-  letter-spacing: 0.01em;
-}
-
-.brandMark {
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border: 1px solid #70592f;
-  border-radius: var(--radius-sm);
-  background: #211b10;
-  color: var(--primary);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-}
-
-.contextCopy {
-  max-width: 28rem;
-  margin: var(--space-12) 0 0;
-  color: var(--text-secondary);
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
-  line-height: 1.45;
-}
-
-.contextLabel {
-  margin: var(--space-6) 0 0;
-  color: var(--accent);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  min-height: 100vh;
+  min-height: 100svh;
+  justify-content: center;
+  padding: clamp(var(--space-8), 8vh, 5rem) var(--space-6);
+  background: var(--background);
 }
 
 .content {
-  display: grid;
-  align-content: center;
-  width: min(100%, 34rem);
+  width: min(100%, 26rem);
   min-width: 0;
-  margin: 0 auto;
-  padding: clamp(var(--space-6), 8vw, 6rem);
+  margin: auto 0;
 }
 
-.eyebrow {
-  margin: 0 0 var(--space-3);
-  color: var(--primary);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.brand {
+  margin: 0 0 var(--space-10);
+  color: var(--identity);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 650;
 }
 
 .title {
   max-width: 22ch;
   margin: 0;
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  line-height: 1.12;
-  letter-spacing: 0;
+  font-size: 2rem;
+  line-height: 1.15;
   overflow-wrap: anywhere;
 }
 
 .description {
   max-width: 42ch;
-  margin: var(--space-3) 0 var(--space-8);
+  margin: var(--space-3) 0 0;
   color: var(--text-secondary);
   font-size: 0.9375rem;
   line-height: 1.6;
 }
 
 .footer {
-  margin: var(--space-6) 0 0;
+  margin-top: var(--space-6);
   color: var(--text-muted);
   font-size: 0.875rem;
+  line-height: 1.5;
 }
 
-@media (max-width: 47.99rem) {
+.footer p {
+  margin: 0;
+}
+
+@media (max-width: 32rem) {
   .shell {
-    display: block;
+    padding: var(--space-8) var(--space-5) var(--space-10);
   }
 
-  .context {
-    display: block;
-    padding: var(--space-5) var(--space-6);
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .contextCopy,
-  .contextLabel {
-    display: none;
-  }
-
-  .content {
-    align-content: start;
-    padding: var(--space-10) var(--space-6) var(--space-12);
+  .brand {
+    margin-bottom: var(--space-8);
   }
 }
 
-@media (max-width: 24rem) {
-  .context,
-  .content {
+@media (max-width: 22rem) {
+  .shell {
     padding-right: var(--space-4);
     padding-left: var(--space-4);
   }

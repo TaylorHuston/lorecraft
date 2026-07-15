@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test'
+import { expectMobileTouchTarget, expectNoHorizontalOverflow } from './uiAssertions'
 
-test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({ page }) => {
+test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({
+  page,
+}, testInfo) => {
   const email = 'e2e-starter-world-author@example.com'
   const password = 'correct horse battery staple'
 
@@ -11,9 +14,11 @@ test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({ 
 
   await expect(page).toHaveURL(/\/worlds$/)
   await expect(page.getByRole('heading', { name: 'Available Worlds' })).toBeVisible()
+  await expectNoHorizontalOverflow(page)
 
   const starterWorldLink = page.getByRole('link', { name: 'Stormbound Chapel' })
   await expect(starterWorldLink).toHaveCount(1)
+  await expectMobileTouchTarget(starterWorldLink, testInfo)
   await expect(page.getByLabel('World access')).toContainText('Public')
   await expect(page.getByLabel('World access')).toContainText('Read only')
 
@@ -21,6 +26,8 @@ test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({ 
 
   await expect(page).toHaveURL(/\/worlds\/stormbound-chapel$/)
   await expect(page.getByRole('heading', { level: 1, name: 'Stormbound Chapel' })).toBeVisible()
+  await expectNoHorizontalOverflow(page)
+  await expectMobileTouchTarget(page.getByRole('link', { name: 'Back to Worlds' }), testInfo)
   await expect(page.getByText('public World', { exact: true })).toBeVisible()
   await expect(page.getByText('Read only', { exact: true })).toBeVisible()
 

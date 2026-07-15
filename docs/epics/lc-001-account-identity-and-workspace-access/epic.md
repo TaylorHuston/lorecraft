@@ -1,9 +1,9 @@
 ---
 id: LC-001
-status: draft
+status: implemented
 created: 2026-07-12
-modified: 2026-07-14
-last_verified: 2026-07-14
+modified: 2026-07-15
+last_verified: 2026-07-15
 stories:
   - S1
   - S2
@@ -14,7 +14,9 @@ stories:
 
 ## Product Context
 
-- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/`
+- Related changes:
+  - `docs/changes/closed/2026-07-12-account-workspace-entry/`
+  - `docs/changes/2026-07-14-ui-cleanup-and-reconciliation/`
 - Related ADRs:
   - `docs/adrs/2026-07-12-adonisjs-api-first-backend.md`
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
@@ -55,9 +57,9 @@ A user can create an account, return through a secure browser session, reach a p
 
 | Story | Status      | Capability                                          | Last Verified | Notes                                                                         |
 | ----- | ----------- | --------------------------------------------------- | ------------- | ----------------------------------------------------------------------------- |
-| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-14    | Automated backend and browser proof passes.                                   |
-| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-14    | Automated backend and browser proof passes.                                   |
-| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-14    | Automated proof passes; current catalog UI confirmation is tracked in LC-002. |
+| S1    | implemented | New account creation and automatic workspace entry. | 2026-07-15    | Automated backend and browser proof passes.                                   |
+| S2    | implemented | Returning sign-in and session restoration.          | 2026-07-15    | Automated backend and browser proof passes.                                   |
+| S3    | implemented | Protected access, sign-out, and empty catalog.      | 2026-07-15    | Automated proof passes; current catalog UI confirmation is tracked in LC-002. |
 
 ## Stories
 
@@ -65,8 +67,8 @@ A user can create an account, return through a secure browser session, reach a p
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-13
-Last verified: 2026-07-14
+Modified: 2026-07-15
+Last verified: 2026-07-15
 
 As a new user, I want to create an account and enter my private workspace, so that I can begin using Lorecraft.
 
@@ -104,6 +106,22 @@ The system SHALL establish an authenticated browser session after successful acc
 - THEN the browser receives a secure session without receiving a reusable bearer token in client-accessible storage
 - AND the user sees the authenticated `Your Worlds` workspace.
 
+##### Requirement R3: Accessible Account Creation Presentation
+
+The system SHALL present account creation as a focused, responsive Lorecraft form with persistent field labels, visible password confirmation, clear validation and pending states, and keyboard-visible focus.
+
+###### Scenario R3-S1: Account Creation At Supported Viewports
+
+- WHEN a visitor opens sign-up at desktop or mobile width
+- THEN the Lorecraft identity and complete account form remain readable without horizontal overflow
+- AND Email, Password, and Confirm password remain visibly labeled and operable.
+
+###### Scenario R3-S2: Validation And Pending Feedback
+
+- WHEN sign-up validation fails or submission is pending
+- THEN field and form feedback remains associated with the relevant controls
+- AND the current form values and layout remain stable enough to recover without re-entry caused by presentation changes.
+
 #### Implemented By
 
 | Path                                                                      | Role                                                                                                               | Recheck Trigger                                                   |
@@ -114,6 +132,8 @@ The system SHALL establish an authenticated browser session after successful acc
 | `apps/backend/database/migrations/1761885935168_create_users_table.ts`    | Preserves the immutable historical account schema, including the unused nullable `full_name` compatibility column. | Never edit after application; recheck through forward migrations. |
 | `apps/backend/database/migrations/1784049600000_normalize_users_email.ts` | Transactionally normalizes existing emails and adds the normalized-email constraint.                               | Recheck when account identity normalization changes.              |
 | `apps/frontend/src/auth/SignUpPage.tsx`                                   | Presents signup, local validation, errors, and automatic workspace entry.                                          | Recheck when the signup journey changes.                          |
+| `apps/frontend/src/auth/AuthLayout.tsx` and `AuthLayout.module.css`       | Define the shared centered, cardless, responsive account-access composition.                                       | Recheck when account presentation changes.                        |
+| `apps/frontend/src/auth/SignUpPage.stories.tsx`                           | Exposes deterministic default, mobile, validation, and pending signup states.                                      | Recheck when signup states or presentation change.                |
 | `apps/frontend/src/auth/tuyauAuthApi.ts`                                  | Uses the generated Tuyau contract with credentialed session requests.                                              | Recheck when account routes or client transport changes.          |
 | `apps/backend/app/middleware/auth_request_boundary_middleware.ts`         | Rejects unsupported and declared-oversized signup payloads before body parsing.                                    | Recheck when signup request formats or limits change.             |
 | `apps/backend/app/exceptions/handler.ts`                                  | Normalizes unknown-length oversized auth streams to the auth 413 contract.                                         | Recheck when parser errors or auth limits change.                 |
@@ -131,6 +151,12 @@ The system SHALL establish an authenticated browser session after successful acc
 | S1/R2-S1                               | `apps/frontend/src/app/App.test.tsx`                                                                                               | Successful signup cancels an older anonymous session read before publishing the authenticated account.                                                            | Passing 2026-07-14 |
 | S1/R1-S1, S1/R1-S3                     | `apps/backend/tests/database/users_email_normalization_migration.spec.ts` and `apps/backend/tests/unit/migration_database.spec.ts` | Existing historical schemas upgrade transactionally, preserve compatibility data, reject collisions without partial writes, and use a guarded disposable harness. | Passing 2026-07-14 |
 | S1/R1-S1 through S1/R2-S1              | User-confirmed local walkthrough                                                                                                   | Validation clarity, responsive layout, signup, and automatic workspace transition behave as intended.                                                             | Passing 2026-07-14 |
+| S1/R3-S1, S1/R3-S2                     | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/SignUpPage.stories.tsx`                                           | Persistent labels, validation association, pending stability, responsive composition, and Storybook accessibility.                                                | Passing 2026-07-15 |
+| S1/R3-S1, S1/R3-S2                     | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                      | Signup remains operable without horizontal overflow and keeps a representative 44 px mobile action target.                                                        | Passing 2026-07-15 |
+
+#### Verification Gaps
+
+- Manual visual confirmation of `S1/R3-S1` and `S1/R3-S2` remains pending for the active UI reconciliation.
 
 #### Deferred Verification
 
@@ -144,8 +170,8 @@ The system SHALL establish an authenticated browser session after successful acc
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-13
-Last verified: 2026-07-14
+Modified: 2026-07-15
+Last verified: 2026-07-15
 
 As a returning user, I want Lorecraft to recognize or re-authenticate me, so that I can resume my private workspace without unnecessary friction.
 
@@ -189,32 +215,54 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 - AND the visitor's unfinished input remains available when the server still reports no authenticated session
 - AND a failed background check leaves the draft mounted with a non-destructive retry action.
 
+##### Requirement R3: Focused Sign-In And Session Recovery
+
+The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with actionable feedback and visible keyboard focus.
+
+###### Scenario R3-S1: Sign-In At Supported Viewports
+
+- WHEN a visitor opens sign-in at desktop or mobile width
+- THEN the Lorecraft identity, credentials, account-navigation link, and submission action remain readable and operable without horizontal overflow.
+
+###### Scenario R3-S2: Background Session Check Fails
+
+- WHEN a background session check fails while an unfinished public form remains mounted
+- THEN a visually distinct but non-destructive recovery notice is presented
+- AND its retry action is keyboard and touch accessible without obscuring the form.
+
 #### Implemented By
 
-| Path                                                              | Role                                                                                              | Recheck Trigger                                      |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `apps/backend/app/controllers/sessions_controller.ts`             | Verifies credentials, establishes the web session, and invalidates it on logout.                  | Recheck when session behavior changes.               |
-| `apps/backend/app/controllers/profile_controller.ts`              | Returns the authenticated account for session restoration.                                        | Recheck when account serialization changes.          |
-| `apps/backend/config/auth.ts`                                     | Defines web sessions as the browser authentication guard while retaining future token capability. | Recheck when guards change.                          |
-| `apps/frontend/src/auth/SignInPage.tsx`                           | Presents generic credential errors and resumes the attempted protected route.                     | Recheck when sign-in changes.                        |
-| `apps/frontend/src/auth/AuthProvider.tsx`                         | Separates initial session loading from background revalidation through TanStack Query.            | Recheck when session restoration changes.            |
-| `apps/frontend/src/app/AppRoutes.tsx`                             | Protects private routes while preserving public auth forms during anonymous background checks.    | Recheck when routing changes.                        |
-| `apps/backend/app/middleware/auth_request_boundary_middleware.ts` | Rejects unsupported and declared-oversized login payloads before body parsing.                    | Recheck when login request formats or limits change. |
-| `apps/backend/app/exceptions/handler.ts`                          | Normalizes unknown-length oversized auth streams to the auth 413 contract.                        | Recheck when parser errors or auth limits change.    |
+| Path                                                                            | Role                                                                                              | Recheck Trigger                                       |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `apps/backend/app/controllers/sessions_controller.ts`                           | Verifies credentials, establishes the web session, and invalidates it on logout.                  | Recheck when session behavior changes.                |
+| `apps/backend/app/controllers/profile_controller.ts`                            | Returns the authenticated account for session restoration.                                        | Recheck when account serialization changes.           |
+| `apps/backend/config/auth.ts`                                                   | Defines web sessions as the browser authentication guard while retaining future token capability. | Recheck when guards change.                           |
+| `apps/frontend/src/auth/SignInPage.tsx`                                         | Presents generic credential errors and resumes the attempted protected route.                     | Recheck when sign-in changes.                         |
+| `apps/frontend/src/auth/AuthProvider.tsx`                                       | Separates initial session loading from background revalidation through TanStack Query.            | Recheck when session restoration changes.             |
+| `apps/frontend/src/app/AppRoutes.tsx`                                           | Protects private routes while preserving public auth forms during anonymous background checks.    | Recheck when routing changes.                         |
+| `apps/frontend/src/auth/SignInPage.stories.tsx` and `SessionStates.stories.tsx` | Expose deterministic sign-in, session loading, failure, refresh, and recovery states.             | Recheck when account or session presentation changes. |
+| `apps/backend/app/middleware/auth_request_boundary_middleware.ts`               | Rejects unsupported and declared-oversized login payloads before body parsing.                    | Recheck when login request formats or limits change.  |
+| `apps/backend/app/exceptions/handler.ts`                                        | Normalizes unknown-length oversized auth streams to the auth 413 contract.                        | Recheck when parser errors or auth limits change.     |
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                               | Proves                                                                                                                                                        | Status             |
-| -------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1, S2/R2-S2 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Sign-in success, validation/rate-limit/CSRF/credential error presentation, session restoration, and auth-route redirection.                                   | Passing 2026-07-13 |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Generic credential failure and database-backed session behavior.                                                                                              | Passing 2026-07-13 |
-| S2/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                               | The exact login throttle boundary and forwarded-client key isolation.                                                                                         | Passing 2026-07-13 |
-| S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass.                                                              | Passing 2026-07-13 |
-| S2 cross-story request boundary        | `apps/backend/tests/functional/account_security.spec.ts`                               | Login rejects unsupported content before parsing and applies one 16 KB contract to declared and streamed JSON payloads.                                       | Passing 2026-07-14 |
-| S2/R1-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                               | Login rejects missing and forged CSRF tokens without changing account or browser-session ownership.                                                           | Passing 2026-07-14 |
-| S2/R2-S3                               | `apps/frontend/src/app/App.test.tsx`                                                   | Real window focus keeps signup and sign-in drafts mounted during pending, successful, and failed anonymous revalidation and exposes retry without remounting. | Passing 2026-07-14 |
-| S2/R1-S1                               | `apps/frontend/src/app/App.test.tsx`                                                   | Successful sign-in cancels an older anonymous session read before publishing the authenticated account.                                                       | Passing 2026-07-14 |
-| S2/R1-S1 through S2/R2-S3              | User-confirmed local walkthrough                                                       | Sign-in, refresh, focus revalidation, draft preservation, and recovery behavior work as intended.                                                             | Passing 2026-07-14 |
+| Requirement / Scenario                 | Evidence                                                                                                               | Proves                                                                                                                                                        | Status             |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| S2/R1-S1, S2/R1-S2, S2/R2-S1, S2/R2-S2 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts`                                 | Sign-in success, validation/rate-limit/CSRF/credential error presentation, session restoration, and auth-route redirection.                                   | Passing 2026-07-13 |
+| S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                                                   | Generic credential failure and database-backed session behavior.                                                                                              | Passing 2026-07-13 |
+| S2/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                                                               | The exact login throttle boundary and forwarded-client key isolation.                                                                                         | Passing 2026-07-13 |
+| S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`                                                                          | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass.                                                              | Passing 2026-07-13 |
+| S2 cross-story request boundary        | `apps/backend/tests/functional/account_security.spec.ts`                                                               | Login rejects unsupported content before parsing and applies one 16 KB contract to declared and streamed JSON payloads.                                       | Passing 2026-07-14 |
+| S2/R1-S1 CSRF boundary                 | `apps/backend/tests/functional/account_security.spec.ts`                                                               | Login rejects missing and forged CSRF tokens without changing account or browser-session ownership.                                                           | Passing 2026-07-14 |
+| S2/R2-S3                               | `apps/frontend/src/app/App.test.tsx`                                                                                   | Real window focus keeps signup and sign-in drafts mounted during pending, successful, and failed anonymous revalidation and exposes retry without remounting. | Passing 2026-07-14 |
+| S2/R1-S1                               | `apps/frontend/src/app/App.test.tsx`                                                                                   | Successful sign-in cancels an older anonymous session read before publishing the authenticated account.                                                       | Passing 2026-07-14 |
+| S2/R1-S1 through S2/R2-S3              | User-confirmed local walkthrough                                                                                       | Sign-in, refresh, focus revalidation, draft preservation, and recovery behavior work as intended.                                                             | Passing 2026-07-14 |
+| S2/R3-S1, S2/R3-S2                     | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/auth/SignInPage.stories.tsx`, and `SessionStates.stories.tsx` | Responsive sign-in, pending/error states, non-destructive refresh recovery, focus restoration without ID dependence, and Storybook accessibility.             | Passing 2026-07-15 |
+| S2/R3-S1, S2/R3-S2                     | `apps/frontend/e2e/account-workspace.spec.ts`                                                                          | Sign-in remains operable without horizontal overflow and keeps a representative 44 px mobile action target.                                                   | Passing 2026-07-15 |
+
+#### Verification Gaps
+
+- Manual visual confirmation of `S2/R3-S1` and `S2/R3-S2` remains pending for the active UI reconciliation.
 
 #### Deferred Verification
 
@@ -228,8 +276,8 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-13
-Last verified: 2026-07-14
+Modified: 2026-07-15
+Last verified: 2026-07-15
 
 As an account holder, I want my workspace protected and my session terminable, so that only I can access my private Lorecraft data.
 
@@ -287,15 +335,15 @@ The system SHALL invalidate the active server-side session when the user signs o
 
 #### Verified By
 
-| Requirement / Scenario       | Evidence                                                                               | Proves                                                                                                                                                           | Status               |
-| ---------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| S3/R1-S1, S3/R2-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | Deferred-session observation proves no private-content flash, plus logout and CSRF-expiry recovery.                                                              | Passing 2026-07-13   |
-| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts`                               | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                  | Passing 2026-07-13   |
-| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`                                   | Logout removes authentication from the active database-backed test session.                                                                                      | Passing 2026-07-13   |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2 | `apps/frontend/e2e/account-workspace.spec.ts`                                          | Same-origin anonymous API denial, protected workspace, logout, and invalidated-cookie replay.                                                                    | Passing 2026-07-13   |
-| S3/R1-S3                     | `apps/frontend/src/app/App.test.tsx`                                                   | Focus revalidation suppresses private UI, restores workspace focus after success, focuses sign-in when the session ends, and focuses retry when the check fails. | Passing 2026-07-14   |
-| S3/R2-S1 CSRF boundary       | `apps/backend/tests/functional/account_security.spec.ts`                               | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                      | Passing 2026-07-14   |
-| S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                       | Protected transitions, session restoration, and logout behaved as intended.                                                                                      | Confirmed 2026-07-14 |
+| Requirement / Scenario       | Evidence                                                                                    | Proves                                                                                                                                                          | Status               |
+| ---------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| S3/R1-S1, S3/R2-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts`      | Deferred-session observation proves no private-content flash, plus logout and CSRF-expiry recovery.                                                             | Passing 2026-07-13   |
+| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts`                                    | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                 | Passing 2026-07-13   |
+| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`                                        | Logout removes authentication from the active database-backed test session.                                                                                     | Passing 2026-07-13   |
+| S3/R1-S2, S3/R2-S1, S3/R2-S2 | `apps/frontend/e2e/account-workspace.spec.ts`                                               | Same-origin anonymous API denial, protected workspace, logout, and invalidated-cookie replay.                                                                   | Passing 2026-07-13   |
+| S3/R1-S3                     | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/SessionStates.stories.tsx` | Focus revalidation suppresses private UI, restores controls with or without IDs, focuses sign-in or retry after failure, and exposes accessible session states. | Passing 2026-07-15   |
+| S3/R2-S1 CSRF boundary       | `apps/backend/tests/functional/account_security.spec.ts`                                    | Logout rejects missing and forged CSRF tokens while preserving the authenticated session and account state.                                                     | Passing 2026-07-14   |
+| S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                            | Protected transitions, session restoration, and logout behaved as intended.                                                                                     | Confirmed 2026-07-14 |
 
 #### Story Notes
 
@@ -322,6 +370,8 @@ The system SHALL invalidate the active server-side session when the user signs o
 | `apps/backend/scripts/database-safety.test.mjs`                                                | Proves target-component, acknowledgement, effective same-target, selector, environment-override, loopback/Neon normalization, schema casing, valid-target, and child-environment behavior.                          |
 | `apps/backend/tests/helpers/migration_database.ts` and `tests/unit/migration_database.spec.ts` | Guard per-test PostgreSQL schemas before any write and prove cleanup across setup and callback failures.                                                                                                            |
 | `apps/backend/tests/functional/account_security.spec.ts`                                       | Proves exact missing/forged CSRF rejection and unchanged account/session state for signup, login, and logout.                                                                                                       |
+| `apps/frontend/src/styles/fonts.css`, `styles/tokens.css`, and `main.tsx`                      | Load the bundled type system and shared semantic presentation foundation used across account and workspace routes.                                                                                                  |
+| `apps/frontend/.storybook/preview.tsx`                                                         | Applies the same shared foundation to deterministic component-state and accessibility evidence.                                                                                                                     |
 
 ### Cross-Story Deferred Verification
 

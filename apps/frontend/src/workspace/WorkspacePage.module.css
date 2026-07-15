@@ -1,13 +1,15 @@
 .shell {
+  min-width: 0;
   min-height: 100vh;
+  overflow-x: clip;
   background: var(--background);
 }
 
 .header {
-  display: flex;
+  display: grid;
   min-height: 4rem;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-4);
   padding: 0 clamp(var(--space-4), 4vw, var(--space-8));
   border-bottom: 1px solid var(--border);
@@ -15,14 +17,15 @@
 }
 
 .brandGroup {
-  display: flex;
+  display: grid;
   min-width: 0;
+  grid-template-columns: auto 1px minmax(0, 1fr);
   align-items: center;
   gap: var(--space-4);
 }
 
 .brand {
-  color: var(--text-primary);
+  color: var(--identity);
   font-size: 0.875rem;
   font-weight: 700;
   white-space: nowrap;
@@ -35,29 +38,26 @@
 }
 
 .account {
-  max-width: min(36vw, 24rem);
+  min-width: 0;
+  max-width: 24rem;
   overflow: hidden;
   color: var(--text-muted);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.signOut {
-  min-height: 2.75rem;
-  padding: 0 var(--space-3);
+.signOut,
+.retryWorlds {
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   background: transparent;
   color: var(--text-secondary);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 650;
   cursor: pointer;
   transition:
     color var(--motion-fast) ease,
@@ -65,19 +65,22 @@
     background var(--motion-fast) ease;
 }
 
-.signOut:hover:not(:disabled) {
-  border-color: #595961;
-  background: var(--surface-muted);
+.signOut:hover:not(:disabled),
+.retryWorlds:hover:not(:disabled) {
+  border-color: var(--control-boundary);
+  background: var(--surface-interactive);
   color: var(--text-primary);
 }
 
-.signOut:disabled {
+.signOut:disabled,
+.retryWorlds:disabled {
   cursor: wait;
   opacity: 0.6;
 }
 
 .content {
   width: min(100%, 72rem);
+  min-width: 0;
   margin: 0 auto;
   padding: clamp(var(--space-8), 7vw, 5rem) clamp(var(--space-4), 5vw, var(--space-10));
 }
@@ -87,28 +90,23 @@
   border-bottom: 1px solid var(--border);
 }
 
-.eyebrow {
+.eyebrow,
+.emptyLabel {
   margin: 0 0 var(--space-2);
-  color: var(--accent);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
+  color: var(--identity);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-size: 2rem;
   line-height: 1.15;
-  letter-spacing: 0;
 }
 
 .loading {
+  min-height: 8rem;
   margin: var(--space-8) 0 0;
   color: var(--text-secondary);
 }
@@ -120,28 +118,22 @@
   border-left: 2px solid var(--danger);
 }
 
-.catalogError p {
+.catalogError h2 {
   margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.catalogError p {
+  margin: var(--space-2) 0 0;
   color: var(--text-secondary);
   line-height: 1.6;
 }
 
 .retryWorlds {
-  min-height: 2.75rem;
   margin-top: var(--space-4);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
-  background: var(--surface-muted);
+  background: var(--surface-interactive);
   color: var(--text-primary);
-  font-size: 0.8125rem;
-  font-weight: 650;
-  cursor: pointer;
-}
-
-.retryWorlds:disabled {
-  cursor: wait;
-  opacity: 0.6;
 }
 
 .catalog {
@@ -156,6 +148,7 @@
 }
 
 .worldList {
+  min-width: 0;
   margin: var(--space-4) 0 0;
   padding: 0;
   border-top: 1px solid var(--border);
@@ -163,34 +156,42 @@
 }
 
 .worldRow {
+  min-width: 0;
   padding: var(--space-6) 0;
   border-bottom: 1px solid var(--border);
 }
 
+.worldRow article {
+  min-width: 0;
+}
+
 .worldHeading {
   display: flex;
+  min-width: 0;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
 }
 
 .worldName {
+  min-width: 0;
   margin: 0;
   font-size: 1.25rem;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .worldLink {
   display: inline-flex;
-  min-height: 2.75rem;
+  min-height: var(--control-touch);
   align-items: center;
-  color: var(--text-primary);
+  color: var(--action-hover);
   text-decoration-color: var(--border-strong);
   text-decoration-thickness: 1px;
 }
 
 .worldLink:hover {
-  color: var(--primary-hover);
+  color: var(--text-primary);
   text-decoration-color: currentColor;
 }
 
@@ -201,21 +202,15 @@
   justify-content: flex-end;
   gap: var(--space-2);
   color: var(--text-muted);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .worldFlags span {
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-row);
 }
 
 .worldDescription {
@@ -224,6 +219,7 @@
   color: var(--text-secondary);
   font-size: 0.9375rem;
   line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .emptyState {
@@ -232,17 +228,8 @@
 }
 
 .emptyLabel {
-  margin: 0 0 var(--space-3);
-  color: var(--primary);
-  font-family:
-    Geist Mono,
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+  color: var(--action);
 }
 
 .emptyTitle {
@@ -262,21 +249,31 @@
   max-width: 36rem;
   margin: var(--space-5) 0 0;
   padding: var(--space-3);
-  border: 1px solid #653638;
-  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--danger);
   background: var(--danger-muted);
-  color: #fac6c6;
+  color: var(--text-primary);
   font-size: 0.8125rem;
+  line-height: 1.5;
 }
 
 @media (max-width: 35rem) {
   .header {
-    min-height: 4.5rem;
+    min-height: 4.75rem;
+    align-items: start;
+    padding-block: var(--space-3);
   }
 
-  .separator,
-  .account {
+  .brandGroup {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+
+  .separator {
     display: none;
+  }
+
+  .account {
+    max-width: 100%;
   }
 
   .worldHeading {

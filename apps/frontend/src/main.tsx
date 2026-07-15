@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { App } from './app/App'
 import { createTuyauAuthApi } from './auth/tuyauAuthApi'
 import { createTuyauWorldApi } from './worlds/tuyauWorldApi'
+import './styles/fonts.css'
 import './styles/tokens.css'
 
 const root = document.getElementById('root')

@@ -31,7 +31,7 @@ const stormboundDetail: WorldDetail = {
 }
 
 describe('World catalog and detail routes', () => {
-  it('LC-002/S1/R1-S1 loads accessible Worlds with public read-only navigation', async () => {
+  it('LC-002/S1/R1-S1 + R2-S1 loads accessible Worlds with identity and read-only navigation', async () => {
     const listWorlds = vi.fn().mockResolvedValue([stormboundChapel])
 
     renderTestApp({
@@ -41,6 +41,7 @@ describe('World catalog and detail routes', () => {
     })
 
     expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
+    expect(screen.getByLabelText('Signed in as member@example.com')).toBeVisible()
     expect(await screen.findByText(stormboundChapel.description)).toBeVisible()
     expect(screen.getByText('Public')).toBeVisible()
     expect(screen.getByText('Read only')).toBeVisible()
@@ -96,7 +97,7 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(3)
   })
 
-  it('LC-002/S1/R1-S3 explains when no Worlds are currently available', async () => {
+  it('LC-002/S1/R1-S3 + R2-S2 explains when no Worlds are available without creation', async () => {
     renderTestApp({
       route: '/worlds',
       session: { id: 4, email: 'member@example.com' },
@@ -105,9 +106,10 @@ describe('World catalog and detail routes', () => {
 
     expect(await screen.findByRole('heading', { name: 'No Worlds available' })).toBeVisible()
     expect(screen.getByText('There are no Worlds available to this account yet.')).toBeVisible()
+    expect(screen.queryByRole('button', { name: /create.*world/i })).not.toBeInTheDocument()
   })
 
-  it('shows catalog loading while Worlds are unresolved', async () => {
+  it('LC-002/S1/R2-S2 shows catalog loading while Worlds are unresolved', async () => {
     renderTestApp({
       route: '/worlds',
       session: { id: 4, email: 'member@example.com' },
@@ -117,7 +119,7 @@ describe('World catalog and detail routes', () => {
     expect(await screen.findByText('Loading Worlds…')).toHaveAttribute('role', 'status')
   })
 
-  it('recovers from a catalog load failure', async () => {
+  it('LC-002/S1/R2-S3 recovers from a catalog load failure', async () => {
     const user = userEvent.setup()
     const listWorlds = vi
       .fn()
@@ -163,18 +165,60 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(2)
   })
 
-  it('LC-002/S2/R1-S1 renders structured World detail without a byline', async () => {
+  it('LC-002/S2/R1-S1 + R2-S1 renders structured read-only World detail without a byline', async () => {
     renderTestApp({
       route: '/worlds/stormbound-chapel',
       session: { id: 4, email: 'member@example.com' },
       worldApi: { getWorld: async () => stormboundDetail },
     })
     expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
+    expect(screen.getByText(stormboundDetail.description)).toBeVisible()
+    expect(screen.getByText('Read only')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
     expect(screen.getByRole('heading', { name: 'Locations' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Mira' })).toBeVisible()
     expect(screen.getByText('The bell rang at midnight.')).toBeVisible()
     expect(screen.getByText('Chapel', { selector: 'span' })).toBeVisible()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
+  })
+
+  it('LC-002/S2/R2-S3 communicates empty Locations while preserving Character hierarchy', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => ({ ...stormboundDetail, locations: [] }) },
+    })
+
+    const locations = await screen.findByRole('region', { name: 'Locations' })
+    expect(locations).toHaveTextContent('No Locations are recorded for this World.')
+    expect(screen.getByRole('region', { name: 'Characters' })).toContainElement(
+      screen.getByRole('heading', { name: 'Mira' })
+    )
+  })
+
+  it('LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => ({ ...stormboundDetail, characters: [] }) },
+    })
+
+    const characters = await screen.findByRole('region', { name: 'Characters' })
+    expect(characters).toHaveTextContent('No Characters are recorded for this World.')
+    expect(screen.getByRole('region', { name: 'Locations' })).toContainElement(
+      screen.getByRole('heading', { name: 'Chapel' })
+    )
+  })
+
+  it('LC-002/S2/R2-S2 keeps return navigation available while World detail is loading', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: () => new Promise(() => undefined) },
+    })
+
+    expect(await screen.findByRole('heading', { name: 'Loading World…' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
   })
 
   it('ends the shared session when World detail reports unauthorized', async () => {
@@ -193,7 +237,7 @@ describe('World catalog and detail routes', () => {
     expect(screen.queryByText('The bell rang at midnight.')).not.toBeInTheDocument()
   })
 
-  it('retries a failed World detail request with visible pending and recovery states', async () => {
+  it('LC-002/S2/R2-S2 retries unavailable World detail with visible pending and recovery', async () => {
     const user = userEvent.setup()
     let resolveRetry!: (world: WorldDetail) => void
     const retry = new Promise<WorldDetail>((resolve) => {
@@ -259,7 +303,7 @@ describe('World catalog and detail routes', () => {
     expect(getWorld).toHaveBeenCalledTimes(3)
   })
 
-  it('LC-002/S2/R1-S2 presents an unknown World without ownership details', async () => {
+  it('LC-002/S2/R1-S2 + R2-S2 presents an unknown World without ownership details', async () => {
     renderTestApp({
       route: '/worlds/missing',
       session: { id: 4, email: 'member@example.com' },

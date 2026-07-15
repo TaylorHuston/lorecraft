@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthApiError } from '../auth/authApi'
 import { useAuth } from '../auth/authContext'
@@ -9,6 +9,7 @@ import styles from './WorkspacePage.module.css'
 export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
   const { account, api, endSession } = useAuth()
   const navigate = useNavigate()
+  const [isRetrying, setIsRetrying] = useState(false)
   const signOut = useMutation({
     mutationFn: () => api.signOut(),
     retry: false,
@@ -29,15 +30,35 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
     }
   }, [endSession, worlds.error])
 
+  async function retryWorlds() {
+    setIsRetrying(true)
+    try {
+      await worlds.refetch()
+    } finally {
+      setIsRetrying(false)
+    }
+  }
+
+  const worldList = worlds.data ?? []
+
   return (
-    <main className={styles.shell}>
+    <main
+      className={styles.shell}
+      aria-busy={worlds.isPending || isRetrying || signOut.isPending || undefined}
+    >
       <header className={styles.header}>
         <div className={styles.brandGroup}>
           <span className={styles.brand}>Lorecraft</span>
           <span className={styles.separator} aria-hidden="true" />
-          <span className={styles.account} title={account?.email}>
-            {account?.email}
-          </span>
+          {account ? (
+            <span
+              className={styles.account}
+              aria-label={`Signed in as ${account.email}`}
+              title={account.email}
+            >
+              {account.email}
+            </span>
+          ) : null}
         </div>
         <button
           id="workspace-sign-out"
@@ -63,29 +84,30 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
                 : 'We couldn’t sign you out. Try again.'}
           </p>
         ) : null}
-        {worlds.isPending ? (
-          <p className={styles.loading} role="status">
+        {worlds.isPending && !isRetrying ? (
+          <p className={styles.loading} role="status" aria-live="polite">
             Loading Worlds…
           </p>
-        ) : worlds.isError ? (
+        ) : worlds.isError || isRetrying ? (
           <div className={styles.catalogError} role="alert">
-            <p>Worlds could not be loaded. Try again.</p>
+            <h2>Worlds could not be loaded. Try again.</h2>
+            <p>Lorecraft could not reach the World catalog.</p>
             <button
               className={styles.retryWorlds}
               type="button"
-              disabled={worlds.isFetching}
-              onClick={() => void worlds.refetch()}
+              disabled={isRetrying}
+              onClick={() => void retryWorlds()}
             >
-              {worlds.isFetching ? 'Trying again…' : 'Try again'}
+              {isRetrying ? 'Trying again…' : 'Try again'}
             </button>
           </div>
-        ) : worlds.data.length > 0 ? (
+        ) : worldList.length > 0 ? (
           <section className={styles.catalog} aria-labelledby="available-worlds-title">
             <h2 className={styles.sectionTitle} id="available-worlds-title">
               Available Worlds
             </h2>
             <ul className={styles.worldList}>
-              {worlds.data.map((world) => (
+              {worldList.map((world) => (
                 <li className={styles.worldRow} key={world.id}>
                   <article>
                     <div className={styles.worldHeading}>

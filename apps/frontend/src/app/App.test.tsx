@@ -161,6 +161,34 @@ describe('account workspace entry', () => {
     })
   })
 
+  it('LC-001/S2/R1-S1 returns sign-in to the protected route that requested authentication', async () => {
+    const user = userEvent.setup()
+    const signIn = vi.fn().mockResolvedValue({ id: 4, email: 'member@example.com' })
+    const getWorld = vi.fn().mockResolvedValue({
+      id: 10,
+      slug: 'stormbound-chapel',
+      name: 'Stormbound Chapel',
+      description: 'A weathered sanctuary above the tide line.',
+      visibility: 'private',
+      readOnly: true,
+      locations: [],
+      characters: [],
+    })
+    renderTestApp({
+      route: '/worlds/stormbound-chapel?view=canon#characters',
+      session: null,
+      api: { signIn },
+      worldApi: { getWorld },
+    })
+
+    await user.type(await screen.findByLabelText('Email'), 'member@example.com')
+    await user.type(screen.getByLabelText('Password'), 'correct horse')
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+
+    expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
+    expect(getWorld).toHaveBeenCalledWith('stormbound-chapel')
+  })
+
   it('LC-001/S2/R1-S2 uses one generic response for invalid credentials', async () => {
     const user = userEvent.setup()
     const signIn = vi
@@ -249,6 +277,26 @@ describe('account workspace entry', () => {
     expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     expect(screen.queryByRole('heading', { name: 'Sign in to Lorecraft' })).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(1)
+  })
+
+  it('LC-001/S2/R3-S2 announces an initial session failure and recovers through retry', async () => {
+    const user = userEvent.setup()
+    const restoreSession = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Service unavailable'))
+      .mockResolvedValueOnce(null)
+    renderTestApp({ route: '/sign-in', session: null, api: { restoreSession } })
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent("We couldn't reach Lorecraft")
+    expect(alert).toHaveTextContent(
+      'Your session could not be checked. Try again when the service is available.'
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(restoreSession).toHaveBeenCalledTimes(2)
   })
 
   it('LC-001/S2/R2-S2 returns an authenticated account from auth routes to Worlds', async () => {
@@ -379,12 +427,12 @@ describe('account workspace entry', () => {
     const retry = await screen.findByRole('button', { name: 'Try again' })
     await user.click(retry)
 
-    expect(screen.getByRole('button', { name: 'Trying again...' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
     expect(screen.getByRole('alert')).toHaveAttribute('aria-busy', 'true')
     expect(screen.getByLabelText('Email')).toHaveValue('draft@example.com')
     expect(restoreSession).toHaveBeenCalledTimes(3)
 
-    await user.click(screen.getByRole('button', { name: 'Trying again...' }))
+    await user.click(screen.getByRole('button', { name: 'Trying again…' }))
     expect(restoreSession).toHaveBeenCalledTimes(3)
 
     await act(async () => resolveRetry(null))
@@ -581,6 +629,54 @@ describe('account workspace entry', () => {
 
     expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Sign out' })).toHaveFocus())
+  })
+
+  it('LC-001/S3/R1-S3 restores an id-less workspace control after session revalidation', async () => {
+    const account = { id: 4, email: 'member@example.com' }
+    let resolveRevalidation: (resolvedAccount: typeof account) => void = () => undefined
+    const restoreSession = vi
+      .fn()
+      .mockResolvedValueOnce(account)
+      .mockImplementationOnce(
+        () =>
+          new Promise<typeof account>((resolve) => {
+            resolveRevalidation = resolve
+          })
+      )
+    renderTestApp({
+      route: '/worlds',
+      session: null,
+      api: { restoreSession },
+      worldApi: {
+        listWorlds: async () => [
+          {
+            id: 10,
+            slug: 'stormbound-chapel',
+            name: 'Stormbound Chapel',
+            description: 'A weathered sanctuary above the tide line.',
+            visibility: 'private',
+            readOnly: true,
+          },
+        ],
+      },
+    })
+
+    const worldLink = await screen.findByRole('link', { name: 'Stormbound Chapel' })
+    expect(worldLink).not.toHaveAttribute('id')
+    worldLink.focus()
+    expect(worldLink).toHaveFocus()
+
+    await act(async () => window.dispatchEvent(new Event('focus')))
+    expect(
+      (await screen.findByText('Checking your session...')).closest('[role="status"]')
+    ).toBeInTheDocument()
+
+    await act(async () => resolveRevalidation(account))
+
+    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
+    await waitFor(() =>
+      expect(screen.getByRole('link', { name: 'Stormbound Chapel' })).toHaveFocus()
+    )
   })
 
   it('LC-001/S3/R1-S3 focuses retry after an authenticated session revalidation fails', async () => {

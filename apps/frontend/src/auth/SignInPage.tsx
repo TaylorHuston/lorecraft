@@ -70,6 +70,7 @@ export function SignInPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (signIn.isPending) return
     setFormError(null)
     setFieldErrors({})
     const data = new FormData(event.currentTarget)
@@ -93,9 +94,10 @@ export function SignInPage() {
         className={formStyles.form}
         onSubmit={handleSubmit}
         aria-describedby={formError ? 'signin-error' : undefined}
+        aria-busy={signIn.isPending}
       >
         {formError ? (
-          <p className={formStyles.formError} id="signin-error" role="alert">
+          <p className={formStyles.formError} id="signin-error" role="alert" aria-atomic="true">
             {formError}
           </p>
         ) : null}
@@ -117,7 +119,12 @@ export function SignInPage() {
             aria-describedby={fieldErrors.email ? 'signin-email-error' : undefined}
           />
           {fieldErrors.email ? (
-            <p className={formStyles.fieldError} id="signin-email-error" role="alert">
+            <p
+              className={formStyles.fieldError}
+              id="signin-email-error"
+              role="alert"
+              aria-atomic="true"
+            >
               {fieldErrors.email}
             </p>
           ) : null}
@@ -139,7 +146,12 @@ export function SignInPage() {
             aria-describedby={fieldErrors.password ? 'signin-password-error' : undefined}
           />
           {fieldErrors.password ? (
-            <p className={formStyles.fieldError} id="signin-password-error" role="alert">
+            <p
+              className={formStyles.fieldError}
+              id="signin-password-error"
+              role="alert"
+              aria-atomic="true"
+            >
               {fieldErrors.password}
             </p>
           ) : null}
