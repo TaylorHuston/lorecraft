@@ -186,13 +186,11 @@
   min-height: var(--control-touch);
   align-items: center;
   color: var(--action-hover);
-  text-decoration-color: var(--border-strong);
-  text-decoration-thickness: 1px;
+  text-decoration: none;
 }
 
 .worldLink:hover {
   color: var(--text-primary);
-  text-decoration-color: currentColor;
 }
 
 .worldFlags {
