@@ -42,7 +42,7 @@ An authenticated account can browse Worlds available to it and inspect a World's
 - World, Location, or Character authoring and deletion.
 - Anonymous publishing, creator bylines, sharing controls, and collaboration.
 - Time-aware canon history, custom entity types, provenance, and continuity analysis.
-- Adventures and all mutable gameplay state.
+- Adventure play and mutable gameplay state are owned by `LC-003 Adventure Play`.
 - Policy that hides character knowledge from specific readers or clients.
 
 ## Candidate Stories

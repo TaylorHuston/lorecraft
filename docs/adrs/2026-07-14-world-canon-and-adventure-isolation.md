@@ -2,8 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-14
-- Related change: None; this decision constrains future Adventure work.
-- Related Epics / Stories: Future Adventure capability; no current Epic.
+- Related change: `docs/changes/2026-07-16-private-adventure-foundation/`
+- Related Epics / Stories: `LC-003/S1`
 
 ## Context
 
@@ -49,7 +49,7 @@ The physical storage strategy may use a materialized copy, immutable version ref
 
 ## Validation
 
-Future implementation and review must prove that creating an Adventure binds it to an explicit World version, World edits do not change existing Adventures, Adventure mutations do not change World canon, reset restores the original source version, and any upgrade or canon-promotion path requires an explicit action.
+The Private Adventure Foundation implementation and review must prove that creating an Adventure binds it to an explicit World version, World edits do not change existing Adventures, reset restores the original source version, and source canon remains unchanged. Later mutation work must additionally prove that Adventure mutations cannot change World canon and that any upgrade or canon-promotion path requires an explicit action.
 
 ## Reconsider When
 
