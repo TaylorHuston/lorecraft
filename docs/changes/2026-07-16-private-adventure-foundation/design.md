@@ -323,51 +323,69 @@ any owned state -> deleted                  (owner delete)
 
 ## Experience Design
 
-- Applicability: required, but current product conventions and the checked-in Adventure workbench prototype make a separate `/sdd-design` pass non-blocking.
-- Confirmed direction: World-contained Adventure discovery, dedicated creation route, durable Adventure route, story-first reading surface, persistent Player and Scene context, and explicit pending/recovery states.
-- User confirmation: the World/Adventure containment model, durable route, player profile, and persistent context were confirmed during exploration; final visual acceptance remains manual.
-- Reference artifacts: `apps/frontend/src/prototypes/adventure/AdventureWorkbenchPrototype.tsx`, its CSS/Storybook states, the shared style guide, and current World detail patterns.
+- Applicability: required and design-ready.
+- Confirmed direction: adapt the checked-in Adventure workbench into a production three-region Player / Story / Scene shell on desktop and a Story-first tabbed shell on mobile. Add World-contained discovery, a dedicated creation route, and explicit pending, failure, ready, reset, and delete behavior without exposing deferred turn controls.
+- User confirmation: Taylor confirmed the experience direction one decision at a time on 2026-07-16. Final implementation appearance remains subject to manual UI confirmation.
+- Reference artifacts:
+  - `apps/frontend/src/prototypes/adventure/AdventureWorkbenchPrototype.tsx`
+  - `apps/frontend/src/prototypes/adventure/AdventureWorkbenchPrototype.module.css`
+  - Storybook IDs `prototypes-adventure-workbench--desktop-center-anchored`, `--desktop-generating`, `--mobile-story`, `--mobile-player`, and `--mobile-scene`
+  - `apps/frontend/src/worlds/WorldDetailPage.tsx` and `WorldDetailPage.module.css`
+  - `docs/style-guide.md`
+- Prototype exclusions: the current composer, Act/Story/Guide/Pass controls, Director observation, change badges, editable Player data, and spoiler-bearing NPC personality/memory fields are not production requirements for this Change.
 
 ### User Flow And Information Architecture
 
-1. The account opens a World detail page and sees an `Adventures` section before canonical Locations and Characters.
-2. Existing owned Adventures show player name, zero completed turns, last-played time, and pending/failed/ready status.
-3. `New Adventure` opens `/worlds/:slug/adventures/new` with required player name and optional physical description/backstory.
-4. Successful submission navigates to `/adventures/<id>` immediately.
-5. Pending state polls; terminal failure offers Retry; ready state shows opening story, Player context, and starting Scene.
-6. Delete remains in the World Adventure list. Reset remains inside the selected Adventure's settings surface.
+1. The account opens a World detail page and sees a compact `Adventures` section before canonical Locations and Characters.
+2. Each Adventure row uses player name as its primary label and shows lifecycle status, `0 turns`, and last-played time. The row resumes the Adventure; a separate delete icon opens confirmation.
+3. `New Adventure` is the section action and opens `/worlds/:slug/adventures/new` rather than a modal.
+4. The creation page preserves World identity and presents required player name, optional physical description, optional backstory, `Start Adventure`, and `Cancel`.
+5. Accepted submission immediately navigates to `/adventures/<id>`. The real Player and Scene regions are already populated while the Story region shows a restrained Game Master preparation state.
+6. A ready Adventure replaces only the Story loading state with the generated opening. This Change renders no composer, disabled action controls, or future-feature explanation.
+7. Terminal generation failure preserves Player and Scene context while the Story region presents a clear failure, `Try Again`, and `Return to World`. No partial narration appears.
+8. Delete remains in the World Adventure list. Reset remains in the selected Adventure's compact header menu and is never combined with source-World controls.
 
 ### Responsive Composition
 
-- Desktop may adapt the checked-in three-area workbench prototype, but story remains the widest and primary area.
-- Mobile uses accessible Story, Player, and Scene views without rendering squeezed columns.
-- Pending, empty, error, and confirmation states must not shift controls unpredictably or create horizontal overflow.
+- Desktop keeps persistent Player, Story, and Scene regions, with Story visibly wider and primary. Each region may scroll independently so long content does not move navigation or obscure the opening.
+- Mobile uses a persistent bottom tab bar ordered Story, Player, Scene. Story is selected by default; arrow-key behavior follows the existing tab prototype. No Scene change badge appears until context can mutate.
+- The same pending, failure, and ready states occupy the Story region on both layouts; Player and Scene remain available throughout.
+- Narrow desktop and tablet widths must not squeeze three unreadable columns. They may adopt the mobile tab composition at the implementation's tested breakpoint.
+- Loading, error, confirmation, and long-content states must not cause horizontal overflow or incoherent layout shifts.
 
 ### Component And State Contract
 
-- World detail owns Adventure discovery and deletion, not Adventure runtime logic.
-- Creation owns form state and one idempotent submission.
-- Adventure page renders authoritative `opening_pending`, `opening_processing`, `opening_failed`, or `ready` state from the API.
+- World detail owns Adventure discovery, resume, creation navigation, and confirmed deletion, not Adventure runtime logic.
+- The dedicated creation page owns form validation, cancellation, and one idempotent submission. It does not offer model or Starting Point controls.
+- The Adventure shell owns a compact top navigation with Lorecraft/World identity, `Return to World`, and an Adventure menu containing `Reset Adventure`. Exact top-navigation polish may receive another design pass without changing this contract.
+- Player is read-only after creation and shows name, optional physical description, optional backstory, current status when meaningful, and starting Location.
+- Scene is read-only and shows the starting Location name, player-visible description, and NPCs present by name and physical description only. It excludes background, personality, voice, private knowledge, memory, and NPC detail interaction.
+- Story renders authoritative `opening_pending`, `opening_processing`, `opening_failed`, or `ready` state. Pending and failure never reveal partial narration.
+- No inactive composer, disabled turn controls, `/look`, or NPC inspection affordance is rendered before those behaviors are accepted by a later Change.
 - React Query keys remain account-scoped and are invalidated after creation, retry, reset, and delete.
 - Polling runs only for pending/processing Adventures and stops on ready, failed, missing, unauthorized, or unmount.
 
 ### Accessibility And Interaction
 
-- Labels distinguish required and optional fields; validation associates errors with inputs.
-- Pending and completion changes use restrained live-region status announcements.
-- Confirmation dialogs return focus to their trigger when cancelled and choose a safe focus target after completion.
-- Destructive buttons are named explicitly and visually distinct without relying on color alone.
-- Keyboard and touch targets follow the app's existing accessibility and responsive gates.
+- Labels distinguish required and optional fields; validation associates errors with inputs and preserves entered values after rejected submission.
+- Submission, pending, completion, and terminal failure use restrained live-region announcements without repeatedly announcing each poll.
+- Desktop regions and mobile tab panels use meaningful landmarks and headings; mobile tabs support click/touch plus Left, Right, Home, and End keyboard behavior.
+- Retry restores focus to the Story status region when work restarts. Reset/delete confirmations return focus to their trigger when cancelled and choose a safe destination after completion.
+- Row navigation and the adjacent delete icon remain separate keyboard targets with unambiguous accessible names.
+- Destructive buttons are explicit and visually distinct without relying on color alone.
+- Keyboard, visible focus, reduced motion, contrast, and touch targets follow the app's existing accessibility and responsive gates.
 
 ### Visual Direction
 
-- Follow the current Lorecraft style guide and Deep Steel Blue foundation after that separate Change is merged.
-- Preserve the story-first, quiet creator-tool character; do not turn the opening screen into a marketing hero or generic chat card.
-- Treat the prototype as composition evidence, not production code to copy wholesale.
+- Follow `docs/style-guide.md`: Zinc foundation, Burnished Orange identity/action/focus, and Deep Steel Blue only for semantic information.
+- Preserve the prototype's story-first reading hierarchy and restrained game-workbench character. The generated opening uses the narrative type treatment; supporting UI remains compact Geist/Geist Mono.
+- Keep panels structurally clear without decorative card stacking, oversized rounding, or marketing composition.
+- Treat the prototype as selected composition evidence, not production code to copy wholesale. Production components must use real state and remove prototype-only behavior.
 
 ### Open Design Questions
 
-- None block implementation. Exact spacing and responsive panel behavior are manual-polish concerns within the accepted composition.
+- No design blocker remains.
+- Accepted deferral: exact top-navigation visual cleanup may receive a later `/sdd-design` refinement. Implementation must still provide the confirmed identity, return navigation, Adventure menu, responsive behavior, and accessibility semantics now.
 
 ## Client And API Boundary
 

@@ -5,10 +5,10 @@ status: planned
 
 ## Resume Here
 
-- Last completed action: promoted the validated Change, created canonical `LC-003`, added both Proposed ADRs, and reconciled `LC-002` plus the isolation ADR
+- Last completed action: confirmed and recorded the production Adventure experience contract through `/sdd-design`
 - Next action: invoke `/sdd-apply`; create `change/private-adventure-foundation` from current `develop`, then start Task 4.1 with failing database tests
 - Active branch/ref: `develop` for promotion documentation; implementation branch not created
-- Expected dirty files: none after the promotion commit; implementation files begin only on `change/private-adventure-foundation`
+- Expected dirty files: none after the design-readiness commit; application files begin only on `change/private-adventure-foundation`
 - Known blockers: none
 
 ## Task Checklist
@@ -20,7 +20,7 @@ status: planned
 - [x] 1.3 Define observable creation, isolation, async recovery, lifecycle, authorization, responsive, and failure Scenarios.
 - [x] 1.4 Record turn controls, utilities, mutation, rules, sharing, and history editing as deferred Candidate Stories.
 - [x] 1.5 Define scenario-mapped backend, frontend, E2E, live-provider, debug, and manual evidence expectations.
-- [x] 1.6 Confirm existing World UI and Adventure prototype provide sufficient implementation direction; reserve final visual acceptance for manual review.
+- [x] 1.6 Complete `/sdd-design`: confirm desktop/mobile composition, creation flow, shell lifecycle states, disclosure boundaries, accessibility, prototype exclusions, and final manual acceptance scope.
 - [x] 1.7 Set this private Change to `planned` after scoped validation succeeds.
 
 ### 2. Promotion And Repository Preflight
@@ -82,12 +82,12 @@ status: planned
 ### 8. World And Adventure Experience
 
 - [ ] 8.1 RED: extend route/component tests for World Adventures empty/populated states, creation validation, pending polling, reload, failure/retry, ready projection, reset conflict, delete, and session loss.
-- [ ] 8.2 Add the World-contained Adventures section with player identity, zero completed turns, last-played time, lifecycle status, New Adventure, resume, and confirmed delete actions.
-- [ ] 8.3 Add `/worlds/:slug/adventures/new` with required name, optional physical description/backstory, associated validation, one idempotent submission, and safe navigation.
-- [ ] 8.4 Convert the Storybook Adventure workbench prototype into production feature components only where useful; do not retain prototype-only fake behavior in the live route.
-- [ ] 8.5 Add `/adventures/:id` pending, processing, failed, missing, ready, and reset states with story-first opening, Player context, and Scene context.
-- [ ] 8.6 Add responsive mobile Story/Player/Scene access, focus management, live status announcements, confirmation behavior, touch targets, and overflow checks.
-- [ ] 8.7 Add Storybook stories for creation, Adventure list, pending, failure, ready desktop/mobile, empty Character scene, and destructive confirmations; run configured accessibility checks.
+- [ ] 8.2 Add the compact World-contained Adventures section with player identity, zero completed turns, last-played time, lifecycle status, row-level resume, New Adventure, and separate confirmed delete action.
+- [ ] 8.3 Add `/worlds/:slug/adventures/new` with preserved World identity, required name, optional physical description/backstory, associated validation, one idempotent submission, Cancel, and safe navigation.
+- [ ] 8.4 Adapt the selected Adventure workbench prototype into real feature components while removing its composer, action controls, Director observation, change badge, editable Player data, and spoiler-bearing NPC fields.
+- [ ] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and reset menu.
+- [ ] 8.6 Add persistent desktop Player/Story/Scene regions and mobile bottom tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
+- [ ] 8.7 Add Storybook stories for World Adventure list, creation form states, pending populated shell, terminal failure/retry, ready desktop, mobile Story/Player/Scene, empty NPC scene, and destructive confirmations; run configured accessibility checks.
 - [ ] 8.8 Map implementation and evidence for `LC-003/S1 R4` and `R5`.
 
 ### 9. End-To-End And Operational Verification
@@ -126,6 +126,7 @@ status: planned
 |---|---|---|---|---|
 | 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --json` | artifact validation | Private Change structure, planned status, and references | Passed; 0 errors, 0 warnings |
 | 2026-07-16 | Scoped Change and `LC-003` validation after promotion | artifact validation | Canonical Change, Epic, Story, ADR links, and repository references | Passed; 0 errors, 0 warnings |
+| 2026-07-16 | Scoped Change validation after `/sdd-design` | artifact validation | Confirmed experience contract remains structurally valid and implementation-ready | Passed; 0 errors, 0 warnings |
 
 ## Manual Feedback
 
@@ -145,15 +146,16 @@ status: planned
 | Date | Feedback / Discovery | Classification | Reference / Target | Preserve / Change / Non-Goals | Artifact Updates | Next Apply Starting Point |
 |---|---|---|---|---|---|---|
 | 2026-07-16 | Existing Adventure workbench prototype supplies composition evidence but not production behavior. | experience refinement | `apps/frontend/src/prototypes/adventure/` | Preserve story-first Player/Story/Scene hierarchy; replace fake state and avoid exact MVP recreation. | `design.md` Experience Design | Task 8.1 |
+| 2026-07-16 | Taylor confirmed the production Adventure direction one decision at a time. | experience refinement | stable prototype Storybook IDs and current World detail | Preserve three-region desktop and bottom-tab mobile composition; add dedicated creation, populated pending/failure shells, read-only filtered context, no composer, and compact navigation. Exact top-nav polish remains safely deferrable. | `design.md` Experience Design and Tasks 8.2-8.7 | Task 2.4, then Task 4.1 |
 
 ## Manual UI Confirmation
 
 - Status: pending user
 - App URL / route: `http://localhost:4310/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
-- Steps for the user: create an Adventure, review pending/retry behavior, reload and resume it, inspect ready Story/Player/Scene views, reset it, then delete it from World detail at desktop and mobile widths
-- Expected result: one private Adventure uses its frozen source, survives reload, renders one coherent opening, remains readable and accessible, resets to the same source, and deletes without changing the World
-- Feedback that would change artifacts: different discovery placement, player fields, reset semantics, opening lifecycle, responsive composition, or requirement for an Adventure title
+- Steps for the user: create from the compact World Adventure list; review dedicated form validation; inspect the populated pending shell; reload and recover; inspect terminal failure/retry; verify ready Story/Player/Scene disclosure; use mobile bottom tabs; reset from the Adventure menu; delete from World detail
+- Expected result: the shell remains story-first and stable across lifecycle states, no deferred controls or hidden NPC knowledge leak, the frozen Adventure survives reload, and reset/delete remain clearly separated
+- Feedback that would change artifacts: different discovery placement, creation route, panel composition, disclosure boundary, pending/failure treatment, reset/delete placement, or mobile navigation
 
 ## Blockers / Open Questions
 
