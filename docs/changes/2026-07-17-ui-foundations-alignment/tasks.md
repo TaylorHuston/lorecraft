@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: completed independent review discovery and the safe evidence-remediation batch against source commit `2b261810dffec7d7da80d7225931398918ca8951`.
-- Next action: obtain user manual confirmation and coordinate the separately owned UI Foundations hub registration/comparison capture before closeout.
+- Last completed action: completed the follow-up accessibility, comparison-geometry, preview-state, and shared UI Foundations remediation at Lorecraft source commit `90f84b595a7ed71a0bf2f200de0c53434daedc04` and UI Foundations commit `db250f399bac1f19b1cfc1733620c52fc286053a`.
+- Next action: await user manual visual confirmation, then rerun `/sdd-review`; do not close or merge without explicit authorization.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
-- Known blockers: no Lorecraft implementation blocker. UI Foundations currently has unrelated active catalog work, so Lorecraft registration and cross-application comparison capture remain a separately owned closeout dependency; user manual confirmation also remains pending.
+- Known blockers: no technical blocker. User manual visual confirmation remains pending by request.
 
 ## Task Checklist
 
@@ -79,8 +79,8 @@ status: in_review
 - [x] 7.3 Add app-owned `Comparison/Workbench` exports `Desktop`, `Mobile`, `FileBrowser`, `Empty`, and `Error` with deterministic fixtures and stable generated story IDs.
 - [x] 7.4 Render Lorecraft World navigation/collection in the `FileBrowser` compatibility cell and document it as an intentional domain analogue, not a literal file tree.
 - [x] 7.5 Verify Storybook still binds exact port `4312`, all existing useful stories remain discoverable, and comparison stories require no backend or external provider.
-- [ ] 7.6 Create or link separate UI Foundations repository-local tracked work that adds Lorecraft at default `http://127.0.0.1:4312`, supports `LORECRAFT_STORYBOOK_URL`, and includes it in the capture matrix.
-- [ ] 7.7 Run the comparison capture from UI Foundations and retain evidence that Lorecraft renders in desktop, mobile, navigation/collection, empty, and error cells.
+- [x] 7.6 Create or link separate UI Foundations repository-local tracked work that adds Lorecraft at default `http://127.0.0.1:4312`, supports `LORECRAFT_STORYBOOK_URL`, and includes it in the capture matrix.
+- [x] 7.7 Run the comparison capture from UI Foundations and retain evidence that Lorecraft renders in desktop, mobile, navigation/collection, empty, and error cells.
 - [x] 7.8 Consider a Foundation promotion proposal for password disclosure or another Lorecraft-first improvement only after real-app evidence demonstrates broader reuse; no promotion is proposed from this first app adoption.
 
 ### 8. Verification And Product Truth
@@ -101,7 +101,7 @@ status: in_review
 - [x] 9.1 Add the required user-facing `CHANGELOG.md` entry without including SDD bookkeeping, scaffolding, refactors, or test-only work.
 - [x] 9.2 Run `/sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, behavior, accessibility, tests, docs, comparison evidence, and branch readiness.
 - [x] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
-- [ ] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
+- [x] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
 - [ ] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
 - [x] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
 - [ ] 9.7 Follow the repository's authorized PR/merge policy, then run `sdd change close` only after review, integration, acceptance, and closeout truth are complete.
@@ -115,6 +115,8 @@ status: in_review
 | 2026-07-17 | LC-002 World presentation | Migrated catalog/detail actions, recovery, pending, and destructive confirmation states to app-owned controls while preserving the World list/document hierarchy and LC-003 ownership of Adventure actions. | `d59b550` |
 | 2026-07-17 | LC-003 Adventure presentation | Migrated creation, retry, mobile tabs, settings, reset, and confirmation behavior; replaced the route-local modal with sequential Base UI dialogs and explicit focus restoration while preserving lifecycle semantics. | `d59b550` |
 | 2026-07-17 | Comparison contract | Added deterministic `Comparison/Workbench` desktop, mobile, World-navigation analogue, empty, and error fixtures with no backend dependency. | `d59b550` |
+| 2026-07-17 | Follow-up accessibility and comparison remediation | Connected destructive consequences to the Dialog description contract, added designed field states, exercised production-height internal scrolling, and aligned Storybook to exact shared-hub host/port. | `90f84b5` |
+| 2026-07-17 | Shared comparison registration | Registered Lorecraft and the retained 49th Floor source in the shared UI Foundations Storybook and capture matrix from an isolated worktree. | UI Foundations `db250f3` |
 
 ## Verification Ledger
 
@@ -136,10 +138,17 @@ status: in_review
 | 2026-07-17 | final scoped `sdd validate`                                                                                                                             | deterministic artifact validation     | Active Change and all three affected Epics remain structurally coherent after implementation reconciliation | Passed: 0 errors, 0 warnings |
 | 2026-07-17 | independent `/sdd-review` discovery and bounded remediation                                                                                           | independent integration review        | Source-vs-target behavior, artifacts, traceability, security, responsive composition, and branch readiness were reviewed together | Ready after four required evidence/artifact fixes |
 | 2026-07-17 | focused Dialog test and full Storybook browser suite after review remediation                                                                          | regression verification               | Focus wraps across both dialog boundaries; ready/pending/failed Adventure states retain required actions and overflow-free desktop/mobile composition | Passed: Dialog 2 tests; Storybook 76 tests |
+| 2026-07-17 | follow-up frontend and Storybook suites                                                                                                               | regression and component-browser verification | Accessible destructive descriptions, disabled/pending field semantics, and exercised desktop/mobile internal scrolling remain green | Passed: frontend 114 tests; Storybook 78 tests |
+| 2026-07-17 | frontend typecheck, lint, production build, and static Storybook build                                                                                | broad supporting gates                | Current TypeScript, CSS, production bundle, and static Storybook output are coherent after remediation | Passed |
+| 2026-07-17 | guarded repository tests and Playwright E2E                                                                                                           | full backend/frontend and deterministic E2E | Disposable-database guards accepted the configured targets and all API, persistence, desktop, and mobile journeys remained green | Passed: backend 102 tests; frontend 114 tests; E2E 7 tests |
+| 2026-07-17 | UI Foundations `npm run check:all` and `npm run compare:capture`                                                                                      | shared-hub verification and retained visual comparison | Lorecraft is registered in the composed Storybook and appears in all five matched comparison cells | Passed: 20 screenshots plus `comparison-report/index.html`; 5 Lorecraft captures retained at `/private/tmp/ui-foundations-lorecraft/comparison-report/` |
+| 2026-07-17 | scoped SDD validation and changed-surface reverse traceability                                                                                        | artifact and ownership verification   | The active Change resolves three Epics with no structural warnings, missing references, or unowned changed source/test files | Passed after Epic comparison-style ownership reconciliation |
+| 2026-07-17 | `git merge-tree --write-tree develop 90f84b595a7ed71a0bf2f200de0c53434daedc04`                                                                        | integration verification              | The exact follow-up remediation source merges cleanly into `develop` | Passed: tree `d5eaa6b85c23c17055521aeb9249312508a3e723` |
 
 ## Manual Feedback
 
-No entries. Manual testing begins after implementation provides reviewable routes and stories.
+- 2026-07-17 follow-up review, classified as in-scope defects and verification gaps: expose destructive consequences through the Dialog description contract; assert the resulting accessible description; constrain stable desktop/mobile comparison stories to production-equivalent viewport height; deterministically exercise internal scrolling geometry; add the designed disabled and pending TextField/Textarea previews; refresh exact review SHAs and merge-tree evidence; and complete the separately tracked shared UI Foundations registration and retained capture. No accepted product requirement, Scenario, ownership boundary, or architecture decision changed, so `/sdd-change --replan` was not required.
+- Manual visual confirmation remains pending for the user after deterministic remediation is complete.
 
 ## Planning Updates
 
@@ -155,7 +164,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Status: pending user.
 - App URL / route: Lorecraft frontend at `http://localhost:4310`; Storybook at exact `http://127.0.0.1:4312`.
 - Required setup or test data: deterministic account fixtures plus representative empty, populated, failed, and retryable Worlds; ready, pending, failed, settings, reset, and delete Adventure fixtures.
-- Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories. Cross-application hub comparison follows after separate UI Foundations registration.
+- Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories and the retained shared-hub matrix at `/private/tmp/ui-foundations-lorecraft/comparison-report/index.html`.
 - Expected result: controls and states feel consistent and accessible while the World list/document structure, Story-dominant Adventure, mobile tabs, dark palette, Burnished Orange identity, and narrative atmosphere remain recognizably Lorecraft.
 - Feedback that would change artifacts: requests to change pane hierarchy, mobile navigation, auth flow, palette identity, narrative typography, or the copy-owned reference model require replanning or a design pass before further implementation.
 
@@ -163,13 +172,13 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 - Planning blockers: none.
 - Promotion dependency: resolved; `2026-07-17-epic-truth-reconciliation` is integrated and closed.
-- Closeout dependency: complete separately tracked UI Foundations hub registration and successful Lorecraft comparison capture.
-- Coordination evidence: `spaces/code/ui-foundations` is currently on `change/scaffold-component-pattern-catalog` with unrelated uncommitted catalog work, so this run did not modify that repository.
+- Shared-hub dependency: resolved on isolated UI Foundations branch `misc/register-lorecraft-comparison` at `db250f399bac1f19b1cfc1733620c52fc286053a`; the canonical dirty checkout was not modified.
+- Closeout dependency: user manual visual confirmation, fresh independent review, and explicit merge/close authorization.
 - Open product or visual questions: none under the confirmed constraints.
 
 ## Closeout
 
-- Change status: `in_review`; independent review is technically ready, with user confirmation plus UI Foundations coordination still pending before closeout.
+- Change status: `in_review`; deterministic remediation and shared-hub evidence are complete, while user manual confirmation remains pending before closeout.
 - Epic files updated: yes; LC-001, LC-002, and LC-003 reflect current implementation and evidence.
 - Story labels/references and Requirement/Scenario IDs current: yes; semantic duplicate scenarios were reconciled onto stable existing IDs during promotion.
 - Implemented By maps current: yes; changed-surface reverse traceability reports no unowned source files or missing paths.
@@ -177,11 +186,11 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: ready at reviewed source commit `2b261810dffec7d7da80d7225931398918ca8951` plus the verified review-remediation commit.
+- `sdd-review` verdict: prior review was ready at implementation commit `2b261810dffec7d7da80d7225931398918ca8951` and review-remediation commit `41699f24e703ece229781ea9556fb8456b73deb5`; follow-up remediation commit `90f84b595a7ed71a0bf2f200de0c53434daedc04` now requires the final independent rerun after user confirmation.
 - Review record: `docs/changes/2026-07-17-ui-foundations-alignment/review.md`.
-- `review.md` findings resolved: yes; four required evidence/artifact findings were remediated and reverified.
+- `review.md` findings resolved: yes; the original four and follow-up accessibility/comparison/shared-hub findings were remediated and deterministically reverified.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
 - Manual UI confirmation status: pending user.
 - PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
-- Change moved to `docs/changes/closed/`: no; it remains active until review, user confirmation, UI Foundations coordination, and integration complete.
+- Change moved to `docs/changes/closed/`: no; it remains active until user confirmation, fresh review, explicit integration authorization, and integration complete.

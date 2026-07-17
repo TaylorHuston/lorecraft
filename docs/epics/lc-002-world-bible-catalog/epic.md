@@ -141,7 +141,7 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 | `apps/frontend/src/auth/accountQueryKeys.ts` and `apps/frontend/src/auth/AuthProvider.tsx` | Scope account-owned data and clear it when the session changes.                    | Recheck when session or account cache ownership changes.        |
 | `apps/frontend/src/adventures/NewAdventurePage.tsx` and `apps/frontend/src/adventures/adventureApi.ts` | Add LC-003-owned Adventure creation behavior to the shared World workflow. | Recheck when Adventure launch or World playability changes. |
 | `apps/frontend/src/components/Button/Button.tsx` and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx` | Provide the app-owned action, pending, and confirmation grammar used on World surfaces. | Recheck when shared control or confirmation behavior changes. |
-| `apps/frontend/src/comparison/Workbench.stories.tsx` | Exposes deterministic catalog, empty, error, desktop, and mobile comparison fixtures without backend dependencies. | Recheck when the comparison protocol or representative World states change. |
+| `apps/frontend/src/comparison/Workbench.stories.tsx` and `apps/frontend/src/comparison/Workbench.stories.module.css` | Expose deterministic, production-height catalog, empty, error, desktop, and mobile comparison fixtures without backend dependencies. | Recheck when the comparison protocol or representative World states change. |
 
 #### Verified By
 
