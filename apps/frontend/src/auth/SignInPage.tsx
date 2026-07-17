@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Button } from '../components/Button/Button'
+import { TextField } from '../components/TextField/TextField'
 import { sessionQueryKey, useAuth } from './authContext'
 import { AuthApiError, type SignInInput } from './authApi'
 import formStyles from './AuthForm.module.css'
 import { AuthLayout } from './AuthLayout'
+import { PasswordField } from './PasswordField'
 
 type ReturnLocation = {
   from?: {
@@ -102,64 +105,33 @@ export function SignInPage() {
           </p>
         ) : null}
 
-        <div className={formStyles.field}>
-          <label className={formStyles.label} htmlFor="signin-email">
-            Email
-          </label>
-          <input
-            className={formStyles.input}
-            ref={emailRef}
-            id="signin-email"
-            name="email"
-            type="email"
-            autoFocus
-            autoComplete="email"
-            required
-            aria-invalid={Boolean(fieldErrors.email)}
-            aria-describedby={fieldErrors.email ? 'signin-email-error' : undefined}
-          />
-          {fieldErrors.email ? (
-            <p
-              className={formStyles.fieldError}
-              id="signin-email-error"
-              role="alert"
-              aria-atomic="true"
-            >
-              {fieldErrors.email}
-            </p>
-          ) : null}
-        </div>
+        <TextField
+          ref={emailRef}
+          id="signin-email"
+          label="Email"
+          name="email"
+          type="email"
+          autoFocus
+          autoComplete="email"
+          required
+          error={fieldErrors.email}
+          pending={signIn.isPending}
+        />
 
-        <div className={formStyles.field}>
-          <label className={formStyles.label} htmlFor="signin-password">
-            Password
-          </label>
-          <input
-            className={formStyles.input}
-            ref={passwordRef}
-            id="signin-password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            aria-invalid={Boolean(fieldErrors.password)}
-            aria-describedby={fieldErrors.password ? 'signin-password-error' : undefined}
-          />
-          {fieldErrors.password ? (
-            <p
-              className={formStyles.fieldError}
-              id="signin-password-error"
-              role="alert"
-              aria-atomic="true"
-            >
-              {fieldErrors.password}
-            </p>
-          ) : null}
-        </div>
+        <PasswordField
+          ref={passwordRef}
+          id="signin-password"
+          label="Password"
+          name="password"
+          autoComplete="current-password"
+          required
+          error={fieldErrors.password}
+          pending={signIn.isPending}
+        />
 
-        <button className={formStyles.submit} type="submit" disabled={signIn.isPending}>
-          {signIn.isPending ? 'Signing in…' : 'Sign in'}
-        </button>
+        <Button pending={signIn.isPending} pendingLabel="Signing in…" size="touch" type="submit">
+          Sign in
+        </Button>
       </form>
     </AuthLayout>
   )

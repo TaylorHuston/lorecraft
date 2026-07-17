@@ -17,6 +17,7 @@
     "test:storybook": "vitest run --config vitest.storybook.config.ts"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/geist-mono": "^5.2.8",
     "@lorecraft/backend": "^0.0.0",

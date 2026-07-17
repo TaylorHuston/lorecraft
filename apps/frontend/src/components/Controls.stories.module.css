@@ -1,0 +1,29 @@
+.preview {
+  display: grid;
+  gap: var(--space-8);
+  max-inline-size: 52rem;
+}
+
+.preview section,
+.fields,
+.narrow {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.preview h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.fields {
+  max-inline-size: 30rem;
+}
+.narrow {
+  max-inline-size: 24rem;
+}

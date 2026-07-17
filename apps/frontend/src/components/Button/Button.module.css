@@ -1,0 +1,91 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    background-color var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    opacity var(--motion-fast) ease;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.button[data-pending='true'] {
+  cursor: wait;
+}
+
+.dense {
+  min-block-size: var(--control-dense);
+  padding-inline: var(--space-3);
+}
+
+.standard {
+  min-block-size: var(--control-standard);
+}
+
+.touch {
+  min-block-size: var(--control-touch);
+}
+
+.primary {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-foreground);
+}
+
+.primary:hover:not(:disabled) {
+  border-color: var(--action-hover);
+  background: var(--action-hover);
+}
+
+.primary:active:not(:disabled) {
+  border-color: color-mix(in srgb, var(--action) 82%, black);
+  background: color-mix(in srgb, var(--action) 82%, black);
+}
+
+.secondary {
+  border-color: var(--control-boundary);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.secondary:hover:not(:disabled),
+.ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--surface-raised) 88%, var(--text-primary));
+}
+
+.secondary:active:not(:disabled),
+.ghost:active:not(:disabled) {
+  background: color-mix(in srgb, var(--surface-raised) 94%, var(--text-primary));
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.destructive {
+  border-color: var(--danger);
+  background: var(--danger-muted);
+  color: var(--danger);
+}
+
+.destructive:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger-muted) 78%, var(--danger));
+}
+
+.destructive:active:not(:disabled) {
+  background: color-mix(in srgb, var(--danger-muted) 66%, var(--danger));
+}

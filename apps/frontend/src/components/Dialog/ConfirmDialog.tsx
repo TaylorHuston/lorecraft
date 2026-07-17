@@ -1,0 +1,62 @@
+import { useRef, type ReactNode } from 'react'
+import { Button } from '../Button/Button'
+import { Dialog } from './Dialog'
+import styles from './ConfirmDialog.module.css'
+
+export interface ConfirmDialogProps {
+  children: ReactNode
+  confirmLabel: string
+  error?: string | null
+  onCancel: () => void
+  onConfirm: () => void
+  open: boolean
+  pending?: boolean
+  pendingLabel: string
+  title: ReactNode
+}
+
+export function ConfirmDialog({
+  children,
+  confirmLabel,
+  error,
+  onCancel,
+  onConfirm,
+  open,
+  pending = false,
+  pendingLabel,
+  title,
+}: ConfirmDialogProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <Dialog
+      closeDisabled={pending}
+      initialFocusRef={cancelRef}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onCancel()
+      }}
+      open={open}
+      title={title}
+    >
+      <div className={styles.description}>{children}</div>
+      {error ? (
+        <p aria-atomic="true" className={styles.error} role="alert">
+          {error}
+        </p>
+      ) : null}
+      <div className={styles.actions}>
+        <Button ref={cancelRef} disabled={pending} onClick={onCancel} variant="secondary">
+          Cancel
+        </Button>
+        <Button
+          onClick={onConfirm}
+          pending={pending}
+          pendingLabel={pendingLabel}
+          variant="destructive"
+        >
+          {confirmLabel}
+        </Button>
+      </div>
+    </Dialog>
+  )
+}

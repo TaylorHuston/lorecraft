@@ -1,0 +1,26 @@
+.description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.description p {
+  margin: 0;
+}
+
+.error {
+  margin: var(--space-4) 0 0;
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-block-start: var(--space-6);
+}

@@ -26,6 +26,19 @@ export const Mobile: Story = {
   parameters: { viewport: { defaultViewport: 'mobile1' } },
 }
 
+export const PasswordDisclosure: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const password = canvas.getByLabelText('Password')
+    await userEvent.type(password, 'correct horse')
+    await userEvent.click(canvas.getByRole('button', { name: 'Show Password' }))
+    await expect(password).toHaveAttribute('type', 'text')
+    await expect(password).toHaveValue('correct horse')
+    await expect(canvas.getByRole('button', { name: 'Hide Password' })).toHaveFocus()
+  },
+}
+
 export const InvalidCredentials: Story = {
   render: () => (
     <StorybookAppProviders

@@ -1,12 +1,13 @@
 ---
 status: in_progress
 ---
+
 # Tasks: UI Foundations Alignment
 
 ## Resume Here
 
-- Last completed action: promoted and reconciled the Change against final Epic truth, transitioned it to `in_progress`, and committed the planning baseline at `7d42eca`.
-- Next action: implement and verify the app-owned control baseline, then migrate LC-001 account presentation as the first user-facing slice.
+- Last completed action: implemented the app-owned control baseline and LC-001 password disclosure through routed tests and deterministic Storybook states; commit pending.
+- Next action: integrate and verify the parallel LC-002 World and LC-003 Adventure presentation migrations.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
 - Known blockers: no implementation blocker. Closeout still depends on separately tracked UI Foundations hub registration and comparison capture.
@@ -33,22 +34,22 @@ status: in_progress
 
 ### 3. App-Owned Foundation Baseline
 
-- [ ] 3.1 Inventory affected production call sites against the component-strategy table and record the final classification without broad unrelated cleanup.
-- [ ] 3.2 Establish or consolidate Lorecraft-owned Button and IconButton behavior for default, focus, active, disabled, pending, and destructive states.
-- [ ] 3.3 Establish or consolidate Lorecraft-owned TextField and Textarea behavior for labels, descriptions, validation, focus, disabled, populated, and pending states.
-- [ ] 3.4 Copy or adapt the current Base UI-backed Dialog and confirmation references into Lorecraft ownership, preserving feature callbacks and product language.
-- [ ] 3.5 Add focused primitive tests for accessible names, keyboard behavior, focus treatment, disabled/pending behavior, and dialog focus containment/restoration.
-- [ ] 3.6 Confirm Lorecraft has no UI Foundations runtime or development dependency and no automatic source synchronization.
+- [x] 3.1 Inventory affected production call sites against the component-strategy table and record the final classification without broad unrelated cleanup.
+- [x] 3.2 Establish or consolidate Lorecraft-owned Button and IconButton behavior for default, focus, active, disabled, pending, and destructive states.
+- [x] 3.3 Establish or consolidate Lorecraft-owned TextField and Textarea behavior for labels, descriptions, validation, focus, disabled, populated, and pending states.
+- [x] 3.4 Copy or adapt the current Base UI-backed Dialog and confirmation references into Lorecraft ownership, preserving feature callbacks and product language.
+- [x] 3.5 Add focused primitive tests for accessible names, keyboard behavior, focus treatment, disabled/pending behavior, and dialog focus containment/restoration.
+- [x] 3.6 Confirm Lorecraft has no UI Foundations runtime or development dependency and no automatic source synchronization.
 
 ### 4. LC-001 Account Identity And Workspace Access
 
 - [x] 4.1 Update `LC-001/S1/R3` and add `R3-S3` exactly around accessible account-creation password disclosure; retain all current validation, submission, and session Scenarios.
-- [ ] 4.2 Implement the account-creation disclosure controls for Password and Confirm password through a Lorecraft-owned field action.
-- [ ] 4.3 Prove that each disclosure control changes only its selected field's presentation while preserving value, focus, autocomplete purpose, validation, and submission.
+- [x] 4.2 Implement the account-creation disclosure controls for Password and Confirm password through a Lorecraft-owned field action.
+- [x] 4.3 Prove that each disclosure control changes only its selected field's presentation while preserving value, focus, autocomplete purpose, validation, and submission.
 - [x] 4.4 Update `LC-001/S2/R3` and add `R3-S3` around the corresponding sign-in behavior.
-- [ ] 4.5 Implement and prove the sign-in password disclosure behavior without changing credentials, auth calls, error semantics, or pending submission behavior.
-- [ ] 4.6 Align sign-up and sign-in buttons, fields, validation, pending, disabled, and focus states with the app-owned baseline while preserving the current centered cardless layout.
-- [ ] 4.7 Update LC-001 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps`; preserve truthful existing evidence and mark new evidence only after it passes.
+- [x] 4.5 Implement and prove the sign-in password disclosure behavior without changing credentials, auth calls, error semantics, or pending submission behavior.
+- [x] 4.6 Align sign-up and sign-in buttons, fields, validation, pending, disabled, and focus states with the app-owned baseline while preserving the current centered cardless layout.
+- [x] 4.7 Update LC-001 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps`; preserve truthful existing evidence and mark new evidence only after it passes.
 
 ### 5. LC-002 World Bible Catalog
 
@@ -107,16 +108,20 @@ status: in_progress
 
 ## Implementation Ledger
 
-| Date | Scope | Result | Commit |
-|---|---|---|---|
-| 2026-07-17 | Promotion and final-Epic reconciliation discovery | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs. | `7d42eca` |
+| Date       | Scope                                              | Result                                                                                                                                                                                                                    | Commit         |
+| ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| 2026-07-17 | Promotion and final-Epic reconciliation discovery  | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs.    | `7d42eca`      |
+| 2026-07-17 | App-owned controls and LC-001 account presentation | Added locally owned button, icon-button, field, textarea, and Base UI-backed dialog behavior; migrated sign-up/sign-in to independently controllable password disclosure without changing auth calls or layout ownership. | commit pending |
 
 ## Verification Ledger
 
-| Date | Check | Evidence Type | What It Proves | Result |
-|---|---|---|---|---|
-| 2026-07-17 | `sdd validate lorecraft --change 2026-07-17-ui-foundations-alignment --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault --json` | deterministic artifact validation | Proposal, design, task, and affected-Epic references are structurally coherent before promotion | Passed: 1 planned Change, 0 errors, 0 warnings |
-| 2026-07-17 | post-promotion scoped `sdd validate` | deterministic artifact validation | Active repository Change resolves all three affected Epics after prerequisite reconciliation | Passed: 1 active Change, 3 Epics, 0 errors, 0 warnings |
+| Date       | Check                                                                                                                                                    | Evidence Type                         | What It Proves                                                                                               | Result                                                                                       |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| 2026-07-17 | `sdd validate lorecraft --change 2026-07-17-ui-foundations-alignment --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault --json` | deterministic artifact validation     | Proposal, design, task, and affected-Epic references are structurally coherent before promotion              | Passed: 1 planned Change, 0 errors, 0 warnings                                               |
+| 2026-07-17 | post-promotion scoped `sdd validate`                                                                                                                     | deterministic artifact validation     | Active repository Change resolves all three affected Epics after prerequisite reconciliation                 | Passed: 1 active Change, 3 Epics, 0 errors, 0 warnings                                       |
+| 2026-07-17 | focused component and routed account tests                                                                                                               | focused automated tests               | Primitive pending/focus/error behavior plus `LC-001/S1/R3-S3` and `LC-001/S2/R3-S3` disclosure semantics     | Passed: 6 files, 44 tests                                                                    |
+| 2026-07-17 | frontend typecheck and lint                                                                                                                              | broad supporting gates                | New component and account TypeScript/CSS/React integration is statically coherent                            | Passed                                                                                       |
+| 2026-07-17 | Storybook test suite                                                                                                                                     | deterministic component-preview tests | Existing app states, new control previews, and account disclosure stories remain accessible and interactive after direct Base UI adoption | Passed: 10 files, 69 tests |
 
 ## Manual Feedback
 

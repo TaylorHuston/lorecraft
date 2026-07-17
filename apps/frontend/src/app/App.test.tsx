@@ -34,6 +34,31 @@ describe('account workspace entry', () => {
     expect(signUp).not.toHaveBeenCalled()
   })
 
+  it('LC-001/S1/R3-S3 independently discloses signup passwords without changing their values or purpose', async () => {
+    const user = userEvent.setup()
+    renderTestApp({ route: '/sign-up', session: null })
+
+    const password = await screen.findByLabelText('Password')
+    const confirmation = screen.getByLabelText('Confirm password')
+    await user.type(password, 'correct horse')
+    await user.type(confirmation, 'correct horse')
+
+    const showPassword = screen.getByRole('button', { name: 'Show Password' })
+    await user.click(showPassword)
+
+    expect(password).toHaveAttribute('type', 'text')
+    expect(password).toHaveAttribute('autocomplete', 'new-password')
+    expect(password).toHaveValue('correct horse')
+    expect(confirmation).toHaveAttribute('type', 'password')
+    expect(confirmation).toHaveValue('correct horse')
+    expect(screen.getByRole('button', { name: 'Hide Password' })).toHaveFocus()
+
+    await user.click(screen.getByRole('button', { name: 'Show Confirm password' }))
+    expect(confirmation).toHaveAttribute('type', 'text')
+    expect(confirmation).toHaveAttribute('autocomplete', 'new-password')
+    expect(confirmation).toHaveValue('correct horse')
+  })
+
   it('LC-001/S1/R1-S1 + R2-S1 submits a normalized account and enters Worlds without bearer storage', async () => {
     const user = userEvent.setup()
     const signUp = vi.fn().mockResolvedValue({ id: 7, email: 'new@example.com' })
@@ -189,6 +214,28 @@ describe('account workspace entry', () => {
 
     expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
     expect(getWorld).toHaveBeenCalledWith('stormbound-chapel')
+  })
+
+  it('LC-001/S2/R3-S3 discloses the sign-in password without changing submission', async () => {
+    const user = userEvent.setup()
+    const signIn = vi.fn().mockResolvedValue({ id: 7, email: 'member@example.com' })
+    renderTestApp({ route: '/sign-in', session: null, api: { signIn } })
+
+    await user.type(await screen.findByLabelText('Email'), 'member@example.com')
+    const password = screen.getByLabelText('Password')
+    await user.type(password, 'correct horse')
+    await user.click(screen.getByRole('button', { name: 'Show Password' }))
+
+    expect(password).toHaveAttribute('type', 'text')
+    expect(password).toHaveAttribute('autocomplete', 'current-password')
+    expect(password).toHaveValue('correct horse')
+    expect(screen.getByRole('button', { name: 'Hide Password' })).toHaveFocus()
+
+    await user.click(screen.getByRole('button', { name: 'Sign in' }))
+    expect(signIn).toHaveBeenCalledWith({
+      email: 'member@example.com',
+      password: 'correct horse',
+    })
   })
 
   it('LC-001/S2/R1-S2 uses one generic response for invalid credentials', async () => {

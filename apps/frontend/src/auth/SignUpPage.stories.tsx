@@ -25,6 +25,23 @@ export const Mobile: Story = {
   parameters: { viewport: { defaultViewport: 'mobile1' } },
 }
 
+export const PasswordDisclosure: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const password = canvas.getByLabelText('Password')
+    const confirmation = canvas.getByLabelText('Confirm password')
+    await userEvent.type(password, 'correct horse')
+    await userEvent.type(confirmation, 'correct horse')
+    await userEvent.click(canvas.getByRole('button', { name: 'Show Password' }))
+    await expect(password).toHaveAttribute('type', 'text')
+    await expect(confirmation).toHaveAttribute('type', 'password')
+    await userEvent.click(canvas.getByRole('button', { name: 'Show Confirm password' }))
+    await expect(confirmation).toHaveAttribute('type', 'text')
+    await expect(confirmation).toHaveValue('correct horse')
+  },
+}
+
 export const ValidationErrors: Story = {
   render: () => (
     <StorybookAppProviders account={null} route="/sign-up">
