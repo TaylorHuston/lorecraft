@@ -1,0 +1,73 @@
+.backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(9 9 11 / 82%);
+}
+
+.dialog {
+  width: min(100%, 28rem);
+  max-height: calc(100vh - (2 * var(--space-4)));
+  overflow: auto;
+  padding: var(--space-6);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.description {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.description p {
+  margin: 0;
+}
+
+.error {
+  margin: var(--space-4) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.actions button {
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.actions .danger {
+  border-color: var(--danger);
+  background: var(--danger-muted);
+  color: var(--danger);
+}
+
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}

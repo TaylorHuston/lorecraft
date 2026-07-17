@@ -1,0 +1,173 @@
+.shell {
+  min-width: 0;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--background);
+}
+
+.header {
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 clamp(var(--space-4), 4vw, var(--space-8));
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.8125rem;
+}
+
+.header a,
+.actions a,
+.state a {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  font-weight: 650;
+}
+
+.brand,
+.eyebrow {
+  color: var(--identity);
+}
+
+.brand {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.content {
+  width: min(100%, 44rem);
+  margin: 0 auto;
+  padding: clamp(var(--space-8), 8vw, 5rem) clamp(var(--space-4), 5vw, var(--space-8));
+}
+
+.introduction {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.introduction h1,
+.state h1,
+.state h2 {
+  margin: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.introduction h1 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.introduction > p:last-child,
+.state > p {
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field label {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.field label span {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text-primary);
+  line-height: 1.5;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.field input {
+  min-height: var(--control-touch);
+}
+
+.field [aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.fieldError,
+.formError {
+  color: var(--danger);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.fieldError {
+  margin: 0;
+}
+
+.formError {
+  margin: 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--danger);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.actions button {
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-foreground);
+  font-weight: 700;
+}
+
+.actions button:hover:not(:disabled) {
+  border-color: var(--action-hover);
+  background: var(--action-hover);
+}
+
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.actions a {
+  padding: 0 var(--space-3);
+  color: var(--text-secondary);
+}
+
+.state {
+  margin-top: var(--space-8);
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--info);
+}

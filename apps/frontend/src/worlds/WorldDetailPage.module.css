@@ -115,6 +115,99 @@
   line-height: 1.4;
 }
 
+.sectionHeading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionHeading h2 {
+  border-bottom: 0;
+}
+
+.newAdventure {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  padding: 0 var(--space-3);
+  color: var(--action-hover);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.adventureList {
+  display: grid;
+}
+
+.adventureRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.deleteAdventure {
+  min-width: var(--control-touch);
+  min-height: var(--control-touch);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.deleteAdventure:hover {
+  background: var(--danger-muted);
+}
+
+.adventureLink {
+  display: flex;
+  min-width: 0;
+  min-height: var(--control-touch);
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.adventureLink strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.adventureLink > span {
+  flex: 0 0 auto;
+  color: var(--action-hover);
+  font-size: 0.75rem;
+}
+
+.adventureMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.playabilityNotice {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--info);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
 .list {
   display: grid;
   min-width: 0;
@@ -273,5 +366,21 @@
 
   .entry dd {
     margin-bottom: var(--space-3);
+  }
+
+  .adventureRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+
+  .adventureLink {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .adventureMeta {
+    justify-content: flex-start;
   }
 }
