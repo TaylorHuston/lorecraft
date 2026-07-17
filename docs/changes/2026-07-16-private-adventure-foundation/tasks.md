@@ -101,7 +101,7 @@ status: in_progress
 - [ ] 9.6 Live-provider playtest: verify the opening follows the authored premise and frozen starting context with a configured local or compatible model.
 - [x] 9.7 Inspect one successful and one failed opening unit for redacted exact request/response, provider/model/settings, retry, timing, and final status.
 - [x] 9.8 Run `npm run lint`, `npm run test`, `npm run typecheck`, `npm run build`, `npm run test:storybook`, and `npm run test:e2e`; record what each command actually exercised.
-- [ ] 9.9 Keep the dev servers and worker running after verification unless the user asks to stop them.
+- [x] 9.9 Keep the dev servers and worker running after verification unless the user asks to stop them.
 
 ### 10. Documentation, Review, And Closeout
 
