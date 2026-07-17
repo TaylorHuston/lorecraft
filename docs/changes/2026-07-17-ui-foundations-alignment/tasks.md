@@ -103,7 +103,7 @@ status: in_progress
 - [ ] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
 - [ ] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
 - [ ] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
-- [ ] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
+- [x] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
 - [ ] 9.7 Follow the repository's authorized PR/merge policy, then run `sdd change close` only after review, integration, acceptance, and closeout truth are complete.
 
 ## Implementation Ledger
@@ -112,9 +112,9 @@ status: in_progress
 | ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | 2026-07-17 | Promotion and final-Epic reconciliation discovery  | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs.    | `7d42eca`      |
 | 2026-07-17 | App-owned controls and LC-001 account presentation | Added locally owned button, icon-button, field, textarea, and Base UI-backed dialog behavior; migrated sign-up/sign-in to independently controllable password disclosure without changing auth calls or layout ownership. | `d8f7721` |
-| 2026-07-17 | LC-002 World presentation | Migrated catalog/detail actions, recovery, pending, and destructive confirmation states to app-owned controls while preserving the World list/document hierarchy and LC-003 ownership of Adventure actions. | pending commit |
-| 2026-07-17 | LC-003 Adventure presentation | Migrated creation, retry, mobile tabs, settings, reset, and confirmation behavior; replaced the route-local modal with sequential Base UI dialogs and explicit focus restoration while preserving lifecycle semantics. | pending commit |
-| 2026-07-17 | Comparison contract | Added deterministic `Comparison/Workbench` desktop, mobile, World-navigation analogue, empty, and error fixtures with no backend dependency. | pending commit |
+| 2026-07-17 | LC-002 World presentation | Migrated catalog/detail actions, recovery, pending, and destructive confirmation states to app-owned controls while preserving the World list/document hierarchy and LC-003 ownership of Adventure actions. | `d59b550` |
+| 2026-07-17 | LC-003 Adventure presentation | Migrated creation, retry, mobile tabs, settings, reset, and confirmation behavior; replaced the route-local modal with sequential Base UI dialogs and explicit focus restoration while preserving lifecycle semantics. | `d59b550` |
+| 2026-07-17 | Comparison contract | Added deterministic `Comparison/Workbench` desktop, mobile, World-navigation analogue, empty, and error fixtures with no backend dependency. | `d59b550` |
 
 ## Verification Ledger
 
@@ -151,9 +151,9 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 ## Manual UI Confirmation
 
 - Status: pending user.
-- App URL / route: Lorecraft frontend at its implementation-time local URL; Storybook at exact `http://127.0.0.1:4312`.
+- App URL / route: Lorecraft frontend at `http://localhost:4310`; Storybook at exact `http://127.0.0.1:4312`.
 - Required setup or test data: deterministic account fixtures plus representative empty, populated, failed, and retryable Worlds; ready, pending, failed, settings, reset, and delete Adventure fixtures.
-- Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; compare the five app-owned comparison stories in the UI Foundations hub.
+- Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories. Cross-application hub comparison follows after separate UI Foundations registration.
 - Expected result: controls and states feel consistent and accessible while the World list/document structure, Story-dominant Adventure, mobile tabs, dark palette, Burnished Orange identity, and narrative atmosphere remain recognizably Lorecraft.
 - Feedback that would change artifacts: requests to change pane hierarchy, mobile navigation, auth flow, palette identity, narrative typography, or the copy-owned reference model require replanning or a design pass before further implementation.
 
@@ -167,19 +167,19 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 ## Closeout
 
-- Change status: planned after scoped validation; later status must follow the active Change lifecycle.
-- Epic files updated: not yet; private planning does not edit actual Epics.
-- Story labels/references and Requirement/Scenario IDs current: planned deltas defined; implementation reconciliation pending.
-- Implemented By maps current: not yet; implementation has not started.
-- Scenario-mapped Verified By maps current: not yet; verification has not started.
-- Superseded earlier Epic truth reconciled: planned; active reconciliation integration is a promotion dependency.
+- Change status: `in_progress`; Lorecraft implementation and deterministic verification are complete, with user confirmation, independent `/sdd-review`, and UI Foundations coordination pending.
+- Epic files updated: yes; LC-001, LC-002, and LC-003 reflect current implementation and evidence.
+- Story labels/references and Requirement/Scenario IDs current: yes; semantic duplicate scenarios were reconciled onto stable existing IDs during promotion.
+- Implemented By maps current: yes; changed-surface reverse traceability reports no unowned source files or missing paths.
+- Scenario-mapped Verified By maps current: yes; changed-surface reverse traceability reports no unowned behavior tests or missing paths.
+- Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
-- Release communication current: planned for implementation closeout.
-- `sdd-review` verdict: pending implementation.
+- Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
+- `sdd-review` verdict: pending independent review.
 - Review record: none yet.
 - `review.md` findings resolved: not applicable before review.
-- Planning updates resolved: no updates currently recorded.
+- Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
 - Manual UI confirmation status: pending user.
-- PR / merge state: no implementation branch, PR, or merge.
+- PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
-- Change moved to `docs/changes/closed/`: no; this is a private planned Change.
+- Change moved to `docs/changes/closed/`: no; it remains active until review, user confirmation, UI Foundations coordination, and integration complete.
