@@ -20,6 +20,7 @@ async function deleteAdventureIfPresent(page: Page, playerName: string) {
 }
 
 test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure', async ({
+  browser,
   page,
 }, testInfo) => {
   const identity = randomUUID().slice(0, 8)
@@ -68,6 +69,25 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await expect(page).toHaveURL(adventureUrl)
     await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
     await expectNoHorizontalOverflow(page)
+
+    const anonymousContext = await browser.newContext()
+    const anonymousPage = await anonymousContext.newPage()
+    await anonymousPage.goto(adventureUrl)
+    await expect(anonymousPage).toHaveURL(/\/sign-in$/)
+    await expect(anonymousPage.getByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    await anonymousContext.close()
+
+    const outsiderContext = await browser.newContext()
+    const outsiderPage = await outsiderContext.newPage()
+    await outsiderPage.goto('/sign-up')
+    await outsiderPage.getByLabel('Email').fill(`outsider-${testInfo.project.name}-${identity}@example.com`)
+    await outsiderPage.getByLabel('Password', { exact: true }).fill(password)
+    await outsiderPage.getByLabel('Confirm password').fill(password)
+    await outsiderPage.getByRole('button', { name: 'Create account' }).click()
+    await expect(outsiderPage).toHaveURL(/\/worlds$/)
+    await outsiderPage.goto(adventureUrl)
+    await expect(outsiderPage.getByRole('heading', { name: 'Adventure not found' })).toBeVisible()
+    await outsiderContext.close()
 
     if (testInfo.project.name.includes('mobile')) {
       await expect(page.getByRole('tab', { name: 'Story' })).toHaveAttribute(
