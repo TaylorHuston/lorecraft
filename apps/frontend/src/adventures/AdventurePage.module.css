@@ -21,6 +21,13 @@
   font-size: 0.8125rem;
 }
 
+.headerStart {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .identity {
   display: flex;
   min-width: 0;
@@ -48,68 +55,75 @@
   white-space: nowrap;
 }
 
-.headerActions {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.header a,
-.menu summary,
-.menuContent button {
+.returnButton,
+.settingsButton,
+.settingsClose {
   display: inline-flex;
   min-height: var(--control-touch);
-  flex: 0 0 auto;
   align-items: center;
-  font-weight: 650;
-}
-
-.menu {
-  position: relative;
-}
-
-.menu summary {
-  align-items: center;
-  padding: 0 var(--space-3);
-  color: var(--text-secondary);
-  font-weight: 650;
-  list-style: none;
-}
-
-.menu summary::-webkit-details-marker {
-  display: none;
-}
-
-.menuContent {
-  position: absolute;
-  z-index: 10;
-  top: calc(100% + var(--space-1));
-  right: 0;
-  width: min(18rem, calc(100vw - (2 * var(--space-4))));
-  padding: var(--space-2);
-  border: 1px solid var(--border-strong);
+  justify-content: center;
   border-radius: var(--radius-control);
-  background: var(--surface-raised);
 }
 
-.menuContent button {
-  width: 100%;
-  justify-content: flex-start;
+.returnButton {
+  flex: 0 0 auto;
+  gap: var(--space-2);
   padding: 0 var(--space-3);
+  border: 1px solid var(--control-boundary);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.returnButton:hover,
+.settingsButton:hover,
+.settingsClose:hover {
+  background: var(--surface-interactive);
+}
+
+.settingsButton,
+.settingsClose {
+  width: var(--control-touch);
+  flex: 0 0 var(--control-touch);
+  padding: 0;
   border: 0;
   background: transparent;
-  color: var(--danger);
-  font-weight: 650;
+  color: var(--text-secondary);
 }
 
-.menuContent button:disabled {
+.settingsClose {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.settingsContent {
+  display: grid;
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.resetAction {
+  width: 100%;
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-control);
+  background: var(--danger-muted);
+  color: var(--danger);
+  font-weight: 650;
+  text-align: left;
+}
+
+.resetAction:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }
 
-.menuContent p {
-  margin: var(--space-2) var(--space-3);
+.settingsContent p {
+  margin: var(--space-2) 0 0;
   color: var(--text-muted);
   font-size: 0.75rem;
   line-height: 1.45;
@@ -163,14 +177,9 @@
     display: none;
   }
 
-  .headerActions {
-    gap: 0;
-  }
-
-  .header a,
-  .menu summary {
-    padding-right: var(--space-2);
-    padding-left: var(--space-2);
+  .returnButton {
+    padding-right: var(--space-3);
+    padding-left: var(--space-3);
     font-size: 0.75rem;
   }
 }

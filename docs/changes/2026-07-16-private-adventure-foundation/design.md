@@ -343,7 +343,7 @@ any owned state -> deleted                  (owner delete)
 5. Accepted submission immediately navigates to `/adventures/<id>`. The real Player and Scene regions are already populated while the Story region shows a restrained Game Master preparation state.
 6. A ready Adventure replaces only the Story loading state with the generated opening. This Change renders no composer, disabled action controls, or future-feature explanation.
 7. Terminal generation failure preserves Player and Scene context while the Story region presents a clear failure, `Try Again`, and `Return to World`. No partial narration appears.
-8. Delete is available beside each owned Adventure in both the catalog and World detail. Reset remains in the selected Adventure's compact header menu and is never combined with source-World controls.
+8. Delete is available beside each owned Adventure in both the catalog and World detail. Reset remains in the selected Adventure's settings modal, opened from a gear icon, and is never combined with source-World controls.
 
 ### Responsive Composition
 
@@ -357,7 +357,7 @@ any owned state -> deleted                  (owner delete)
 
 - The World catalog is the cross-World Adventure launcher and manager; World detail offers the same World-scoped entry points. Neither surface owns Adventure runtime logic.
 - The dedicated creation page owns form validation, cancellation, and one idempotent submission. It does not offer model or Starting Point controls.
-- The Adventure shell owns a compact top navigation with Lorecraft/World identity, `Return to World`, and an Adventure menu containing `Reset Adventure`. Exact top-navigation polish may receive another design pass without changing this contract.
+- The Adventure shell owns compact top navigation with a left-aligned, button-styled `Return to World`, Lorecraft/World identity, and a right-aligned gear button that opens an extensible Adventure settings modal containing `Reset Adventure`.
 - Player is read-only after creation and shows name, optional physical description, optional backstory, current status when meaningful, and starting Location.
 - Scene is read-only and shows the starting Location name, player-visible description, and NPCs present by name and physical description only. It excludes background, personality, voice, private knowledge, memory, and NPC detail interaction.
 - Story renders authoritative `opening_pending`, `opening_processing`, `opening_failed`, or `ready` state. Pending and failure never reveal partial narration.
@@ -385,7 +385,7 @@ any owned state -> deleted                  (owner delete)
 ### Open Design Questions
 
 - No design blocker remains.
-- Accepted deferral: exact top-navigation visual cleanup may receive a later `/sdd-design` refinement. Implementation must still provide the confirmed identity, return navigation, Adventure menu, responsive behavior, and accessibility semantics now.
+- Accepted deferral: additional settings may be added later. The current shell must preserve the confirmed identity, button-styled return navigation, gear-triggered settings modal, responsive behavior, and accessibility semantics.
 
 ## Client And API Boundary
 

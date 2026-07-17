@@ -262,13 +262,18 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 60_000,
     })
 
-    await user.click(await screen.findByText('Adventure menu'))
-    const resetTrigger = screen.getByRole('button', { name: 'Reset Adventure' })
+    const settingsTrigger = await screen.findByRole('button', { name: 'Adventure settings' })
+    await user.click(settingsTrigger)
+    let settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    let resetTrigger = within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })
     await user.click(resetTrigger)
     let dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Cancel' }))
-    expect(resetTrigger).toHaveFocus()
+    expect(settingsTrigger).toHaveFocus()
 
+    await user.click(settingsTrigger)
+    settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    resetTrigger = within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })
     await user.click(resetTrigger)
     dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Reset Adventure' }))
@@ -287,9 +292,10 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 60_000,
     })
 
-    await user.click(await screen.findByText('Adventure menu'))
-    expect(screen.getByRole('button', { name: 'Reset Adventure' })).toBeDisabled()
-    expect(screen.getByText('Reset is unavailable while the opening is active.')).toBeVisible()
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    expect(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })).toBeDisabled()
+    expect(within(settingsDialog).getByText('Reset is unavailable while the opening is active.')).toBeVisible()
   })
 
   it('LC-003/S1/R5-S3 keeps the reset confirmation coherent after a server conflict', async () => {
@@ -310,8 +316,9 @@ describe('Adventure routes', () => {
       },
     })
 
-    await user.click(await screen.findByText('Adventure menu'))
-    await user.click(screen.getByRole('button', { name: 'Reset Adventure' }))
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    await user.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
     const dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Reset Adventure' }))
 

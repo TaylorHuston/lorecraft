@@ -139,8 +139,9 @@ export const ResetConfirmation: Story = {
   render: () => renderAdventure(readyAdventure),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await userEvent.click(await canvas.findByText('Adventure menu'))
-    await userEvent.click(canvas.getByRole('button', { name: 'Reset Adventure' }))
+    await userEvent.click(await canvas.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = canvas.getByRole('dialog', { name: 'Adventure settings' })
+    await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
     await expect(canvas.getByRole('dialog', { name: 'Reset Adventure?' })).toBeVisible()
   },
 }

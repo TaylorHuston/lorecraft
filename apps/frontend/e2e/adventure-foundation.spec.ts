@@ -101,8 +101,9 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
       await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Mira')
     }
 
-    await page.getByText('Adventure menu').click()
-    await page.getByRole('button', { name: 'Reset Adventure' }).click()
+    await page.getByRole('button', { name: 'Adventure settings' }).click()
+    const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
+    await settingsDialog.getByRole('button', { name: 'Reset Adventure' }).click()
     const resetDialog = page.getByRole('dialog', { name: 'Reset Adventure?' })
     await resetDialog.getByRole('button', { name: 'Reset Adventure' }).click()
     await expect(page).toHaveURL(adventureUrl)

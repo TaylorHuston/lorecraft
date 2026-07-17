@@ -1,0 +1,25 @@
+.backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(9 9 11 / 82%);
+}
+
+.dialog {
+  position: relative;
+  width: min(100%, 28rem);
+  max-height: calc(100vh - (2 * var(--space-4)));
+  overflow: auto;
+  padding: var(--space-6);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.dialog h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}

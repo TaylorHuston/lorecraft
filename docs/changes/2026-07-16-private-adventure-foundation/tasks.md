@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: collect Taylor's remaining reset-placement confirmation
+- Next action: collect Taylor's final confirmation of the gear-triggered settings modal and left-aligned Return to World button
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
 - Known blockers: Taylor's final manual UI confirmation
@@ -86,7 +86,7 @@ status: in_review
 - [x] 8.2 Add the compact World-contained Adventures section with player identity, zero completed turns, last-played time, lifecycle status, row-level resume, New Adventure, and separate confirmed delete action.
 - [x] 8.3 Add `/worlds/:slug/adventures/new` with preserved World identity, required name, optional physical description/backstory, associated validation, one idempotent submission, Cancel, and safe navigation.
 - [x] 8.4 Adapt the selected Adventure workbench prototype into real feature components while removing its composer, action controls, Director observation, change badge, editable Player data, and spoiler-bearing NPC fields.
-- [x] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and reset menu.
+- [x] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and a gear-triggered reset settings modal.
 - [x] 8.6 Add persistent desktop Player/Story/Scene regions and mobile top tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
 - [x] 8.7 Add Storybook stories for World Adventure list, creation form states, pending populated shell, terminal failure/retry, ready desktop, mobile Story/Player/Scene, empty NPC scene, and destructive confirmations; run configured accessibility checks.
 - [x] 8.8 Map implementation and evidence for `LC-003/S1 R4` and `R5`.
@@ -183,6 +183,7 @@ status: in_review
 | 2026-07-16 | Post-feedback Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | The production catalog now launches, lists, resumes, and cleans up Adventures across responsive routes while the full lifecycle remains green                                 | Passed; 7 tests                                    |
 | 2026-07-17 | Live `gemma4:31b` opening against the frozen Stormbound Chapel context                                                                                          | configured-provider playtest          | Hidden reasoning is disabled, generation completes without token truncation, and the opening uses the player, starting Location, present Characters, storm, and unexplained bell | Passed in one attempt; 19.8 seconds; `finish_reason: stop` |
 | 2026-07-17 | Explicit Resume-action route, Storybook, lint, typecheck, and guarded Playwright checks                                                                          | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Both World lists render visible Resume links and preserve responsive lifecycle behavior and deletion | Passed; route 18, Storybook 64, Playwright 7 |
+| 2026-07-17 | Adventure settings-modal route, Storybook, lint, typecheck, and guarded Playwright checks                                                                       | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Lucide gear affordance, focus-managed settings modal, two-step reset, conflict handling, return navigation, and responsive lifecycle behavior | Passed; route 10, Storybook 64, Playwright 7 |
 
 ## Manual Feedback
 
@@ -193,6 +194,7 @@ status: in_review
 | 2026-07-17 | Mobile Adventure interface looks good. | manual acceptance | Recorded the responsive mobile interface as accepted; desktop Adventure-shell and reset placement remain to be confirmed. | accepted |
 | 2026-07-17 | Desktop World catalog creates Adventures, resumes through the linked Adventure row, and deletes with confirmation. | manual feedback | Creation and deletion are accepted; row-based resume works but is not discoverable enough. | superseded by explicit Resume action |
 | 2026-07-17 | Add a dedicated Resume button because clicking the Adventure row is not intuitive on desktop. | in-scope experience refinement | Replaced linked identity text with a visible Resume action in both the cross-World catalog and World detail; added focused, Storybook, and E2E assertions for visible button text. | accepted 2026-07-17 |
+| 2026-07-17 | Adventure Menu is not clearly a button; use a Lucide gear and extensible modal, and make Return to World a left-aligned button. | in-scope experience refinement | Added `lucide-react`, an accessible reusable modal shell, gear-triggered Adventure settings with Reset, and button-styled return navigation; retained destructive confirmation. | implemented; manual confirmation pending |
 
 ## Planning Updates
 
@@ -211,10 +213,10 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: mobile, desktop Adventure shell, and desktop catalog creation/Resume/deletion accepted 2026-07-17; reset placement pending
+- Status: mobile, desktop Adventure shell, and desktop catalog creation/Resume/deletion accepted 2026-07-17; settings-modal and Return to World refinements pending final confirmation
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
-- Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; reset from the Adventure menu; verify World-detail controls remain available
+- Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; open Adventure settings from the gear and reset with confirmation; verify the left-aligned Return to World button and World-detail controls
 - Expected result: the shell remains story-first and stable across lifecycle states, no deferred controls or hidden NPC knowledge leak, the frozen Adventure survives reload, and reset/delete remain clearly separated
 - Feedback that would change artifacts: different discovery placement, creation route, panel composition, disclosure boundary, pending/failure treatment, reset/delete placement, or mobile navigation
 

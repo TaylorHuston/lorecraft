@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft, Settings, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { worldQueryKeys } from '../worlds/worldApi'
 import { AdventureWorkbench } from './AdventureWorkbench'
 import { ConfirmDialog } from './ConfirmDialog'
+import { ModalDialog } from './ModalDialog'
 import {
   AdventureApiError,
   adventureQueryKeys,
@@ -29,7 +31,8 @@ export function AdventurePage({
   const { id = '' } = useParams()
   const { account, endSession } = useAuth()
   const queryClient = useQueryClient()
-  const menuRef = useRef<HTMLDetailsElement>(null)
+  const settingsCloseRef = useRef<HTMLButtonElement>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [resetError, setResetError] = useState<string | null>(null)
   const queryKey = adventureQueryKeys.detail(account?.id ?? 0, id)
@@ -68,7 +71,6 @@ export function AdventurePage({
       }
       setResetOpen(false)
       setResetError(null)
-      if (menuRef.current) menuRef.current.open = false
     },
     onError: (error) => {
       if (error instanceof AdventureApiError && error.code === 'conflict') {
@@ -127,33 +129,26 @@ export function AdventurePage({
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
-        <div className={styles.identity}>
-          <strong>Lorecraft</strong>
-          <span aria-hidden="true" />
-          <span title={adventure.data.sourceWorld.name}>{adventure.data.sourceWorld.name}</span>
+        <div className={styles.headerStart}>
+          <Link className={styles.returnButton} to={adventure.data.sourceWorld.route}>
+            <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.8} />
+            Return to World
+          </Link>
+          <div className={styles.identity}>
+            <strong>Lorecraft</strong>
+            <span aria-hidden="true" />
+            <span title={adventure.data.sourceWorld.name}>{adventure.data.sourceWorld.name}</span>
+          </div>
         </div>
-        <div className={styles.headerActions}>
-          <Link to={adventure.data.sourceWorld.route}>Return to World</Link>
-          <details ref={menuRef} className={styles.menu}>
-            <summary>Adventure menu</summary>
-            <div className={styles.menuContent}>
-              <button
-                type="button"
-                disabled={isOpeningActive(adventure.data)}
-                aria-describedby={isOpeningActive(adventure.data) ? 'reset-unavailable' : undefined}
-                onClick={() => {
-                  setResetError(null)
-                  setResetOpen(true)
-                }}
-              >
-                Reset Adventure
-              </button>
-              {isOpeningActive(adventure.data) ? (
-                <p id="reset-unavailable">Reset is unavailable while the opening is active.</p>
-              ) : null}
-            </div>
-          </details>
-        </div>
+        <button
+          className={styles.settingsButton}
+          type="button"
+          aria-label="Adventure settings"
+          title="Adventure settings"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
+        </button>
       </header>
       <AdventureWorkbench
         adventure={adventure.data}
@@ -161,6 +156,42 @@ export function AdventurePage({
         retryError={retryError}
         onRetry={() => retry.mutate()}
       />
+      {settingsOpen ? (
+        <ModalDialog
+          title="Adventure settings"
+          onClose={() => setSettingsOpen(false)}
+          initialFocusRef={settingsCloseRef}
+        >
+          <button
+            ref={settingsCloseRef}
+            className={styles.settingsClose}
+            type="button"
+            aria-label="Close Adventure settings"
+            title="Close"
+            onClick={() => setSettingsOpen(false)}
+          >
+            <X aria-hidden="true" size={18} strokeWidth={1.8} />
+          </button>
+          <div className={styles.settingsContent}>
+            <button
+              className={styles.resetAction}
+              type="button"
+              disabled={isOpeningActive(adventure.data)}
+              aria-describedby={isOpeningActive(adventure.data) ? 'reset-unavailable' : undefined}
+              onClick={() => {
+                setResetError(null)
+                setSettingsOpen(false)
+                setResetOpen(true)
+              }}
+            >
+              Reset Adventure
+            </button>
+            {isOpeningActive(adventure.data) ? (
+              <p id="reset-unavailable">Reset is unavailable while the opening is active.</p>
+            ) : null}
+          </div>
+        </ModalDialog>
+      ) : null}
       {resetOpen ? (
         <ConfirmDialog
           title="Reset Adventure?"
