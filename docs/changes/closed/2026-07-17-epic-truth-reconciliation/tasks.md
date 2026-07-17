@@ -5,10 +5,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: independent `/sdd-review` completed, the consolidated safe artifact/evidence findings were remediated, and the regression rereview passes.
-- Next action: request authorization to merge into `develop` and close the Change.
-- Active branch/ref: `change/epic-truth-reconciliation` from `develop`.
-- Expected dirty files: none in the application repository after review remediation. The private PRD is committed in vault ref `5075f2037`, and the private Lorecraft entry-point reconciliation is committed in vault refs `fb6e4f3b9` and `d87e115f1`; unrelated vault changes remain excluded.
+- Last completed action: Taylor authorized merge-and-close; the reviewed branch was fast-forwarded into `develop`, and `sdd change close` moved the Change into closed history.
+- Next action: none for this Change.
+- Active branch/ref: `develop` at integrated source ref `8808d79` before the closeout commit.
+- Expected dirty files: none after the closeout commit. The private PRD is committed in vault ref `5075f2037`, and the private Lorecraft entry-point reconciliation is committed in vault refs `fb6e4f3b9` and `d87e115f1`; unrelated vault changes remain excluded.
 - Known blockers: none.
 
 ## Task Checklist
@@ -60,7 +60,7 @@ status: in_review
 - [x] 6.2 Address findings or record explicit accepted gaps.
 - [x] 6.3 Manual UI confirmation: `not applicable`; implementation changed no runtime or presentation behavior.
 - [x] 6.4 Confirm proposal/design/tasks/reviews and related closed artifacts do not claim accepted work is pending or use obsolete manual status vocabulary.
-- [ ] 6.5 Merge only after review is ready and Taylor authorizes it; close through `sdd change close` after integration.
+- [x] 6.5 Merge only after review is ready and Taylor authorizes it; close through `sdd change close` after integration.
 
 ## Implementation Ledger
 
@@ -132,7 +132,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: in_review
+- Change status: closed by authorized `sdd change close` after local integration into `develop`
 - Epic files updated: LC-001, LC-002, and LC-003 reconciled
 - Story labels/references and Requirement/Scenario IDs current: yes
 - Implemented By maps current: yes; reverse-traceability paths resolve
@@ -145,6 +145,6 @@ status: in_review
 - `review.md` findings resolved: yes; six safe evidence/supporting-truth findings resolved
 - Planning updates resolved: yes; private PRD aligned
 - Manual UI confirmation status: not applicable
-- PR / merge state: technically ready on `change/epic-truth-reconciliation`; not pushed or merged, pending explicit merge-and-close authorization
+- PR / merge state: no routine integration PR; fast-forwarded locally into `develop` at `8808d79`
 - Deferred scope accepted: yes
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: yes, through `sdd change close`

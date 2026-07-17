@@ -110,7 +110,7 @@ ready
 - Conflict check: clean
 - Commit state: safe review batch committed at app ref `629c413` and private-vault refs `fb6e4f3b9` and `d87e115f1`; this final review-ledger reconciliation is the only follow-up
 - PR status: not requested and not required for routine local integration
-- Merge status: technically ready; merge and closeout require explicit authorization
+- Merge status: Taylor authorized merge-and-close; fast-forwarded locally into `develop` at `8808d79`, then closed through `sdd change close`
 
 ## Suggested Manual UI Testing
 
@@ -120,3 +120,4 @@ ready
 
 - 2026-07-17: Reviewed `abb810a` against `develop` through fresh-context artifact and traceability passes plus local code, verification, security, docs, PRD, and integration gates.
 - 2026-07-17: Consolidated six related supporting-truth and evidence findings into one safe documentation remediation batch.
+- 2026-07-17: Taylor authorized merge-and-close; the reviewed source was fast-forwarded into `develop` and the Change was moved into closed history through `sdd change close`.
