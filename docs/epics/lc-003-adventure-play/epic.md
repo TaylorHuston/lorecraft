@@ -192,17 +192,26 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 | Path | Role | Recheck Trigger |
 |---|---|---|
-| Not implemented yet. | All implementation is pending. | Replace during implementation with current source ownership. |
+| `apps/backend/database/migrations/1784233200000_add_frozen_world_source_foundation.ts` | Adds relational Starting Points and immutable WorldVersion storage plus ownership/default/immutability constraints. | Recheck when World authoring, version identity, or frozen-source ownership changes. |
+| `apps/backend/app/models/world.ts`, `starting_point.ts`, and `world_version.ts` | Maps the relational authoring aggregate and immutable version metadata. | Recheck when snapshot schema or World relationships change. |
+| `apps/backend/app/services/world_version_publication_service.ts` | Validates stable-key references and deterministically publishes or reuses immutable schema-v1 snapshots. | Recheck when canonical World fields or publication concurrency semantics change. |
+| `apps/backend/app/services/stormbound_chapel_seed.ts` | Reconciles the first playable World, default Starting Point, guidance, premise, and current version in one transaction. | Recheck when starter canon or explicit installation behavior changes. |
 
 #### Verified By
 
 | Requirement / Scenario | Evidence | Proves | Status |
 |---|---|---|---|
-| S1/R1-S1 through S1/R5-S3 | Not verified yet. | All accepted behavior awaits implementation and scenario-mapped evidence. | Pending |
+| S1/R2 foundation | `apps/backend/tests/database/frozen_world_source_migration.spec.ts` | Same-World Starting Points, one default, immutable UUID version identity, same-World current-version ownership, and serialized concurrent publication. | Passing 2026-07-16 |
+| S1/R2-S1 publication portion | `apps/backend/tests/functional/world_version_publication.spec.ts` and `world_catalog.spec.ts` | Deterministic complete snapshots, stable-key validation, content identity, playable Stormbound guidance/default Starting Point, and same-transaction publication. | Passing 2026-07-16 |
+| S1/R2-S2 publication portion | `apps/backend/tests/functional/world_version_publication.spec.ts` | Changed canon creates a new ordinal while the earlier snapshot remains unchanged; identical canon reuses the prior version. | Passing 2026-07-16 |
+| S1/R1, remaining R2, and S1/R3-R5 | Not verified yet. | Adventure binding, playability conflict, opening generation, lifecycle, authorization, and UI await later slices in this Change. | Pending |
 
 #### Verification Gaps
 
-- All `LC-003/S1` Requirements and Scenarios await implementation and scenario-mapped evidence.
+- `R2-S1` still needs proof that Adventure creation binds its player and Scene to the versioned default Starting Point.
+- `R2-S2` still needs proof that an existing Adventure keeps its original version while a new Adventure selects the newer current version.
+- `R2-S3` still needs service/API proof that missing playable source returns a clear conflict while World inspection remains available.
+- `R1`, `R3`, `R4`, and `R5` await implementation and scenario-mapped evidence.
 - Live-provider narrative quality and final responsive UI acceptance require separate evidence from deterministic tests.
 
 #### Story Notes

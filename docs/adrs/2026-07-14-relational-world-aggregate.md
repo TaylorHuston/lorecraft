@@ -3,7 +3,7 @@
 - Status: Accepted
 - Date: 2026-07-14
 - Related change: `docs/changes/2026-07-14-public-starter-world/`
-- Related Epics / Stories: `LC-002/S1` and `LC-002/S2`
+- Related Epics / Stories: `LC-002/S1`, `LC-002/S2`, and `LC-003/S1 R2`
 
 ## Context
 
@@ -49,7 +49,7 @@ This decision does not make the current Character fields permanent and does not 
 
 ## Validation
 
-The current implementation validates this decision through normalized `worlds`, `locations`, and `characters` tables; World-scoped stable-key constraints; same-World Character-to-Location integrity; PostgreSQL-backed migration and functional tests; and intentional API DTOs that do not expose persistence records directly.
+The current implementation validates this decision through normalized `worlds`, `locations`, `characters`, and `world_starting_points` tables; World-scoped stable-key constraints; same-World Character and Starting Point Location integrity; PostgreSQL-backed migration and functional tests; and intentional API DTOs that do not expose persistence records directly. Immutable JSONB WorldVersions are derived publication artifacts for frozen Adventure provenance. They do not replace the relational authoring aggregate and can be created only after stable-key references are validated.
 
 ## Reconsider When
 
