@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: collect Taylor's final confirmation of the gear-triggered settings modal and left-aligned Return to World button
+- Next action: collect Taylor's final confirmation of the matching Back to Worlds button on World detail
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
 - Known blockers: Taylor's final manual UI confirmation
@@ -184,6 +184,7 @@ status: in_review
 | 2026-07-17 | Live `gemma4:31b` opening against the frozen Stormbound Chapel context                                                                                          | configured-provider playtest          | Hidden reasoning is disabled, generation completes without token truncation, and the opening uses the player, starting Location, present Characters, storm, and unexplained bell | Passed in one attempt; 19.8 seconds; `finish_reason: stop` |
 | 2026-07-17 | Explicit Resume-action route, Storybook, lint, typecheck, and guarded Playwright checks                                                                          | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Both World lists render visible Resume links and preserve responsive lifecycle behavior and deletion | Passed; route 18, Storybook 64, Playwright 7 |
 | 2026-07-17 | Adventure settings-modal route, Storybook, lint, typecheck, and guarded Playwright checks                                                                       | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Lucide gear affordance, focus-managed settings modal, two-step reset, conflict handling, return navigation, and responsive lifecycle behavior | Passed; route 10, Storybook 64, Playwright 7 |
+| 2026-07-17 | Back-to-Worlds route, Storybook, lint, typecheck, and guarded Playwright checks                                                                                | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Button-styled World-detail back navigation retains routing, touch targets, and responsive overflow behavior | Passed; route 18, Storybook 64, Playwright 7 |
 
 ## Manual Feedback
 
@@ -194,7 +195,8 @@ status: in_review
 | 2026-07-17 | Mobile Adventure interface looks good. | manual acceptance | Recorded the responsive mobile interface as accepted; desktop Adventure-shell and reset placement remain to be confirmed. | accepted |
 | 2026-07-17 | Desktop World catalog creates Adventures, resumes through the linked Adventure row, and deletes with confirmation. | manual feedback | Creation and deletion are accepted; row-based resume works but is not discoverable enough. | superseded by explicit Resume action |
 | 2026-07-17 | Add a dedicated Resume button because clicking the Adventure row is not intuitive on desktop. | in-scope experience refinement | Replaced linked identity text with a visible Resume action in both the cross-World catalog and World detail; added focused, Storybook, and E2E assertions for visible button text. | accepted 2026-07-17 |
-| 2026-07-17 | Adventure Menu is not clearly a button; use a Lucide gear and extensible modal, and make Return to World a left-aligned button. | in-scope experience refinement | Added `lucide-react`, an accessible reusable modal shell, gear-triggered Adventure settings with Reset, and button-styled return navigation; retained destructive confirmation. | implemented; manual confirmation pending |
+| 2026-07-17 | Adventure Menu is not clearly a button; use a Lucide gear and extensible modal, and make Return to World a left-aligned button. | in-scope experience refinement | Added `lucide-react`, an accessible reusable modal shell, gear-triggered Adventure settings with Reset, and button-styled return navigation; retained destructive confirmation. | accepted 2026-07-17 |
+| 2026-07-17 | Follow the same back-navigation pattern for Back to Worlds on World detail. | in-scope experience refinement | Moved Back to Worlds to the leftmost position and applied the same bordered button and Lucide arrow treatment with responsive verification. | implemented; manual confirmation pending |
 
 ## Planning Updates
 
@@ -213,7 +215,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: mobile, desktop Adventure shell, and desktop catalog creation/Resume/deletion accepted 2026-07-17; settings-modal and Return to World refinements pending final confirmation
+- Status: mobile, desktop Adventure shell, settings modal, and catalog lifecycle controls accepted 2026-07-17; Back to Worlds refinement pending final confirmation
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
 - Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; open Adventure settings from the gear and reset with confirmation; verify the left-aligned Return to World button and World-detail controls

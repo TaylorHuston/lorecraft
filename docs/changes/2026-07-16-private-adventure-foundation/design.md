@@ -358,6 +358,7 @@ any owned state -> deleted                  (owner delete)
 - The World catalog is the cross-World Adventure launcher and manager; World detail offers the same World-scoped entry points. Neither surface owns Adventure runtime logic.
 - The dedicated creation page owns form validation, cancellation, and one idempotent submission. It does not offer model or Starting Point controls.
 - The Adventure shell owns compact top navigation with a left-aligned, button-styled `Return to World`, Lorecraft/World identity, and a right-aligned gear button that opens an extensible Adventure settings modal containing `Reset Adventure`.
+- World detail mirrors the same back-navigation language with a leftmost, button-styled `Back to Worlds` control and Lucide arrow.
 - Player is read-only after creation and shows name, optional physical description, optional backstory, current status when meaningful, and starting Location.
 - Scene is read-only and shows the starting Location name, player-visible description, and NPCs present by name and physical description only. It excludes background, personality, voice, private knowledge, memory, and NPC detail interaction.
 - Story renders authoritative `opening_pending`, `opening_processing`, `opening_failed`, or `ready` state. Pending and failure never reveal partial narration.

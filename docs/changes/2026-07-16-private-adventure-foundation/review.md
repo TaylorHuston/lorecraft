@@ -14,7 +14,7 @@ blocked
 | Requirements and Scenarios | pass | Deterministic and live-provider evidence remains scenario-mapped; final human evidence is explicit. |
 | Story reference traceability | pass | No duplicate or conflicting Story references found. |
 | Tests and verification | pass | Post-remediation backend and Playwright suites pass against separate acknowledged disposable Neon schemas. |
-| Manual UI confirmation | blocked | Taylor accepted the mobile interface, desktop Adventure shell, and desktop catalog creation, explicit Resume, and deletion on 2026-07-17. Gear-triggered settings and button-styled return navigation await final confirmation. |
+| Manual UI confirmation | blocked | Taylor accepted the mobile interface, desktop Adventure shell, catalog lifecycle controls, and gear-triggered settings on 2026-07-17. The matching button-styled Back to Worlds refinement awaits final confirmation. |
 | Code review | pass after remediation | Discovery findings were fixed in `976767a`; regression rereview found no new issues. |
 | Visual / UX consistency | pass after remediation | Compact-width overflow and error-feedback gaps were fixed; top tabs are canonical. |
 | Security review | pass with follow-up | Creation is account-throttled and provider responses are bounded. A durable Adventure quota can be considered before paid multi-user operation. |
@@ -27,7 +27,7 @@ blocked
 
 ### BLOCKING
 
-- [ ] Obtain Taylor's remaining manual confirmation of the gear-triggered settings modal and left-aligned Return to World button. Mobile and desktop Adventure presentation plus catalog creation, explicit Resume, and deletion are accepted.
+- [ ] Obtain Taylor's remaining manual confirmation of the matching left-aligned Back to Worlds button on World detail. Mobile and desktop Adventure presentation, settings, and catalog lifecycle controls are accepted.
 
 ### REQUIRED
 
@@ -50,6 +50,7 @@ blocked
 | Live `gemma4:31b` opening against Stormbound Chapel | configured-provider playtest | `LC-003/S1 R3-S1`, `R3-S3` | passed in one attempt; 19.8 seconds; `finish_reason: stop` | With hidden reasoning disabled, the provider returned complete prose grounded in Taylor, the Chapel, Mira, Brother Alden, the storm, and the unexplained bell; the opening persisted once and the Adventure became ready. |
 | Explicit Resume-action route, Storybook, and Playwright checks | focused frontend, interaction/accessibility, desktop/mobile E2E | `LC-003/S1 R4`, `R5` | route 18, Storybook 64, Playwright 7 passed | Both World lists expose visible Resume links, retain confirmed deletion, and preserve responsive lifecycle journeys. |
 | Adventure settings-modal route, Storybook, lint, typecheck, and Playwright checks | focused frontend, interaction/accessibility, static, desktop/mobile E2E | `LC-003/S1 R4-S2`, `R5` | route 10, Storybook 64, Playwright 7 passed | The Lucide gear opens a focus-managed modal, Reset retains confirmation/conflict behavior, and Return to World remains routed across responsive layouts. |
+| Back-to-Worlds route, Storybook, lint, typecheck, and Playwright checks | focused frontend, interaction/accessibility, static, desktop/mobile E2E | `LC-003/S1 R4`, `R5` | route 18, Storybook 64, Playwright 7 passed | World detail mirrors the Adventure back-navigation affordance while preserving touch targets, routing, and responsive overflow behavior. |
 | `npm run lint`, `npm run typecheck`, `npm run build` | broad supporting gates | cross-cutting | passed | Both applications compile, format, and build after remediation. |
 | Scoped `sdd validate` | artifact validation | `LC-003/S1` | 0 errors, 0 warnings | Change and Epic structure remain valid. |
 | `git merge-tree --write-tree develop HEAD` | integration check | branch readiness | clean tree | The reviewed branch is structurally mergeable into `develop`. |
@@ -111,3 +112,4 @@ blocked
 - 2026-07-17: Taylor accepted the dedicated Resume action after manual verification.
 - 2026-07-17: Taylor accepted the ready desktop Player/Story/Scene composition.
 - 2026-07-17: The ambiguous text menu was replaced by a Lucide gear and extensible settings modal; Return to World became a left-aligned button. Automated route, Storybook, and responsive E2E checks pass pending final visual confirmation.
+- 2026-07-17: Taylor accepted the gear/settings-modal pattern and requested the same button-styled back-navigation language for World detail; Back to Worlds now mirrors it pending final confirmation.

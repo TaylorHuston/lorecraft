@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
@@ -29,11 +30,12 @@ function DetailHeader({ readOnly = false }: { readOnly?: boolean }) {
   return (
     <header className={styles.header}>
       <div className={styles.headerIdentity}>
-        <span className={styles.brand}>Lorecraft</span>
-        <span className={styles.separator} aria-hidden="true" />
         <Link className={styles.navigationLink} to="/worlds">
+          <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.8} />
           Back to Worlds
         </Link>
+        <span className={styles.separator} aria-hidden="true" />
+        <span className={styles.brand}>Lorecraft</span>
       </div>
       {readOnly ? <span className={styles.readOnlyStatus}>Read only</span> : null}
     </header>

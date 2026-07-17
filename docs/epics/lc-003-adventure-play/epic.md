@@ -206,7 +206,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | `apps/backend/app/controllers/worlds_controller.ts` and `app/services/world_catalog_service.ts`                                              | Adds playability and current-owner Adventure summaries while withholding raw version data, author identity, and private Character knowledge.                  | Recheck when World discovery, playability, or disclosure policy changes.                                  |
 | `apps/frontend/src/adventures/adventureApi.ts` and `tuyauAdventureApi.ts`                                                                    | Defines reusable lifecycle contracts, generated Tuyau routing, runtime response validation, account-scoped query identity, and stable client errors.          | Recheck when Adventure DTOs, generated routes, or client error semantics change.                          |
 | `apps/frontend/src/adventures/AdventurePage.tsx`, `ModalDialog.tsx`, `AdventureWorkbench.tsx`, and `NewAdventurePage.tsx`                    | Presents creation, pending, failure, ready, retry, gear-triggered reset settings, and responsive Player/Story/Scene states without owning domain rules.        | Recheck when Adventure navigation, disclosure, lifecycle presentation, or responsive composition changes. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx` and `apps/frontend/src/worlds/WorldDetailPage.tsx`                                           | Present direct creation, owner Adventure summaries, explicit Resume actions, and confirmed deletion from both cross-World catalog and World detail contexts.  | Recheck when Adventure discovery, launch, or lifecycle-management placement changes.                       |
+| `apps/frontend/src/workspace/WorkspacePage.tsx` and `apps/frontend/src/worlds/WorldDetailPage.tsx`                                           | Present direct creation, owner Adventure summaries, explicit Resume/delete actions, and matching button-styled back navigation across catalog and World detail. | Recheck when Adventure discovery, launch, navigation, or lifecycle-management placement changes.           |
 | `apps/backend/commands/work_adventure_openings.ts`, `scripts/run-development.mjs`, and `apps/frontend/playwright.config.ts`                  | Runs the durable worker independently in production and alongside the API in development and deterministic browser verification.                              | Recheck when worker deployment, process supervision, polling, or test topology changes.                   |
 
 #### Verified By
@@ -234,7 +234,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 #### Verification Gaps
 
-- Taylor accepted the mobile and desktop Adventure compositions plus desktop catalog creation, explicit Resume, and deletion on 2026-07-17; the gear-triggered settings modal and left-aligned Return to World button still require final manual confirmation.
+- Taylor accepted the mobile and desktop Adventure compositions, catalog lifecycle controls, and gear-triggered settings on 2026-07-17; the matching World-detail Back to Worlds refinement still requires final manual confirmation.
 - The old-versus-new WorldVersion behavior is proven at database/service/API boundaries because no World-authoring browser route exists yet; add a routed E2E when authoring/version publication becomes user-accessible.
 
 #### Story Notes
