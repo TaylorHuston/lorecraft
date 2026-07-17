@@ -91,4 +91,64 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['show']>>>
     }
   }
+  'adventures.store': {
+    methods: ["POST"]
+    pattern: '/api/v1/worlds/:slug/adventures'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/adventure').createAdventureValidator)>>
+      paramsTuple: [ParamValue]
+      params: { slug: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/adventure').createAdventureValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'adventures.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/api/v1/adventures/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['show']>>>
+    }
+  }
+  'adventures.retry_opening': {
+    methods: ["POST"]
+    pattern: '/api/v1/adventures/:id/opening/retry'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['retryOpening']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['retryOpening']>>>
+    }
+  }
+  'adventures.reset': {
+    methods: ["POST"]
+    pattern: '/api/v1/adventures/:id/reset'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['reset']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['reset']>>>
+    }
+  }
+  'adventures.destroy': {
+    methods: ["DELETE"]
+    pattern: '/api/v1/adventures/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['destroy']>>>
+    }
+  }
 }

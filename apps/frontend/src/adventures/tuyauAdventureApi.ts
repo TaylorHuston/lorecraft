@@ -8,97 +8,7 @@ import {
   type AdventureLifecycleResult,
   type AdventureStatus,
   type AdventureSummary,
-  type CreateAdventureInput,
 } from './adventureApi'
-
-const storeAdventureRoute = {
-  methods: ['POST'],
-  pattern: '/api/v1/worlds/:slug/adventures',
-  tokens: [
-    { old: '/api/v1/worlds/:slug/adventures', type: 0, val: 'api', end: '' },
-    { old: '/api/v1/worlds/:slug/adventures', type: 0, val: 'v1', end: '' },
-    { old: '/api/v1/worlds/:slug/adventures', type: 0, val: 'worlds', end: '' },
-    { old: '/api/v1/worlds/:slug/adventures', type: 1, val: 'slug', end: '' },
-    { old: '/api/v1/worlds/:slug/adventures', type: 0, val: 'adventures', end: '' },
-  ],
-  types: undefined,
-} as const
-
-const showAdventureRoute = {
-  methods: ['GET', 'HEAD'],
-  pattern: '/api/v1/adventures/:id',
-  tokens: [
-    { old: '/api/v1/adventures/:id', type: 0, val: 'api', end: '' },
-    { old: '/api/v1/adventures/:id', type: 0, val: 'v1', end: '' },
-    { old: '/api/v1/adventures/:id', type: 0, val: 'adventures', end: '' },
-    { old: '/api/v1/adventures/:id', type: 1, val: 'id', end: '' },
-  ],
-  types: undefined,
-} as const
-
-const retryOpeningRoute = {
-  methods: ['POST'],
-  pattern: '/api/v1/adventures/:id/opening/retry',
-  tokens: [
-    { old: '/api/v1/adventures/:id/opening/retry', type: 0, val: 'api', end: '' },
-    { old: '/api/v1/adventures/:id/opening/retry', type: 0, val: 'v1', end: '' },
-    { old: '/api/v1/adventures/:id/opening/retry', type: 0, val: 'adventures', end: '' },
-    { old: '/api/v1/adventures/:id/opening/retry', type: 1, val: 'id', end: '' },
-    { old: '/api/v1/adventures/:id/opening/retry', type: 0, val: 'opening', end: '' },
-    { old: '/api/v1/adventures/:id/opening/retry', type: 0, val: 'retry', end: '' },
-  ],
-  types: undefined,
-} as const
-
-const resetAdventureRoute = {
-  methods: ['POST'],
-  pattern: '/api/v1/adventures/:id/reset',
-  tokens: [
-    { old: '/api/v1/adventures/:id/reset', type: 0, val: 'api', end: '' },
-    { old: '/api/v1/adventures/:id/reset', type: 0, val: 'v1', end: '' },
-    { old: '/api/v1/adventures/:id/reset', type: 0, val: 'adventures', end: '' },
-    { old: '/api/v1/adventures/:id/reset', type: 1, val: 'id', end: '' },
-    { old: '/api/v1/adventures/:id/reset', type: 0, val: 'reset', end: '' },
-  ],
-  types: undefined,
-} as const
-
-const deleteAdventureRoute = {
-  methods: ['DELETE'],
-  pattern: '/api/v1/adventures/:id',
-  tokens: showAdventureRoute.tokens,
-  types: undefined,
-} as const
-
-const adventureRegistry = {
-  ...registry,
-  routes: {
-    ...registry.routes,
-    'adventures.store': storeAdventureRoute,
-    'adventures.show': showAdventureRoute,
-    'adventures.retry_opening': retryOpeningRoute,
-    'adventures.reset': resetAdventureRoute,
-    'adventures.destroy': deleteAdventureRoute,
-  },
-}
-
-type AdventureTuyauClient = {
-  api: {
-    auth: {
-      csrf(args: Record<string, never>): Promise<unknown>
-    }
-    adventures: {
-      store(args: {
-        params: { slug: string }
-        body: CreateAdventureInput
-      }): Promise<unknown>
-      show(args: { params: { id: string } }): Promise<unknown>
-      retryOpening(args: { params: { id: string } }): Promise<unknown>
-      reset(args: { params: { id: string } }): Promise<unknown>
-      destroy(args: { params: { id: string } }): Promise<unknown>
-    }
-  }
-}
 
 const adventureStatuses = new Set<AdventureStatus>([
   'opening_pending',
@@ -266,11 +176,11 @@ function dataOf<T>(response: unknown, isData: (value: unknown) => value is T): T
 
 export function createTuyauAdventureApi(baseUrl: string): AdventureApi {
   const client = createTuyau({
-    registry: adventureRegistry as unknown as typeof registry,
+    registry,
     baseUrl: baseUrl.replace(/\/$/, ''),
     credentials: 'include',
     headers: { Accept: 'application/json' },
-  }) as unknown as AdventureTuyauClient
+  })
 
   return {
     async createAdventure(worldSlug, input) {
