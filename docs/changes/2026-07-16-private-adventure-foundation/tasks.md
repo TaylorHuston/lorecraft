@@ -7,10 +7,10 @@ status: in_review
 ## Resume Here
 
 - Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: collect Taylor's final confirmation of the matching Back to Worlds button on World detail
+- Next action: await explicit close/merge authorization
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
-- Known blockers: Taylor's final manual UI confirmation
+- Known blockers: none
 
 ## Task Checklist
 
@@ -109,7 +109,7 @@ status: in_review
 - [x] 10.2 Add only user-facing capability to `CHANGELOG.md`: private Adventure creation/resume and generated frozen-source openings.
 - [x] 10.3 Update `LC-003/S1 Implemented By`, scenario-mapped `Verified By`, and real `Verification Gaps`; update ADR statuses based on implementation evidence.
 - [x] 10.4 Run scoped `sdd validate` and resolve deterministic artifact drift before review.
-- [ ] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
+- [x] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
 - [x] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
 - [x] 10.7 Confirm proposal/design/tasks/Epic/ADR/README/CHANGELOG truth matches implementation and no candidate Story is described as implemented.
 - [ ] 10.8 Keep Change status `in_review` through review and authorized PR/merge, then close through `sdd change close` rather than editing a closed status manually.
@@ -196,7 +196,7 @@ status: in_review
 | 2026-07-17 | Desktop World catalog creates Adventures, resumes through the linked Adventure row, and deletes with confirmation. | manual feedback | Creation and deletion are accepted; row-based resume works but is not discoverable enough. | superseded by explicit Resume action |
 | 2026-07-17 | Add a dedicated Resume button because clicking the Adventure row is not intuitive on desktop. | in-scope experience refinement | Replaced linked identity text with a visible Resume action in both the cross-World catalog and World detail; added focused, Storybook, and E2E assertions for visible button text. | accepted 2026-07-17 |
 | 2026-07-17 | Adventure Menu is not clearly a button; use a Lucide gear and extensible modal, and make Return to World a left-aligned button. | in-scope experience refinement | Added `lucide-react`, an accessible reusable modal shell, gear-triggered Adventure settings with Reset, and button-styled return navigation; retained destructive confirmation. | accepted 2026-07-17 |
-| 2026-07-17 | Follow the same back-navigation pattern for Back to Worlds on World detail. | in-scope experience refinement | Moved Back to Worlds to the leftmost position and applied the same bordered button and Lucide arrow treatment with responsive verification. | implemented; manual confirmation pending |
+| 2026-07-17 | Follow the same back-navigation pattern for Back to Worlds on World detail. | in-scope experience refinement | Moved Back to Worlds to the leftmost position and applied the same bordered button and Lucide arrow treatment with responsive verification. | accepted 2026-07-17 |
 
 ## Planning Updates
 
@@ -215,7 +215,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: mobile, desktop Adventure shell, settings modal, and catalog lifecycle controls accepted 2026-07-17; Back to Worlds refinement pending final confirmation
+- Status: confirmed by Taylor on 2026-07-17 across mobile, desktop Adventure shell, settings, catalog lifecycle controls, and back navigation
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
 - Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; open Adventure settings from the gear and reset with confirmation; verify the left-aligned Return to World button and World-detail controls
@@ -225,11 +225,11 @@ status: in_review
 ## Blockers / Open Questions
 
 - No planning questions remain.
-- Final manual UI acceptance remains pending.
+- No blockers or open questions remain.
 
 ## Closeout
 
-- Change status: in_review; implementation, deterministic verification, review remediation, and live-provider evidence complete; final manual acceptance pending
+- Change status: in_review; implementation, deterministic verification, review remediation, live-provider evidence, and manual acceptance complete; awaiting authorized close/merge
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: yes
@@ -237,11 +237,11 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
 - ADR status: immutable snapshots and durable asynchronous work accepted and validated
 - Release communication current: README and user-facing CHANGELOG updated
-- `sdd-review` verdict: blocked on final manual UI confirmation
+- `sdd-review` verdict: pass
 - Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
 - `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
 - Planning updates resolved: yes
-- Manual UI confirmation status: pending user
+- Manual UI confirmation status: confirmed 2026-07-17
 - PR / merge state: local `change/private-adventure-foundation`; no PR
 - Deferred scope accepted: yes, recorded in proposal/design
 - Change moved to `docs/changes/closed/`: no

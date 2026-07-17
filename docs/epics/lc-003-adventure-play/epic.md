@@ -234,7 +234,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 #### Verification Gaps
 
-- Taylor accepted the mobile and desktop Adventure compositions, catalog lifecycle controls, and gear-triggered settings on 2026-07-17; the matching World-detail Back to Worlds refinement still requires final manual confirmation.
+- Taylor accepted the mobile and desktop Adventure compositions, catalog lifecycle controls, gear-triggered settings, and matching back-navigation patterns on 2026-07-17.
 - The old-versus-new WorldVersion behavior is proven at database/service/API boundaries because no World-authoring browser route exists yet; add a routed E2E when authoring/version publication becomes user-accessible.
 
 #### Story Notes
