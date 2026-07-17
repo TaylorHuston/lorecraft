@@ -5,7 +5,7 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: promoted the private plan after `2026-07-17-epic-truth-reconciliation` was integrated and closed; post-promotion validation passed with zero errors and warnings.
+- Last completed action: promoted and reconciled the Change against final Epic truth, transitioned it to `in_progress`, and committed the planning baseline at `7d42eca`.
 - Next action: implement and verify the app-owned control baseline, then migrate LC-001 account presentation as the first user-facing slice.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
@@ -109,7 +109,7 @@ status: in_progress
 
 | Date | Scope | Result | Commit |
 |---|---|---|---|
-| 2026-07-17 | Promotion and final-Epic reconciliation discovery | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and confirmed the planned Scenario IDs remain available. | uncommitted |
+| 2026-07-17 | Promotion and final-Epic reconciliation discovery | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs. | `7d42eca` |
 
 ## Verification Ledger
 
