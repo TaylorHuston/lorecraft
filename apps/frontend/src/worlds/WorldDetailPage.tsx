@@ -183,14 +183,10 @@ export function WorldDetailPage({
             <div className={styles.adventureList}>
               {worldData.adventures.map((adventure) => (
                 <article className={styles.adventureRow} key={adventure.id}>
-                  <Link
-                    className={styles.adventureLink}
-                    to={adventure.route}
-                    aria-label={`Resume Adventure as ${adventure.playerName}`}
-                  >
+                  <div className={styles.adventureIdentity}>
                     <strong>{adventure.playerName}</strong>
                     <span>{adventureStatusLabels[adventure.status]}</span>
-                  </Link>
+                  </div>
                   <div className={styles.adventureMeta}>
                     <span>
                       {adventure.turnCount} {adventure.turnCount === 1 ? 'turn' : 'turns'}
@@ -199,17 +195,26 @@ export function WorldDetailPage({
                       Last played {formatLastPlayed(adventure.lastPlayedAt)}
                     </time>
                   </div>
-                  <button
-                    className={styles.deleteAdventure}
-                    type="button"
-                    aria-label={`Delete Adventure for ${adventure.playerName}`}
-                    onClick={() => {
-                      setDeleteError(null)
-                      setDeleteTarget(adventure)
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div className={styles.adventureActions}>
+                    <Link
+                      className={styles.resumeAdventure}
+                      to={adventure.route}
+                      aria-label={`Resume Adventure as ${adventure.playerName}`}
+                    >
+                      Resume
+                    </Link>
+                    <button
+                      className={styles.deleteAdventure}
+                      type="button"
+                      aria-label={`Delete Adventure for ${adventure.playerName}`}
+                      onClick={() => {
+                        setDeleteError(null)
+                        setDeleteTarget(adventure)
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

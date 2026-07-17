@@ -14,7 +14,7 @@ blocked
 | Requirements and Scenarios | pass | Deterministic and live-provider evidence remains scenario-mapped; final human evidence is explicit. |
 | Story reference traceability | pass | No duplicate or conflicting Story references found. |
 | Tests and verification | pass | Post-remediation backend and Playwright suites pass against separate acknowledged disposable Neon schemas. |
-| Manual UI confirmation | blocked | Taylor accepted the mobile interface and desktop catalog creation, row-based resume, and deletion on 2026-07-17; desktop Adventure-shell and reset placement confirmation remain pending. |
+| Manual UI confirmation | blocked | Taylor accepted the mobile interface plus desktop catalog creation and deletion on 2026-07-17. An explicit Resume button replaced the unclear row-only interaction and awaits confirmation alongside the desktop Adventure shell and reset placement. |
 | Code review | pass after remediation | Discovery findings were fixed in `976767a`; regression rereview found no new issues. |
 | Visual / UX consistency | pass after remediation | Compact-width overflow and error-feedback gaps were fixed; top tabs are canonical. |
 | Security review | pass with follow-up | Creation is account-throttled and provider responses are bounded. A durable Adventure quota can be considered before paid multi-user operation. |
@@ -27,7 +27,7 @@ blocked
 
 ### BLOCKING
 
-- [ ] Obtain Taylor's remaining manual confirmation of the ready desktop Player/Story/Scene presentation and reset placement. Mobile presentation plus desktop catalog creation, row-based resume, and deletion are accepted.
+- [ ] Obtain Taylor's remaining manual confirmation of the explicit catalog Resume action, ready desktop Player/Story/Scene presentation, and reset placement. Mobile presentation plus desktop catalog creation and deletion are accepted.
 
 ### REQUIRED
 
@@ -48,6 +48,7 @@ blocked
 | `npm run test:e2e` against isolated `lorecraft_e2e` Neon schema | desktop/mobile E2E | `LC-001`, `LC-002`, `LC-003/S1` | 7 passed | The supervised API, worker, deterministic provider, and responsive Adventure lifecycle journey pass end to end. |
 | Post-feedback backend/frontend/Storybook suites | regression and interaction | `LC-003/S1 R3-R5` | backend 101, frontend 101, Storybook 64 passed | Reasoning control, truncated-output rejection, and catalog launch/list/delete behavior remain green with existing behavior. |
 | Live `gemma4:31b` opening against Stormbound Chapel | configured-provider playtest | `LC-003/S1 R3-S1`, `R3-S3` | passed in one attempt; 19.8 seconds; `finish_reason: stop` | With hidden reasoning disabled, the provider returned complete prose grounded in Taylor, the Chapel, Mira, Brother Alden, the storm, and the unexplained bell; the opening persisted once and the Adventure became ready. |
+| Explicit Resume-action route, Storybook, and Playwright checks | focused frontend, interaction/accessibility, desktop/mobile E2E | `LC-003/S1 R4`, `R5` | route 18, Storybook 64, Playwright 7 passed | Both World lists expose visible Resume links, retain confirmed deletion, and preserve responsive lifecycle journeys. |
 | `npm run lint`, `npm run typecheck`, `npm run build` | broad supporting gates | cross-cutting | passed | Both applications compile, format, and build after remediation. |
 | Scoped `sdd validate` | artifact validation | `LC-003/S1` | 0 errors, 0 warnings | Change and Epic structure remain valid. |
 | `git merge-tree --write-tree develop HEAD` | integration check | branch readiness | clean tree | The reviewed branch is structurally mergeable into `develop`. |
@@ -80,7 +81,7 @@ blocked
 
 ## Consolidated Remediation
 
-- Root causes addressed: mismatched timeout/lease defaults, inconsistent row-lock order, missing resume touch semantics, untested intermediate viewport, incomplete error feedback, unbounded provider evidence, burst abuse, unstable paragraph keys, and artifact drift after manual UI refinement.
+- Root causes addressed: mismatched timeout/lease defaults, inconsistent row-lock order, missing resume touch semantics, unclear row-only resume discoverability, untested intermediate viewport, incomplete error feedback, unbounded provider evidence, burst abuse, unstable paragraph keys, and artifact drift after manual UI refinement.
 - Live-provider follow-up: the first Gemma opening exhausted all 500 completion tokens on hidden reasoning or persisted a length-truncated sentence. After disabling reasoning and rejecting `finish_reason: length`, a clean `gemma4:31b` rerun completed in one attempt with `finish_reason: stop`, no hidden reasoning, and complete grounded narration.
 - Safe-fix batch: committed as `976767a`.
 - Deferred or unsafe findings: durable quota policy requires a later product/operations decision.
@@ -105,4 +106,4 @@ blocked
 - 2026-07-16: Live Gemma evidence exposed hidden-reasoning token exhaustion; provider controls, truncation rejection, and catalog-level Adventure management were implemented and deterministically verified pending live/manual rerun.
 - 2026-07-17: A clean live `gemma4:31b` opening completed in one attempt with reasoning disabled, `finish_reason: stop`, and complete grounded narration; only final manual UI acceptance remains.
 - 2026-07-17: Taylor accepted the mobile interface; desktop and catalog/lifecycle placement confirmation remain.
-- 2026-07-17: Taylor confirmed desktop catalog creation, row-based Adventure resume, and deletion. The review wording was corrected because resume is the linked Adventure row, not a separate button.
+- 2026-07-17: Taylor confirmed desktop catalog creation and deletion, but found row-based Adventure resume unclear. Both World lists now expose a dedicated Resume button with route, Storybook, and desktop/mobile E2E coverage.

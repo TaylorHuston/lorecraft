@@ -95,7 +95,9 @@ export const Populated: Story = {
     const canvas = within(canvasElement)
     await expect(canvas.findByRole('link', { name: 'Stormbound Chapel' })).resolves.toBeVisible()
     await expect(canvas.getByRole('link', { name: 'New Adventure' })).toBeVisible()
-    await expect(canvas.getByRole('link', { name: 'Resume Adventure as Mara Venn' })).toBeVisible()
+    const resume = canvas.getByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    await expect(resume).toBeVisible()
+    await expect(resume).toHaveTextContent('Resume')
     await expect(canvas.getByLabelText('Signed in as keeper@lorecraft.test')).toBeVisible()
   },
 }

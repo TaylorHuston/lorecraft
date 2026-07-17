@@ -149,6 +149,9 @@ export const AdventureList: Story = {
     const canvas = within(canvasElement)
     await expect(canvas.findByText('Elara Vance')).resolves.toBeVisible()
     await expect(canvas.getByRole('link', { name: 'New Adventure' })).toBeVisible()
+    const resume = canvas.getByRole('link', { name: 'Resume Adventure as Elara Vance' })
+    await expect(resume).toBeVisible()
+    await expect(resume).toHaveTextContent('Resume')
   },
 }
 

@@ -113,6 +113,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page.getByRole('link', { name: 'Back to Worlds' }).click()
     const resume = page.getByRole('link', { name: `Resume Adventure as ${playerName}` })
     await expect(resume).toBeVisible()
+    await expect(resume).toHaveText('Resume')
     await expect(page.getByText('0 turns')).toBeVisible()
     await resume.click()
     await expect(page).toHaveURL(adventureUrl)

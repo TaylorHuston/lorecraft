@@ -80,9 +80,9 @@ describe('World catalog and detail routes', () => {
       adventureApi: { deleteAdventure },
     })
 
-    expect(
-      await screen.findByRole('link', { name: 'Resume Adventure as Mara Venn' })
-    ).toHaveAttribute('href', adventure.route)
+    const resume = await screen.findByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    expect(resume).toHaveAttribute('href', adventure.route)
+    expect(resume).toHaveTextContent('Resume')
     expect(screen.getByText('3 turns')).toBeVisible()
 
     await user.click(screen.getByRole('button', { name: 'Delete Adventure for Mara Venn' }))
@@ -265,10 +265,12 @@ describe('World catalog and detail routes', () => {
     expect(adventures).toHaveTextContent('Elara Vance')
     expect(adventures).toHaveTextContent('Opening pending')
     expect(adventures).toHaveTextContent('0 turns')
-    expect(screen.getByRole('link', { name: 'Resume Adventure as Elara Vance' })).toHaveAttribute(
+    const resume = screen.getByRole('link', { name: 'Resume Adventure as Elara Vance' })
+    expect(resume).toHaveAttribute(
       'href',
       '/adventures/11111111-1111-4111-8111-111111111111'
     )
+    expect(resume).toHaveTextContent('Resume')
     expect(screen.getByRole('link', { name: 'New Adventure' })).toHaveAttribute(
       'href',
       '/worlds/stormbound-chapel/adventures/new'
