@@ -121,7 +121,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 promotion | main agent, `sdd change promote` and `sdd epic create` | active Change, LC-003, LC-002, ADRs | Promoted and reconciled; implementation not started | `develop` |
 | 2026-07-16 | LC-003/S1 apply Discovery | main orchestrator; delegated backend discovery; `tdd` and current framework guidance selected | repository policy, Change/Epic/ADRs, backend schema and tests | Scoped validation passed; implementation branch created; frozen-source foundation selected as first vertical slice | `change/private-adventure-foundation` |
 | 2026-07-16 | LC-003/S1 R2 migration invariants | delegated backend implementation; orchestrator-verified | frozen-source migration and database tests | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending | `605c881` |
-| 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | commit pending |
+| 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | `889460b` |
 
 ## Verification Ledger
 
