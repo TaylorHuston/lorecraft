@@ -234,7 +234,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 #### Verification Gaps
 
-- Taylor accepted the mobile composition plus desktop catalog creation and deletion on 2026-07-17. The replacement explicit Resume action, desktop Adventure composition, and reset placement still require manual confirmation.
+- Taylor accepted the mobile composition plus desktop catalog creation, explicit Resume, and deletion on 2026-07-17; desktop Adventure composition and reset placement still require manual confirmation.
 - The old-versus-new WorldVersion behavior is proven at database/service/API boundaries because no World-authoring browser route exists yet; add a routed E2E when authoring/version publication becomes user-accessible.
 
 #### Story Notes
