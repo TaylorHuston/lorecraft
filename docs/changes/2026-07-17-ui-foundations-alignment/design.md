@@ -77,16 +77,21 @@ The system SHALL present sign-in as a focused, responsive Lorecraft form with pe
 
 ##### Implemented By
 
-Not implemented yet.
+- `apps/frontend/src/auth/PasswordField.tsx`
+- `apps/frontend/src/components/TextField/TextField.tsx`
+- `apps/frontend/src/components/IconButton/IconButton.tsx`
+- `apps/frontend/src/auth/SignUpPage.tsx`
+- `apps/frontend/src/auth/SignInPage.tsx`
 
 ##### Verified By
 
-Not verified yet.
+- Focused routed and component tests in `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/components/TextField/TextField.test.tsx`.
+- Interaction and accessibility stories in `apps/frontend/src/auth/SignUpPage.stories.tsx` and `apps/frontend/src/auth/SignInPage.stories.tsx`.
+- Desktop/mobile browser disclosure checks in `apps/frontend/e2e/account-workspace.spec.ts`.
 
 ##### Verification Gaps
 
-- `LC-001/S1/R3-S3` and `LC-001/S2/R3-S3` require focused interaction tests, Storybook evidence, and desktop/mobile browser confirmation.
-- Existing LC-001 auth and session evidence does not prove the new disclosure behavior and must not be relabeled as doing so.
+- User manual confirmation remains pending; deterministic interaction, Storybook, and desktop/mobile browser evidence is complete.
 
 #### Supersedes / Reconciles
 
@@ -130,16 +135,21 @@ The system SHALL present World identity, metadata, Locations, Characters, naviga
 
 ##### Implemented By
 
-Not implemented yet.
+- `apps/frontend/src/components/Button/Button.tsx`
+- `apps/frontend/src/components/Dialog/ConfirmDialog.tsx`
+- `apps/frontend/src/workspace/WorkspacePage.tsx`
+- `apps/frontend/src/worlds/WorldDetailPage.tsx`
 
 ##### Verified By
 
-Not verified yet.
+- Route coverage in `apps/frontend/src/worlds/WorldRoutes.test.tsx`.
+- Deterministic state coverage in `apps/frontend/src/workspace/WorkspacePage.stories.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`.
+- Desktop/mobile browser coverage in `apps/frontend/e2e/account-workspace.spec.ts` and `apps/frontend/e2e/starter-world.spec.ts`.
+- App-owned comparison fixtures in `apps/frontend/src/comparison/Workbench.stories.tsx`.
 
 ##### Verification Gaps
 
-- `LC-002/S1/R2-S4` and the strengthened `LC-002/S2/R2-S2` require route tests, Storybook state coverage, overflow checks, and desktop/mobile browser evidence.
-- Existing World behavior evidence remains useful but cannot prove the new cross-state presentation contract until implementation is complete.
+- User manual confirmation and the separately owned UI Foundations hub capture remain pending; app-owned deterministic evidence is complete.
 
 #### Supersedes / Reconciles
 
@@ -181,16 +191,22 @@ The system SHALL present Adventure creation, pending, failure, ready, reset, del
 
 ##### Implemented By
 
-Not implemented yet.
+- `apps/frontend/src/components/Dialog/Dialog.tsx`
+- `apps/frontend/src/components/Dialog/ConfirmDialog.tsx`
+- `apps/frontend/src/adventures/AdventurePage.tsx`
+- `apps/frontend/src/adventures/NewAdventurePage.tsx`
+- `apps/frontend/src/adventures/AdventureWorkbench.tsx`
 
 ##### Verified By
 
-Not verified yet.
+- Route and dialog coverage in `apps/frontend/src/adventures/AdventureRoutes.test.tsx`.
+- Responsive pane and tab coverage in `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`.
+- Deterministic Storybook states in `apps/frontend/src/adventures/AdventurePage.stories.tsx` and `apps/frontend/src/comparison/Workbench.stories.tsx`.
+- Desktop/mobile lifecycle coverage in `apps/frontend/e2e/adventure-foundation.spec.ts`.
 
 ##### Verification Gaps
 
-- `LC-003/S1/R5-S4` requires desktop/mobile component, route, E2E, and visual comparison evidence.
-- The strengthened `LC-003/S1/R5-S3` requires focused focus-management, dismissal, pending, failure, and restoration tests plus browser confirmation.
+- User manual confirmation and the separately owned UI Foundations hub capture remain pending; app-owned dialog, responsive, E2E, and visual evidence is complete.
 
 #### Supersedes / Reconciles
 

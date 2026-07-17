@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from 'react'
+import { useRef, type ReactNode, type RefObject } from 'react'
 import { Button } from '../Button/Button'
 import { Dialog } from './Dialog'
 import styles from './ConfirmDialog.module.css'
@@ -7,6 +7,7 @@ export interface ConfirmDialogProps {
   children: ReactNode
   confirmLabel: string
   error?: string | null
+  finalFocusRef?: RefObject<HTMLElement | null>
   onCancel: () => void
   onConfirm: () => void
   open: boolean
@@ -19,6 +20,7 @@ export function ConfirmDialog({
   children,
   confirmLabel,
   error,
+  finalFocusRef,
   onCancel,
   onConfirm,
   open,
@@ -31,6 +33,7 @@ export function ConfirmDialog({
   return (
     <Dialog
       closeDisabled={pending}
+      finalFocusRef={finalFocusRef}
       initialFocusRef={cancelRef}
       onOpenChange={(nextOpen) => {
         if (!nextOpen) onCancel()
@@ -42,6 +45,11 @@ export function ConfirmDialog({
       {error ? (
         <p aria-atomic="true" className={styles.error} role="alert">
           {error}
+        </p>
+      ) : null}
+      {pending ? (
+        <p aria-atomic="true" className={styles.status} role="status">
+          {pendingLabel}
         </p>
       ) : null}
       <div className={styles.actions}>

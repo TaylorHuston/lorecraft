@@ -164,8 +164,7 @@
   gap: var(--space-1);
 }
 
-.resumeAdventure,
-.deleteAdventure {
+.resumeAdventure {
   display: inline-flex;
   min-width: var(--control-touch);
   min-height: var(--control-touch);
@@ -191,11 +190,7 @@
 }
 
 .deleteAdventure {
-  color: var(--danger);
-}
-
-.deleteAdventure:hover {
-  background: var(--danger-muted);
+  font-size: 0.75rem;
 }
 
 .adventureIdentity {
@@ -333,32 +328,6 @@
   align-items: center;
   gap: var(--space-4);
   margin-top: var(--space-5);
-}
-
-.retry {
-  min-height: var(--control-touch);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--control-boundary);
-  border-radius: var(--radius-control);
-  background: var(--surface-interactive);
-  color: var(--text-primary);
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 650;
-  cursor: pointer;
-  transition:
-    background var(--motion-fast) ease,
-    border-color var(--motion-fast) ease;
-}
-
-.retry:hover:not(:disabled) {
-  border-color: var(--control-boundary);
-  background: var(--surface-raised);
-}
-
-.retry:disabled {
-  cursor: wait;
-  opacity: 0.6;
 }
 
 @media (max-width: 40rem) {

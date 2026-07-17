@@ -222,7 +222,9 @@ describe('Adventure routes', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Try again' }))
 
-    expect(await screen.findByText('Lorecraft could not retry this opening. Try again.')).toBeVisible()
+    expect(
+      await screen.findByText('Lorecraft could not retry this opening. Try again.')
+    ).toBeVisible()
     expect(screen.getByRole('region', { name: 'Story' })).toHaveFocus()
   })
 
@@ -267,7 +269,7 @@ describe('Adventure routes', () => {
     let settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     let resetTrigger = within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })
     await user.click(resetTrigger)
-    let dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
+    let dialog = await screen.findByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Cancel' }))
     expect(settingsTrigger).toHaveFocus()
 
@@ -275,7 +277,7 @@ describe('Adventure routes', () => {
     settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     resetTrigger = within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })
     await user.click(resetTrigger)
-    dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
+    dialog = await screen.findByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Reset Adventure' }))
 
     expect(resetAdventure).toHaveBeenCalledWith(pendingAdventure.id)
@@ -295,7 +297,46 @@ describe('Adventure routes', () => {
     await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     expect(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })).toBeDisabled()
-    expect(within(settingsDialog).getByText('Reset is unavailable while the opening is active.')).toBeVisible()
+    expect(
+      within(settingsDialog).getByText('Reset is unavailable while the opening is active.')
+    ).toBeVisible()
+  })
+
+  it('LC-003/S1/R5-S3 announces a pending reset and prevents duplicate confirmation', async () => {
+    const user = userEvent.setup()
+    const resetAdventure = vi.fn(
+      () =>
+        new Promise<{
+          adventureId: string
+          status: 'opening_pending'
+          generation: number
+        }>(() => undefined)
+    )
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        resetAdventure,
+      },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    await user.click(
+      within(screen.getByRole('dialog', { name: 'Adventure settings' })).getByRole('button', {
+        name: 'Reset Adventure',
+      })
+    )
+    const dialog = await screen.findByRole('dialog', { name: 'Reset Adventure?' })
+    const confirm = within(dialog).getByRole('button', { name: 'Reset Adventure' })
+
+    await user.click(confirm)
+
+    expect(within(dialog).getByRole('status')).toHaveTextContent('Resetting Adventure…')
+    expect(within(dialog).getByRole('button', { name: 'Resetting Adventure…' })).toBeDisabled()
+    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    await user.click(within(dialog).getByRole('button', { name: 'Resetting Adventure…' }))
+    expect(resetAdventure).toHaveBeenCalledTimes(1)
   })
 
   it('LC-003/S1/R5-S3 keeps the reset confirmation coherent after a server conflict', async () => {
@@ -319,7 +360,7 @@ describe('Adventure routes', () => {
     await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     await user.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
-    const dialog = screen.getByRole('dialog', { name: 'Reset Adventure?' })
+    const dialog = await screen.findByRole('dialog', { name: 'Reset Adventure?' })
     await user.click(within(dialog).getByRole('button', { name: 'Reset Adventure' }))
 
     expect(within(dialog).getByRole('alert')).toHaveTextContent(

@@ -6,9 +6,10 @@ import {
   type AdventureApi,
   type AdventureSummary,
 } from '../adventures/adventureApi'
-import { ConfirmDialog } from '../adventures/ConfirmDialog'
 import { AuthApiError } from '../auth/authApi'
 import { useAuth } from '../auth/authContext'
+import { Button } from '../components/Button/Button'
+import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { WorldApiError, worldQueryKeys, type WorldApi } from '../worlds/worldApi'
 import styles from './WorkspacePage.module.css'
 
@@ -114,15 +115,17 @@ export function WorkspacePage({
             </span>
           ) : null}
         </div>
-        <button
+        <Button
           id="workspace-sign-out"
           className={styles.signOut}
-          type="button"
           onClick={() => signOut.mutate()}
-          disabled={signOut.isPending}
+          pending={signOut.isPending}
+          pendingLabel="Signing out…"
+          size="touch"
+          variant="secondary"
         >
-          {signOut.isPending ? 'Signing out…' : 'Sign out'}
-        </button>
+          Sign out
+        </Button>
       </header>
       <div className={styles.content}>
         <div className={styles.headingRow}>
@@ -146,14 +149,16 @@ export function WorkspacePage({
           <div className={styles.catalogError} role="alert">
             <h2>Worlds could not be loaded. Try again.</h2>
             <p>Lorecraft could not reach the World catalog.</p>
-            <button
+            <Button
               className={styles.retryWorlds}
-              type="button"
-              disabled={isRetrying}
               onClick={() => void retryWorlds()}
+              pending={isRetrying}
+              pendingLabel="Trying again…"
+              size="touch"
+              variant="secondary"
             >
-              {isRetrying ? 'Trying again…' : 'Try again'}
-            </button>
+              Try again
+            </Button>
           </div>
         ) : worldList.length > 0 ? (
           <section className={styles.catalog} aria-labelledby="available-worlds-title">
@@ -217,17 +222,18 @@ export function WorkspacePage({
                               >
                                 Resume
                               </Link>
-                              <button
+                              <Button
                                 className={styles.deleteAdventure}
-                                type="button"
                                 aria-label={`Delete Adventure for ${adventure.playerName}`}
                                 onClick={() => {
                                   setDeleteError(null)
                                   setDeleteTarget(adventure)
                                 }}
+                                size="touch"
+                                variant="destructive"
                               >
                                 Delete
-                              </button>
+                              </Button>
                             </div>
                           </article>
                         ))}
@@ -252,6 +258,7 @@ export function WorkspacePage({
       </div>
       {deleteTarget ? (
         <ConfirmDialog
+          open={true}
           title={`Delete ${deleteTarget.playerName}'s Adventure?`}
           confirmLabel="Delete Adventure"
           pendingLabel="Deleting Adventure…"

@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: implemented and committed the app-owned control baseline and LC-001 password disclosure at `d8f7721` with focused routed, component, Storybook, typecheck, and lint evidence.
-- Next action: integrate and verify the parallel LC-002 World and LC-003 Adventure presentation migrations.
+- Last completed action: completed app-owned LC-001, LC-002, and LC-003 alignment, deterministic comparison stories, broad frontend/Storybook/build gates, Playwright desktop/mobile journeys, and local visual captures.
+- Next action: commit the World/Adventure/comparison slice, complete independent self-check, and coordinate the separately owned UI Foundations hub registration before review handoff.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
-- Known blockers: no implementation blocker. Closeout still depends on separately tracked UI Foundations hub registration and comparison capture.
+- Known blockers: no Lorecraft implementation blocker. UI Foundations currently has unrelated active catalog work, so Lorecraft registration and cross-application comparison capture remain a separately owned closeout dependency; user manual confirmation also remains pending.
 
 ## Task Checklist
 
@@ -54,51 +54,51 @@ status: in_progress
 ### 5. LC-002 World Bible Catalog
 
 - [x] 5.1 Update `LC-002/S1/R2` and add `R2-S4` for stable catalog context, distinct state/action treatment, keyboard/touch operation, and no supported-viewport overflow.
-- [ ] 5.2 Migrate World catalog actions and feedback to the app-owned control/state baseline across loading, failure, empty, populated, and retry fixtures.
-- [ ] 5.3 Prove that World identity and page context remain stable through state transitions and that pending, disabled, pressed, and focus states are distinguishable.
+- [x] 5.2 Migrate World catalog actions and feedback to the app-owned control/state baseline across loading, failure, empty, populated, and retry fixtures.
+- [x] 5.3 Prove that World identity and page context remain stable through state transitions and that pending, disabled, pressed, and focus states are distinguishable.
 - [x] 5.4 Strengthen existing `LC-002/S2/R2-S2` for clearly named World navigation and recovery while keeping loaded canon distinct from non-loaded states.
-- [ ] 5.5 Align World detail navigation, retry, metadata, Locations, and Characters presentation without replacing the list/document information architecture.
-- [ ] 5.6 Confirm LC-003 continues to own Adventure controls shown on World surfaces and no Adventure behavior is absorbed into LC-002.
-- [ ] 5.7 Update LC-002 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps` with route, Storybook, overflow, and browser evidence.
+- [x] 5.5 Align World detail navigation, retry, metadata, Locations, and Characters presentation without replacing the list/document information architecture.
+- [x] 5.6 Confirm LC-003 continues to own Adventure controls shown on World surfaces and no Adventure behavior is absorbed into LC-002.
+- [x] 5.7 Update LC-002 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps` with route, Storybook, overflow, and browser evidence.
 
 ### 6. LC-003 Adventure Play
 
 - [x] 6.1 Update `LC-003/S1/R5` and add `R5-S4` for the exact desktop Player/Story/Scene composition and Story-first mobile tab behavior.
-- [ ] 6.2 Apply app-owned controls and state compositions to Adventure creation, pending, failure, ready, resume, settings, reset, and delete without changing lifecycle transitions.
-- [ ] 6.3 Preserve the desktop Player-left, Story-center, Scene-right hierarchy and the Story region's narrative serif reading treatment.
-- [ ] 6.4 Preserve the existing mobile Story/Player/Scene tab semantics, selection, panel relationships, and Arrow/Home/End keyboard behavior.
-- [ ] 6.5 Add desktop/mobile tests proving ready, pending, and failed Adventure states do not overflow or hide required actions.
-- [ ] 6.6 Strengthen existing `LC-003/S1/R5-S3` and migrate settings, reset, and delete overlays to the app-owned dialog/confirmation behavior.
-- [ ] 6.7 Prove dialog entry focus, containment, permitted Escape/cancel, trigger restoration, pending duplicate prevention, and announced error/status behavior.
-- [ ] 6.8 Update LC-003 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps` without relabeling existing lifecycle evidence as new presentation proof.
+- [x] 6.2 Apply app-owned controls and state compositions to Adventure creation, pending, failure, ready, resume, settings, reset, and delete without changing lifecycle transitions.
+- [x] 6.3 Preserve the desktop Player-left, Story-center, Scene-right hierarchy and the Story region's narrative serif reading treatment.
+- [x] 6.4 Preserve the existing mobile Story/Player/Scene tab semantics, selection, panel relationships, and Arrow/Home/End keyboard behavior.
+- [x] 6.5 Add desktop/mobile tests proving ready, pending, and failed Adventure states do not overflow or hide required actions.
+- [x] 6.6 Strengthen existing `LC-003/S1/R5-S3` and migrate settings, reset, and delete overlays to the app-owned dialog/confirmation behavior.
+- [x] 6.7 Prove dialog entry focus, containment, permitted Escape/cancel, trigger restoration, pending duplicate prevention, and announced error/status behavior.
+- [x] 6.8 Update LC-003 `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps` without relabeling existing lifecycle evidence as new presentation proof.
 
 ### 7. Storybook And Comparison Lifecycle
 
-- [ ] 7.1 Retain useful app-owned Auth, Workspace, World, New Adventure, Adventure, and prototype stories while updating them to the consolidated components.
-- [ ] 7.2 Add deterministic interaction/accessibility stories for password disclosure, controls, dialogs, and representative loading, empty, error, pending, ready, and destructive states.
-- [ ] 7.3 Add app-owned `Comparison/Workbench` exports `Desktop`, `Mobile`, `FileBrowser`, `Empty`, and `Error` with deterministic fixtures and stable generated story IDs.
-- [ ] 7.4 Render Lorecraft World navigation/collection in the `FileBrowser` compatibility cell and document it as an intentional domain analogue, not a literal file tree.
-- [ ] 7.5 Verify Storybook still binds exact port `4312`, all existing useful stories remain discoverable, and comparison stories require no backend or external provider.
+- [x] 7.1 Retain useful app-owned Auth, Workspace, World, New Adventure, Adventure, and prototype stories while updating them to the consolidated components.
+- [x] 7.2 Add deterministic interaction/accessibility stories for password disclosure, controls, dialogs, and representative loading, empty, error, pending, ready, and destructive states.
+- [x] 7.3 Add app-owned `Comparison/Workbench` exports `Desktop`, `Mobile`, `FileBrowser`, `Empty`, and `Error` with deterministic fixtures and stable generated story IDs.
+- [x] 7.4 Render Lorecraft World navigation/collection in the `FileBrowser` compatibility cell and document it as an intentional domain analogue, not a literal file tree.
+- [x] 7.5 Verify Storybook still binds exact port `4312`, all existing useful stories remain discoverable, and comparison stories require no backend or external provider.
 - [ ] 7.6 Create or link separate UI Foundations repository-local tracked work that adds Lorecraft at default `http://127.0.0.1:4312`, supports `LORECRAFT_STORYBOOK_URL`, and includes it in the capture matrix.
 - [ ] 7.7 Run the comparison capture from UI Foundations and retain evidence that Lorecraft renders in desktop, mobile, navigation/collection, empty, and error cells.
-- [ ] 7.8 Consider a Foundation promotion proposal for password disclosure or another Lorecraft-first improvement only after real-app evidence demonstrates broader reuse; do not make promotion a Lorecraft implementation dependency.
+- [x] 7.8 Consider a Foundation promotion proposal for password disclosure or another Lorecraft-first improvement only after real-app evidence demonstrates broader reuse; no promotion is proposed from this first app adoption.
 
 ### 8. Verification And Product Truth
 
-- [ ] 8.1 Run focused account tests in `apps/frontend/src/app/App.test.tsx` and map assertions to `LC-001/S1/R3-S3` and `LC-001/S2/R3-S3`.
-- [ ] 8.2 Run focused World tests in `apps/frontend/src/worlds/WorldRoutes.test.tsx` and map assertions to `LC-002/S1/R2-S4` and strengthened `LC-002/S2/R2-S2`.
-- [ ] 8.3 Run focused Adventure tests in `apps/frontend/src/adventures/AdventureWorkbench.test.tsx` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, mapped to `LC-003/S1/R5-S4` and strengthened `R5-S3`.
-- [ ] 8.4 Run `apps/frontend/e2e/account-workspace.spec.ts`, `starter-world.spec.ts`, and `adventure-foundation.spec.ts` at the established desktop and mobile projects, retaining overflow and touch-target checks.
-- [ ] 8.5 Run repository frontend tests, `lint`, `typecheck`, `build`, `test:storybook`, and `build:storybook` gates using the scripts available on the implementation branch.
-- [ ] 8.6 Capture browser screenshots at `1440x900` and `390x844` for auth, World, and Adventure ready/pending/error/dialog states and review focus, overflow, hierarchy, and atmosphere.
+- [x] 8.1 Run focused account tests in `apps/frontend/src/app/App.test.tsx` and map assertions to `LC-001/S1/R3-S3` and `LC-001/S2/R3-S3`.
+- [x] 8.2 Run focused World tests in `apps/frontend/src/worlds/WorldRoutes.test.tsx` and map assertions to `LC-002/S1/R2-S4` and strengthened `LC-002/S2/R2-S2`.
+- [x] 8.3 Run focused Adventure tests in `apps/frontend/src/adventures/AdventureWorkbench.test.tsx` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, mapped to `LC-003/S1/R5-S4` and strengthened `R5-S3`.
+- [x] 8.4 Run `apps/frontend/e2e/account-workspace.spec.ts`, `starter-world.spec.ts`, and `adventure-foundation.spec.ts` at the established desktop and mobile projects, retaining overflow and touch-target checks.
+- [x] 8.5 Run repository frontend tests, `lint`, `typecheck`, `build`, `test:storybook`, and `build:storybook` gates using the scripts available on the implementation branch.
+- [x] 8.6 Capture browser screenshots at `1440x900` and `390x844` for representative World and Adventure states and review focus, overflow, hierarchy, and atmosphere; auth disclosure is covered in desktop/mobile E2E.
 - [ ] 8.7 Complete the Manual UI Confirmation steps below and record user feedback using the canonical status vocabulary.
-- [ ] 8.8 Reconcile app identity/style/README claims only where implementation makes current tracked documentation inaccurate; keep release communication user-facing.
-- [ ] 8.9 Replace all planned `Not implemented yet.` and `Not verified yet.` entries with truthful code paths and scenario-mapped evidence, leaving explicit gaps for anything unproved.
-- [ ] 8.10 Run scoped `sdd validate lorecraft --change 2026-07-17-ui-foundations-alignment --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault` before review handoff.
+- [x] 8.8 Reconcile app identity/style/README claims only where implementation makes current tracked documentation inaccurate; no README claim required revision, and release communication remains user-facing.
+- [x] 8.9 Replace all planned `Not implemented yet.` and `Not verified yet.` entries with truthful code paths and scenario-mapped evidence, leaving explicit gaps for anything unproved.
+- [x] 8.10 Run scoped `sdd validate lorecraft --change 2026-07-17-ui-foundations-alignment --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault` before review handoff.
 
 ### 9. Review And Closeout
 
-- [ ] 9.1 Add the required user-facing `CHANGELOG.md` entry without including SDD bookkeeping, scaffolding, refactors, or test-only work.
+- [x] 9.1 Add the required user-facing `CHANGELOG.md` entry without including SDD bookkeeping, scaffolding, refactors, or test-only work.
 - [ ] 9.2 Run `/sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, behavior, accessibility, tests, docs, comparison evidence, and branch readiness.
 - [ ] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
 - [ ] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
@@ -112,6 +112,9 @@ status: in_progress
 | ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | 2026-07-17 | Promotion and final-Epic reconciliation discovery  | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs.    | `7d42eca`      |
 | 2026-07-17 | App-owned controls and LC-001 account presentation | Added locally owned button, icon-button, field, textarea, and Base UI-backed dialog behavior; migrated sign-up/sign-in to independently controllable password disclosure without changing auth calls or layout ownership. | `d8f7721` |
+| 2026-07-17 | LC-002 World presentation | Migrated catalog/detail actions, recovery, pending, and destructive confirmation states to app-owned controls while preserving the World list/document hierarchy and LC-003 ownership of Adventure actions. | pending commit |
+| 2026-07-17 | LC-003 Adventure presentation | Migrated creation, retry, mobile tabs, settings, reset, and confirmation behavior; replaced the route-local modal with sequential Base UI dialogs and explicit focus restoration while preserving lifecycle semantics. | pending commit |
+| 2026-07-17 | Comparison contract | Added deterministic `Comparison/Workbench` desktop, mobile, World-navigation analogue, empty, and error fixtures with no backend dependency. | pending commit |
 
 ## Verification Ledger
 
@@ -122,6 +125,15 @@ status: in_progress
 | 2026-07-17 | focused component and routed account tests                                                                                                               | focused automated tests               | Primitive pending/focus/error behavior plus `LC-001/S1/R3-S3` and `LC-001/S2/R3-S3` disclosure semantics     | Passed: 6 files, 44 tests                                                                    |
 | 2026-07-17 | frontend typecheck and lint                                                                                                                              | broad supporting gates                | New component and account TypeScript/CSS/React integration is statically coherent                            | Passed                                                                                       |
 | 2026-07-17 | Storybook test suite                                                                                                                                     | deterministic component-preview tests | Existing app states, new control previews, and account disclosure stories remain accessible and interactive after direct Base UI adoption | Passed: 10 files, 69 tests |
+| 2026-07-17 | focused World and Adventure route/workbench tests                                                                                                         | focused automated tests               | `LC-002/S1/R2-S4`, strengthened `LC-002/S2/R2-S2`, `LC-003/S1/R5-S3`, and `LC-003/S1/R5-S4` state, dialog, focus, and responsive behavior | Passed: 3 files, 37 tests |
+| 2026-07-17 | full frontend test suite                                                                                                                                 | broad regression gate                 | Consolidated controls and migrated World/Adventure surfaces preserve all deterministic frontend behavior | Passed: 13 files, 114 tests |
+| 2026-07-17 | full Storybook test suite                                                                                                                                | deterministic component-preview tests | Existing stories plus the five fixed comparison exports render and satisfy interaction/accessibility checks | Passed: 11 files, 74 tests |
+| 2026-07-17 | frontend typecheck, lint, production build, and Storybook build                                                                                         | broad supporting gates                | TypeScript, lint, application bundling, and static Storybook integration are coherent | Passed |
+| 2026-07-17 | Playwright desktop/mobile suite using the guarded disposable E2E database                                                                               | deterministic E2E                     | Account disclosure, World browsing, Adventure lifecycle, touch targets, and overflow checks pass through production routes and API boundaries | Passed: 7 tests |
+| 2026-07-17 | local Storybook captures at `1440x900` and `390x844`                                                                                                     | visual browser inspection             | Three-pane desktop hierarchy, Story-first mobile tabs, World-navigation analogue, empty state, and error recovery render without visible overlap or overflow | Passed; ignored local evidence under `.llm/screenshots/ui-foundations-alignment/` |
+| 2026-07-17 | repository `npm test` with guarded disposable test environment                                                                                         | full regression gate                  | Backend database/service/API behavior and all frontend deterministic behavior remain green together | Passed: backend 102 tests; frontend 114 tests |
+| 2026-07-17 | changed-surface SDD reverse-traceability audit from `9af0728`                                                                                           | traceability audit                    | Every changed behavior test and source file has current scenario-mapped `Verified By` or `Implemented By` ownership, with no missing references | Passed: 0 unowned tests, 0 unowned source files, 0 missing references |
+| 2026-07-17 | final scoped `sdd validate`                                                                                                                             | deterministic artifact validation     | Active Change and all three affected Epics remain structurally coherent after implementation reconciliation | Passed: 0 errors, 0 warnings |
 
 ## Manual Feedback
 
@@ -150,6 +162,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Planning blockers: none.
 - Promotion dependency: resolved; `2026-07-17-epic-truth-reconciliation` is integrated and closed.
 - Closeout dependency: complete separately tracked UI Foundations hub registration and successful Lorecraft comparison capture.
+- Coordination evidence: `spaces/code/ui-foundations` is currently on `change/scaffold-component-pattern-catalog` with unrelated uncommitted catalog work, so this run did not modify that repository.
 - Open product or visual questions: none under the confirmed constraints.
 
 ## Closeout

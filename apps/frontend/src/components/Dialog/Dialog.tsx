@@ -9,6 +9,7 @@ export interface DialogProps {
   closeDisabled?: boolean
   closeLabel?: string
   description?: ReactNode
+  finalFocusRef?: RefObject<HTMLElement | null>
   initialFocusRef?: RefObject<HTMLElement | null>
   onOpenChange: (open: boolean) => void
   open: boolean
@@ -20,6 +21,7 @@ export function Dialog({
   closeDisabled = false,
   closeLabel = 'Close dialog',
   description,
+  finalFocusRef,
   initialFocusRef,
   onOpenChange,
   open,
@@ -35,7 +37,11 @@ export function Dialog({
       <BaseDialog.Portal>
         <BaseDialog.Backdrop className={styles.backdrop} />
         <BaseDialog.Viewport className={styles.viewport}>
-          <BaseDialog.Popup className={styles.popup} initialFocus={initialFocusRef}>
+          <BaseDialog.Popup
+            className={styles.popup}
+            finalFocus={finalFocusRef}
+            initialFocus={initialFocusRef}
+          >
             <header className={styles.header}>
               <div className={styles.heading}>
                 <BaseDialog.Title className={styles.title}>{title}</BaseDialog.Title>

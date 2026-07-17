@@ -43,6 +43,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Editors and local tooling
+.llm/
 .fleet/
 .idea/
 .vscode/

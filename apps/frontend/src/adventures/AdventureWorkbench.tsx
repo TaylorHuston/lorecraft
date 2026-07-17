@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { Button } from '../components/Button/Button'
 import type { AdventureDetail } from './adventureApi'
 import styles from './AdventureWorkbench.module.css'
 
@@ -90,7 +91,9 @@ function StoryRegion({
           <div className={styles.storyState} role="status" aria-live="polite" aria-atomic="true">
             <p className={styles.stateEyebrow}>Game Master</p>
             <h3>Preparing your opening</h3>
-            <p>Your Adventure is safe. You can leave this page and return while the story begins.</p>
+            <p>
+              Your Adventure is safe. You can leave this page and return while the story begins.
+            </p>
           </div>
         ) : null}
         {adventure.status === 'opening_failed' ? (
@@ -100,9 +103,14 @@ function StoryRegion({
             <p>No partial story was saved. Try again when you're ready.</p>
             {retryError ? <p className={styles.retryError}>{retryError}</p> : null}
             <div className={styles.stateActions}>
-              <button type="button" disabled={retrying} onClick={retryOpening}>
-                {retrying ? 'Trying again…' : 'Try again'}
-              </button>
+              <Button
+                onClick={retryOpening}
+                pending={retrying}
+                pendingLabel="Trying again…"
+                size="touch"
+              >
+                Try again
+              </Button>
               <Link to={adventure.sourceWorld.route}>Return to World</Link>
             </div>
           </div>
@@ -210,19 +218,20 @@ export function AdventureWorkbench({
       <div className={styles.mobileWorkbench}>
         <nav className={styles.mobileTabs} role="tablist" aria-label="Adventure views">
           {paneOrder.map((pane) => (
-            <button
+            <Button
               key={pane}
               id={`adventure-tab-${pane}`}
-              type="button"
               role="tab"
               aria-controls={`adventure-panel-${pane}`}
               aria-selected={activePane === pane}
               tabIndex={activePane === pane ? 0 : -1}
               onClick={() => setActivePane(pane)}
               onKeyDown={(event) => handleTabKey(event, pane)}
+              size="touch"
+              variant="ghost"
             >
               {paneLabels[pane]}
-            </button>
+            </Button>
           ))}
         </nav>
         <div

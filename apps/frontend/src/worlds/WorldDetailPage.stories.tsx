@@ -35,10 +35,18 @@ const emptyApi: WorldApi = {
 }
 
 const adventureApi: AdventureApi = {
-  createAdventure: async () => { throw new Error('Not used in this story.') },
-  getAdventure: async () => { throw new Error('Not used in this story.') },
-  retryOpening: async () => { throw new Error('Not used in this story.') },
-  resetAdventure: async () => { throw new Error('Not used in this story.') },
+  createAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
+  getAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
+  retryOpening: async () => {
+    throw new Error('Not used in this story.')
+  },
+  resetAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
   deleteAdventure: async () => undefined,
 }
 
@@ -114,7 +122,11 @@ export const Loaded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.findByRole('heading', { name: 'Stormbound Chapel' })).resolves.toBeVisible()
-    await expect(canvas.getByText('A local woman with damp dark hair and watchful eyes.')).toBeVisible()
+    await expect(canvas.getByRole('article', { name: 'Stormbound Chapel' })).toBeVisible()
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
+    await expect(
+      canvas.getByText('A local woman with damp dark hair and watchful eyes.')
+    ).toBeVisible()
     await expect(canvas.getByText('Read only')).toBeVisible()
     await expect(canvas.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute(
       'href',
@@ -159,11 +171,12 @@ export const DeleteConfirmation: Story = {
   ...AdventureList,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
+    const page = within(canvasElement.ownerDocument.body)
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Delete Adventure for Elara Vance' })
     )
     await expect(
-      canvas.getByRole('dialog', { name: "Delete Elara Vance's Adventure?" })
+      page.getByRole('dialog', { name: "Delete Elara Vance's Adventure?" })
     ).toBeVisible()
   },
 }
@@ -286,7 +299,11 @@ export const RetryPending: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await userEvent.click(await canvas.findByRole('button', { name: 'Try again' }))
-    await expect(canvas.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
+    const pendingRetry = canvas.getByRole('button', { name: 'Trying again…' })
+    await expect(pendingRetry).toBeDisabled()
+    await expect(pendingRetry).toHaveAttribute('aria-busy', 'true')
+    await expect(canvas.getByRole('heading', { name: 'World unavailable' })).toBeVisible()
+    await expect(canvas.getByRole('link', { name: 'Back to Worlds' })).toBeVisible()
   },
 }
 
