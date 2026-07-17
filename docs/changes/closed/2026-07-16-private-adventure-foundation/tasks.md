@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: await explicit close/merge authorization
-- Active branch/ref: `change/private-adventure-foundation`
-- Expected dirty files: review evidence reconciliation only
+- Last completed action: merged `change/private-adventure-foundation` into `develop` at `c595f24`
+- Next action: complete the authorized `sdd change close` folder transition and commit it on `develop`
+- Active branch/ref: `develop`
+- Expected dirty files: closeout record and Change folder transition only
 - Known blockers: none
 
 ## Task Checklist
@@ -112,7 +112,7 @@ status: in_review
 - [x] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
 - [x] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
 - [x] 10.7 Confirm proposal/design/tasks/Epic/ADR/README/CHANGELOG truth matches implementation and no candidate Story is described as implemented.
-- [ ] 10.8 Keep Change status `in_review` through review and authorized PR/merge, then close through `sdd change close` rather than editing a closed status manually.
+- [x] 10.8 Keep Change status `in_review` through review and authorized PR/merge, then close through `sdd change close` rather than editing a closed status manually.
 
 ## Implementation Ledger
 
@@ -229,7 +229,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: in_review; implementation, deterministic verification, review remediation, live-provider evidence, and manual acceptance complete; awaiting authorized close/merge
+- Change status: closed by authorized `sdd change close` after local integration into `develop`
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: yes
@@ -239,9 +239,9 @@ status: in_review
 - Release communication current: README and user-facing CHANGELOG updated
 - `sdd-review` verdict: pass
 - Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
-- `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
+- `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; all evidence gates complete
 - Planning updates resolved: yes
 - Manual UI confirmation status: confirmed 2026-07-17
-- PR / merge state: local `change/private-adventure-foundation`; no PR
+- PR / merge state: merged locally into `develop` at `c595f24`; no PR or push requested
 - Deferred scope accepted: yes, recorded in proposal/design
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: yes, through `sdd change close`
