@@ -70,7 +70,7 @@ ready
 - Conflict check: clean; `git merge-tree --write-tree develop HEAD` produced `62d0d0e53024d372b7c449241f61834adac12824`
 - Dirty state at discovery: clean implementation repository; unrelated private-vault edits were outside the source repository
 - Branch policy: valid `change/` branch targeting non-production `develop`; no routine PR required
-- Review remediation commit: pending ledger update
+- Review remediation commits: app `629c413`; private vault `fb6e4f3b9`, `d87e115f1`
 
 ## Reverse Traceability
 
@@ -108,9 +108,9 @@ ready
 - Reviewed implementation commit: `abb810a4b16cc4d429841278603bde9d32dbdd8d`
 - Target branch: `develop`
 - Conflict check: clean
-- Commit state: safe review batch pending commit and final ledger ref
+- Commit state: safe review batch committed at app ref `629c413` and private-vault refs `fb6e4f3b9` and `d87e115f1`; this final review-ledger reconciliation is the only follow-up
 - PR status: not requested and not required for routine local integration
-- Merge status: technically ready after the safe review batch is committed; merge and closeout require explicit authorization
+- Merge status: technically ready; merge and closeout require explicit authorization
 
 ## Suggested Manual UI Testing
 

@@ -6,9 +6,9 @@ status: in_review
 ## Resume Here
 
 - Last completed action: independent `/sdd-review` completed, the consolidated safe artifact/evidence findings were remediated, and the regression rereview passes.
-- Next action: commit the safe review batch, record its ref, then request authorization to merge into `develop` and close the Change.
+- Next action: request authorization to merge into `develop` and close the Change.
 - Active branch/ref: `change/epic-truth-reconciliation` from `develop`.
-- Expected dirty files: none at reviewed implementation commit `abb810a`; the private PRD is committed in vault ref `5075f2037`. Review remediation is limited to this Change, affected Epic/supporting artifacts, and the private Lorecraft entry points; unrelated vault changes remain excluded.
+- Expected dirty files: none in the application repository after review remediation. The private PRD is committed in vault ref `5075f2037`, and the private Lorecraft entry-point reconciliation is committed in vault refs `fb6e4f3b9` and `d87e115f1`; unrelated vault changes remain excluded.
 - Known blockers: none.
 
 ## Task Checklist
@@ -72,7 +72,7 @@ status: in_review
 | 2026-07-17 | LC-002 visibility/disclosure truth | bounded TDD delegation, integrated and verified locally | LC-002 Epic and World catalog functional test | Added owner-private visibility/non-disclosure proof; preserved minimized Character disclosure with no production-code change | `713f9a7` |
 | 2026-07-17 | LC-003 and supporting truth | main orchestrator | LC-003, ADRs, closed Changes, README, AGENTS, CHANGELOG | Narrowed implemented outcome, normalized lifecycle records, linked accepted ADRs, and aligned public/private product posture | `713f9a7` |
 | 2026-07-17 | Fresh-context implementation self-check | delegated review integrated by main orchestrator | LC-001 security evidence and reconciliation artifacts | Added direct user/session state-invariance assertions to malformed and oversized auth payload tests; no unresolved safe finding remains | `713f9a7` |
-| 2026-07-17 | Independent SDD review and safe remediation | delegated artifact/traceability passes plus orchestrator code, verification, security, and integration review | Epics, Change/closed artifacts, private Idea entry points | Reconciled six evidence/supporting-truth findings; no runtime or security defect remains | commit pending |
+| 2026-07-17 | Independent SDD review and safe remediation | delegated artifact/traceability passes plus orchestrator code, verification, security, and integration review | Epics, Change/closed artifacts, private Idea entry points | Reconciled six evidence/supporting-truth findings; no runtime or security defect remains | app `629c413`; vault `fb6e4f3b9`, `d87e115f1` |
 
 ## Verification Ledger
 
