@@ -102,7 +102,7 @@ The system SHALL list public Worlds and Worlds privately owned by the current ac
 
 ##### Requirement R2: Coherent World Catalog Presentation
 
-The system SHALL present the World catalog and its loading, failure, empty, populated, retry, and sign-out states through one responsive Lorecraft interface.
+The system SHALL present the World catalog and its loading, failure, empty, populated, retry, and sign-out states through one responsive Lorecraft interface with predictable app-owned action and state grammar.
 
 ###### Scenario R2-S1: Populated Catalog
 
@@ -121,6 +121,13 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 - WHEN catalog loading or sign-out fails recoverably
 - THEN the interface presents an actionable error without hiding available context
 - AND any retry action has visible focus and a touch-accessible target.
+
+###### Scenario R2-S4: Preserve Catalog Context Across States And Actions
+
+- WHEN the catalog transitions among loading, failure, empty, and populated states or the user invokes World navigation or retry
+- THEN available World identity and page context remain stable
+- AND controls expose distinct keyboard focus, pending, disabled, and pressed states where applicable
+- AND the interface introduces no horizontal overflow at supported desktop or mobile widths.
 
 #### Implemented By
 
@@ -149,7 +156,7 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 
 #### Verification Gaps
 
-- None.
+- `S1/R2-S4` is accepted but not implemented or verified yet; it requires route, Storybook, overflow, and desktop/mobile browser evidence.
 
 #### Story Notes
 
@@ -193,7 +200,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 ##### Requirement R2: Readable Structured World Detail
 
-The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy.
+The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy using the same app-owned control and state grammar as the catalog.
 
 ###### Scenario R2-S1: Structured Detail At Supported Viewports
 
@@ -205,7 +212,8 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 
 - WHEN World detail is missing, loading, or temporarily unavailable
 - THEN the state is clearly distinguished from loaded canon
-- AND available retry or return navigation remains keyboard and touch accessible.
+- AND available retry or return navigation is clearly named and remains keyboard and touch accessible
+- AND pending or disabled behavior is exposed when applicable through the same app-owned control grammar as the catalog.
 
 ###### Scenario R2-S3: Empty Structured Collections
 
@@ -242,7 +250,7 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 
 #### Verification Gaps
 
-- None.
+- The strengthened `S2/R2-S2` control grammar is accepted but not verified yet; it requires route, Storybook, overflow, and desktop/mobile browser evidence.
 
 #### Story Notes
 

@@ -170,7 +170,7 @@ The system SHALL list and reopen the owner's Adventures under their source World
 
 ##### Requirement R5: Coherent Adventure Experience
 
-The system SHALL present creation, pending, failure, ready, reset, delete, and resume states through an accessible responsive interface.
+The system SHALL present creation, pending, failure, ready, reset, delete, resume, and settings states through an accessible story-first responsive interface that preserves Lorecraft's Player/Story/Scene composition.
 
 ###### Scenario R5-S1: Create And Pending States
 
@@ -186,9 +186,20 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 ###### Scenario R5-S3: Recoverable And Destructive Actions
 
-- WHEN an opening fails, reset is unavailable during active work, or delete/reset requires confirmation
+- WHEN an opening fails, reset is unavailable during active work, or settings, delete, or reset opens a dialog
 - THEN the UI presents the correct retry, conflict, or confirmation behavior
-- AND focus and status announcements remain coherent after the action.
+- AND focus enters the appropriate dialog control, remains contained while open, and returns to the invoking control after close
+- AND Escape or cancel dismisses the dialog when dismissal is allowed
+- WHEN confirmation is pending or fails
+- THEN duplicate or conflicting destructive actions are prevented and status or error feedback is announced.
+
+###### Scenario R5-S4: Preserve Desktop And Mobile Adventure Composition
+
+- WHEN a ready, pending, or failed Adventure is viewed at a supported desktop width
+- THEN Player, Story, and Scene remain distinct regions with Story dominant in the center
+- WHEN the same Adventure is viewed at a supported narrow width
+- THEN Story is the first view and Story, Player, and Scene are available through keyboard-operable tabs
+- AND no region introduces horizontal overflow or hides required actions.
 
 #### Implemented By
 
@@ -237,6 +248,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 #### Verification Gaps
 
+- `S1/R5-S4` and the strengthened `S1/R5-S3` dialog guarantees are accepted but not verified yet; they require responsive component, route, E2E, dialog interaction, and browser evidence.
 - The old-versus-new WorldVersion behavior is proven at database/service/API boundaries because no World-authoring browser route exists yet; add a routed E2E when authoring/version publication becomes user-accessible.
 
 #### Story Notes

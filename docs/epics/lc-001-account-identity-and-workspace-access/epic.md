@@ -107,7 +107,7 @@ The system SHALL establish an authenticated browser session after successful acc
 
 ##### Requirement R3: Accessible Account Creation Presentation
 
-The system SHALL present account creation as a focused, responsive Lorecraft form with persistent field labels, visible password confirmation, clear validation and pending states, and keyboard-visible focus.
+The system SHALL present account creation as a focused, responsive Lorecraft form with persistent field labels, independently controllable password disclosure, visible password confirmation, clear validation and pending states, and keyboard-visible focus.
 
 ###### Scenario R3-S1: Account Creation At Supported Viewports
 
@@ -120,6 +120,13 @@ The system SHALL present account creation as a focused, responsive Lorecraft for
 - WHEN sign-up validation fails or submission is pending
 - THEN field and form feedback remains associated with the relevant controls
 - AND the current form values and layout remain stable enough to recover without re-entry caused by presentation changes.
+
+###### Scenario R3-S3: Control Account-Creation Password Disclosure
+
+- WHEN a visitor uses the disclosure action for Password or Confirm password
+- THEN only the selected field changes between concealed and readable presentation
+- AND its value, focus, autocomplete purpose, validation association, and submission behavior remain unchanged
+- AND the action is operable by keyboard and touch with a clear accessible name for its current action.
 
 ##### Requirement R4: Secure And Recoverable Signup Boundary
 
@@ -179,6 +186,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 #### Verification Gaps
 
+- `S1/R3-S3` is accepted but not implemented or verified yet; it requires focused interaction, Storybook, and desktop/mobile browser evidence.
 - Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
 
 #### Story Notes
@@ -236,7 +244,7 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 
 ##### Requirement R3: Focused Sign-In And Session Recovery
 
-The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with actionable feedback and visible keyboard focus.
+The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with independently controllable password disclosure, actionable feedback, and visible keyboard focus.
 
 ###### Scenario R3-S1: Sign-In At Supported Viewports
 
@@ -248,6 +256,12 @@ The system SHALL present sign-in and public session-refresh recovery as focused,
 - WHEN a background session check fails while an unfinished public form remains mounted
 - THEN a visually distinct but non-destructive recovery notice is presented
 - AND its retry action is keyboard and touch accessible without obscuring the form.
+
+###### Scenario R3-S3: Control Sign-In Password Disclosure
+
+- WHEN a visitor uses the disclosure action for Password
+- THEN the field changes between concealed and readable presentation without changing its value, focus, autocomplete purpose, validation association, or submission behavior
+- AND the action is operable by keyboard and touch with a clear accessible name for its current action.
 
 ##### Requirement R4: Secure And Recoverable Sign-In Boundary
 
@@ -304,6 +318,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 #### Verification Gaps
 
+- `S2/R3-S3` is accepted but not implemented or verified yet; it requires focused interaction, Storybook, and desktop/mobile browser evidence.
 - Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
 
 #### Story Notes
