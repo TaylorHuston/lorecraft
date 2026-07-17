@@ -21,6 +21,7 @@ assertDisposableDatabase({
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const frontendUrl = 'http://localhost:4313'
 const backendUrl = 'http://localhost:4314'
+const fakeStoryProviderUrl = 'http://localhost:4315'
 
 export default defineConfig({
   testDir: './e2e',
@@ -53,6 +54,14 @@ export default defineConfig({
   ],
   webServer: [
     {
+      name: 'fake-story-provider',
+      cwd: repositoryRoot,
+      command: 'node apps/frontend/e2e/fake-story-provider.mjs',
+      url: `${fakeStoryProviderUrl}/health`,
+      reuseExistingServer: false,
+      timeout: 30_000,
+    },
+    {
       name: 'backend',
       cwd: repositoryRoot,
       command:
@@ -63,6 +72,10 @@ export default defineConfig({
         NODE_ENV: 'development',
         PORT: '4314',
         SESSION_DRIVER: 'database',
+        LLM_BASE_URL: `${fakeStoryProviderUrl}/v1`,
+        LLM_API_KEY: 'e2e-provider-key',
+        LLM_MODEL: 'e2e-story-model',
+        ADVENTURE_WORKER_POLL_INTERVAL_MS: '50',
       },
       url: backendUrl,
       reuseExistingServer: false,

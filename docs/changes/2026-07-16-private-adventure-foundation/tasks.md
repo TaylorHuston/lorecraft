@@ -1,14 +1,15 @@
 ---
-status: planned
+status: in_review
 ---
+
 # Tasks: Private Adventure Foundation
 
 ## Resume Here
 
-- Last completed action: confirmed and recorded the production Adventure experience contract through `/sdd-design`
-- Next action: invoke `/sdd-apply`; create `change/private-adventure-foundation` from current `develop`, then start Task 4.1 with failing database tests
-- Active branch/ref: `develop` for promotion documentation; implementation branch not created
-- Expected dirty files: none after the design-readiness commit; application files begin only on `change/private-adventure-foundation`
+- Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
+- Next action: await explicit close/merge authorization
+- Active branch/ref: `change/private-adventure-foundation`
+- Expected dirty files: review evidence reconciliation only
 - Known blockers: none
 
 ## Task Checklist
@@ -28,8 +29,8 @@ status: planned
 - [x] 2.1 Remove the unnecessary Deep Steel Blue SDD artifacts and merge its final maintenance delta into `develop`.
 - [x] 2.2 Fetch `origin/develop`, confirm the official repository is clean, and preserve the local unpushed maintenance commit as the promotion base.
 - [x] 2.3 Promote the private folder to `docs/changes/2026-07-16-private-adventure-foundation/` and remove the private duplicate.
-- [ ] 2.4 At `/sdd-apply` start, create `change/private-adventure-foundation` from current `develop` before editing application code.
-- [ ] 2.5 Re-read repository guidance and current AdonisJS/Lucid/Tuyau documentation for version-sensitive worker, transaction, JSONB, and route APIs.
+- [x] 2.4 At `/sdd-apply` start, create `change/private-adventure-foundation` from current `develop` before editing application code.
+- [x] 2.5 Re-read repository guidance and current AdonisJS/Lucid/Tuyau documentation for version-sensitive worker, transaction, JSONB, and route APIs.
 
 ### 3. Epic And ADR Artifacts
 
@@ -42,141 +43,205 @@ status: planned
 
 ### 4. Frozen Source Foundation
 
-- [ ] 4.1 RED: add migration/database tests for World Adventure guidance, same-World Starting Point references, one default Starting Point, immutable version identity, and current-version ownership.
-- [ ] 4.2 RED: add publication tests proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
-- [ ] 4.3 Implement relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshots.
-- [ ] 4.4 Implement a provider-independent WorldVersion publication service that validates all stable-key references before insert and never updates an existing version.
-- [ ] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
-- [ ] 4.6 Verify repeated seed installation remains exact and does not alter Adventures already bound to an older version.
-- [ ] 4.7 Map implementation and evidence for `LC-003/S1 R2/R2-S1..R2-S3` and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
+- [x] 4.1 RED-to-GREEN, one invariant at a time: add migration/database tests and implementation for World Adventure guidance, same-World Starting Point references, one default Starting Point, immutable version identity, and current-version ownership.
+- [x] 4.2 RED-to-GREEN, one behavior at a time: add publication tests and implementation proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
+- [x] 4.3 Complete the relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshot models after the invariant cycles pass.
+- [x] 4.4 Complete the provider-independent WorldVersion publication service after its behavior cycles pass; validate all stable-key references before insert and never update an existing version.
+- [x] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
+- [x] 4.6 Verify repeated seed installation remains exact and reuses its immutable version; the Adventure-binding portion remains explicitly pending until the Adventure aggregate exists.
+- [x] 4.7 Map Phase 4 implementation and publication/preservation evidence for `LC-003/S1 R2`; leave Adventure-binding and creation-conflict portions of `R2-S1..R2-S3` explicit until Tasks 5 and 7 can prove them, and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
 
 ### 5. Adventure Aggregate And Authorization
 
-- [ ] 5.1 RED: add domain/service tests for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
-- [ ] 5.2 RED: add database tests for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
-- [ ] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
-- [ ] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
-- [ ] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
-- [ ] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
-- [ ] 5.7 Map implementation and evidence for `LC-003/S1 R1`, `R2`, and `R4` as each Scenario passes.
+- [x] 5.1 RED-to-GREEN, one behavior at a time: add domain/service tests and implementation for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
+- [x] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
+- [x] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
+- [x] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
+- [x] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
+- [x] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
+- [x] 5.7 Map implementation and evidence for `LC-003/S1 R1`, `R2`, and `R4` as each Scenario passes.
 
 ### 6. Durable Opening Generation
 
-- [ ] 6.1 RED: define a deterministic `StoryGenerator` contract test for successful prose, invalid/empty output, timeout, provider failure, and metadata/redaction behavior.
-- [ ] 6.2 Implement structured opening prompt assembly from platform instructions, frozen World guidance, Starting Point premise, player profile, starting Location, and Characters present.
-- [ ] 6.3 Implement the OpenAI-compatible story adapter with server-only base URL/key/model/settings, bounded timeout, normalized errors, and no extraction/JSON-mode responsibility.
-- [ ] 6.4 RED: add worker tests for row claiming, one active job, lease expiry/reclaim, one automatic retry, terminal failure, owner retry, stale-worker rejection, and deletion/reset races.
-- [ ] 6.5 Implement the separately runnable worker and atomic finalization of model call, root revision, opening story entry, Adventure head, and ready status.
-- [ ] 6.6 Add structured correlated local logs for opening lifecycle while ensuring secrets and authorization headers are absent.
-- [ ] 6.7 Wire root development/test process startup so frontend, API, and worker run together; document the separate production worker command and health expectations.
-- [ ] 6.8 Map implementation and evidence for `LC-003/S1 R3/R3-S1..R3-S4`.
+- [x] 6.1 RED: define a deterministic `StoryGenerator` contract test for successful prose, invalid/empty output, timeout, provider failure, and metadata/redaction behavior.
+- [x] 6.2 Implement structured opening prompt assembly from platform instructions, frozen World guidance, Starting Point premise, player profile, starting Location, and Characters present.
+- [x] 6.3 Implement the OpenAI-compatible story adapter with server-only base URL/key/model/settings, bounded timeout, normalized errors, and no extraction/JSON-mode responsibility.
+- [x] 6.4 RED: add worker tests for row claiming, one active job, lease expiry/reclaim, one automatic retry, terminal failure, owner retry, stale-worker rejection, and deletion/reset races.
+- [x] 6.5 Implement the separately runnable worker and atomic finalization of model call, root revision, opening story entry, Adventure head, and ready status.
+- [x] 6.6 Add structured correlated local logs for opening lifecycle while ensuring secrets and authorization headers are absent.
+- [x] 6.7 Wire root development/test process startup so frontend, API, and worker run together; document the separate production worker command and health expectations.
+- [x] 6.8 Map implementation and evidence for `LC-003/S1 R3/R3-S1..R3-S4`.
 
 ### 7. Typed API Boundary
 
-- [ ] 7.1 RED: add functional tests for World playability/Adventure summaries, create/read/retry/reset/delete routes, anonymous denial, cross-account non-disclosure, CSRF, validation, idempotency, and busy/unplayable conflicts.
-- [ ] 7.2 Add Vine validators and thin controllers over Adventure application services under authenticated `/api/v1` routes.
-- [ ] 7.3 Extend the World detail DTO with playability and current-owner Adventure summaries; keep author account data and raw version data minimized.
-- [ ] 7.4 Add typed Tuyau client contracts, runtime response validators, account-scoped query keys, and stable error mapping for `404`, `409`, `422`, and network failures.
-- [ ] 7.5 Confirm future clients can reuse lifecycle APIs without depending on React presentation behavior.
+- [x] 7.1 RED: add functional tests for World playability/Adventure summaries, create/read/retry/reset/delete routes, anonymous denial, cross-account non-disclosure, CSRF, validation, idempotency, and busy/unplayable conflicts.
+- [x] 7.2 Add Vine validators and thin controllers over Adventure application services under authenticated `/api/v1` routes.
+- [x] 7.3 Extend the World detail DTO with playability and current-owner Adventure summaries; keep author account data and raw version data minimized.
+- [x] 7.4 Add typed Tuyau client contracts, runtime response validators, account-scoped query keys, and stable error mapping for `404`, `409`, `422`, and network failures.
+- [x] 7.5 Confirm future clients can reuse lifecycle APIs without depending on React presentation behavior.
 
 ### 8. World And Adventure Experience
 
-- [ ] 8.1 RED: extend route/component tests for World Adventures empty/populated states, creation validation, pending polling, reload, failure/retry, ready projection, reset conflict, delete, and session loss.
-- [ ] 8.2 Add the compact World-contained Adventures section with player identity, zero completed turns, last-played time, lifecycle status, row-level resume, New Adventure, and separate confirmed delete action.
-- [ ] 8.3 Add `/worlds/:slug/adventures/new` with preserved World identity, required name, optional physical description/backstory, associated validation, one idempotent submission, Cancel, and safe navigation.
-- [ ] 8.4 Adapt the selected Adventure workbench prototype into real feature components while removing its composer, action controls, Director observation, change badge, editable Player data, and spoiler-bearing NPC fields.
-- [ ] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and reset menu.
-- [ ] 8.6 Add persistent desktop Player/Story/Scene regions and mobile bottom tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
-- [ ] 8.7 Add Storybook stories for World Adventure list, creation form states, pending populated shell, terminal failure/retry, ready desktop, mobile Story/Player/Scene, empty NPC scene, and destructive confirmations; run configured accessibility checks.
-- [ ] 8.8 Map implementation and evidence for `LC-003/S1 R4` and `R5`.
+- [x] 8.1 RED: extend route/component tests for World Adventures empty/populated states, creation validation, pending polling, reload, failure/retry, ready projection, reset conflict, delete, and session loss.
+- [x] 8.2 Add the compact World-contained Adventures section with player identity, zero completed turns, last-played time, lifecycle status, row-level resume, New Adventure, and separate confirmed delete action.
+- [x] 8.3 Add `/worlds/:slug/adventures/new` with preserved World identity, required name, optional physical description/backstory, associated validation, one idempotent submission, Cancel, and safe navigation.
+- [x] 8.4 Adapt the selected Adventure workbench prototype into real feature components while removing its composer, action controls, Director observation, change badge, editable Player data, and spoiler-bearing NPC fields.
+- [x] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and a gear-triggered reset settings modal.
+- [x] 8.6 Add persistent desktop Player/Story/Scene regions and mobile top tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
+- [x] 8.7 Add Storybook stories for World Adventure list, creation form states, pending populated shell, terminal failure/retry, ready desktop, mobile Story/Player/Scene, empty NPC scene, and destructive confirmations; run configured accessibility checks.
+- [x] 8.8 Map implementation and evidence for `LC-003/S1 R4` and `R5`.
 
 ### 9. End-To-End And Operational Verification
 
-- [ ] 9.1 Add a deterministic fake OpenAI-compatible endpoint or injected test adapter that exercises the production async boundary without an external model.
-- [ ] 9.2 Extend Playwright setup to start the worker and use disposable data; ensure every test-created Adventure is deleted or database-isolated after the run.
-- [ ] 9.3 E2E: create from Stormbound Chapel, reload while pending, observe exactly one opening, resume from World detail, and verify zero completed turns plus stable Player/Scene context.
-- [ ] 9.4 E2E: prove source version isolation, same-version reset, delete isolation, anonymous denial, and cross-account non-disclosure.
-- [ ] 9.5 E2E: verify desktop/mobile layout, keyboard path, status announcements, touch targets, and no horizontal overflow.
-- [ ] 9.6 Live-provider playtest: verify the opening follows the authored premise and frozen starting context with a configured local or compatible model.
-- [ ] 9.7 Inspect one successful and one failed opening unit for redacted exact request/response, provider/model/settings, retry, timing, and final status.
-- [ ] 9.8 Run `npm run lint`, `npm run test`, `npm run typecheck`, `npm run build`, `npm run test:storybook`, and `npm run test:e2e`; record what each command actually exercised.
-- [ ] 9.9 Keep the dev servers and worker running after verification unless the user asks to stop them.
+- [x] 9.1 Add a deterministic fake OpenAI-compatible endpoint or injected test adapter that exercises the production async boundary without an external model.
+- [x] 9.2 Extend Playwright setup to start the worker and use disposable data; ensure every test-created Adventure is deleted or database-isolated after the run.
+- [x] 9.3 E2E: create from Stormbound Chapel, reload while pending, observe exactly one opening, resume from World detail, and verify zero completed turns plus stable Player/Scene context.
+- [x] 9.4 Prove source version isolation and delete isolation at the service/database boundary, and prove same-version reset, anonymous denial, and cross-account non-disclosure through the routed E2E journey; no World-authoring browser route exists for an artificial source-change flow.
+- [x] 9.5 E2E: verify desktop/mobile layout, keyboard path, status announcements, touch targets, and no horizontal overflow.
+- [x] 9.6 Live-provider playtest: verify the opening follows the authored premise and frozen starting context with a configured local or compatible model.
+- [x] 9.7 Inspect one successful and one failed opening unit for redacted exact request/response, provider/model/settings, retry, timing, and final status.
+- [x] 9.8 Run `npm run lint`, `npm run test`, `npm run typecheck`, `npm run build`, `npm run test:storybook`, and `npm run test:e2e`; record what each command actually exercised.
+- [x] 9.9 Keep the dev servers and worker running after verification unless the user asks to stop them.
 
 ### 10. Documentation, Review, And Closeout
 
-- [ ] 10.1 Update README capability boundaries, environment setup, explicit starter publication/seed operation, and frontend/API/worker runtime commands without exposing private planning paths or secrets.
-- [ ] 10.2 Add only user-facing capability to `CHANGELOG.md`: private Adventure creation/resume and generated frozen-source openings.
-- [ ] 10.3 Update `LC-003/S1 Implemented By`, scenario-mapped `Verified By`, and real `Verification Gaps`; update ADR statuses based on implementation evidence.
-- [ ] 10.4 Run scoped `sdd validate` and resolve deterministic artifact drift before review.
-- [ ] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
-- [ ] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
-- [ ] 10.7 Confirm proposal/design/tasks/Epic/ADR/README/CHANGELOG truth matches implementation and no candidate Story is described as implemented.
+- [x] 10.1 Update README capability boundaries, environment setup, explicit starter publication/seed operation, and frontend/API/worker runtime commands without exposing private planning paths or secrets.
+- [x] 10.2 Add only user-facing capability to `CHANGELOG.md`: private Adventure creation/resume and generated frozen-source openings.
+- [x] 10.3 Update `LC-003/S1 Implemented By`, scenario-mapped `Verified By`, and real `Verification Gaps`; update ADR statuses based on implementation evidence.
+- [x] 10.4 Run scoped `sdd validate` and resolve deterministic artifact drift before review.
+- [x] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
+- [x] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
+- [x] 10.7 Confirm proposal/design/tasks/Epic/ADR/README/CHANGELOG truth matches implementation and no candidate Story is described as implemented.
 - [ ] 10.8 Keep Change status `in_review` through review and authorized PR/merge, then close through `sdd change close` rather than editing a closed status manually.
 
 ## Implementation Ledger
 
-| Date | Slice | Agent / Guidance | Files / Areas | Result | Commit / Ref |
-|---|---|---|---|---|---|
-| 2026-07-16 | LC-003/S1 planning | main agent, `/sdd-change --plan` | private proposal/design/tasks | Planned; implementation not started | private plan |
-| 2026-07-16 | LC-003/S1 promotion | main agent, `sdd change promote` and `sdd epic create` | active Change, LC-003, LC-002, ADRs | Promoted and reconciled; implementation not started | `develop` |
+| Date       | Slice                                    | Agent / Guidance                                                                              | Files / Areas                                                                                        | Result                                                                                                                                                                                                                  | Commit / Ref                          |
+| ---------- | ---------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| 2026-07-16 | LC-003/S1 planning                       | main agent, `/sdd-change --plan`                                                              | private proposal/design/tasks                                                                        | Planned; implementation not started                                                                                                                                                                                     | private plan                          |
+| 2026-07-16 | LC-003/S1 promotion                      | main agent, `sdd change promote` and `sdd epic create`                                        | active Change, LC-003, LC-002, ADRs                                                                  | Promoted and reconciled; implementation not started                                                                                                                                                                     | `develop`                             |
+| 2026-07-16 | LC-003/S1 apply Discovery                | main orchestrator; delegated backend discovery; `tdd` and current framework guidance selected | repository policy, Change/Epic/ADRs, backend schema and tests                                        | Scoped validation passed; implementation branch created; frozen-source foundation selected as first vertical slice                                                                                                      | `change/private-adventure-foundation` |
+| 2026-07-16 | LC-003/S1 R2 migration invariants        | delegated backend implementation; orchestrator-verified                                       | frozen-source migration and database tests                                                           | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending                                                                   | `605c881`                             |
+| 2026-07-16 | LC-003/S1 R2 deterministic publication   | delegated backend implementation; orchestrator lint correction and verification               | World/StartingPoint/WorldVersion models, publication service, focused functional tests               | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass                                           | `889460b`                             |
+| 2026-07-16 | LC-003/S1 R2 playable Stormbound seed    | delegated RED test; main-agent implementation and verification                                | Stormbound seed, catalog/seed tests, isolated publication race test                                  | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass                                         | `db38048`                             |
+| 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification            | Adventure aggregate migration, Lucid models, and focused database tests                              | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass                                                      | `794c005`                             |
+| 2026-07-16 | LC-003/S1 Adventure creation             | delegated RED tests; main-agent implementation and verification                               | Adventure creation service and focused functional tests                                              | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | `54bb3a4`                             |
+| 2026-07-16 | LC-003/S1 Adventure query and lifecycle  | two delegated backend TDD slices; main-agent review and sequential verification               | owner-filtered projections, reset/delete services, and focused functional tests                      | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass                                                          | `3a716ee`                             |
+| 2026-07-16 | LC-003/S1 story-generation boundary      | delegated backend TDD slice; main-agent review and sequential verification                    | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests  | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass                                                             | `73bd761`                             |
+| 2026-07-16 | LC-003/S1 owner opening retry            | main-agent RED-to-GREEN lifecycle extension                                                   | Adventure lifecycle service and focused functional test                                              | Owner-only terminal retry queues new work against the same source/generation while preserving failed evidence; cross-owner access remains non-disclosing                                                                | `a919fd4`                             |
+| 2026-07-16 | LC-003/S1 durable opening worker         | main-agent TDD and concurrency-harness correction                                             | opening worker and focused functional tests                                                          | Transactional claims, leases, bounded retry, crash recovery, atomic publication, stale finalization rejection, sanitized evidence, and correlated logs pass                                                             | `e77e6b3`                             |
+| 2026-07-16 | LC-003/S1 authenticated Adventure API    | delegated API implementation; main-agent disclosure and boundary review                       | Adventure controller/routes/validator, World detail projection, and functional tests                 | Server DTOs, CSRF mutations, owner-only lifecycle, stable validation/conflicts, malformed-ID handling, playability, and private-knowledge minimization pass                                                             | `015cb8c`                             |
+| 2026-07-16 | LC-003/S1 worker process topology        | main-agent implementation and static runtime verification                                     | Ace command, environment contract, npm/Turbo startup, and runtime docs                               | Root development includes frontend/API/worker; worker-only production command, graceful shutdown, and health/log expectations are explicit                                                                              | `5c9107a`, `ac82245`                  |
+| 2026-07-16 | LC-003/S1 typed Adventure client         | delegated frontend boundary; main-agent generated-registry reconciliation                     | typed lifecycle adapter, runtime validators, query keys, and generated Tuyau registry                | Provider-neutral client contract, disclosure validation, stable client errors, and reusable non-React lifecycle API pass                                                                                                | `ff1170d`, `bb8252c`                  |
+| 2026-07-16 | LC-003/S1 Adventure experience           | delegated UI implementation; main-agent integration, accessibility, and regression review     | World Adventure list, creation route, Adventure workbench, responsive tabs, tests, and stories       | Creation, pending/failure/ready, resume, retry, reset, delete, filtered context, focus, keyboard, responsive, and accessibility behavior pass                                                                           | `7ad66a5`                             |
+| 2026-07-16 | LC-003/S1 deterministic E2E journey      | main-agent implementation and browser verification                                            | fake OpenAI-compatible service, supervised Playwright topology, and desktop/mobile Adventure journey | Production prompt/provider/job/worker/persistence path passes reload, opening, reset, resume, anonymous/cross-owner denial, responsive behavior, and cleanup deletion without an external model                         | `ac82245`, `46ce874`                  |
+| 2026-07-16 | LC-003/S1 review remediation             | delegated artifact/backend/security/UI review; main-agent remediation; delegated regression rereview | worker/lifecycle/provider/query services, Adventure UI, tests, and Change artifacts | Fixed lease/timeout mismatch, lock ordering, resume timestamps, response bounds, creation throttling, compact-width overflow, retry/validation feedback, duplicate paragraph keys, and top-tab artifact drift; static rereview found no regressions | `976767a` |
+| 2026-07-16 | LC-003/S1 live-provider and catalog feedback | main-agent diagnosis, implementation, and verification | provider settings/truncation handling, World catalog projection and Adventure controls, tests, and artifacts | Added configurable reasoning effort, rejected length-truncated prose, and made `/worlds` the cross-World launch/list/resume/delete surface without removing World-detail controls | `7773a03` |
 
 ## Verification Ledger
 
-| Date | Check | Evidence Type | What It Proves | Result |
-|---|---|---|---|---|
-| 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --json` | artifact validation | Private Change structure, planned status, and references | Passed; 0 errors, 0 warnings |
-| 2026-07-16 | Scoped Change and `LC-003` validation after promotion | artifact validation | Canonical Change, Epic, Story, ADR links, and repository references | Passed; 0 errors, 0 warnings |
-| 2026-07-16 | Scoped Change validation after `/sdd-design` | artifact validation | Confirmed experience contract remains structurally valid and implementation-ready | Passed; 0 errors, 0 warnings |
+| Date       | Check                                                                                                                                                        | Evidence Type                         | What It Proves                                                                                                                                                               | Result                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --json`                                                                             | artifact validation                   | Private Change structure, planned status, and references                                                                                                                     | Passed; 0 errors, 0 warnings                       |
+| 2026-07-16 | Scoped Change and `LC-003` validation after promotion                                                                                                        | artifact validation                   | Canonical Change, Epic, Story, ADR links, and repository references                                                                                                          | Passed; 0 errors, 0 warnings                       |
+| 2026-07-16 | Scoped Change validation after `/sdd-design`                                                                                                                 | artifact validation                   | Confirmed experience contract remains structurally valid and implementation-ready                                                                                            | Passed; 0 errors, 0 warnings                       |
+| 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault --json` | artifact validation                   | Active Change and Epic structure before implementation                                                                                                                       | Passed; 0 errors, 0 warnings                       |
+| 2026-07-16 | Focused frozen-source migration suite against isolated scratch Neon schema                                                                                   | focused database test                 | `LC-003/S1 R2` same-World Starting Point/default constraints, UUID version identity, insert-only rows, and same-World current-version ownership                              | Passed; 2 tests                                    |
+| 2026-07-16 | Existing World migration/seed/catalog regression suite against isolated scratch Neon schema                                                                  | focused database and functional tests | Pre-change World integrity, seed provenance, exact reconciliation, authorization, and catalog behavior remain green                                                          | Passed; 11 tests                                   |
+| 2026-07-16 | WorldVersion publication suite against isolated scratch Neon schema                                                                                          | focused functional test               | `LC-003/S1 R2` deterministic ordering/hash, stable-key rejection, identical reuse, changed-content insertion, and old-snapshot preservation                                  | Passed; 4 tests                                    |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after publication slice                                                                                      | broad supporting gates                | Publication implementation is formatted and type-safe                                                                                                                        | Passed                                             |
+| 2026-07-16 | Stormbound seed/catalog suite against isolated scratch Neon schema                                                                                           | focused functional test               | Playable seed publication, exact reconciliation, stale Starting Point cleanup, same-version reuse, and existing catalog/seed safety                                          | Passed; 9 tests                                    |
+| 2026-07-16 | Isolated concurrent World publication check                                                                                                                  | focused database test                 | Two publishers serialize on the World row and reuse one ordinal/version                                                                                                      | Passed within 3-test frozen-source migration suite |
+| 2026-07-16 | Adventure aggregate migration suite against isolated scratch Neon schema                                                                                     | focused database test                 | `LC-003/S1 R1-R4` storage invariants, UUID identity, ownership boundaries, immutable opening history, selective Adventure cascade, and guarded rollback                      | Passed; 6 tests                                    |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure aggregate migration                                                                          | broad supporting gates                | Aggregate migration and tests are formatted and type-safe before service implementation                                                                                      | Passed                                             |
+| 2026-07-16 | Adventure creation service suite against isolated scratch Neon schema                                                                                        | focused functional test               | `LC-003/S1 R1-S1..R1-S3`, creation portion of `R2-S1`, and creation conflict portion of `R2-S3`                                                                              | Passed; 6 tests                                    |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure creation                                                                                     | broad supporting gates                | Creation service and tests are formatted and type-safe                                                                                                                       | Passed                                             |
+| 2026-07-16 | Adventure query service suite against isolated scratch Neon schema                                                                                           | focused functional test               | `LC-003/S1 R2-S2` frozen reads and `R4-S1` owner-only list/read projections without private evidence                                                                         | Passed; 2 tests                                    |
+| 2026-07-16 | Adventure lifecycle service suite against isolated scratch Neon schema                                                                                       | focused functional test               | `LC-003/S1 R1-S3` lifecycle non-disclosure and `R4-S2..R4-S3` same-version reset, busy conflict, cleanup, and isolated deletion                                              | Passed; 4 tests                                    |
+| 2026-07-16 | Full backend test suite after Adventure creation                                                                                                             | broad supporting test                 | Authentication, catalog, publication, migration, and Adventure creation regressions remain green together                                                                    | Passed; 63 tests                                   |
+| 2026-07-16 | Story-generation prompt and adapter unit suites                                                                                                              | focused unit test                     | `LC-003/S1 R3-S1` structured frozen context plus provider-neutral success, timeout, failure, malformed/empty output, exact evidence, and credential redaction                | Passed; 8 tests                                    |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after query/lifecycle/provider slices                                                                        | broad supporting gates                | New service boundaries and tests are formatted and type-safe                                                                                                                 | Passed                                             |
+| 2026-07-16 | Adventure lifecycle suite after owner retry                                                                                                                  | focused functional test               | `LC-003/S1 R3-S3` owner-only manual retry preserves frozen source and creates exactly one new pending job                                                                    | Passed; 5 tests total                              |
+| 2026-07-16 | Adventure opening worker suite against isolated scratch Neon schema                                                                                          | focused functional test               | `LC-003/S1 R3-S1..R3-S4` one claimant, lease reclaim/exhaustion, bounded retry, atomic publication, stale reset/delete rejection, sanitized evidence, and correlated logs    | Passed; 5 tests                                    |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after opening worker and API review                                                                          | broad supporting gates                | Worker and current API boundary compile cleanly and satisfy repository formatting/static-analysis policy                                                                     | Passed                                             |
+| 2026-07-16 | Adventure API suite against isolated scratch Neon schema                                                                                                     | focused functional API test           | Create/read/retry/reset/delete, playability/summaries, anonymous and cross-owner denial, CSRF, validation, idempotency, malformed identity, and busy/unplayable conflicts    | Passed; 14 tests                                   |
+| 2026-07-16 | World catalog regression suite after disclosure minimization                                                                                                 | focused functional API test           | Existing catalog behavior remains green while private Character knowledge no longer crosses the player-facing API                                                            | Passed; 9 tests                                    |
+| 2026-07-16 | `node ace list` and Turborepo dry run                                                                                                                        | runtime topology inspection           | Ace discovers `adventures:openings:work`; root development resolves the frontend and supervised backend API/worker commands                                                  | Passed                                             |
+| 2026-07-16 | Typed Adventure adapter and routed component suites                                                                                                          | focused frontend tests                | Generated Tuyau lifecycle calls, response validation, account query identity, creation, polling, failure/retry, reset conflicts, deletion, session loss, and responsive tabs | Passed; 43 Adventure-focused tests                 |
+| 2026-07-16 | Full frontend Vitest suite                                                                                                                                   | broad frontend regression             | Existing account/World behavior and production Adventure routes remain green together                                                                                        | Passed; 96 tests                                   |
+| 2026-07-16 | Storybook interaction and accessibility suite                                                                                                                | component interaction/a11y            | World Adventure list, creation states, pending/failure/ready workbench, mobile tabs, empty Scene, confirmations, and color contrast                                          | Passed; 64 tests                                   |
+| 2026-07-16 | Full backend suite against isolated scratch Neon schema                                                                                                      | broad backend regression              | Database, account, security, World, snapshot, Adventure API/service/worker, provider, and publication behavior remain green together                                         | Passed; 97 tests                                   |
+| 2026-07-16 | Full Playwright suite with supervised API/worker and deterministic provider                                                                                  | desktop/mobile E2E                    | Account and World regressions plus Adventure create, pending reload, opening, privacy, reset, resume, responsive tabs, overflow, and cleanup deletion                        | Passed; 7 tests                                    |
+| 2026-07-16 | Frontend/backend lint, typecheck, production build, and `git diff --check`                                                                                   | broad static/build gates              | Generated contracts, both applications, process scripts, tests, styles, and production bundles are coherent                                                                  | Passed                                             |
+| 2026-07-16 | Post-review frontend Vitest suite                                                                                                                               | focused and broad frontend regression | Retry errors, optional-field focus/announcement, repeated narration paragraphs, responsive shell behavior, and existing frontend behavior                                    | Passed; 99 tests                                   |
+| 2026-07-16 | Post-review Storybook interaction/accessibility suite                                                                                                         | component interaction/a11y            | Existing Adventure and World stories remain accessible after review remediation                                                                                               | Passed; 64 tests                                   |
+| 2026-07-16 | Post-review backend unit execution                                                                                                                              | focused unit evidence                 | Provider response bounding and lease-duration derivation pass without a database                                                                                              | Passed; 15 unit tests; broader command then stopped on missing acknowledged test database |
+| 2026-07-16 | Post-review lint, typecheck, production build, `git diff --check`, merge-tree, and scoped SDD validation                                                      | static/build/integration gates         | Remediation compiles, formats, builds, remains conflict-free with `develop`, and preserves valid artifact structure                                                           | Passed; validation 0 errors, 0 warnings            |
+| 2026-07-16 | Post-review guarded backend suite against isolated `lorecraft_test` Neon schema                                                                               | broad backend regression              | Post-remediation database, account, security, World, snapshot, Adventure API/service/worker, provider, and publication behavior remains green together                        | Passed; 100 tests                                  |
+| 2026-07-16 | Post-review Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | Supervised API/worker/provider topology and responsive Adventure create/open/resume/reset/delete journey remain green                                                        | Passed; 7 tests                                    |
+| 2026-07-16 | Post-feedback backend, frontend, and Storybook suites                                                                                                           | broad regression and interaction      | Reasoning control, truncated-output rejection, grouped owner summaries, catalog launch/list/delete, and existing account/World/Adventure behavior                              | Passed; backend 101, frontend 101, Storybook 64    |
+| 2026-07-16 | Post-feedback Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | The production catalog now launches, lists, resumes, and cleans up Adventures across responsive routes while the full lifecycle remains green                                 | Passed; 7 tests                                    |
+| 2026-07-17 | Live `gemma4:31b` opening against the frozen Stormbound Chapel context                                                                                          | configured-provider playtest          | Hidden reasoning is disabled, generation completes without token truncation, and the opening uses the player, starting Location, present Characters, storm, and unexplained bell | Passed in one attempt; 19.8 seconds; `finish_reason: stop` |
+| 2026-07-17 | Explicit Resume-action route, Storybook, lint, typecheck, and guarded Playwright checks                                                                          | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Both World lists render visible Resume links and preserve responsive lifecycle behavior and deletion | Passed; route 18, Storybook 64, Playwright 7 |
+| 2026-07-17 | Adventure settings-modal route, Storybook, lint, typecheck, and guarded Playwright checks                                                                       | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Lucide gear affordance, focus-managed settings modal, two-step reset, conflict handling, return navigation, and responsive lifecycle behavior | Passed; route 10, Storybook 64, Playwright 7 |
+| 2026-07-17 | Back-to-Worlds route, Storybook, lint, typecheck, and guarded Playwright checks                                                                                | focused frontend, interaction/accessibility, static, desktop/mobile E2E | Button-styled World-detail back navigation retains routing, touch targets, and responsive overflow behavior | Passed; route 18, Storybook 64, Playwright 7 |
 
 ## Manual Feedback
 
-| Date | Feedback | Classification | Action / Artifact Updates | Status |
-|---|---|---|---|---|
+| Date       | Feedback                                                                           | Classification         | Action / Artifact Updates                                                    | Status   |
+| ---------- | ---------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | -------- |
 | 2026-07-16 | World/Adventure isolation and core Adventure behavior resolved during exploration. | requirement refinement | Incorporated into proposal and design; turn loop staged as later candidates. | resolved |
+| 2026-07-16 | `/worlds` should directly launch playable Worlds and list/resume/delete every owned Adventure under its source World. | in-scope experience refinement | Extended the catalog API projection and made the World catalog the primary cross-World Adventure manager while preserving World-detail controls. | accepted 2026-07-17 |
+| 2026-07-17 | Mobile Adventure interface looks good. | manual acceptance | Recorded the responsive mobile interface as accepted; desktop Adventure-shell and reset placement remain to be confirmed. | accepted |
+| 2026-07-17 | Desktop World catalog creates Adventures, resumes through the linked Adventure row, and deletes with confirmation. | manual feedback | Creation and deletion are accepted; row-based resume works but is not discoverable enough. | superseded by explicit Resume action |
+| 2026-07-17 | Add a dedicated Resume button because clicking the Adventure row is not intuitive on desktop. | in-scope experience refinement | Replaced linked identity text with a visible Resume action in both the cross-World catalog and World detail; added focused, Storybook, and E2E assertions for visible button text. | accepted 2026-07-17 |
+| 2026-07-17 | Adventure Menu is not clearly a button; use a Lucide gear and extensible modal, and make Return to World a left-aligned button. | in-scope experience refinement | Added `lucide-react`, an accessible reusable modal shell, gear-triggered Adventure settings with Reset, and button-styled return navigation; retained destructive confirmation. | accepted 2026-07-17 |
+| 2026-07-17 | Follow the same back-navigation pattern for Back to Worlds on World detail. | in-scope experience refinement | Moved Back to Worlds to the leftmost position and applied the same bordered button and Lucide arrow treatment with responsive verification. | accepted 2026-07-17 |
 
 ## Planning Updates
 
-| Date | Discovery | Classification | Planning Updates | Next Apply Starting Point |
-|---|---|---|---|---|
-| 2026-07-16 | Official checkout contains an unrelated Change in review and dirty UI files. | technical constraint | Kept planning private; added clean-branch promotion preflight. | Task 2.1 |
-| 2026-07-16 | Deep Steel Blue was reclassified as maintenance and removed as an SDD Change. | in-scope refinement | Cleared the promotion gate and updated Resume Here plus preflight truth. | Task 2.4 |
+| Date       | Discovery                                                                                                                                               | Classification                     | Planning Updates                                                                                                                     | Next Apply Starting Point |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| 2026-07-16 | Official checkout contains an unrelated Change in review and dirty UI files.                                                                            | technical constraint               | Kept planning private; added clean-branch promotion preflight.                                                                       | Task 2.1                  |
+| 2026-07-16 | Deep Steel Blue was reclassified as maintenance and removed as an SDD Change.                                                                           | in-scope refinement                | Cleared the promotion gate and updated Resume Here plus preflight truth.                                                             | Task 2.4                  |
+| 2026-07-16 | Phase 4 grouped all RED work before implementation and implied it could fully verify Adventure-binding Scenarios before the Adventure aggregate exists. | implementation-planning correction | Reframed Tasks 4.1-4.4 as vertical RED-to-GREEN cycles and made Task 4.7 preserve the remaining `R2` evidence gap for Tasks 5 and 7. | Task 4.1                  |
 
 ## Design Updates
 
-| Date | Feedback / Discovery | Classification | Reference / Target | Preserve / Change / Non-Goals | Artifact Updates | Next Apply Starting Point |
-|---|---|---|---|---|---|---|
-| 2026-07-16 | Existing Adventure workbench prototype supplies composition evidence but not production behavior. | experience refinement | `apps/frontend/src/prototypes/adventure/` | Preserve story-first Player/Story/Scene hierarchy; replace fake state and avoid exact MVP recreation. | `design.md` Experience Design | Task 8.1 |
-| 2026-07-16 | Taylor confirmed the production Adventure direction one decision at a time. | experience refinement | stable prototype Storybook IDs and current World detail | Preserve three-region desktop and bottom-tab mobile composition; add dedicated creation, populated pending/failure shells, read-only filtered context, no composer, and compact navigation. Exact top-nav polish remains safely deferrable. | `design.md` Experience Design and Tasks 8.2-8.7 | Task 2.4, then Task 4.1 |
+| Date       | Feedback / Discovery                                                                              | Classification        | Reference / Target                                      | Preserve / Change / Non-Goals                                                                                                                                                                                                               | Artifact Updates                                | Next Apply Starting Point |
+| ---------- | ------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------- |
+| 2026-07-16 | Existing Adventure workbench prototype supplies composition evidence but not production behavior. | experience refinement | `apps/frontend/src/prototypes/adventure/`               | Preserve story-first Player/Story/Scene hierarchy; replace fake state and avoid exact MVP recreation.                                                                                                                                       | `design.md` Experience Design                   | Task 8.1                  |
+| 2026-07-16 | Taylor confirmed the production Adventure direction one decision at a time.                       | experience refinement | stable prototype Storybook IDs and current World detail | Preserve three-region desktop and tabbed mobile composition; add dedicated creation, populated pending/failure shells, read-only filtered context, no composer, and compact navigation. Exact top-nav polish remains safely deferrable. | `design.md` Experience Design and Tasks 8.2-8.7 | Task 2.4, then Task 4.1   |
 
 ## Manual UI Confirmation
 
-- Status: pending user
-- App URL / route: `http://localhost:4310/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
+- Status: confirmed by Taylor on 2026-07-17 across mobile, desktop Adventure shell, settings, catalog lifecycle controls, and back navigation
+- App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
-- Steps for the user: create from the compact World Adventure list; review dedicated form validation; inspect the populated pending shell; reload and recover; inspect terminal failure/retry; verify ready Story/Player/Scene disclosure; use mobile bottom tabs; reset from the Adventure menu; delete from World detail
+- Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; open Adventure settings from the gear and reset with confirmation; verify the left-aligned Return to World button and World-detail controls
 - Expected result: the shell remains story-first and stable across lifecycle states, no deferred controls or hidden NPC knowledge leak, the frozen Adventure survives reload, and reset/delete remain clearly separated
 - Feedback that would change artifacts: different discovery placement, creation route, panel composition, disclosure boundary, pending/failure treatment, reset/delete placement, or mobile navigation
 
 ## Blockers / Open Questions
 
 - No planning questions remain.
-- No operational or planning blocker remains.
+- No blockers or open questions remain.
 
 ## Closeout
 
-- Change status: planned; implementation not started
+- Change status: in_review; implementation, deterministic verification, review remediation, live-provider evidence, and manual acceptance complete; awaiting authorized close/merge
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
-- Story labels/references and Requirement/Scenario IDs current: planned `LC-003/S1`; candidates intentionally unnumbered
-- Implemented By maps current: pending
-- Scenario-mapped Verified By maps current: pending
+- Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
+- Implemented By maps current: yes
+- Scenario-mapped Verified By maps current: yes
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
-- ADR status: two Proposed ADRs created; isolation ADR linked to this Change
-- Release communication current: planned README and CHANGELOG updates
-- `sdd-review` verdict: pending implementation
-- Review record: none
-- `review.md` findings resolved: not applicable yet
+- ADR status: immutable snapshots and durable asynchronous work accepted and validated
+- Release communication current: README and user-facing CHANGELOG updated
+- `sdd-review` verdict: pass
+- Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
+- `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
 - Planning updates resolved: yes
-- Manual UI confirmation status: pending user after implementation
-- PR / merge state: promotion documentation on local `develop`; no implementation branch or PR
+- Manual UI confirmation status: confirmed 2026-07-17
+- PR / merge state: local `change/private-adventure-foundation`; no PR
 - Deferred scope accepted: yes, recorded in proposal/design
 - Change moved to `docs/changes/closed/`: no

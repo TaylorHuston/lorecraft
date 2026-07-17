@@ -1,6 +1,6 @@
 # ADR: Immutable World Version Snapshots
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-16
 - Related change: `docs/changes/2026-07-16-private-adventure-foundation/`
 - Related Epics / Stories: `LC-003/S1`, especially `R2`
@@ -45,7 +45,7 @@ Normal APIs and seed paths SHALL NOT update an existing WorldVersion. Corrected 
 
 ## Validation
 
-Implementation and review must prove that identical canon reuses one version, changed canon creates a new version, existing Adventure reads remain unchanged, reset uses the original version, invalid internal references cannot publish, and no normal update path mutates snapshot content.
+The frozen-source migration, publication, creation, query, lifecycle, API, and browser suites prove deterministic identity, same-World references, changed-content version creation, preservation of earlier snapshots, Adventure binding, old-version reads, same-version reset, and exact Stormbound seed reuse. Raw snapshots remain internal while the player-facing API exposes minimized frozen projections.
 
 ## Reconsider When
 

@@ -1,6 +1,8 @@
 import World from '#models/world'
 import Location from '#models/location'
 import Character from '#models/character'
+import StartingPoint from '#models/starting_point'
+import WorldVersion from '#models/world_version'
 import { seedStormboundChapel } from '#services/stormbound_chapel_seed'
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
@@ -99,6 +101,8 @@ test.group('World catalog API', (group) => {
           description: 'A rain-lashed chapel and its nearby village haunts.',
           visibility: 'public',
           readOnly: true,
+          playability: { available: false },
+          adventures: [],
         },
       ],
     })
@@ -142,8 +146,6 @@ test.group('World catalog API', (group) => {
           {
             key: 'mira',
             name: 'Mira',
-            privateKnowledge:
-              'Mira knows the storm began after the chapel bell rang at midnight, but she is afraid to say that plainly.',
             location: { key: 'chapel', name: 'Chapel' },
           },
         ],
@@ -151,6 +153,8 @@ test.group('World catalog API', (group) => {
     })
     assert.notProperty(response.body().data, 'authorId')
     assert.notProperty(response.body().data, 'author')
+    assert.notInclude(JSON.stringify(response.body()), 'privateKnowledge')
+    assert.notInclude(JSON.stringify(response.body()), 'storm began after the chapel bell')
     assert.notInclude(JSON.stringify(response.body()), author.email)
     const missing = await withBrowserSession(client.get('/api/v1/worlds/unknown-world'), viewer)
     missing.assertStatus(404)
@@ -172,12 +176,22 @@ test.group('World catalog API', (group) => {
     })
     await seedStormboundChapel(author.email)
     const world = await World.findByOrFail('slug', 'stormbound-chapel')
+    const initialVersionId = world.currentVersionId
     const staleLocation = await Location.create({
       worldId: world.id,
       key: 'stale-location',
       name: 'Stale Location',
       description: 'This Location is not part of the configured starter World.',
       sortOrder: 99,
+    })
+    await StartingPoint.create({
+      worldId: world.id,
+      locationId: staleLocation.id,
+      key: 'stale-start',
+      name: 'Stale Start',
+      openingPremise: 'This Starting Point is not part of the configured starter World.',
+      sortOrder: 99,
+      isDefault: false,
     })
     await Character.create({
       worldId: world.id,
@@ -359,6 +373,70 @@ test.group('World catalog API', (group) => {
         .where('key', 'stale-character')
         .first()
     )
+    assert.isNull(
+      await StartingPoint.query()
+        .where('worldId', seededWorld.id)
+        .where('key', 'stale-start')
+        .first()
+    )
+    assert.equal(seededWorld.currentVersionId, initialVersionId)
+    assert.lengthOf(await WorldVersion.query().where('worldId', seededWorld.id), 1)
+  })
+
+  test('LC-003/S1/R2-S1: starter seed publishes canonical Adventure guidance and a default Chapel Starting Point', async ({
+    assert,
+  }) => {
+    const author = await User.create({
+      email: 'playable-seed-author@example.com',
+      password: 'correct horse battery staple',
+    })
+
+    await seedStormboundChapel(author.email)
+
+    const world = await World.findByOrFail('slug', 'stormbound-chapel')
+    const startingPoints = await StartingPoint.query()
+      .where('worldId', world.id)
+      .orderBy('sortOrder')
+      .preload('location')
+    const version = await WorldVersion.findOrFail(world.currentVersionId!)
+
+    assert.equal(
+      world.adventureGuidance,
+      "Run Stormbound Chapel as a grounded gothic mystery. Keep the rain and isolation present, let clues emerge through exploration and conversation, preserve each character's voice and private knowledge, and never decide the player's actions."
+    )
+    assert.deepEqual(
+      startingPoints.map((startingPoint) => ({
+        key: startingPoint.key,
+        name: startingPoint.name,
+        locationKey: startingPoint.location.key,
+        openingPremise: startingPoint.openingPremise,
+        sortOrder: startingPoint.sortOrder,
+        isDefault: startingPoint.isDefault,
+      })),
+      [
+        {
+          key: 'chapel-midnight',
+          name: 'Midnight at the Chapel',
+          locationKey: 'chapel',
+          openingPremise:
+            'The player reaches Stormbound Chapel as a midnight storm closes the road. The chapel bell has just rung without a hand on its rope, Mira is waiting in the aisle, and Brother Alden is hiding what he found beside the altar.',
+          sortOrder: 0,
+          isDefault: true,
+        },
+      ]
+    )
+    assert.equal(version.snapshot.world.adventureGuidance, world.adventureGuidance)
+    assert.deepEqual(version.snapshot.startingPoints, [
+      {
+        key: 'chapel-midnight',
+        name: 'Midnight at the Chapel',
+        locationKey: 'chapel',
+        openingPremise:
+          'The player reaches Stormbound Chapel as a midnight storm closes the road. The chapel bell has just rung without a hand on its rope, Mira is waiting in the aisle, and Brother Alden is hiding what he found beside the altar.',
+        sortOrder: 0,
+        isDefault: true,
+      },
+    ])
   })
 
   test('LC-002/S2/R1-S3: an exact legacy starter graph receives immutable provenance', async ({

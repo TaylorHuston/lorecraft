@@ -1,0 +1,185 @@
+.shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.header {
+  display: flex;
+  min-width: 0;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.8125rem;
+}
+
+.headerStart {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.identity strong {
+  flex: 0 0 auto;
+  color: var(--identity);
+}
+
+.identity > span[aria-hidden] {
+  width: 1px;
+  height: 1.1rem;
+  flex: 0 0 auto;
+  background: var(--border-strong);
+}
+
+.identity > span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.returnButton,
+.settingsButton,
+.settingsClose {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+}
+
+.returnButton {
+  flex: 0 0 auto;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-boundary);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.returnButton:hover,
+.settingsButton:hover,
+.settingsClose:hover {
+  background: var(--surface-interactive);
+}
+
+.settingsButton,
+.settingsClose {
+  width: var(--control-touch);
+  flex: 0 0 var(--control-touch);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.settingsClose {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+
+.settingsContent {
+  display: grid;
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.resetAction {
+  width: 100%;
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-control);
+  background: var(--danger-muted);
+  color: var(--danger);
+  font-weight: 650;
+  text-align: left;
+}
+
+.resetAction:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.settingsContent p {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.stateShell {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  place-items: center;
+  padding: var(--space-6);
+}
+
+.stateShell > div {
+  width: min(100%, 32rem);
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--info);
+}
+
+.stateLabel {
+  margin: 0;
+  color: var(--identity);
+  font-size: 0.75rem;
+}
+
+.stateTitle {
+  margin: var(--space-2) 0 0;
+  font-size: 1.25rem;
+}
+
+.stateCopy {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.stateShell button {
+  min-height: var(--control-touch);
+  margin-top: var(--space-4);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--action);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-foreground);
+  font-weight: 700;
+}
+
+@media (max-width: 30rem) {
+  .identity > span[aria-hidden],
+  .identity > span:last-child {
+    display: none;
+  }
+
+  .returnButton {
+    padding-right: var(--space-3);
+    padding-left: var(--space-3);
+    font-size: 0.75rem;
+  }
+}

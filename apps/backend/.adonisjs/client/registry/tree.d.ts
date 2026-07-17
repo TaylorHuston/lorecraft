@@ -23,4 +23,11 @@ export interface ApiDefinition {
     index: typeof routes['worlds.index']
     show: typeof routes['worlds.show']
   }
+  adventures: {
+    store: typeof routes['adventures.store']
+    show: typeof routes['adventures.show']
+    retryOpening: typeof routes['adventures.retry_opening']
+    reset: typeof routes['adventures.reset']
+    destroy: typeof routes['adventures.destroy']
+  }
 }

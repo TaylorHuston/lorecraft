@@ -10,7 +10,14 @@
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 import { controllers } from '#generated/controllers'
-import { csrfBootstrapThrottle, loginThrottle, signupThrottle } from '#start/limiter'
+import {
+  adventureCreationThrottle,
+  csrfBootstrapThrottle,
+  loginThrottle,
+  signupThrottle,
+} from '#start/limiter'
+
+const AdventuresController = () => import('#controllers/adventures_controller')
 
 router.get('/', () => {
   return { hello: 'world' }
@@ -61,8 +68,26 @@ router
       .group(() => {
         router.get('', [controllers.Worlds, 'index'])
         router.get(':slug', [controllers.Worlds, 'show'])
+        router
+          .post(':slug/adventures', [AdventuresController, 'store'])
+          .use(middleware.browserCsrf())
+          .use(adventureCreationThrottle)
       })
       .prefix('worlds')
+      .use(middleware.requireSessionCookie())
+      .use(middleware.session())
+      .use(middleware.auth({ guards: ['web'] }))
+
+    router
+      .group(() => {
+        router.get(':id', [AdventuresController, 'show'])
+        router
+          .post(':id/opening/retry', [AdventuresController, 'retryOpening'])
+          .use(middleware.browserCsrf())
+        router.post(':id/reset', [AdventuresController, 'reset']).use(middleware.browserCsrf())
+        router.delete(':id', [AdventuresController, 'destroy']).use(middleware.browserCsrf())
+      })
+      .prefix('adventures')
       .use(middleware.requireSessionCookie())
       .use(middleware.session())
       .use(middleware.auth({ guards: ['web'] }))

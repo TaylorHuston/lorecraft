@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { AppRoutes } from '../app/AppRoutes'
 import { AuthProvider } from '../auth/AuthProvider'
 import type { Account, AuthApi } from '../auth/authApi'
+import type { AdventureApi } from '../adventures/adventureApi'
 import type { WorldApi } from '../worlds/worldApi'
 
 type RenderTestAppOptions = {
@@ -11,6 +12,8 @@ type RenderTestAppOptions = {
   session: Account | null
   api?: Partial<AuthApi>
   worldApi?: Partial<WorldApi>
+  adventureApi?: Partial<AdventureApi>
+  adventurePollIntervalMs?: number
 }
 
 export function renderTestApp({
@@ -18,6 +21,8 @@ export function renderTestApp({
   session,
   api: overrides,
   worldApi: worldApiOverrides,
+  adventureApi: adventureApiOverrides,
+  adventurePollIntervalMs,
 }: RenderTestAppOptions) {
   const api: AuthApi = {
     restoreSession: async () => session,
@@ -39,12 +44,34 @@ export function renderTestApp({
       mutations: { retry: false },
     },
   })
+  const adventureApi: AdventureApi = {
+    createAdventure: async () => {
+      throw new Error('Adventure creation was not configured for this test.')
+    },
+    getAdventure: async () => {
+      throw new Error('Adventure detail was not configured for this test.')
+    },
+    retryOpening: async () => {
+      throw new Error('Adventure retry was not configured for this test.')
+    },
+    resetAdventure: async () => {
+      throw new Error('Adventure reset was not configured for this test.')
+    },
+    deleteAdventure: async () => {
+      throw new Error('Adventure deletion was not configured for this test.')
+    },
+    ...adventureApiOverrides,
+  }
 
   return render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider api={api}>
         <MemoryRouter initialEntries={[route]}>
-          <AppRoutes worldApi={worldApi} />
+          <AppRoutes
+            worldApi={worldApi}
+            adventureApi={adventureApi}
+            adventurePollIntervalMs={adventurePollIntervalMs}
+          />
         </MemoryRouter>
       </AuthProvider>
     </QueryClientProvider>

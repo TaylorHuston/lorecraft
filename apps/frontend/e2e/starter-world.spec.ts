@@ -55,11 +55,6 @@ test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({
   await expect(mira.getByText('Background', { exact: true })).toBeVisible()
   await expect(mira.getByText('Personality', { exact: true })).toBeVisible()
   await expect(mira.getByText('Voice', { exact: true })).toBeVisible()
-  await expect(mira.getByText('Private knowledge', { exact: true })).toBeVisible()
-  await expect(
-    mira.getByText(
-      'Mira knows the storm began after the chapel bell rang at midnight, but she is afraid to say that plainly.',
-      { exact: true }
-    )
-  ).toBeVisible()
+  await expect(mira.getByText('Private knowledge', { exact: true })).toHaveCount(0)
+  await expect(page.getByText(/storm began after the chapel bell/i)).toHaveCount(0)
 })

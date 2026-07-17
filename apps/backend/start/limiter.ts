@@ -11,3 +11,8 @@ export const signupThrottle = limiter.define('signup', (ctx) => {
 export const loginThrottle = limiter.define('login', (ctx) => {
   return limiter.allowRequests(20).every('1 minute').usingKey(ctx.request.ip())
 })
+
+export const adventureCreationThrottle = limiter.define('adventure-creation', (ctx) => {
+  const accountKey = ctx.auth.user ? `account:${ctx.auth.user.id}` : `ip:${ctx.request.ip()}`
+  return limiter.allowRequests(10).every('1 minute').usingKey(accountKey)
+})

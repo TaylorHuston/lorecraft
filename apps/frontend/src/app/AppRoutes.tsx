@@ -3,6 +3,9 @@ import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { SignInPage } from '../auth/SignInPage'
 import { SignUpPage } from '../auth/SignUpPage'
+import type { AdventureApi } from '../adventures/adventureApi'
+import { NewAdventurePage } from '../adventures/NewAdventurePage'
+import { AdventurePage } from '../adventures/AdventurePage'
 import { WorkspacePage } from '../workspace/WorkspacePage'
 import type { WorldApi } from '../worlds/worldApi'
 import { WorldDetailPage } from '../worlds/WorldDetailPage'
@@ -206,7 +209,15 @@ function PublicOnlyRoute() {
   )
 }
 
-export function AppRoutes({ worldApi }: { worldApi: WorldApi }) {
+export function AppRoutes({
+  worldApi,
+  adventureApi,
+  adventurePollIntervalMs,
+}: {
+  worldApi: WorldApi
+  adventureApi: AdventureApi
+  adventurePollIntervalMs?: number
+}) {
   return (
     <Routes>
       <Route element={<PublicOnlyRoute />}>
@@ -214,8 +225,24 @@ export function AppRoutes({ worldApi }: { worldApi: WorldApi }) {
         <Route path="/sign-in" element={<SignInPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="/worlds" element={<WorkspacePage worldApi={worldApi} />} />
-        <Route path="/worlds/:slug" element={<WorldDetailPage worldApi={worldApi} />} />
+        <Route
+          path="/worlds"
+          element={<WorkspacePage worldApi={worldApi} adventureApi={adventureApi} />}
+        />
+        <Route
+          path="/worlds/:slug"
+          element={<WorldDetailPage worldApi={worldApi} adventureApi={adventureApi} />}
+        />
+        <Route
+          path="/worlds/:slug/adventures/new"
+          element={<NewAdventurePage worldApi={worldApi} adventureApi={adventureApi} />}
+        />
+        <Route
+          path="/adventures/:id"
+          element={
+            <AdventurePage adventureApi={adventureApi} pollIntervalMs={adventurePollIntervalMs} />
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to="/worlds" replace />} />
     </Routes>

@@ -1,20 +1,24 @@
-import { act, screen } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
-import { WorldApiError, type WorldDetail, type WorldSummary } from './worldApi'
+import { WorldApiError, type WorldCatalogItem, type WorldDetail } from './worldApi'
 
-const stormboundChapel: WorldSummary = {
+const stormboundChapel: WorldCatalogItem = {
   id: 1,
   slug: 'stormbound-chapel',
   name: 'Stormbound Chapel',
   description: 'A storm-battered sanctuary where old vows still shape the living.',
   visibility: 'public',
   readOnly: true,
+  playability: { available: true, reason: null },
+  adventures: [],
 }
 
 const stormboundDetail: WorldDetail = {
   ...stormboundChapel,
+  playability: { available: true, reason: null },
+  adventures: [],
   locations: [{ key: 'chapel', name: 'Chapel', description: 'Rain taps against warped shutters.' }],
   characters: [
     {
@@ -24,7 +28,6 @@ const stormboundDetail: WorldDetail = {
       background: 'Mira grew up around the chapel.',
       personality: 'Cautious and observant.',
       voice: 'Plain-spoken and restrained.',
-      privateKnowledge: 'The bell rang at midnight.',
       location: { key: 'chapel', name: 'Chapel' },
     },
   ],
@@ -49,7 +52,48 @@ describe('World catalog and detail routes', () => {
       'href',
       '/worlds/stormbound-chapel'
     )
+    expect(screen.getByRole('link', { name: 'New Adventure' })).toHaveAttribute(
+      'href',
+      '/worlds/stormbound-chapel/adventures/new'
+    )
     expect(listWorlds).toHaveBeenCalledTimes(1)
+  })
+
+  it('lists and deletes an owner Adventure directly from the World catalog', async () => {
+    const user = userEvent.setup()
+    const deleteAdventure = vi.fn().mockResolvedValue(undefined)
+    const adventure = {
+      id: '11111111-1111-4111-8111-111111111111',
+      playerName: 'Mara Venn',
+      status: 'ready' as const,
+      turnCount: 3,
+      lastPlayedAt: '2026-07-16T19:00:00.000Z',
+      route: '/adventures/11111111-1111-4111-8111-111111111111',
+    }
+
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        listWorlds: async () => [{ ...stormboundChapel, adventures: [adventure] }],
+      },
+      adventureApi: { deleteAdventure },
+    })
+
+    const resume = await screen.findByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    expect(resume).toHaveAttribute('href', adventure.route)
+    expect(resume).toHaveTextContent('Resume')
+    expect(screen.getByText('3 turns')).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Delete Adventure for Mara Venn' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('The World is unchanged.')
+    await user.click(screen.getByRole('button', { name: 'Delete Adventure' }))
+
+    await waitFor(() => expect(deleteAdventure).toHaveBeenCalledWith(adventure.id))
+    expect(
+      screen.queryByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('No Adventures started in this World.')).toBeVisible()
   })
 
   it('isolates the catalog across account changes and purges the previous account cache', async () => {
@@ -177,7 +221,7 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
     expect(screen.getByRole('heading', { name: 'Locations' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Mira' })).toBeVisible()
-    expect(screen.getByText('The bell rang at midnight.')).toBeVisible()
+    expect(screen.queryByText('Private knowledge')).not.toBeInTheDocument()
     expect(screen.getByText('Chapel', { selector: 'span' })).toBeVisible()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
   })
@@ -194,6 +238,99 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByRole('region', { name: 'Characters' })).toContainElement(
       screen.getByRole('heading', { name: 'Mira' })
     )
+  })
+
+  it('LC-003/S1/R4-S1 presents playable Adventure discovery before World canon', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        getWorld: async () => ({
+          ...stormboundDetail,
+          adventures: [
+            {
+              id: '11111111-1111-4111-8111-111111111111',
+              playerName: 'Elara Vance',
+              status: 'opening_pending',
+              turnCount: 0,
+              lastPlayedAt: '2026-07-16T20:30:00.000Z',
+              route: '/adventures/11111111-1111-4111-8111-111111111111',
+            },
+          ],
+        }),
+      },
+    })
+
+    const adventures = await screen.findByRole('region', { name: 'Adventures' })
+    expect(adventures).toHaveTextContent('Elara Vance')
+    expect(adventures).toHaveTextContent('Opening pending')
+    expect(adventures).toHaveTextContent('0 turns')
+    const resume = screen.getByRole('link', { name: 'Resume Adventure as Elara Vance' })
+    expect(resume).toHaveAttribute(
+      'href',
+      '/adventures/11111111-1111-4111-8111-111111111111'
+    )
+    expect(resume).toHaveTextContent('Resume')
+    expect(screen.getByRole('link', { name: 'New Adventure' })).toHaveAttribute(
+      'href',
+      '/worlds/stormbound-chapel/adventures/new'
+    )
+
+    const locations = screen.getByRole('region', { name: 'Locations' })
+    expect(
+      adventures.compareDocumentPosition(locations) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy()
+  })
+
+  it('LC-003/S1/R2-S3 explains empty and unavailable Adventure states without blocking canon', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        getWorld: async () => ({
+          ...stormboundDetail,
+          playability: {
+            available: false,
+            reason: 'This World does not have a playable published version.',
+          },
+        }),
+      },
+    })
+
+    const adventures = await screen.findByRole('region', { name: 'Adventures' })
+    expect(adventures).toHaveTextContent('No Adventures started in this World.')
+    expect(adventures).toHaveTextContent('This World does not have a playable published version.')
+    expect(screen.queryByRole('link', { name: 'New Adventure' })).not.toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Locations' })).toBeVisible()
+  })
+
+  it('LC-003/S1/R4-S3 deletes only the confirmed Adventure from the World list', async () => {
+    const user = userEvent.setup()
+    const adventure = {
+      id: '11111111-1111-4111-8111-111111111111',
+      playerName: 'Elara Vance',
+      status: 'ready' as const,
+      turnCount: 0,
+      lastPlayedAt: '2026-07-16T20:30:00.000Z',
+      route: '/adventures/11111111-1111-4111-8111-111111111111',
+    }
+    const deleteAdventure = vi.fn().mockResolvedValue(undefined)
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => ({ ...stormboundDetail, adventures: [adventure] }) },
+      adventureApi: { deleteAdventure },
+    })
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Delete Adventure for Elara Vance' })
+    )
+    const dialog = screen.getByRole('dialog', { name: "Delete Elara Vance's Adventure?" })
+    await user.click(within(dialog).getByRole('button', { name: 'Delete Adventure' }))
+
+    expect(deleteAdventure).toHaveBeenCalledWith(adventure.id)
+    expect(await screen.findByText('No Adventures started in this World.')).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Adventures' })).toHaveFocus())
   })
 
   it('LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy', async () => {
@@ -266,9 +403,9 @@ describe('World catalog and detail routes', () => {
   it('isolates World detail across account changes and purges the previous account cache', async () => {
     const firstAccount = { id: 4, email: 'first@example.com' }
     const secondAccount = { id: 9, email: 'second@example.com' }
-    const detailFor = (privateKnowledge: string): WorldDetail => ({
+    const detailFor = (voice: string): WorldDetail => ({
       ...stormboundDetail,
-      characters: [{ ...stormboundDetail.characters[0], privateKnowledge }],
+      characters: [{ ...stormboundDetail.characters[0], voice }],
     })
     const firstDetail = detailFor('First account detail response.')
     const secondDetail = detailFor('Second account detail response.')

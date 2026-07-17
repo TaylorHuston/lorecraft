@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
+import type { AdventureApi } from '../adventures/adventureApi'
 import { AuthApiError, type AuthApi } from '../auth/authApi'
 import { StorybookAppProviders } from '../stories/StorybookAppProviders'
 import type { WorldApi } from '../worlds/worldApi'
@@ -22,8 +23,35 @@ const populatedWorldApi: WorldApi = {
       description: 'A rain-lashed chapel and the people keeping its secrets.',
       visibility: 'public',
       readOnly: true,
+      playability: { available: true, reason: null },
+      adventures: [
+        {
+          id: '11111111-1111-4111-8111-111111111111',
+          playerName: 'Mara Venn',
+          status: 'ready',
+          turnCount: 3,
+          lastPlayedAt: '2026-07-16T19:00:00.000Z',
+          route: '/adventures/11111111-1111-4111-8111-111111111111',
+        },
+      ],
     },
   ],
+}
+
+const adventureApi: AdventureApi = {
+  createAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
+  getAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
+  retryOpening: async () => {
+    throw new Error('Not used in this story.')
+  },
+  resetAdventure: async () => {
+    throw new Error('Not used in this story.')
+  },
+  deleteAdventure: async () => undefined,
 }
 
 const loadingWorldApi: WorldApi = {
@@ -41,7 +69,7 @@ const failedWorldApi: WorldApi = {
 function renderWorkspace(worldApi: WorldApi, api?: Partial<AuthApi>) {
   return (
     <StorybookAppProviders route="/worlds" api={api}>
-      <WorkspacePage worldApi={worldApi} />
+      <WorkspacePage worldApi={worldApi} adventureApi={adventureApi} />
     </StorybookAppProviders>
   )
 }
@@ -56,16 +84,20 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Loading: Story = {
-  args: { worldApi: loadingWorldApi },
+  args: { worldApi: loadingWorldApi, adventureApi },
   render: () => renderWorkspace(loadingWorldApi),
 }
 
 export const Populated: Story = {
-  args: { worldApi: populatedWorldApi },
+  args: { worldApi: populatedWorldApi, adventureApi },
   render: () => renderWorkspace(populatedWorldApi),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.findByRole('link', { name: 'Stormbound Chapel' })).resolves.toBeVisible()
+    await expect(canvas.getByRole('link', { name: 'New Adventure' })).toBeVisible()
+    const resume = canvas.getByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    await expect(resume).toBeVisible()
+    await expect(resume).toHaveTextContent('Resume')
     await expect(canvas.getByLabelText('Signed in as keeper@lorecraft.test')).toBeVisible()
   },
 }
@@ -76,7 +108,7 @@ export const PopulatedMobile: Story = {
 }
 
 export const Empty: Story = {
-  args: { worldApi: emptyWorldApi },
+  args: { worldApi: emptyWorldApi, adventureApi },
   render: () => renderWorkspace(emptyWorldApi),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -93,7 +125,7 @@ export const EmptyMobile: Story = {
 }
 
 export const LoadFailure: Story = {
-  args: { worldApi: failedWorldApi },
+  args: { worldApi: failedWorldApi, adventureApi },
   render: () => renderWorkspace(failedWorldApi),
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).findByRole('alert')).resolves.toHaveTextContent(
@@ -121,7 +153,7 @@ export const LoadFailureMobile: Story = {
 }
 
 export const RetryPending: Story = {
-  args: { worldApi: failedWorldApi },
+  args: { worldApi: failedWorldApi, adventureApi },
   render: () => {
     let requests = 0
     const retryPendingApi: WorldApi = {
@@ -149,7 +181,7 @@ export const RetryPendingMobile: Story = {
 }
 
 export const SignOutPending: Story = {
-  args: { worldApi: emptyWorldApi },
+  args: { worldApi: emptyWorldApi, adventureApi },
   render: () =>
     renderWorkspace(emptyWorldApi, {
       signOut: () => new Promise(() => undefined),
@@ -162,7 +194,7 @@ export const SignOutPending: Story = {
 }
 
 export const SignOutFailure: Story = {
-  args: { worldApi: populatedWorldApi },
+  args: { worldApi: populatedWorldApi, adventureApi },
   render: () =>
     renderWorkspace(populatedWorldApi, {
       signOut: async () => {

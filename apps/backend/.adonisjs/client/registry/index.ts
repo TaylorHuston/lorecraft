@@ -48,6 +48,36 @@ const routes = {
     tokens: [{"old":"/api/v1/worlds/:slug","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug","type":1,"val":"slug","end":""}],
     types: placeholder as Registry['worlds.show']['types'],
   },
+  'adventures.store': {
+    methods: ["POST"],
+    pattern: '/api/v1/worlds/:slug/adventures',
+    tokens: [{"old":"/api/v1/worlds/:slug/adventures","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug/adventures","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug/adventures","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug/adventures","type":1,"val":"slug","end":""},{"old":"/api/v1/worlds/:slug/adventures","type":0,"val":"adventures","end":""}],
+    types: placeholder as Registry['adventures.store']['types'],
+  },
+  'adventures.show': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/v1/adventures/:id',
+    tokens: [{"old":"/api/v1/adventures/:id","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['adventures.show']['types'],
+  },
+  'adventures.retry_opening': {
+    methods: ["POST"],
+    pattern: '/api/v1/adventures/:id/opening/retry',
+    tokens: [{"old":"/api/v1/adventures/:id/opening/retry","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/opening/retry","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/opening/retry","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/opening/retry","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/opening/retry","type":0,"val":"opening","end":""},{"old":"/api/v1/adventures/:id/opening/retry","type":0,"val":"retry","end":""}],
+    types: placeholder as Registry['adventures.retry_opening']['types'],
+  },
+  'adventures.reset': {
+    methods: ["POST"],
+    pattern: '/api/v1/adventures/:id/reset',
+    tokens: [{"old":"/api/v1/adventures/:id/reset","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/reset","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/reset","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/reset","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/reset","type":0,"val":"reset","end":""}],
+    types: placeholder as Registry['adventures.reset']['types'],
+  },
+  'adventures.destroy': {
+    methods: ["DELETE"],
+    pattern: '/api/v1/adventures/:id',
+    tokens: [{"old":"/api/v1/adventures/:id","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id","type":1,"val":"id","end":""}],
+    types: placeholder as Registry['adventures.destroy']['types'],
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export { routes }

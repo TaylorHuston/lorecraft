@@ -1,0 +1,48 @@
+.description {
+  margin-top: var(--space-3);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.description p {
+  margin: 0;
+}
+
+.error {
+  margin: var(--space-4) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.actions button {
+  min-height: var(--control-touch);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.actions .danger {
+  border-color: var(--danger);
+  background: var(--danger-muted);
+  color: var(--danger);
+}
+
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}

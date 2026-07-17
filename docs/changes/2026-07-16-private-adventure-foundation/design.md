@@ -302,7 +302,7 @@ any owned state -> deleted                  (owner delete)
 
 ## API Contract
 
-- Extend `GET /api/v1/worlds/:slug` with playability and only the current account's Adventure summaries.
+- Extend `GET /api/v1/worlds` and `GET /api/v1/worlds/:slug` with playability and only the current account's Adventure summaries so discovery does not require per-World requests.
 - Add `POST /api/v1/worlds/:slug/adventures` with Vine validation for creation request ID and player profile; return the Adventure summary and durable URL.
 - Add `GET /api/v1/adventures/:id` for owner-filtered lifecycle, frozen source identity, player, scene, and visible story projection.
 - Add `POST /api/v1/adventures/:id/opening/retry` for terminal opening failure.
@@ -336,28 +336,29 @@ any owned state -> deleted                  (owner delete)
 
 ### User Flow And Information Architecture
 
-1. The account opens a World detail page and sees a compact `Adventures` section before canonical Locations and Characters.
+1. The account opens the World catalog and sees each accessible World with its playability, direct `New Adventure` action, and current-account Adventures. World detail retains the same controls as a secondary entry point.
 2. Each Adventure row uses player name as its primary label and shows lifecycle status, `0 turns`, and last-played time. The row resumes the Adventure; a separate delete icon opens confirmation.
 3. `New Adventure` is the section action and opens `/worlds/:slug/adventures/new` rather than a modal.
 4. The creation page preserves World identity and presents required player name, optional physical description, optional backstory, `Start Adventure`, and `Cancel`.
 5. Accepted submission immediately navigates to `/adventures/<id>`. The real Player and Scene regions are already populated while the Story region shows a restrained Game Master preparation state.
 6. A ready Adventure replaces only the Story loading state with the generated opening. This Change renders no composer, disabled action controls, or future-feature explanation.
 7. Terminal generation failure preserves Player and Scene context while the Story region presents a clear failure, `Try Again`, and `Return to World`. No partial narration appears.
-8. Delete remains in the World Adventure list. Reset remains in the selected Adventure's compact header menu and is never combined with source-World controls.
+8. Delete is available beside each owned Adventure in both the catalog and World detail. Reset remains in the selected Adventure's settings modal, opened from a gear icon, and is never combined with source-World controls.
 
 ### Responsive Composition
 
 - Desktop keeps persistent Player, Story, and Scene regions, with Story visibly wider and primary. Each region may scroll independently so long content does not move navigation or obscure the opening.
-- Mobile uses a persistent bottom tab bar ordered Story, Player, Scene. Story is selected by default; arrow-key behavior follows the existing tab prototype. No Scene change badge appears until context can mutate.
+- Mobile uses a persistent top tab bar ordered Story, Player, Scene. Story is selected by default; arrow-key behavior follows the existing tab prototype. No Scene change badge appears until context can mutate.
 - The same pending, failure, and ready states occupy the Story region on both layouts; Player and Scene remain available throughout.
 - Narrow desktop and tablet widths must not squeeze three unreadable columns. They may adopt the mobile tab composition at the implementation's tested breakpoint.
 - Loading, error, confirmation, and long-content states must not cause horizontal overflow or incoherent layout shifts.
 
 ### Component And State Contract
 
-- World detail owns Adventure discovery, resume, creation navigation, and confirmed deletion, not Adventure runtime logic.
+- The World catalog is the cross-World Adventure launcher and manager; World detail offers the same World-scoped entry points. Neither surface owns Adventure runtime logic.
 - The dedicated creation page owns form validation, cancellation, and one idempotent submission. It does not offer model or Starting Point controls.
-- The Adventure shell owns a compact top navigation with Lorecraft/World identity, `Return to World`, and an Adventure menu containing `Reset Adventure`. Exact top-navigation polish may receive another design pass without changing this contract.
+- The Adventure shell owns compact top navigation with a left-aligned, button-styled `Return to World`, Lorecraft/World identity, and a right-aligned gear button that opens an extensible Adventure settings modal containing `Reset Adventure`.
+- World detail mirrors the same back-navigation language with a leftmost, button-styled `Back to Worlds` control and Lucide arrow.
 - Player is read-only after creation and shows name, optional physical description, optional backstory, current status when meaningful, and starting Location.
 - Scene is read-only and shows the starting Location name, player-visible description, and NPCs present by name and physical description only. It excludes background, personality, voice, private knowledge, memory, and NPC detail interaction.
 - Story renders authoritative `opening_pending`, `opening_processing`, `opening_failed`, or `ready` state. Pending and failure never reveal partial narration.
@@ -385,7 +386,7 @@ any owned state -> deleted                  (owner delete)
 ### Open Design Questions
 
 - No design blocker remains.
-- Accepted deferral: exact top-navigation visual cleanup may receive a later `/sdd-design` refinement. Implementation must still provide the confirmed identity, return navigation, Adventure menu, responsive behavior, and accessibility semantics now.
+- Accepted deferral: additional settings may be added later. The current shell must preserve the confirmed identity, button-styled return navigation, gear-triggered settings modal, responsive behavior, and accessibility semantics.
 
 ## Client And API Boundary
 

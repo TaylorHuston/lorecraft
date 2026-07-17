@@ -1,6 +1,20 @@
 import { createTuyau } from '@tuyau/core/client'
 import { registry } from '@lorecraft/backend/registry'
-import { WorldApiError, type WorldApi, type WorldDetail, type WorldSummary } from './worldApi'
+import type { AdventureSummary, AdventureStatus } from '../adventures/adventureApi'
+import {
+  WorldApiError,
+  type WorldApi,
+  type WorldCatalogItem,
+  type WorldDetail,
+  type WorldSummary,
+} from './worldApi'
+
+const adventureStatuses = new Set<AdventureStatus>([
+  'opening_pending',
+  'opening_processing',
+  'opening_failed',
+  'ready',
+])
 
 function statusOf(error: unknown) {
   return typeof error === 'object' &&
@@ -25,10 +39,6 @@ function isWorldSummary(value: unknown): value is WorldSummary {
     (value.visibility === 'public' || value.visibility === 'private') &&
     typeof value.readOnly === 'boolean'
   )
-}
-
-function isWorldCatalog(value: unknown): value is WorldSummary[] {
-  return Array.isArray(value) && value.every(isWorldSummary)
 }
 
 function isWorldLocation(value: unknown): value is WorldDetail['locations'][number] {
@@ -58,17 +68,57 @@ function isWorldCharacter(value: unknown): value is WorldDetail['characters'][nu
     typeof value.background === 'string' &&
     typeof value.personality === 'string' &&
     typeof value.voice === 'string' &&
-    typeof value.privateKnowledge === 'string' &&
+    !('privateKnowledge' in value) &&
     isWorldCharacterLocation(value.location)
   )
 }
 
+function isAdventureSummary(value: unknown): value is AdventureSummary {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'string' &&
+    typeof value.playerName === 'string' &&
+    typeof value.status === 'string' &&
+    adventureStatuses.has(value.status as AdventureStatus) &&
+    typeof value.turnCount === 'number' &&
+    typeof value.lastPlayedAt === 'string' &&
+    typeof value.route === 'string'
+  )
+}
+
+function isWorldPlayability(value: unknown): value is WorldDetail['playability'] {
+  return (
+    isRecord(value) &&
+    typeof value.available === 'boolean' &&
+    (value.reason === null || typeof value.reason === 'string')
+  )
+}
+
+function isWorldCatalogItem(value: unknown): value is WorldCatalogItem {
+  if (!isRecord(value)) return false
+  const playability = value.playability
+  const adventures = value.adventures
+  return (
+    isWorldSummary(value) &&
+    isWorldPlayability(playability) &&
+    Array.isArray(adventures) &&
+    adventures.every(isAdventureSummary)
+  )
+}
+
+function isWorldCatalog(value: unknown): value is WorldCatalogItem[] {
+  return Array.isArray(value) && value.every(isWorldCatalogItem)
+}
+
 function isWorldDetail(value: unknown): value is WorldDetail {
   if (!isRecord(value)) return false
-  const { locations, characters } = value
+  const { playability, adventures, locations, characters } = value
 
   return (
     isWorldSummary(value) &&
+    isWorldPlayability(playability) &&
+    Array.isArray(adventures) &&
+    adventures.every(isAdventureSummary) &&
     Array.isArray(locations) &&
     locations.every(isWorldLocation) &&
     Array.isArray(characters) &&

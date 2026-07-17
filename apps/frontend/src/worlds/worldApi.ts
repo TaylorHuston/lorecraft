@@ -1,4 +1,5 @@
 import { accountOwnedQueryKeyFor } from '../auth/accountQueryKeys'
+import type { AdventureSummary } from '../adventures/adventureApi'
 
 export type WorldVisibility = 'public' | 'private'
 
@@ -9,6 +10,11 @@ export type WorldSummary = {
   description: string
   visibility: WorldVisibility
   readOnly: boolean
+}
+
+export type WorldCatalogItem = WorldSummary & {
+  playability: WorldPlayability
+  adventures: AdventureSummary[]
 }
 
 export type WorldLocation = {
@@ -24,17 +30,23 @@ export type WorldCharacter = {
   background: string
   personality: string
   voice: string
-  privateKnowledge: string
   location: Pick<WorldLocation, 'key' | 'name'> | null
 }
 
+export type WorldPlayability = {
+  available: boolean
+  reason: string | null
+}
+
 export type WorldDetail = WorldSummary & {
+  playability: WorldPlayability
+  adventures: AdventureSummary[]
   locations: WorldLocation[]
   characters: WorldCharacter[]
 }
 
 export interface WorldApi {
-  listWorlds(): Promise<WorldSummary[]>
+  listWorlds(): Promise<WorldCatalogItem[]>
   getWorld(slug: string): Promise<WorldDetail>
 }
 

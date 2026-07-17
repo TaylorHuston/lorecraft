@@ -14,8 +14,9 @@ Implemented now:
 - An authenticated catalog of Worlds available to the current account.
 - Read-only inspection of structured World metadata, Locations, and Characters.
 - Explicit, repeatable installation of the shared `Stormbound Chapel` starter World for local testing.
+- Private Adventures created from a frozen version of an accessible World, with a durable generated opening, resume, retry, reset, and delete flows.
 
-World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, and playable Adventures. Combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics are likewise deferred.
+World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, and the interactive Adventure turn loop. Combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics are likewise deferred.
 
 The [Epics](#documentation) are the canonical source for detailed implemented behavior, scenarios, and verification evidence. This section is only a current summary.
 
@@ -64,7 +65,7 @@ cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 ```
 
-Configure the environment values described below. Then generate the AdonisJS application key, apply development migrations, and start both applications:
+Configure the environment values described below. Then generate the AdonisJS application key, apply development migrations, and start the web client, API, and Adventure worker:
 
 ```bash
 cd apps/backend
@@ -76,13 +77,14 @@ npm run dev
 
 Lorecraft reserves a dedicated local port block:
 
-| Surface        | URL                     |
-| -------------- | ----------------------- |
-| Web client     | `http://localhost:4310` |
-| API server     | `http://localhost:4311` |
-| Storybook      | `http://localhost:4312` |
-| Playwright web | `http://localhost:4313` |
-| Playwright API | `http://localhost:4314` |
+| Surface                        | URL                     |
+| ------------------------------ | ----------------------- |
+| Web client                     | `http://localhost:4310` |
+| API server                     | `http://localhost:4311` |
+| Storybook                      | `http://localhost:4312` |
+| Playwright web                 | `http://localhost:4313` |
+| Playwright API                 | `http://localhost:4314` |
+| Playwright fake story provider | `http://localhost:4315` |
 
 Vite and Storybook fail when their reserved port is unavailable rather than silently selecting another port.
 
@@ -97,6 +99,8 @@ Backend configuration lives in `apps/backend/.env`:
 - `HOST` and `PORT` default to `localhost` and `4311` in the example file.
 - `CORS_ORIGIN` must match the frontend origin, normally `http://localhost:4310`.
 - `STARTER_WORLD_AUTHOR_EMAIL` is optional and is used only by the explicit starter-World seed.
+- `LLM_BASE_URL`, `LLM_MODEL`, and the optional `LLM_API_KEY` configure the OpenAI-compatible provider used by the Adventure worker.
+- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, optional `LLM_REASONING_EFFORT`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded opening generation and queue polling. Set reasoning effort to `none` for compatible local models that otherwise spend the narration budget on hidden reasoning.
 
 Frontend configuration lives in `apps/frontend/.env`:
 
@@ -117,12 +121,27 @@ npm run typecheck
 npm run build
 ```
 
+`npm run dev` starts the frontend, API, and opening worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
+
 Use a workspace selector when only one application is relevant. For example:
 
 ```bash
 npm run dev --workspace @lorecraft/backend
 npm run dev --workspace @lorecraft/frontend
+npm run dev:api --workspace @lorecraft/backend
+npm run dev:worker --workspace @lorecraft/backend
 ```
+
+The backend workspace's normal `dev` command supervises both API and worker and stops the sibling process if either exits. Use `dev:api` or `dev:worker` only when intentionally running one backend process in isolation.
+
+The worker is a separately deployable process. From a production backend build, run:
+
+```bash
+cd apps/backend/build
+node bin/console.js adventures:openings:work
+```
+
+Healthy startup emits `adventure_opening.worker_started`; graceful shutdown emits `adventure_opening.worker_stopped`. Claimed jobs emit correlated lifecycle records containing only Adventure/job/generation/attempt/status/timing identifiers. Missing startup logs, repeated process exits, or processing leases that remain expired indicate an unhealthy worker. Credentials, authorization headers, prompt text, and model prose are excluded from lifecycle logs.
 
 ### Starter World
 
@@ -209,6 +228,7 @@ Epics define canonical implemented behavior, scenario evidence, and explicit gap
 
 - [LC-001 Account Identity And Workspace Access](docs/epics/lc-001-account-identity-and-workspace-access/epic.md)
 - [LC-002 World Bible Catalog](docs/epics/lc-002-world-bible-catalog/epic.md)
+- [LC-003 Adventure Play](docs/epics/lc-003-adventure-play/epic.md)
 
 Accepted architecture decisions:
 
@@ -219,5 +239,7 @@ Accepted architecture decisions:
 - [World Canon And Adventure Isolation](docs/adrs/2026-07-14-world-canon-and-adventure-isolation.md)
 - [Relational World Aggregate](docs/adrs/2026-07-14-relational-world-aggregate.md)
 - [Disposable Database Targets For Automation](docs/adrs/2026-07-14-disposable-database-automation.md)
+- [Immutable World Version Snapshots](docs/adrs/2026-07-16-immutable-world-version-snapshots.md)
+- [Durable Asynchronous Adventure Work](docs/adrs/2026-07-16-durable-asynchronous-adventure-work.md)
 
 Application-specific workflow details are available in the [backend README](apps/backend/README.md) and [frontend README](apps/frontend/README.md). See the [changelog](CHANGELOG.md) for user-facing changes.
