@@ -200,6 +200,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | `apps/backend/app/services/adventure_creation_service.ts` | Validates and atomically creates an owner-idempotent Adventure from the accessible current WorldVersion and its frozen default Starting Point. | Recheck when creation input, source access, idempotency, or initial-state semantics change. |
 | `apps/backend/app/services/adventure_query_service.ts` | Projects owner-filtered Adventure summaries and visible Player/Scene/story state from the frozen source without raw snapshot or prompt evidence. | Recheck when Adventure disclosure, read projection, or story history semantics change. |
 | `apps/backend/app/services/adventure_lifecycle_service.ts` | Resets an owned Adventure to its same frozen source and deletes only the selected private aggregate. | Recheck when reset generations, active-work conflicts, or deletion boundaries change. |
+| `apps/backend/app/services/story_generation/` | Defines deterministic frozen-context prompt assembly and a provider-neutral OpenAI-compatible prose boundary with sanitized evidence and normalized failures. | Recheck when opening context, provider protocol, generation settings, or evidence redaction changes. |
 
 #### Verified By
 
@@ -214,14 +215,16 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | S1/R2-S3 creation conflict | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Missing current version or valid frozen default Starting Point creates no Adventure and returns a playability conflict. | Passing 2026-07-16 |
 | S1/R2-S2 Adventure isolation and R4-S1 service boundary | `apps/backend/tests/functional/adventure_query_service.spec.ts` | Owner-only list/read projections continue using the original frozen version after newer canon is published and omit private model/prompt evidence. | Passing 2026-07-16 |
 | S1/R1-S3 lifecycle portion and R4-S2..R4-S3 service boundary | `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts` | Cross-owner lifecycle calls are non-disclosing; reset uses the same frozen source and clears prior work; delete preserves source and sibling Adventures. | Passing 2026-07-16 |
-| Remaining S1/R1-R4 API behavior and S1/R3/R5 | Not verified yet. | HTTP authorization/contracts, World inspection playability, opening generation, lifecycle API behavior, and UI await later slices in this Change. | Pending |
+| S1/R3-S1 prompt/provider boundary and R3-S3/R3-S4 provider-error portions | `apps/backend/tests/unit/story_generation/opening_prompt.spec.ts` and `openai_compatible_story_generator.spec.ts` | Frozen opening context is assembled deterministically; prose, timeout, provider failure, malformed/empty output, exact evidence, and credential redaction are normalized. | Passing 2026-07-16 |
+| Remaining S1/R1-R4 API behavior, R3 worker behavior, and S1/R5 | Not verified yet. | HTTP contracts, World inspection playability, durable claiming/publication/retry, lifecycle API behavior, and UI await later slices in this Change. | Pending |
 
 #### Verification Gaps
 
 - `R2-S2` still needs API/E2E proof that a newly created Adventure selects the newer current version; service projection proof covers preservation of the existing Adventure.
 - `R2-S3` still needs API and World-inspection proof that unplayable source returns a clear conflict while inspection remains available.
 - `R1-S3` still needs anonymous and cross-account Adventure API proof; service-level source non-disclosure is covered.
-- `R3` and `R5` await implementation and scenario-mapped evidence; `R4` still needs HTTP/UI/E2E proof over the passing service boundary.
+- `R3` still needs durable worker claim, lease, retry, atomic publication, and race proof over the passing provider boundary.
+- `R5` awaits implementation and scenario-mapped evidence; `R4` still needs HTTP/UI/E2E proof over the passing service boundary.
 - Live-provider narrative quality and final responsive UI acceptance require separate evidence from deterministic tests.
 
 #### Story Notes

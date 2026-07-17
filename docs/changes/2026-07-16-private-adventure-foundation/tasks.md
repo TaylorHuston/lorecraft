@@ -62,9 +62,9 @@ status: in_progress
 
 ### 6. Durable Opening Generation
 
-- [ ] 6.1 RED: define a deterministic `StoryGenerator` contract test for successful prose, invalid/empty output, timeout, provider failure, and metadata/redaction behavior.
-- [ ] 6.2 Implement structured opening prompt assembly from platform instructions, frozen World guidance, Starting Point premise, player profile, starting Location, and Characters present.
-- [ ] 6.3 Implement the OpenAI-compatible story adapter with server-only base URL/key/model/settings, bounded timeout, normalized errors, and no extraction/JSON-mode responsibility.
+- [x] 6.1 RED: define a deterministic `StoryGenerator` contract test for successful prose, invalid/empty output, timeout, provider failure, and metadata/redaction behavior.
+- [x] 6.2 Implement structured opening prompt assembly from platform instructions, frozen World guidance, Starting Point premise, player profile, starting Location, and Characters present.
+- [x] 6.3 Implement the OpenAI-compatible story adapter with server-only base URL/key/model/settings, bounded timeout, normalized errors, and no extraction/JSON-mode responsibility.
 - [ ] 6.4 RED: add worker tests for row claiming, one active job, lease expiry/reclaim, one automatic retry, terminal failure, owner retry, stale-worker rejection, and deletion/reset races.
 - [ ] 6.5 Implement the separately runnable worker and atomic finalization of model call, root revision, opening story entry, Adventure head, and ready status.
 - [ ] 6.6 Add structured correlated local logs for opening lifecycle while ensuring secrets and authorization headers are absent.
@@ -125,7 +125,8 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 R2 playable Stormbound seed | delegated RED test; main-agent implementation and verification | Stormbound seed, catalog/seed tests, isolated publication race test | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass | `db38048` |
 | 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification | Adventure aggregate migration, Lucid models, and focused database tests | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass | `794c005` |
 | 2026-07-16 | LC-003/S1 Adventure creation | delegated RED tests; main-agent implementation and verification | Adventure creation service and focused functional tests | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | `54bb3a4` |
-| 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | pending commit |
+| 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | `3a716ee` |
+| 2026-07-16 | LC-003/S1 story-generation boundary | delegated backend TDD slice; main-agent review and sequential verification | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass | pending commit |
 
 ## Verification Ledger
 
@@ -148,6 +149,8 @@ status: in_progress
 | 2026-07-16 | Adventure query service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R2-S2` frozen reads and `R4-S1` owner-only list/read projections without private evidence | Passed; 2 tests |
 | 2026-07-16 | Adventure lifecycle service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R1-S3` lifecycle non-disclosure and `R4-S2..R4-S3` same-version reset, busy conflict, cleanup, and isolated deletion | Passed; 4 tests |
 | 2026-07-16 | Full backend test suite after Adventure creation | broad supporting test | Authentication, catalog, publication, migration, and Adventure creation regressions remain green together | Passed; 63 tests |
+| 2026-07-16 | Story-generation prompt and adapter unit suites | focused unit test | `LC-003/S1 R3-S1` structured frozen context plus provider-neutral success, timeout, failure, malformed/empty output, exact evidence, and credential redaction | Passed; 8 tests |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after query/lifecycle/provider slices | broad supporting gates | New service boundaries and tests are formatted and type-safe | Passed |
 
 ## Manual Feedback
 
