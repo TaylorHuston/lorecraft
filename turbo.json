@@ -14,7 +14,14 @@
     "HOST",
     "PORT",
     "LOG_LEVEL",
-    "SESSION_DRIVER"
+    "SESSION_DRIVER",
+    "LLM_BASE_URL",
+    "LLM_API_KEY",
+    "LLM_MODEL",
+    "LLM_TIMEOUT_MS",
+    "LLM_MAX_TOKENS",
+    "LLM_TEMPERATURE",
+    "ADVENTURE_WORKER_POLL_INTERVAL_MS"
   ],
   "tasks": {
     "build": {
@@ -22,6 +29,10 @@
       "outputs": ["build/**", "dist/**", ".adonisjs/**"]
     },
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:worker": {
       "cache": false,
       "persistent": true
     },

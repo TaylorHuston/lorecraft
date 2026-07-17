@@ -12,6 +12,8 @@
     "start": "node bin/server.js",
     "build": "node ace build",
     "dev": "node ace serve --hmr",
+    "dev:worker": "node ace adventures:openings:work",
+    "worker:adventure-openings": "node ace adventures:openings:work",
     "migrate": "node ace migration:run",
     "migrate:ci": "node scripts/run-migrations.mjs test",
     "migrate:e2e": "node scripts/run-migrations.mjs e2e",

@@ -64,7 +64,7 @@ cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 ```
 
-Configure the environment values described below. Then generate the AdonisJS application key, apply development migrations, and start both applications:
+Configure the environment values described below. Then generate the AdonisJS application key, apply development migrations, and start the web client, API, and Adventure worker:
 
 ```bash
 cd apps/backend
@@ -97,6 +97,8 @@ Backend configuration lives in `apps/backend/.env`:
 - `HOST` and `PORT` default to `localhost` and `4311` in the example file.
 - `CORS_ORIGIN` must match the frontend origin, normally `http://localhost:4310`.
 - `STARTER_WORLD_AUTHOR_EMAIL` is optional and is used only by the explicit starter-World seed.
+- `LLM_BASE_URL`, `LLM_MODEL`, and the optional `LLM_API_KEY` configure the OpenAI-compatible provider used by the Adventure worker.
+- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded opening generation and queue polling.
 
 Frontend configuration lives in `apps/frontend/.env`:
 
@@ -117,12 +119,24 @@ npm run typecheck
 npm run build
 ```
 
+`npm run dev` starts the frontend, API, and opening worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
+
 Use a workspace selector when only one application is relevant. For example:
 
 ```bash
 npm run dev --workspace @lorecraft/backend
 npm run dev --workspace @lorecraft/frontend
+npm run dev:worker --workspace @lorecraft/backend
 ```
+
+The worker is a separately deployable process. From a production backend build, run:
+
+```bash
+cd apps/backend/build
+node bin/console.js adventures:openings:work
+```
+
+Healthy startup emits `adventure_opening.worker_started`; graceful shutdown emits `adventure_opening.worker_stopped`. Claimed jobs emit correlated lifecycle records containing only Adventure/job/generation/attempt/status/timing identifiers. Missing startup logs, repeated process exits, or processing leases that remain expired indicate an unhealthy worker. Credentials, authorization headers, prompt text, and model prose are excluded from lifecycle logs.
 
 ### Starter World
 
