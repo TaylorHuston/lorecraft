@@ -149,7 +149,7 @@ The system SHALL present World identity, metadata, Locations, Characters, naviga
 
 ##### Verification Gaps
 
-- User manual confirmation and the separately owned UI Foundations hub capture remain pending; app-owned deterministic evidence is complete.
+- User manual confirmation remains pending; app-owned deterministic evidence and the separately owned UI Foundations hub capture are complete.
 
 #### Supersedes / Reconciles
 
@@ -206,7 +206,7 @@ The system SHALL present Adventure creation, pending, failure, ready, reset, del
 
 ##### Verification Gaps
 
-- User manual confirmation and the separately owned UI Foundations hub capture remain pending; app-owned dialog, responsive, E2E, and visual evidence is complete.
+- User manual confirmation remains pending; app-owned dialog, responsive, E2E, and visual evidence and the separately owned UI Foundations hub capture are complete.
 
 #### Supersedes / Reconciles
 
