@@ -85,13 +85,29 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+function expectNoHorizontalOverflow(canvasElement: HTMLElement) {
+  const documentElement = canvasElement.ownerDocument.documentElement
+  expect(documentElement.scrollWidth).toBeLessThanOrEqual(documentElement.clientWidth)
+}
+
 export const ReadyDesktop: Story = {
   render: () => renderAdventure(readyAdventure),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.findByText(/chapel doors yield/i)).resolves.toBeVisible()
-    await expect(canvas.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
-    await expect(canvas.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira')
+    const player = canvas.getByRole('region', { name: 'Player' })
+    const story = canvas.getByRole('region', { name: 'Story' })
+    const scene = canvas.getByRole('region', { name: 'Scene' })
+    await expect(player).toHaveTextContent('Elara Vance')
+    await expect(scene).toHaveTextContent('Mira')
+    const playerRect = player.getBoundingClientRect()
+    const storyRect = story.getBoundingClientRect()
+    const sceneRect = scene.getBoundingClientRect()
+    expect(playerRect.left).toBeLessThan(storyRect.left)
+    expect(storyRect.left).toBeLessThan(sceneRect.left)
+    expect(storyRect.width).toBeGreaterThan(playerRect.width)
+    expect(storyRect.width).toBeGreaterThan(sceneRect.width)
+    expectNoHorizontalOverflow(canvasElement)
   },
 }
 
@@ -104,24 +120,56 @@ export const ReadyMobile: Story = {
       'aria-selected',
       'true'
     )
+    expectNoHorizontalOverflow(canvasElement)
   },
 }
 
 export const OpeningPending: Story = {
   render: () => renderAdventure({ ...readyAdventure, status: 'opening_pending', story: [] }),
   play: async ({ canvasElement }) => {
-    await expect(
-      within(canvasElement).findByText('Preparing your opening')
-    ).resolves.toBeVisible()
+    const canvas = within(canvasElement)
+    await expect(canvas.findByText('Preparing your opening')).resolves.toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Adventure settings' })).toBeVisible()
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
+export const OpeningPendingMobile: Story = {
+  ...OpeningPending,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByText('Preparing your opening')).resolves.toBeVisible()
+    await expect(canvas.getByRole('tab', { name: 'Story' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+    expectNoHorizontalOverflow(canvasElement)
   },
 }
 
 export const OpeningFailed: Story = {
   render: () => renderAdventure({ ...readyAdventure, status: 'opening_failed', story: [] }),
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).findByRole('alert')).resolves.toHaveTextContent(
-      "couldn't prepare your opening"
-    )
+    const canvas = within(canvasElement)
+    const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent("couldn't prepare your opening")
+    await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
+    await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
+export const OpeningFailedMobile: Story = {
+  ...OpeningFailed,
+  parameters: { viewport: { defaultViewport: 'mobile1' } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent("couldn't prepare your opening")
+    await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
+    await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
+    expectNoHorizontalOverflow(canvasElement)
   },
 }
 

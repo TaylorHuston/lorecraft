@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useRef, useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -35,7 +35,21 @@ describe('Dialog', () => {
     const trigger = screen.getByRole('button', { name: 'Open settings' })
     await user.click(trigger)
     const dialog = screen.getByRole('dialog', { name: 'Adventure settings' })
-    expect(within(dialog).getByRole('button', { name: 'First action' })).toHaveFocus()
+    const closeButton = within(dialog).getByRole('button', { name: 'Close dialog' })
+    const firstAction = within(dialog).getByRole('button', { name: 'First action' })
+    const lastAction = within(dialog).getByRole('button', { name: 'Last action' })
+    expect(firstAction).toHaveFocus()
+
+    await user.tab()
+    expect(lastAction).toHaveFocus()
+    await user.tab()
+    await waitFor(() => expect(closeButton).toHaveFocus())
+    await user.tab()
+    expect(firstAction).toHaveFocus()
+    await user.tab({ shift: true })
+    expect(closeButton).toHaveFocus()
+    await user.tab({ shift: true })
+    await waitFor(() => expect(lastAction).toHaveFocus())
 
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

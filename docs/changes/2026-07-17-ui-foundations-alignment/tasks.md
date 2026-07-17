@@ -1,13 +1,13 @@
 ---
-status: in_progress
+status: in_review
 ---
 
 # Tasks: UI Foundations Alignment
 
 ## Resume Here
 
-- Last completed action: completed app-owned LC-001, LC-002, and LC-003 alignment, deterministic comparison stories, broad frontend/Storybook/build gates, Playwright desktop/mobile journeys, and local visual captures.
-- Next action: commit the World/Adventure/comparison slice, complete independent self-check, and coordinate the separately owned UI Foundations hub registration before review handoff.
+- Last completed action: completed independent review discovery and the safe evidence-remediation batch against source commit `2b261810dffec7d7da80d7225931398918ca8951`.
+- Next action: obtain user manual confirmation and coordinate the separately owned UI Foundations hub registration/comparison capture before closeout.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
 - Known blockers: no Lorecraft implementation blocker. UI Foundations currently has unrelated active catalog work, so Lorecraft registration and cross-application comparison capture remain a separately owned closeout dependency; user manual confirmation also remains pending.
@@ -99,8 +99,8 @@ status: in_progress
 ### 9. Review And Closeout
 
 - [x] 9.1 Add the required user-facing `CHANGELOG.md` entry without including SDD bookkeeping, scaffolding, refactors, or test-only work.
-- [ ] 9.2 Run `/sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, behavior, accessibility, tests, docs, comparison evidence, and branch readiness.
-- [ ] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
+- [x] 9.2 Run `/sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, behavior, accessibility, tests, docs, comparison evidence, and branch readiness.
+- [x] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
 - [ ] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
 - [ ] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
 - [x] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
@@ -134,6 +134,8 @@ status: in_progress
 | 2026-07-17 | repository `npm test` with guarded disposable test environment                                                                                         | full regression gate                  | Backend database/service/API behavior and all frontend deterministic behavior remain green together | Passed: backend 102 tests; frontend 114 tests |
 | 2026-07-17 | changed-surface SDD reverse-traceability audit from `9af0728`                                                                                           | traceability audit                    | Every changed behavior test and source file has current scenario-mapped `Verified By` or `Implemented By` ownership, with no missing references | Passed: 0 unowned tests, 0 unowned source files, 0 missing references |
 | 2026-07-17 | final scoped `sdd validate`                                                                                                                             | deterministic artifact validation     | Active Change and all three affected Epics remain structurally coherent after implementation reconciliation | Passed: 0 errors, 0 warnings |
+| 2026-07-17 | independent `/sdd-review` discovery and bounded remediation                                                                                           | independent integration review        | Source-vs-target behavior, artifacts, traceability, security, responsive composition, and branch readiness were reviewed together | Ready after four required evidence/artifact fixes |
+| 2026-07-17 | focused Dialog test and full Storybook browser suite after review remediation                                                                          | regression verification               | Focus wraps across both dialog boundaries; ready/pending/failed Adventure states retain required actions and overflow-free desktop/mobile composition | Passed: Dialog 2 tests; Storybook 76 tests |
 
 ## Manual Feedback
 
@@ -167,7 +169,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 ## Closeout
 
-- Change status: `in_progress`; Lorecraft implementation and deterministic verification are complete, with user confirmation, independent `/sdd-review`, and UI Foundations coordination pending.
+- Change status: `in_review`; independent review is technically ready, with user confirmation plus UI Foundations coordination still pending before closeout.
 - Epic files updated: yes; LC-001, LC-002, and LC-003 reflect current implementation and evidence.
 - Story labels/references and Requirement/Scenario IDs current: yes; semantic duplicate scenarios were reconciled onto stable existing IDs during promotion.
 - Implemented By maps current: yes; changed-surface reverse traceability reports no unowned source files or missing paths.
@@ -175,9 +177,9 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: pending independent review.
-- Review record: none yet.
-- `review.md` findings resolved: not applicable before review.
+- `sdd-review` verdict: ready at reviewed source commit `2b261810dffec7d7da80d7225931398918ca8951` plus the verified review-remediation commit.
+- Review record: `docs/changes/2026-07-17-ui-foundations-alignment/review.md`.
+- `review.md` findings resolved: yes; four required evidence/artifact findings were remediated and reverified.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
 - Manual UI confirmation status: pending user.
 - PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
