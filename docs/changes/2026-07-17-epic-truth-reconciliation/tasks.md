@@ -68,10 +68,10 @@ status: in_review
 |---|---|---|---|---|---|
 | 2026-07-17 | Cross-Epic audit and plan | main orchestrator plus Epic/Story audit delegation | LC-001/2/3, related code/tests/docs | Consolidated drift boundary planned; implementation not started | planned draft |
 | 2026-07-17 | PRD alignment and Change promotion | main orchestrator with `sdd-prd` and `sdd-apply` guidance | private PRD and active Change artifacts | Adventure foundation recorded as current while creator-first priority and deferred turns remain explicit | vault `5075f2037` |
-| 2026-07-17 | LC-001 security/session truth | bounded implementation delegation, integrated and verified locally | LC-001 Epic, account tests, closed account artifacts | Added stable R4 and session-loss/logout-failure ownership; relabeled and strengthened existing focused proof | commit pending |
-| 2026-07-17 | LC-002 visibility/disclosure truth | bounded TDD delegation, integrated and verified locally | LC-002 Epic and World catalog functional test | Added owner-private visibility/non-disclosure proof; preserved minimized Character disclosure with no production-code change | commit pending |
-| 2026-07-17 | LC-003 and supporting truth | main orchestrator | LC-003, ADRs, closed Changes, README, AGENTS, CHANGELOG | Narrowed implemented outcome, normalized lifecycle records, linked accepted ADRs, and aligned public/private product posture | commit pending |
-| 2026-07-17 | Fresh-context implementation self-check | delegated review integrated by main orchestrator | LC-001 security evidence and reconciliation artifacts | Added direct user/session state-invariance assertions to malformed and oversized auth payload tests; no unresolved safe finding remains | commit pending |
+| 2026-07-17 | LC-001 security/session truth | bounded implementation delegation, integrated and verified locally | LC-001 Epic, account tests, closed account artifacts | Added stable R4 and session-loss/logout-failure ownership; relabeled and strengthened existing focused proof | `713f9a7` |
+| 2026-07-17 | LC-002 visibility/disclosure truth | bounded TDD delegation, integrated and verified locally | LC-002 Epic and World catalog functional test | Added owner-private visibility/non-disclosure proof; preserved minimized Character disclosure with no production-code change | `713f9a7` |
+| 2026-07-17 | LC-003 and supporting truth | main orchestrator | LC-003, ADRs, closed Changes, README, AGENTS, CHANGELOG | Narrowed implemented outcome, normalized lifecycle records, linked accepted ADRs, and aligned public/private product posture | `713f9a7` |
+| 2026-07-17 | Fresh-context implementation self-check | delegated review integrated by main orchestrator | LC-001 security evidence and reconciliation artifacts | Added direct user/session state-invariance assertions to malformed and oversized auth payload tests; no unresolved safe finding remains | `713f9a7` |
 
 ## Verification Ledger
 
