@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: completed independent review and committed the Adventure pending-state and dialog-style remediation at `3797c8b244a38c602b1344184eec154fc0adaff3`.
-- Next action: repair the vault-level SDD archived-root configuration and reconcile the external Lorecraft visual-identity note, then rerun `/sdd-review`; manual visual confirmation remains pending and the Change must not close or merge without explicit authorization.
+- Last completed action: reconciled Lorecraft idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage/capture at UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`.
+- Next action: complete the prepared manual desktop/mobile walkthrough; then ask before merging either repository and stop again before closing the Change.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
-- Known blockers: vault-level `repositories.roots.archived` is invalid under the current SDD schema, and the external Lorecraft visual-identity note still describes Adventure as a future surface. User manual visual confirmation remains pending by request.
+- Known blockers: user manual visual confirmation remains pending. The invalid vault-level SDD configuration is an external workspace blocker, was not edited, and prevents a fresh SDD validation claim.
 
 ## Task Checklist
 
@@ -118,6 +118,7 @@ status: in_review
 | 2026-07-17 | Follow-up accessibility and comparison remediation | Connected destructive consequences to the Dialog description contract, added designed field states, exercised production-height internal scrolling, and aligned Storybook to exact shared-hub host/port. | `90f84b5` |
 | 2026-07-17 | Shared comparison registration | Registered Lorecraft and the retained 49th Floor source in the shared UI Foundations Storybook and capture matrix from an isolated worktree. | UI Foundations `db250f3` |
 | 2026-07-17 | Independent review remediation | Exposed Adventure creation field pending state, kept unavailable-Adventure retry contextual and duplicate-safe, and removed the dialog shadow that conflicted with Lorecraft visual guidance. | `3797c8b` |
+| 2026-07-17 | Final cross-repository reconciliation | Updated LC-002 comparison truth, aligned private visual identity with the implemented Adventure foundation, and rebased Lorecraft registration onto the current 49th Floor comparison lineage. | App `4e90773`; vault `85c451a7c`; UI Foundations `41259aa` |
 
 ## Verification Ledger
 
@@ -148,6 +149,8 @@ status: in_review
 | 2026-07-17 | independent review frontend, Storybook, static build, typecheck, lint, and guarded Playwright gates | post-review regression verification | Adventure pending-state remediation preserves the affected and broad frontend behavior | Passed: frontend 115 tests; Storybook 78 tests; E2E 7 tests; typecheck, lint, and static Storybook build |
 | 2026-07-17 | independent review scoped SDD validation attempt | artifact validation | Whether current workspace topology can resolve the active Change and affected Epics | Blocked: `INVALID_CONFIG`; vault `repositories.roots.archived` traverses to a parent directory |
 | 2026-07-17 | `git merge-tree --write-tree develop 3797c8b244a38c602b1344184eec154fc0adaff3` | integration verification | The exact independent-review remediation source merges cleanly into `develop` | Passed: tree `b923a90d69eb5a721e893beb5b673792ebe713c9` |
+| 2026-07-17 | final app regression, security, and integration gates | complete technical review | Current application source remains coherent after cross-repository artifact reconciliation | Passed: backend 102; frontend 115; Storybook 78; E2E 7; builds, typecheck, lint, audit, reverse traceability, and merge tree |
+| 2026-07-17 | UI Foundations `npm run check:all`, audit, and `npm run compare:capture` at `41259aa` | shared comparison verification | Current shared lineage retains all four app references, stable IDs, truthful labels, and complete captures | Passed: 10 tests, static build, 0 audit vulnerabilities, 20 captures, 5 Lorecraft cells |
 
 ## Manual Feedback
 
@@ -176,13 +179,13 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 - Planning blockers: none.
 - Promotion dependency: resolved; `2026-07-17-epic-truth-reconciliation` is integrated and closed.
-- Shared-hub dependency: resolved on isolated UI Foundations branch `misc/register-lorecraft-comparison` at `db250f399bac1f19b1cfc1733620c52fc286053a`; the canonical dirty checkout was not modified.
-- Closeout dependency: repair vault-level SDD configuration, reconcile the external visual-identity note, obtain user manual visual confirmation, rerun independent review, and receive explicit merge/close authorization.
+- Shared-hub dependency: resolved on isolated UI Foundations branch `misc/register-lorecraft-comparison` at `41259aa96ce551ffde96616a295b74a9c019cf7f`, descended from current lineage `3989806`; the canonical checkout was not modified.
+- Closeout dependency: obtain user manual visual confirmation, explicit merge authorization for each repository, completed integration, and explicit close authorization. The external SDD config still prevents fresh validation.
 - Open product or visual questions: none under the confirmed constraints.
 
 ## Closeout
 
-- Change status: `in_review`; application remediation and shared-hub evidence are complete, while two external truth/configuration findings and user manual confirmation remain pending before closeout.
+- Change status: `in_review`; technical remediation and shared-hub evidence are complete, while user manual confirmation and explicit integration/close authorization remain pending.
 - Epic files updated: yes; LC-001, LC-002, and LC-003 reflect current implementation and evidence.
 - Story labels/references and Requirement/Scenario IDs current: yes; semantic duplicate scenarios were reconciled onto stable existing IDs during promotion.
 - Implemented By maps current: yes; changed-surface reverse traceability reports no unowned source files or missing paths.
@@ -190,11 +193,11 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: `changes-requested` after reviewing `b931afb5ae2fa6b37bb17a7bff9e351bc3a602b3` and committing application remediation at `3797c8b244a38c602b1344184eec154fc0adaff3`; vault SDD configuration and external visual-identity truth remain unresolved.
+- `sdd-review` verdict: technical `ready` at app `4e9077383792f2ade3e8eca80103684f978e8bb8` and UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`; manual confirmation remains pending and no fresh SDD validation is claimed while the external config is invalid.
 - Review record: `docs/changes/2026-07-17-ui-foundations-alignment/review.md`.
-- `review.md` findings resolved: application findings yes; external vault configuration and supporting visual-identity findings remain open.
+- `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
 - Manual UI confirmation status: pending user.
 - PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
-- Change moved to `docs/changes/closed/`: no; it remains active until external findings, user confirmation, fresh review, explicit integration authorization, and integration are complete.
+- Change moved to `docs/changes/closed/`: no; it remains active until user confirmation, explicit integration authorization, integration, and explicit close authorization are complete.
