@@ -29,7 +29,7 @@ status: in_progress
 - [x] 2.2 Fetch `origin/develop`, confirm the official repository is clean, and preserve the local unpushed maintenance commit as the promotion base.
 - [x] 2.3 Promote the private folder to `docs/changes/2026-07-16-private-adventure-foundation/` and remove the private duplicate.
 - [x] 2.4 At `/sdd-apply` start, create `change/private-adventure-foundation` from current `develop` before editing application code.
-- [ ] 2.5 Re-read repository guidance and current AdonisJS/Lucid/Tuyau documentation for version-sensitive worker, transaction, JSONB, and route APIs.
+- [x] 2.5 Re-read repository guidance and current AdonisJS/Lucid/Tuyau documentation for version-sensitive worker, transaction, JSONB, and route APIs.
 
 ### 3. Epic And ADR Artifacts
 
@@ -53,8 +53,8 @@ status: in_progress
 ### 5. Adventure Aggregate And Authorization
 
 - [ ] 5.1 RED-to-GREEN, one behavior at a time: add domain/service tests and implementation for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
-- [ ] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
-- [ ] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
+- [x] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
+- [x] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
 - [ ] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
 - [ ] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
 - [ ] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
@@ -123,6 +123,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 R2 migration invariants | delegated backend implementation; orchestrator-verified | frozen-source migration and database tests | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending | `605c881` |
 | 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | `889460b` |
 | 2026-07-16 | LC-003/S1 R2 playable Stormbound seed | delegated RED test; main-agent implementation and verification | Stormbound seed, catalog/seed tests, isolated publication race test | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass | `db38048` |
+| 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification | Adventure aggregate migration and focused database tests | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass | pending commit |
 
 ## Verification Ledger
 
@@ -138,6 +139,8 @@ status: in_progress
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after publication slice | broad supporting gates | Publication implementation is formatted and type-safe | Passed |
 | 2026-07-16 | Stormbound seed/catalog suite against isolated scratch Neon schema | focused functional test | Playable seed publication, exact reconciliation, stale Starting Point cleanup, same-version reuse, and existing catalog/seed safety | Passed; 9 tests |
 | 2026-07-16 | Isolated concurrent World publication check | focused database test | Two publishers serialize on the World row and reuse one ordinal/version | Passed within 3-test frozen-source migration suite |
+| 2026-07-16 | Adventure aggregate migration suite against isolated scratch Neon schema | focused database test | `LC-003/S1 R1-R4` storage invariants, UUID identity, ownership boundaries, immutable opening history, selective Adventure cascade, and guarded rollback | Passed; 6 tests |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure aggregate migration | broad supporting gates | Aggregate migration and tests are formatted and type-safe before service implementation | Passed |
 
 ## Manual Feedback
 
