@@ -9,7 +9,7 @@ ready
 | Gate                         | Result         | Notes                                                                                  |
 | ---------------------------- | -------------- | -------------------------------------------------------------------------------------- |
 | Change artifacts             | pass           | Proposal, design, task ledger, and implementation agree.                               |
-| Change status                | ready_to_close | Review and manual acceptance are complete.                                             |
+| Change status                | closed         | Review, manual acceptance, integration, and artifact closeout are complete.             |
 | Epic truth                   | pass           | No Epic action is appropriate because the prototype is not mounted in the application. |
 | Requirements and Scenarios   | not applicable | This tooling-only Change creates no product Story or Requirement.                      |
 | Story reference traceability | not applicable | No durable Story reference is introduced or changed.                                   |
@@ -52,7 +52,7 @@ ready
 | `npm run build:storybook`                                     | static Storybook build           | Storybook configuration      | passed    | The isolated catalog bundles for static delivery.                      |
 | `npx prettier --check .`, `npm audit`, and `git diff --check` | format and security gates        | Full reviewed diff           | passed    | Formatting is clean and no known dependency vulnerability is reported. |
 | Production bundle inspection and route/import search          | isolation inspection             | No-Epic/non-product boundary | passed    | Prototypes and Storybook fixtures are absent from production routes.   |
-| User review of the local Storybook catalog                    | manual UI confirmation           | Responsive visual acceptance | confirmed | The catalog and representative states are accepted.                    |
+| User review of the local Storybook catalog                    | manual UI confirmation           | Responsive visual acceptance | user confirmed | The catalog and representative states are accepted.               |
 
 ## Review Bundle
 

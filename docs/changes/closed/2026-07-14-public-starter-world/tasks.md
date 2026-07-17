@@ -1,5 +1,5 @@
 ---
-status: ready_to_close
+status: in_review
 ---
 
 # Tasks: Public Starter World
@@ -119,7 +119,7 @@ status: ready_to_close
 
 ## Closeout
 
-- Change status: ready_to_close; folder location records the completed closeout.
+- Change status: closed by artifact location after reviewed local integration.
 - Epic files updated: LC-001 and LC-002.
 - Story labels/references and Requirement/Scenario IDs current: yes.
 - Implemented By maps current: yes.
@@ -133,5 +133,5 @@ status: ready_to_close
 - Planning updates resolved: yes.
 - Manual UI confirmation status: user confirmed.
 - PR / merge state: merged locally into `develop` as `ab3796f`; no PR was required or requested.
-- Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and hidden private-knowledge policy
+- Accepted deferred gaps: authoring, anonymous publishing, bylines, mutable gameplay state, and creator-only private-knowledge access
 - Change moved to `docs/changes/closed/`: yes, on 2026-07-15.

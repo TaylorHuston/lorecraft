@@ -226,7 +226,7 @@ describe('Adventure routes', () => {
     expect(screen.getByRole('region', { name: 'Story' })).toHaveFocus()
   })
 
-  it('ends the shared session when Adventure detail reports unauthorized', async () => {
+  it('LC-001/S3/R1-S4 ends the shared session when Adventure detail reports unauthorized', async () => {
     renderTestApp({
       route: pendingAdventure.route,
       session: { id: 4, email: 'member@example.com' },

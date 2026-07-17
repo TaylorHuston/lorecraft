@@ -15,17 +15,17 @@ const csrfMutationCases = [
   {
     id: 'signup',
     path: '/api/v1/auth/signup',
-    story: 'LC-001/S1/R2-S1',
+    story: 'LC-001/S1/R4-S1',
   },
   {
     id: 'login',
     path: '/api/v1/auth/login',
-    story: 'LC-001/S2/R1-S1',
+    story: 'LC-001/S2/R4-S1',
   },
   {
     id: 'logout',
     path: '/api/v1/account/logout',
-    story: 'LC-001/S3/R2-S1',
+    story: 'LC-001/S3/R2-S3',
   },
 ] as const
 
@@ -66,6 +66,16 @@ function sendChunkedJson(url: string, chunks: string[]) {
     chunks.forEach((chunk) => request.write(chunk))
     request.end()
   })
+}
+
+async function authStateCounts() {
+  const users = await db.from('users').count('* as total').firstOrFail()
+  const sessions = await db.from('sessions').count('* as total').firstOrFail()
+
+  return {
+    sessions: Number(sessions.total),
+    users: Number(users.total),
+  }
 }
 
 test.group('Account API security', (group) => {
@@ -285,10 +295,11 @@ test.group('Account API security', (group) => {
     assert.equal(Number(accountsAfter.total), Number(accountsBefore.total))
   })
 
-  test('LC-001/Cross-Story: auth routes reject multipart before session and CSRF processing', async ({
+  test('LC-001/S1/R4-S2 + S2/R4-S2: auth routes reject multipart before session and CSRF processing', async ({
     client,
     assert,
   }) => {
+    const stateBefore = await authStateCounts()
     const oversizedAuthFile = Buffer.alloc(17 * 1024, 'x')
 
     for (const path of [
@@ -316,12 +327,16 @@ test.group('Account API security', (group) => {
       response.assertCookieMissing('adonis-session')
       response.assertCookieMissing('XSRF-TOKEN')
     }
+
+    assert.deepEqual(await authStateCounts(), stateBefore)
   })
 
-  test('LC-001/Cross-Story: auth routes reject URL-encoded forms before body parsing', async ({
+  test('LC-001/S1/R4-S2 + S2/R4-S2: auth routes reject URL-encoded forms before body parsing', async ({
     client,
     assert,
   }) => {
+    const stateBefore = await authStateCounts()
+
     for (const path of [
       '/api/v1/auth/signup',
       '/api/v1/auth/signup/',
@@ -345,51 +360,65 @@ test.group('Account API security', (group) => {
       response.assertCookieMissing('adonis-session')
       response.assertCookieMissing('XSRF-TOKEN')
     }
+
+    assert.deepEqual(await authStateCounts(), stateBefore)
   })
 
-  test('LC-001/Cross-Story: auth routes reject oversized JSON before session and CSRF processing', async ({
+  test('LC-001/S1/R4-S2 + S2/R4-S2: auth routes reject oversized JSON before session and CSRF processing', async ({
     client,
     assert,
   }) => {
-    const response = await client.post('/api/v1/auth/login?source=security-test').json({
-      email: 'x'.repeat(17 * 1024),
-      password: 'irrelevant',
-    })
+    const stateBefore = await authStateCounts()
 
-    response.assertStatus(413)
-    assert.deepEqual(response.body(), {
-      errors: [
-        {
-          code: 'AUTH_PAYLOAD_TOO_LARGE',
-          message: 'Signup and login request bodies must not exceed 16 KB.',
-        },
-      ],
-    })
-    response.assertCookieMissing('adonis-session')
-    response.assertCookieMissing('XSRF-TOKEN')
+    for (const path of ['/api/v1/auth/signup', '/api/v1/auth/login?source=security-test']) {
+      const response = await client.post(path).json({
+        email: 'x'.repeat(17 * 1024),
+        password: 'irrelevant',
+      })
+
+      response.assertStatus(413)
+      assert.deepEqual(response.body(), {
+        errors: [
+          {
+            code: 'AUTH_PAYLOAD_TOO_LARGE',
+            message: 'Signup and login request bodies must not exceed 16 KB.',
+          },
+        ],
+      })
+      response.assertCookieMissing('adonis-session')
+      response.assertCookieMissing('XSRF-TOKEN')
+    }
+
+    assert.deepEqual(await authStateCounts(), stateBefore)
   })
 
-  test('LC-001/Cross-Story: auth routes normalize oversized chunked JSON rejection', async ({
+  test('LC-001/S1/R4-S2 + S2/R4-S2: auth routes normalize oversized chunked JSON rejection', async ({
     client,
     assert,
   }) => {
-    const endpoint = client.post('/api/v1/auth/login').request.url
-    const response = await sendChunkedJson(endpoint, [
-      '{"email":"',
-      'x'.repeat(17 * 1024),
-      '","password":"irrelevant"}',
-    ])
+    const stateBefore = await authStateCounts()
 
-    assert.equal(response.status, 413)
-    assert.deepEqual(response.body, {
-      errors: [
-        {
-          code: 'AUTH_PAYLOAD_TOO_LARGE',
-          message: 'Signup and login request bodies must not exceed 16 KB.',
-        },
-      ],
-    })
-    assert.isUndefined(response.headers['set-cookie'])
+    for (const path of ['/api/v1/auth/signup', '/api/v1/auth/login']) {
+      const endpoint = client.post(path).request.url
+      const response = await sendChunkedJson(endpoint, [
+        '{"email":"',
+        'x'.repeat(17 * 1024),
+        '","password":"irrelevant"}',
+      ])
+
+      assert.equal(response.status, 413)
+      assert.deepEqual(response.body, {
+        errors: [
+          {
+            code: 'AUTH_PAYLOAD_TOO_LARGE',
+            message: 'Signup and login request bodies must not exceed 16 KB.',
+          },
+        ],
+      })
+      assert.isUndefined(response.headers['set-cookie'])
+    }
+
+    assert.deepEqual(await authStateCounts(), stateBefore)
   })
 
   test('LC-001/Cross-Story: anonymous CSRF throttling isolates forwarded clients', async ({
@@ -421,9 +450,11 @@ test.group('Account API security', (group) => {
     assert.equal(Number(sessionsAfter.total) - Number(sessionsBefore.total), 61)
   })
 
-  test('LC-001/Cross-Story: repeated signup attempts are throttled before validation', async ({
+  test('LC-001/S1/R4-S3: repeated signup attempts are throttled before validation', async ({
     client,
+    assert,
   }) => {
+    const accountsBefore = await db.from('users').count('* as total').firstOrFail()
     const browser = await bootstrapBrowserSession(client)
 
     for (let request = 1; request <= 10; request += 1) {
@@ -449,9 +480,12 @@ test.group('Account API security', (group) => {
       passwordConfirmation: 'different',
     })
     overQuota.assertStatus(429)
+
+    const accountsAfter = await db.from('users').count('* as total').firstOrFail()
+    assert.equal(Number(accountsAfter.total), Number(accountsBefore.total))
   })
 
-  test('LC-001/Cross-Story: repeated login attempts are throttled per forwarded client', async ({
+  test('LC-001/S2/R4-S3: repeated login attempts are throttled per forwarded client', async ({
     client,
   }) => {
     const browser = await bootstrapBrowserSession(client)
@@ -480,5 +514,8 @@ test.group('Account API security', (group) => {
       { csrf: true }
     ).json({ email: 'unknown@example.com', password: 'incorrect password' })
     distinctClient.assertStatus(401)
+
+    const profile = await withBrowserSession(client.get('/api/v1/account/profile'), browser.session)
+    profile.assertStatus(401)
   })
 })

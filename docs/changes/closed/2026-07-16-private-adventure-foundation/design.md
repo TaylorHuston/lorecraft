@@ -181,15 +181,15 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 
 ##### Implemented By
 
-Not implemented yet. Expected ownership starts in backend World/Adventure models and services, authenticated v1 routes/controllers/validators, provider and worker services, frontend World/Adventure feature modules, and deterministic test support.
+Implemented across the backend WorldVersion and Adventure aggregates, authenticated lifecycle APIs, provider-neutral generation and durable worker services, frontend World and Adventure feature modules, and deterministic test support. The current file-level ownership map is maintained in `docs/epics/lc-003-adventure-play/epic.md`.
 
 ##### Verified By
 
-Not verified yet. The implementing Change must replace this section with scenario-mapped backend, frontend, Storybook, E2E, live-provider, and manual UI evidence.
+Verified by the scenario-mapped backend, frontend, Storybook, deterministic E2E, live-provider, and manual UI evidence maintained under `LC-003/S1` in `docs/epics/lc-003-adventure-play/epic.md`.
 
 ##### Verification Gaps
 
-- All implementation and verification are pending.
+- A routed old-versus-new WorldVersion E2E remains deferred until creator-facing World authoring and publication are available.
 
 ### Update Epic: LC-002 World Bible Catalog
 

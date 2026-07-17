@@ -78,7 +78,7 @@ This Change establishes the boundary on which later turns and state mutation dep
 ## Change Folder
 
 - Planned location: promoted; private draft removed
-- Active location: `docs/changes/2026-07-16-private-adventure-foundation/`
+- Former active location: `docs/changes/2026-07-16-private-adventure-foundation/`
 - Closed location: `docs/changes/closed/2026-07-16-private-adventure-foundation/`
 
 ## Impact

@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-07-14
-- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/` and `docs/changes/2026-07-14-public-starter-world/`
+- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/` and `docs/changes/closed/2026-07-14-public-starter-world/`
 - Related Epics / Stories: `LC-001/S1`, `LC-001/S2`, `LC-001/S3`, `LC-002/S1`, and `LC-002/S2`
 
 ## Context

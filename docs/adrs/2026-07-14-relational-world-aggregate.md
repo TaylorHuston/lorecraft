@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-07-14
-- Related change: `docs/changes/2026-07-14-public-starter-world/`
+- Related change: `docs/changes/closed/2026-07-14-public-starter-world/`
 - Related Epics / Stories: `LC-002/S1`, `LC-002/S2`, and `LC-003/S1 R2`
 
 ## Context

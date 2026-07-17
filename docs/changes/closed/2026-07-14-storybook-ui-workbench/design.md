@@ -39,6 +39,12 @@ The first representative composition will remain an isolated future-facing gamep
 - Do not treat visual prototypes as accepted product behavior.
 - Avoid stories for trivial wrappers that add no meaningful state, interaction, or responsive evidence.
 
+## Risks / Trade-Offs
+
+- Storybook adds browser-test and static-build maintenance, accepted in exchange for deterministic component, interaction, responsive, and accessibility evidence.
+- Isolated stories can drift from routed behavior, so application Playwright remains authoritative for complete frontend/backend workflows.
+- Hosted publication and external visual regression remain deferred until local usage demonstrates enough value to justify their operational cost.
+
 ## ADR Assessment
 
 No ADR is required. Storybook is an incrementally adoptable frontend development tool and does not change Lorecraft's application or API authority boundaries.

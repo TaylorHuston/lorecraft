@@ -2,7 +2,7 @@
 
 Lorecraft is a creator-first application for building and maintaining coherent fictional Worlds across novels, games, animation, and other media. It treats each World as an authoritative, time-aware body of canon rather than a loose collection of notes.
 
-The initial product is a private workspace for individual worldbuilders. The same foundation may later support source-backed AI assistance, continuity analysis, selective publishing, and non-canonical playable Adventures.
+The initial product is a private workspace for individual worldbuilders. Its current foundation also supports private, non-canonical Adventure openings, while source-backed AI assistance, continuity analysis, selective publishing, and interactive Adventure turns remain future capabilities.
 
 ## Status
 
@@ -28,7 +28,7 @@ The [Epics](#documentation) are the canonical source for detailed implemented be
 - Common worldbuilding concepts should work well by default without imposing a genre or medium.
 - AI may analyze and propose, but it must not silently redefine canon.
 - Canonical works may contribute creator-approved changes to the World.
-- Playable Adventures may consume canon later, but their events remain separate from it by default.
+- Playable Adventures consume frozen canon without changing it; their events remain separate from the authoritative World by default.
 - The world bible should remain useful without AI.
 
 ## Architecture
@@ -241,5 +241,7 @@ Accepted architecture decisions:
 - [Disposable Database Targets For Automation](docs/adrs/2026-07-14-disposable-database-automation.md)
 - [Immutable World Version Snapshots](docs/adrs/2026-07-16-immutable-world-version-snapshots.md)
 - [Durable Asynchronous Adventure Work](docs/adrs/2026-07-16-durable-asynchronous-adventure-work.md)
+- [Immutable Adventure Revisions](docs/adrs/2026-07-17-immutable-adventure-revisions.md)
+- [Provider-Neutral AI Boundary](docs/adrs/2026-07-17-provider-neutral-ai-boundary.md)
 
 Application-specific workflow details are available in the [backend README](apps/backend/README.md) and [frontend README](apps/frontend/README.md). See the [changelog](CHANGELOG.md) for user-facing changes.

@@ -1,5 +1,5 @@
 ---
-status: ready_to_close
+status: in_review
 ---
 
 # Tasks: Account Workspace Entry
@@ -176,7 +176,7 @@ status: ready_to_close
 
 ## Manual UI Confirmation
 
-- Status: confirmed by user on 2026-07-14
+- Status: user confirmed on 2026-07-14
 - App URL / route: local frontend URL and account/workspace routes established during implementation
 - Required setup or test data: migrated disposable PostgreSQL database and a unique test email
 - Steps for the user: partially complete signup and sign-in, switch away and return focus, confirm drafts survive; then create an account, observe automatic workspace entry, refresh, sign out, sign back in, and inspect the empty workspace at desktop and mobile widths
@@ -203,7 +203,7 @@ status: ready_to_close
 - Review record: `review.md`
 - `review.md` findings resolved: yes; deployment-specific verification is explicitly deferred
 - Planning updates resolved: current
-- Manual UI confirmation status: confirmed by user on 2026-07-14
+- Manual UI confirmation status: user confirmed on 2026-07-14
 - PR / merge state: no routine integration PR; merged locally into `develop` as `47a7c55`
 - Deferred scope accepted: recorded in proposal and design
 - Change moved to `docs/changes/closed/`: yes

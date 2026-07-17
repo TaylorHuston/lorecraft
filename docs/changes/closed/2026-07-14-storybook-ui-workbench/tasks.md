@@ -1,5 +1,5 @@
 ---
-status: ready_to_close
+status: in_review
 ---
 
 # Tasks: Storybook UI Workbench
@@ -52,7 +52,7 @@ status: ready_to_close
 | 2026-07-14 | Expanded Storybook Vitest browser suite                | Fourteen production and prototype stories                       | passed; interactions and accessibility    |
 | 2026-07-14 | Production component visual review                     | Sign-in desktop and workspace mobile                            | passed; no horizontal overflow            |
 | 2026-07-14 | Frontend regression and build gates                    | 44 tests, lint, typecheck, app and Storybook builds             | passed                                    |
-| 2026-07-14 | User review                                            | Local Storybook catalog and responsive states                   | confirmed                                 |
+| 2026-07-14 | User review                                            | Local Storybook catalog and responsive states                   | user confirmed                            |
 | 2026-07-14 | Fresh-install and independent review                   | Install, suites, static gates, builds, audit, and merge preview | passed                                    |
 
 ## Manual UI Confirmation
@@ -65,6 +65,18 @@ status: ready_to_close
 
 - Status: not applicable
 - Reason: no user-facing product behavior changes
+
+## Blockers / Open Questions
+
+- None remain. Hosted publication and external visual regression are accepted deferred considerations.
+
+## Closeout
+
+- Review: passed; `docs/changes/closed/2026-07-14-storybook-ui-workbench/review.md`
+- Manual UI confirmation: user confirmed
+- Release communication: not applicable
+- Integration: fast-forwarded into `develop` at `9c06207`
+- Folder location: `docs/changes/closed/2026-07-14-storybook-ui-workbench/`
 
 ## Review And Closeout
 

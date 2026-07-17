@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: merged `change/private-adventure-foundation` into `develop` at `c595f24`
-- Next action: complete the authorized `sdd change close` folder transition and commit it on `develop`
+- Last completed action: merged `change/private-adventure-foundation` into `develop` at `c595f24` and closed this Change.
+- Next action: none.
 - Active branch/ref: `develop`
-- Expected dirty files: closeout record and Change folder transition only
+- Expected dirty files: none from this closed Change.
 - Known blockers: none
 
 ## Task Checklist
@@ -215,7 +215,8 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: confirmed by Taylor on 2026-07-17 across mobile, desktop Adventure shell, settings, catalog lifecycle controls, and back navigation
+- Status: user confirmed
+- Confirmation date: 2026-07-17
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
 - Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; open Adventure settings from the gear and reset with confirmation; verify the left-aligned Return to World button and World-detail controls
@@ -238,10 +239,10 @@ status: in_review
 - ADR status: immutable snapshots and durable asynchronous work accepted and validated
 - Release communication current: README and user-facing CHANGELOG updated
 - `sdd-review` verdict: pass
-- Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
+- Review record: `docs/changes/closed/2026-07-16-private-adventure-foundation/review.md`
 - `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; all evidence gates complete
 - Planning updates resolved: yes
-- Manual UI confirmation status: confirmed 2026-07-17
+- Manual UI confirmation status: user confirmed
 - PR / merge state: merged locally into `develop` at `c595f24`; no PR or push requested
 - Deferred scope accepted: yes, recorded in proposal/design
 - Change moved to `docs/changes/closed/`: yes, through `sdd change close`

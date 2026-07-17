@@ -28,7 +28,7 @@ describe('Tuyau auth adapter', () => {
     tuyau.csrf.mockResolvedValue(undefined)
   })
 
-  it('classifies a throttled signup response as rate limited', async () => {
+  it('LC-001/S1/R4-S3 classifies a throttled signup response as rate limited', async () => {
     tuyau.signUp.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -44,7 +44,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies throttled CSRF bootstrap before signup as rate limited', async () => {
+  it('LC-001/S1/R4-S3 classifies throttled CSRF bootstrap before signup as rate limited', async () => {
     tuyau.csrf.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -87,7 +87,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies an expired signup CSRF token with recovery guidance', async () => {
+  it('LC-001/S1/R4-S1 classifies an expired signup CSRF token with recovery guidance', async () => {
     tuyau.signUp.mockRejectedValue({
       status: 403,
       response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
@@ -106,7 +106,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies a throttled sign-in response as rate limited', async () => {
+  it('LC-001/S2/R4-S3 classifies a throttled sign-in response as rate limited', async () => {
     tuyau.signIn.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -118,7 +118,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies throttled CSRF bootstrap before sign-in as rate limited', async () => {
+  it('LC-001/S2/R4-S3 classifies throttled CSRF bootstrap before sign-in as rate limited', async () => {
     tuyau.csrf.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -131,7 +131,7 @@ describe('Tuyau auth adapter', () => {
     expect(tuyau.signIn).not.toHaveBeenCalled()
   })
 
-  it('classifies an expired sign-in CSRF token with recovery guidance', async () => {
+  it('LC-001/S2/R4-S1 classifies an expired sign-in CSRF token with recovery guidance', async () => {
     tuyau.signIn.mockRejectedValue({
       status: 403,
       response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
@@ -146,7 +146,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies a throttled sign-out response as rate limited', async () => {
+  it('LC-001/S3/R2-S3 classifies a throttled sign-out response as rate limited', async () => {
     tuyau.signOut.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -156,7 +156,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('classifies throttled CSRF bootstrap before sign-out as rate limited', async () => {
+  it('LC-001/S3/R2-S3 classifies throttled CSRF bootstrap before sign-out as rate limited', async () => {
     tuyau.csrf.mockRejectedValue({ status: 429 })
     const api = createTuyauAuthApi('http://frontend.example.test')
 
@@ -167,7 +167,7 @@ describe('Tuyau auth adapter', () => {
     expect(tuyau.signOut).not.toHaveBeenCalled()
   })
 
-  it('classifies an expired sign-out CSRF token with recovery guidance', async () => {
+  it('LC-001/S3/R2-S3 classifies an expired sign-out CSRF token with recovery guidance', async () => {
     tuyau.signOut.mockRejectedValue({
       status: 403,
       response: { errors: [{ code: 'INVALID_CSRF_TOKEN' }] },
@@ -180,7 +180,7 @@ describe('Tuyau auth adapter', () => {
     })
   })
 
-  it('translates server sign-in validation into field guidance', async () => {
+  it('LC-001/S2/R4-S2 translates server sign-in validation into field guidance', async () => {
     tuyau.signIn.mockRejectedValue({
       status: 422,
       response: {

@@ -116,6 +116,65 @@ test.group('World catalog API', (group) => {
     response.assertBodyNotContains({ name: 'Stormbound Chapel' })
   })
 
+  test('LC-002/S1/R1-S4: an owner sees a private World without disclosing it to another account', async ({
+    client,
+    assert,
+  }) => {
+    const ownerEmail = 'private-world-owner@example.com'
+    const owner = await createAuthenticatedBrowser(client, ownerEmail)
+    const ownerAccount = await User.findByOrFail('email', ownerEmail)
+    await World.create({
+      authorId: ownerAccount.id,
+      slug: 'owner-private-world',
+      name: 'Owner Private World',
+      description: 'Private canon visible only to its author.',
+      visibility: 'private',
+    })
+    const otherAccount = await createAuthenticatedBrowser(
+      client,
+      'private-world-viewer@example.com'
+    )
+
+    const ownerCatalog = await withBrowserSession(client.get('/api/v1/worlds'), owner)
+    ownerCatalog.assertOk()
+    ownerCatalog.assertBodyContains({
+      data: [
+        {
+          slug: 'owner-private-world',
+          name: 'Owner Private World',
+          visibility: 'private',
+          readOnly: true,
+        },
+      ],
+    })
+
+    const ownerDetail = await withBrowserSession(
+      client.get('/api/v1/worlds/owner-private-world'),
+      owner
+    )
+    ownerDetail.assertOk()
+    ownerDetail.assertBodyContains({
+      data: {
+        slug: 'owner-private-world',
+        name: 'Owner Private World',
+        visibility: 'private',
+      },
+    })
+
+    const otherCatalog = await withBrowserSession(client.get('/api/v1/worlds'), otherAccount)
+    otherCatalog.assertOk()
+    otherCatalog.assertBody({ data: [] })
+
+    const otherDetail = await withBrowserSession(
+      client.get('/api/v1/worlds/owner-private-world'),
+      otherAccount
+    )
+    otherDetail.assertStatus(404)
+    otherDetail.assertBody({ errors: [{ code: 'WORLD_NOT_FOUND', message: 'World not found.' }] })
+    assert.notInclude(JSON.stringify(otherDetail.body()), 'Owner Private World')
+    assert.notInclude(JSON.stringify(otherDetail.body()), ownerEmail)
+  })
+
   test('LC-002/S2/R1-S1 + R1-S2: detail is structured, minimized, and safely missing', async ({
     client,
     assert,

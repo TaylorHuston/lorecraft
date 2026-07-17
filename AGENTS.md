@@ -31,7 +31,7 @@ Stop before editing when product scope, canon authority, Epic ownership, reposit
 - The product must remain medium-agnostic. Avoid assumptions that every World exists for a novel, game, tabletop campaign, or any other single format.
 - Start with intelligent defaults for common worldbuilding concepts and add structure as proven needs emerge. Preserve a path for creator-defined concepts without prematurely building a universal schema system.
 - Canonical works may contribute creator-approved changes to a World and should eventually support source provenance.
-- Playable Adventures are an eventual core capability, but they are non-canonical branches derived from a World. Adventure state must not mutate source canon by default.
+- Playable Adventures are a core capability, but they are non-canonical branches derived from frozen World canon. Adventure state must not mutate source canon by default, and creator-first World-bible work remains the primary product priority.
 - The world bible must provide value without an LLM. Keep AI providers behind replaceable adapters and treat their output as untrusted external input.
 
 ## Initial Scope Guardrails
@@ -42,7 +42,7 @@ The first application capabilities should serve an individual creator maintainin
 - public publishing or reader-facing wiki features
 - multi-user collaboration and canon-approval workflows
 - automated source ingestion or LLM-assisted canon mutation
-- playable Adventures or Game Master behavior
+- interactive Adventure turns, Game Master state mutation, or history revision beyond the implemented private opening/resume foundation
 - combat, inventory, character stats, rulesets, multiplayer, or marketplace mechanics
 
 These are deferred capabilities, not necessarily permanent product non-goals.

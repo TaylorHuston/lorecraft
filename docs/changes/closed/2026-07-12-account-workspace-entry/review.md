@@ -9,7 +9,7 @@ ready
 | Gate                         | Result              | Notes                                                                                                            |
 | ---------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Change artifacts             | pass after safe fix | Current source, evidence counts, ADR status, and accepted deployment follow-ups are reconciled.                  |
-| Change status                | ready_to_close      | Implementation and acceptance are complete; two deployment checks are explicitly deferred.                       |
+| Change status                | closed              | Implementation and acceptance are complete; two deployment checks are explicitly deferred.                       |
 | Epic truth                   | pass                | `LC-001/S1-S3` match current behavior and retain explicit deferred verification.                                 |
 | Requirements and Scenarios   | pass                | Story labels and local Requirement/Scenario IDs are unique and mapped.                                           |
 | Story reference traceability | pass                | Full Story references remain Epic-scoped and traceable.                                                          |
@@ -20,7 +20,7 @@ ready
 | Security review              | pass                | Runtime auth logs omit submitted credentials; production HTTPS cookie proof is an accepted pre-production check. |
 | Documentation                | pass after safe fix | README, ADRs, Epic, change design, and evidence ledgers agree.                                                   |
 | Release communication        | pass                | `[Unreleased]` contains only the user-facing account/workspace capability.                                       |
-| Branch and merge readiness   | ready               | Merge is mechanically clean; closeout still requires explicit user authorization.                                |
+| Branch and merge readiness   | integrated          | The reviewed implementation was merged into `develop` as `47a7c55`, and the Change is closed.                    |
 | PRD alignment                | pass                | The account boundary supports the private, creator-first world-bible direction.                                  |
 
 ## Findings
@@ -98,7 +98,7 @@ ready
 - Reviewed source: `f799981a169fa36cdbd13935fec21d527a8582b9`
 - Target branch: `develop`
 - Conflict check: clean at reviewed source
-- Commit state: implementation and review artifacts merged into `develop` as `47a7c55`; closeout reconciliation pending commit
+- Commit state: implementation and review artifacts merged into `develop` as `47a7c55`; closeout reconciliation complete
 - PR status: not used for routine integration under repository policy
 - Merge status: merged into `develop` as `47a7c55`
 
@@ -109,7 +109,7 @@ ready
 - Session recovery: from `/worlds`, return focus with both a valid and expired session. Private content should be suppressed during the check; focus should return to the prior control on success and move to recovery or sign-in on failure.
 - Account journey: create an account, refresh `/worlds`, sign out, sign back in, and revisit `/sign-up`. Expect stable transitions and no private-workspace flash.
 - Responsive layout: repeat at narrow mobile and wide desktop sizes. Expect no clipping or horizontal overflow and at least 44px interactive targets.
-- Status: confirmed by user on 2026-07-14.
+- Status: user confirmed on 2026-07-14.
 
 ## Review Log
 

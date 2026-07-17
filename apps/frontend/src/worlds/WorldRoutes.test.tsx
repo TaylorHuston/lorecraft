@@ -185,7 +185,7 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(2)
   })
 
-  it('ends the shared session when the catalog reports unauthorized', async () => {
+  it('LC-001/S3/R1-S4 ends the shared session when the catalog reports unauthorized', async () => {
     const user = userEvent.setup()
     const listWorlds = vi
       .fn()
@@ -358,7 +358,7 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
   })
 
-  it('ends the shared session when World detail reports unauthorized', async () => {
+  it('LC-001/S3/R1-S4 ends the shared session when World detail reports unauthorized', async () => {
     renderTestApp({
       route: '/worlds/stormbound-chapel',
       session: { id: 4, email: 'member@example.com' },

@@ -9,7 +9,7 @@ status: in_review
 - Last completed action: fast-forwarded the reviewed Change into local `develop` and closed it through `sdd change close` after explicit user authorization.
 - Next action: none; push or release work requires a separate request.
 - Active branch/ref: local `develop`; the closed record is `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation`.
-- Expected dirty files: closeout artifact movement until the final closeout commit is created.
+- Expected dirty files: none from this closed Change.
 - Known blockers: none.
 
 ## Task Checklist
@@ -149,7 +149,7 @@ status: in_review
 - ADR status: not applicable; no new ADR planned.
 - Release communication current: yes; concise user-facing entry added under `Unreleased / Changed`.
 - `/sdd-review` verdict: ready.
-- Review record: `docs/changes/2026-07-14-ui-cleanup-and-reconciliation/review.md`.
+- Review record: `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation/review.md`.
 - Manual UI confirmation status: user confirmed 2026-07-15.
 - PR / merge state: fast-forwarded into local `develop`; no push or remote mutation performed.
 - Deferred scope accepted: creator shell, new capability, light mode, and general component package.

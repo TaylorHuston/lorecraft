@@ -74,7 +74,7 @@ describe('account workspace entry', () => {
     expect(screen.getByLabelText('Email')).toHaveFocus()
   })
 
-  it('LC-001/S1/R1-S3 gives actionable recovery guidance when signup is throttled', async () => {
+  it('LC-001/S1/R4-S3 gives actionable recovery guidance when signup is throttled', async () => {
     const user = userEvent.setup()
     const signUp = vi
       .fn()
@@ -97,7 +97,7 @@ describe('account workspace entry', () => {
     expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
   })
 
-  it('LC-001/S1/R2-S1 gives actionable recovery guidance when signup CSRF expires', async () => {
+  it('LC-001/S1/R4-S1 gives actionable recovery guidance when signup CSRF expires', async () => {
     const user = userEvent.setup()
     const signUp = vi
       .fn()
@@ -209,7 +209,7 @@ describe('account workspace entry', () => {
     expect(screen.getByLabelText('Password')).toHaveFocus()
   })
 
-  it('LC-001/S2/R1-S2 gives actionable recovery guidance when sign-in is throttled', async () => {
+  it('LC-001/S2/R4-S3 gives actionable recovery guidance when sign-in is throttled', async () => {
     const user = userEvent.setup()
     const signIn = vi
       .fn()
@@ -231,7 +231,7 @@ describe('account workspace entry', () => {
     expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
   })
 
-  it('LC-001/S2/R1-S1 gives actionable recovery guidance when sign-in CSRF expires', async () => {
+  it('LC-001/S2/R4-S1 gives actionable recovery guidance when sign-in CSRF expires', async () => {
     const user = userEvent.setup()
     const signIn = vi
       .fn()
@@ -253,7 +253,7 @@ describe('account workspace entry', () => {
     expect(screen.queryByText(/check your connection/i)).not.toBeInTheDocument()
   })
 
-  it('LC-001/S2/R1-S2 presents server sign-in validation on the affected fields', async () => {
+  it('LC-001/S2/R4-S2 presents server sign-in validation on the affected fields', async () => {
     const user = userEvent.setup()
     const signIn = vi.fn().mockRejectedValue(
       new AuthApiError('validation', 'Correct the highlighted fields.', {
@@ -511,7 +511,7 @@ describe('account workspace entry', () => {
     expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
   })
 
-  it('LC-001/S3/R2-S1 gives actionable recovery guidance when sign-out is throttled', async () => {
+  it('LC-001/S3/R2-S3 gives actionable recovery guidance when sign-out is throttled', async () => {
     const user = userEvent.setup()
     const signOut = vi
       .fn()
@@ -536,7 +536,7 @@ describe('account workspace entry', () => {
     expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   })
 
-  it('LC-001/S3/R2-S1 gives actionable recovery guidance when sign-out CSRF expires', async () => {
+  it('LC-001/S3/R2-S3 gives actionable recovery guidance when sign-out CSRF expires', async () => {
     const user = userEvent.setup()
     const signOut = vi
       .fn()
@@ -791,7 +791,7 @@ describe('account workspace entry', () => {
     observer.disconnect()
   })
 
-  it('LC-001/S3/R3-S1 shows an intentional empty workspace without a World-creation control', async () => {
+  it('LC-002/S1/R1-S3 shows an intentional empty workspace without a World-creation control', async () => {
     renderTestApp({
       route: '/worlds',
       session: { id: 4, email: 'member@example.com' },

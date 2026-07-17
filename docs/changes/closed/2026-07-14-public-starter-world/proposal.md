@@ -50,7 +50,7 @@ Lorecraft's authenticated workspace has no World content. A shared starter World
 ## Change Folder
 
 - Planned location: not applicable; the Change was promoted directly through the established SDD workflow.
-- Active location: `docs/changes/2026-07-14-public-starter-world/`
+- Former active location: `docs/changes/2026-07-14-public-starter-world/`
 - Closed location: `docs/changes/closed/2026-07-14-public-starter-world/`
 
 ## Impact
