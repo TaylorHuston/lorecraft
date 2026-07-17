@@ -46,8 +46,8 @@ status: in_progress
 - [x] 4.2 RED-to-GREEN, one behavior at a time: add publication tests and implementation proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
 - [x] 4.3 Complete the relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshot models after the invariant cycles pass.
 - [x] 4.4 Complete the provider-independent WorldVersion publication service after its behavior cycles pass; validate all stable-key references before insert and never update an existing version.
-- [ ] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
-- [ ] 4.6 Verify repeated seed installation remains exact and does not alter Adventures already bound to an older version.
+- [x] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
+- [x] 4.6 Verify repeated seed installation remains exact and reuses its immutable version; the Adventure-binding portion remains explicitly pending until the Adventure aggregate exists.
 - [ ] 4.7 Map Phase 4 implementation and publication/preservation evidence for `LC-003/S1 R2`; leave Adventure-binding and creation-conflict portions of `R2-S1..R2-S3` explicit until Tasks 5 and 7 can prove them, and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
 
 ### 5. Adventure Aggregate And Authorization
@@ -122,6 +122,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 apply Discovery | main orchestrator; delegated backend discovery; `tdd` and current framework guidance selected | repository policy, Change/Epic/ADRs, backend schema and tests | Scoped validation passed; implementation branch created; frozen-source foundation selected as first vertical slice | `change/private-adventure-foundation` |
 | 2026-07-16 | LC-003/S1 R2 migration invariants | delegated backend implementation; orchestrator-verified | frozen-source migration and database tests | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending | `605c881` |
 | 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | `889460b` |
+| 2026-07-16 | LC-003/S1 R2 playable Stormbound seed | delegated RED test; main-agent implementation and verification | Stormbound seed, catalog/seed tests, isolated publication race test | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass | commit pending |
 
 ## Verification Ledger
 
@@ -135,6 +136,8 @@ status: in_progress
 | 2026-07-16 | Existing World migration/seed/catalog regression suite against isolated scratch Neon schema | focused database and functional tests | Pre-change World integrity, seed provenance, exact reconciliation, authorization, and catalog behavior remain green | Passed; 11 tests |
 | 2026-07-16 | WorldVersion publication suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R2` deterministic ordering/hash, stable-key rejection, identical reuse, changed-content insertion, and old-snapshot preservation | Passed; 4 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after publication slice | broad supporting gates | Publication implementation is formatted and type-safe | Passed |
+| 2026-07-16 | Stormbound seed/catalog suite against isolated scratch Neon schema | focused functional test | Playable seed publication, exact reconciliation, stale Starting Point cleanup, same-version reuse, and existing catalog/seed safety | Passed; 9 tests |
+| 2026-07-16 | Isolated concurrent World publication check | focused database test | Two publishers serialize on the World row and reuse one ordinal/version | Passed within 3-test frozen-source migration suite |
 
 ## Manual Feedback
 

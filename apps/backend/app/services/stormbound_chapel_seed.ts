@@ -1,4 +1,5 @@
 import User from '#models/user'
+import { publishWorldVersionInTransaction } from '#services/world_version_publication_service'
 import db from '@adonisjs/lucid/services/db'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
@@ -76,7 +77,20 @@ const starterWorld = {
   description:
     'A small persistent-world test set around a chapel, a tavern, a vestry, and a rain-lashed graveyard.',
   visibility: 'public',
+  adventureGuidance:
+    "Run Stormbound Chapel as a grounded gothic mystery. Keep the rain and isolation present, let clues emerge through exploration and conversation, preserve each character's voice and private knowledge, and never decide the player's actions.",
 } as const
+
+const startingPoints = [
+  {
+    key: 'chapel-midnight',
+    name: 'Midnight at the Chapel',
+    locationKey: 'chapel',
+    openingPremise:
+      'The player reaches Stormbound Chapel as a midnight storm closes the road. The chapel bell has just rung without a hand on its rope, Mira is waiting in the aisle, and Brother Alden is hiding what he found beside the altar.',
+    isDefault: true,
+  },
+] as const
 
 async function isExactLegacyStarterWorld(trx: TransactionClientContract, worldId: number) {
   const persistedLocations = await trx
@@ -184,17 +198,25 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
     let worldId: number
     if (existingWorld) {
       worldId = existingWorld.id
-      await trx
-        .from('worlds')
-        .where('id', worldId)
-        .update({ ...starterWorld, updated_at: new Date() })
+      await trx.from('worlds').where('id', worldId).update({
+        slug: starterWorld.slug,
+        name: starterWorld.name,
+        description: starterWorld.description,
+        visibility: starterWorld.visibility,
+        adventure_guidance: starterWorld.adventureGuidance,
+        updated_at: new Date(),
+      })
     } else {
       const [world] = await trx
         .table('worlds')
         .insert({
           author_id: author.id,
           seed_identity: starterWorldSeedIdentity,
-          ...starterWorld,
+          slug: starterWorld.slug,
+          name: starterWorld.name,
+          description: starterWorld.description,
+          visibility: starterWorld.visibility,
+          adventure_guidance: starterWorld.adventureGuidance,
           created_at: new Date(),
           updated_at: new Date(),
         })
@@ -218,6 +240,23 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
         .merge(['name', 'description', 'sort_order', 'updated_at'])
         .returning('id')
       locationIds.set(key, row.id)
+    }
+    for (const [sortOrder, startingPoint] of startingPoints.entries()) {
+      await trx
+        .table('world_starting_points')
+        .insert({
+          world_id: worldId,
+          location_id: locationIds.get(startingPoint.locationKey)!,
+          key: startingPoint.key,
+          name: startingPoint.name,
+          opening_premise: startingPoint.openingPremise,
+          sort_order: sortOrder,
+          is_default: startingPoint.isDefault,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .onConflict(['world_id', 'key'])
+        .merge(['location_id', 'name', 'opening_premise', 'sort_order', 'is_default', 'updated_at'])
     }
     for (const [
       index,
@@ -270,6 +309,14 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
       )
       .delete()
     await trx
+      .from('world_starting_points')
+      .where('world_id', worldId)
+      .whereNotIn(
+        'key',
+        startingPoints.map(({ key }) => key)
+      )
+      .delete()
+    await trx
       .from('locations')
       .where('world_id', worldId)
       .whereNotIn(
@@ -277,5 +324,7 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
         locations.map(([key]) => key)
       )
       .delete()
+
+    await publishWorldVersionInTransaction(trx, worldId)
   })
 }
