@@ -14,7 +14,7 @@ blocked
 | Requirements and Scenarios | pass | Deterministic and live-provider evidence remains scenario-mapped; final human evidence is explicit. |
 | Story reference traceability | pass | No duplicate or conflicting Story references found. |
 | Tests and verification | pass | Post-remediation backend and Playwright suites pass against separate acknowledged disposable Neon schemas. |
-| Manual UI confirmation | blocked | Taylor accepted the mobile interface plus desktop catalog creation, explicit Resume, and deletion on 2026-07-17; desktop Adventure-shell and reset-placement confirmation remain pending. |
+| Manual UI confirmation | blocked | Taylor accepted the mobile interface, desktop Adventure shell, and desktop catalog creation, explicit Resume, and deletion on 2026-07-17; reset-placement confirmation remains pending. |
 | Code review | pass after remediation | Discovery findings were fixed in `976767a`; regression rereview found no new issues. |
 | Visual / UX consistency | pass after remediation | Compact-width overflow and error-feedback gaps were fixed; top tabs are canonical. |
 | Security review | pass with follow-up | Creation is account-throttled and provider responses are bounded. A durable Adventure quota can be considered before paid multi-user operation. |
@@ -27,7 +27,7 @@ blocked
 
 ### BLOCKING
 
-- [ ] Obtain Taylor's remaining manual confirmation of the ready desktop Player/Story/Scene presentation and reset placement. Mobile presentation plus desktop catalog creation, explicit Resume, and deletion are accepted.
+- [ ] Obtain Taylor's remaining manual confirmation of reset placement. Mobile and desktop Adventure presentation plus catalog creation, explicit Resume, and deletion are accepted.
 
 ### REQUIRED
 
@@ -108,3 +108,4 @@ blocked
 - 2026-07-17: Taylor accepted the mobile interface; desktop and catalog/lifecycle placement confirmation remain.
 - 2026-07-17: Taylor confirmed desktop catalog creation and deletion, but found row-based Adventure resume unclear. Both World lists now expose a dedicated Resume button with route, Storybook, and desktop/mobile E2E coverage.
 - 2026-07-17: Taylor accepted the dedicated Resume action after manual verification.
+- 2026-07-17: Taylor accepted the ready desktop Player/Story/Scene composition.

@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: collect Taylor's remaining desktop Adventure-shell and reset-placement confirmation
+- Next action: collect Taylor's remaining reset-placement confirmation
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
 - Known blockers: Taylor's final manual UI confirmation
@@ -211,7 +211,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: mobile plus desktop catalog creation/Resume/deletion accepted 2026-07-17; desktop Adventure shell and reset placement pending
+- Status: mobile, desktop Adventure shell, and desktop catalog creation/Resume/deletion accepted 2026-07-17; reset placement pending
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
 - Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; reset from the Adventure menu; verify World-detail controls remain available
