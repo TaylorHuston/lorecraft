@@ -1,6 +1,6 @@
 # ADR: Durable Asynchronous Adventure Work
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-07-16
 - Related change: `docs/changes/2026-07-16-private-adventure-foundation/`
 - Related Epics / Stories: `LC-003/S1`, especially `R3`
@@ -52,6 +52,8 @@ The first web client polls persisted status. Worker finalization atomically publ
 ## Validation
 
 Implementation and review must prove that pending work survives reload, expired leases are reclaimable, only one opening publishes, transient failure retries are bounded, terminal failure is recoverable, stale workers cannot commit after reset or delete, and secrets never enter persisted evidence or logs.
+
+The focused opening-worker suite proves transactional single-claim behavior, lease reclaim and exhaustion, one automatic retry, terminal owner retry, atomic root publication, reset/delete stale-worker rejection, and sanitized evidence/logging. Process startup and browser polling remain implementation work in the related Change.
 
 ## Reconsider When
 

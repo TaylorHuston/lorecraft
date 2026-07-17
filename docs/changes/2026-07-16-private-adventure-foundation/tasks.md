@@ -65,9 +65,9 @@ status: in_progress
 - [x] 6.1 RED: define a deterministic `StoryGenerator` contract test for successful prose, invalid/empty output, timeout, provider failure, and metadata/redaction behavior.
 - [x] 6.2 Implement structured opening prompt assembly from platform instructions, frozen World guidance, Starting Point premise, player profile, starting Location, and Characters present.
 - [x] 6.3 Implement the OpenAI-compatible story adapter with server-only base URL/key/model/settings, bounded timeout, normalized errors, and no extraction/JSON-mode responsibility.
-- [ ] 6.4 RED: add worker tests for row claiming, one active job, lease expiry/reclaim, one automatic retry, terminal failure, owner retry, stale-worker rejection, and deletion/reset races.
-- [ ] 6.5 Implement the separately runnable worker and atomic finalization of model call, root revision, opening story entry, Adventure head, and ready status.
-- [ ] 6.6 Add structured correlated local logs for opening lifecycle while ensuring secrets and authorization headers are absent.
+- [x] 6.4 RED: add worker tests for row claiming, one active job, lease expiry/reclaim, one automatic retry, terminal failure, owner retry, stale-worker rejection, and deletion/reset races.
+- [x] 6.5 Implement the separately runnable worker and atomic finalization of model call, root revision, opening story entry, Adventure head, and ready status.
+- [x] 6.6 Add structured correlated local logs for opening lifecycle while ensuring secrets and authorization headers are absent.
 - [ ] 6.7 Wire root development/test process startup so frontend, API, and worker run together; document the separate production worker command and health expectations.
 - [ ] 6.8 Map implementation and evidence for `LC-003/S1 R3/R3-S1..R3-S4`.
 
@@ -128,6 +128,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | `3a716ee` |
 | 2026-07-16 | LC-003/S1 story-generation boundary | delegated backend TDD slice; main-agent review and sequential verification | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass | `73bd761` |
 | 2026-07-16 | LC-003/S1 owner opening retry | main-agent RED-to-GREEN lifecycle extension | Adventure lifecycle service and focused functional test | Owner-only terminal retry queues new work against the same source/generation while preserving failed evidence; cross-owner access remains non-disclosing | pending commit |
+| 2026-07-16 | LC-003/S1 durable opening worker | main-agent TDD and concurrency-harness correction | opening worker and focused functional tests | Transactional claims, leases, bounded retry, crash recovery, atomic publication, stale finalization rejection, sanitized evidence, and correlated logs pass | pending commit |
 
 ## Verification Ledger
 
@@ -153,6 +154,8 @@ status: in_progress
 | 2026-07-16 | Story-generation prompt and adapter unit suites | focused unit test | `LC-003/S1 R3-S1` structured frozen context plus provider-neutral success, timeout, failure, malformed/empty output, exact evidence, and credential redaction | Passed; 8 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after query/lifecycle/provider slices | broad supporting gates | New service boundaries and tests are formatted and type-safe | Passed |
 | 2026-07-16 | Adventure lifecycle suite after owner retry | focused functional test | `LC-003/S1 R3-S3` owner-only manual retry preserves frozen source and creates exactly one new pending job | Passed; 5 tests total |
+| 2026-07-16 | Adventure opening worker suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R3-S1..R3-S4` one claimant, lease reclaim/exhaustion, bounded retry, atomic publication, stale reset/delete rejection, sanitized evidence, and correlated logs | Passed; 5 tests |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after opening worker and API review | broad supporting gates | Worker and current API boundary compile cleanly and satisfy repository formatting/static-analysis policy | Passed |
 
 ## Manual Feedback
 
