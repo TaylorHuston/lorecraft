@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: independent review discovery, safe-fix remediation, static regression rereview, and local commit `976767a`
-- Next action: rerun the PostgreSQL-backed suite against an acknowledged disposable database, restore the development stack, then collect live-provider and manual UI confirmation
+- Last completed action: post-remediation PostgreSQL backend and desktop/mobile Playwright suites passed against isolated disposable Neon schemas
+- Next action: restore the development stack, complete one live-provider opening playtest, then collect manual UI confirmation
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
-- Known blockers: post-remediation PostgreSQL verification, live-provider playtest, and Taylor's manual UI confirmation
+- Known blockers: live-provider playtest and Taylor's manual UI confirmation
 
 ## Task Checklist
 
@@ -176,6 +176,8 @@ status: in_review
 | 2026-07-16 | Post-review Storybook interaction/accessibility suite                                                                                                         | component interaction/a11y            | Existing Adventure and World stories remain accessible after review remediation                                                                                               | Passed; 64 tests                                   |
 | 2026-07-16 | Post-review backend unit execution                                                                                                                              | focused unit evidence                 | Provider response bounding and lease-duration derivation pass without a database                                                                                              | Passed; 15 unit tests; broader command then stopped on missing acknowledged test database |
 | 2026-07-16 | Post-review lint, typecheck, production build, `git diff --check`, merge-tree, and scoped SDD validation                                                      | static/build/integration gates         | Remediation compiles, formats, builds, remains conflict-free with `develop`, and preserves valid artifact structure                                                           | Passed; validation 0 errors, 0 warnings            |
+| 2026-07-16 | Post-review guarded backend suite against isolated `lorecraft_test` Neon schema                                                                               | broad backend regression              | Post-remediation database, account, security, World, snapshot, Adventure API/service/worker, provider, and publication behavior remains green together                        | Passed; 100 tests                                  |
+| 2026-07-16 | Post-review Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | Supervised API/worker/provider topology and responsive Adventure create/open/resume/reset/delete journey remain green                                                        | Passed; 7 tests                                    |
 
 ## Manual Feedback
 
@@ -210,12 +212,11 @@ status: in_review
 ## Blockers / Open Questions
 
 - No planning questions remain.
-- PostgreSQL-backed regression tests require an acknowledged disposable `TEST_DATABASE_URL`; the current environment correctly refused database writes.
 - Live-provider narrative quality and final manual UI acceptance remain pending.
 
 ## Closeout
 
-- Change status: in_review; implementation and deterministic verification complete, review remediation committed, final evidence gates pending
+- Change status: in_review; implementation, deterministic verification, and review remediation complete; live-provider and manual evidence gates pending
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: yes
@@ -223,7 +224,7 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
 - ADR status: immutable snapshots and durable asynchronous work accepted and validated
 - Release communication current: README and user-facing CHANGELOG updated
-- `sdd-review` verdict: blocked on post-remediation PostgreSQL verification, live-provider evidence, and manual UI confirmation
+- `sdd-review` verdict: blocked on live-provider evidence and manual UI confirmation
 - Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
 - `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
 - Planning updates resolved: yes

@@ -13,7 +13,7 @@ blocked
 | Epic truth | pass | `LC-003/S1` implementation and evidence maps are current. |
 | Requirements and Scenarios | pass | Deterministic evidence remains scenario-mapped; final human/provider evidence is explicit. |
 | Story reference traceability | pass | No duplicate or conflicting Story references found. |
-| Tests and verification | blocked | Post-remediation database-backed lifecycle/query/worker tests require an acknowledged disposable database. |
+| Tests and verification | pass | Post-remediation backend and Playwright suites pass against separate acknowledged disposable Neon schemas. |
 | Manual UI confirmation | blocked | Taylor's final desktop/mobile acceptance is pending. |
 | Code review | pass after remediation | Discovery findings were fixed in `976767a`; regression rereview found no new issues. |
 | Visual / UX consistency | pass after remediation | Compact-width overflow and error-feedback gaps were fixed; top tabs are canonical. |
@@ -27,7 +27,6 @@ blocked
 
 ### BLOCKING
 
-- [ ] Rerun the PostgreSQL-backed backend suite against an explicitly acknowledged disposable test database after the lock-order and resume-timestamp fixes.
 - [ ] Complete one configured live-provider opening playtest against the frozen premise, player, Location, and present Characters.
 - [ ] Obtain Taylor's manual confirmation of World discovery, creation, lifecycle recovery, ready Player/Story/Scene presentation, top mobile tabs, reset/delete placement, and compact desktop behavior.
 
@@ -46,6 +45,8 @@ blocked
 | `npm run test --workspace @lorecraft/frontend` | focused/broad frontend test | `LC-003/S1 R1`, `R3`, `R5` | 99 passed | Review UI fixes and existing route behavior remain green. |
 | `npm run test:storybook` | interaction/accessibility | `LC-003/S1 R5` | 64 passed | Component states and accessibility checks remain green. |
 | Backend unit execution | focused unit test | `LC-003/S1 R3` | 15 unit tests passed | Response bounding and lease derivation behave deterministically. |
+| Guarded backend suite against isolated `lorecraft_test` Neon schema | broad backend regression | `LC-001`, `LC-002`, `LC-003/S1` | 100 passed | Post-remediation database, auth, catalog, snapshot, lifecycle, query, worker, provider, and API behavior remains green. |
+| `npm run test:e2e` against isolated `lorecraft_e2e` Neon schema | desktop/mobile E2E | `LC-001`, `LC-002`, `LC-003/S1` | 7 passed | The supervised API, worker, deterministic provider, and responsive Adventure lifecycle journey pass end to end. |
 | `npm run lint`, `npm run typecheck`, `npm run build` | broad supporting gates | cross-cutting | passed | Both applications compile, format, and build after remediation. |
 | Scoped `sdd validate` | artifact validation | `LC-003/S1` | 0 errors, 0 warnings | Change and Epic structure remain valid. |
 | `git merge-tree --write-tree develop HEAD` | integration check | branch readiness | clean tree | The reviewed branch is structurally mergeable into `develop`. |
@@ -53,10 +54,10 @@ blocked
 ## Review Bundle
 
 - Source branch/ref: `change/private-adventure-foundation`
-- Reviewed source commit: `976767a`
+- Reviewed source commit: `408b92e5aba389b8c759010ffd445b269f7cef69`
 - Target branch/ref: `develop` at `20372717193a524e3486d45176a332562c5383ba`
 - Merge base: `20372717193a524e3486d45176a332562c5383ba`
-- Source-only commits: feature implementation plus review remediation through `976767a`
+- Source-only commits: feature implementation plus review remediation and review-record reconciliation through `408b92e`
 - Target-only commits: none
 - Changed files: 84 files before review remediation; 18 files in the safe-fix batch
 - Diff stat: approximately 10.7k insertions across the complete Change
@@ -70,7 +71,7 @@ blocked
 |---|---|---|---|
 | Artifact truth | delegated reviewer | findings remediated | Reconciled top-tab contract and `in_review` state. |
 | Code diff | delegated backend reviewer plus orchestrator | findings remediated | Fixed lease timing, lock order, and resume timestamp semantics. |
-| Verification coverage | orchestrator | blocked | Database-backed post-remediation run lacks an acknowledged disposable target. |
+| Verification coverage | orchestrator | pass | Post-remediation backend and desktop/mobile Playwright suites pass against separate disposable Neon schemas. |
 | Security | delegated security reviewer plus orchestrator | findings remediated/follow-up | Bounded provider responses and throttled creation; private NPC knowledge remains intentional Game Master context. |
 | UI / visual identity | delegated frontend reviewer | findings remediated | Fixed compact-width clipping and missing error/focus feedback. |
 | Docs / release communication / PRD | delegated artifact reviewer | pass | Public and private artifact boundaries remain coherent. |
@@ -88,13 +89,14 @@ blocked
 ## PR / Merge Readiness
 
 - Source branch: `change/private-adventure-foundation`
-- Reviewed source commit: `976767a`
+- Reviewed source commit: `408b92e5aba389b8c759010ffd445b269f7cef69`
 - Target branch: `develop`
 - Conflict check: clean
-- Commit state: review remediation committed; this review record pending commit
+- Commit state: code and review remediation committed; current evidence reconciliation is documentation-only
 - PR status: none
-- Merge status: blocked on remaining evidence gates
+- Merge status: blocked on live-provider and manual-acceptance gates
 
 ## Review Log
 
 - 2026-07-16: Deep review completed, safe findings remediated, and final evidence blockers recorded.
+- 2026-07-16: Guarded PostgreSQL backend and desktop/mobile Playwright suites passed against isolated disposable Neon schemas.
