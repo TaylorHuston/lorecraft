@@ -202,6 +202,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | `apps/backend/app/services/adventure_lifecycle_service.ts` | Resets an owned Adventure to its same frozen source and deletes only the selected private aggregate. | Recheck when reset generations, active-work conflicts, or deletion boundaries change. |
 | `apps/backend/app/services/story_generation/` | Defines deterministic frozen-context prompt assembly and a provider-neutral OpenAI-compatible prose boundary with sanitized evidence and normalized failures. | Recheck when opening context, provider protocol, generation settings, or evidence redaction changes. |
 | `apps/backend/app/services/adventure_opening_worker.ts` | Claims durable opening jobs with expiring leases and atomically publishes sanitized call evidence, the root revision, opening narration, and ready state. | Recheck when job topology, retry limits, lease recovery, or opening publication changes. |
+| `apps/backend/app/controllers/adventures_controller.ts`, `app/validators/adventure.ts`, and `start/routes.ts` | Exposes authenticated, CSRF-protected create/read/retry/reset/delete contracts over backend-owned Adventure services. | Recheck when Adventure HTTP shape, validation, authentication, or lifecycle errors change. |
+| `apps/backend/app/controllers/worlds_controller.ts` and `app/services/world_catalog_service.ts` | Adds playability and current-owner Adventure summaries while withholding raw version data, author identity, and private Character knowledge. | Recheck when World discovery, playability, or disclosure policy changes. |
 
 #### Verified By
 
@@ -219,15 +221,15 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | S1/R3-S1 prompt/provider boundary and R3-S3/R3-S4 provider-error portions | `apps/backend/tests/unit/story_generation/opening_prompt.spec.ts` and `openai_compatible_story_generator.spec.ts` | Frozen opening context is assembled deterministically; prose, timeout, provider failure, malformed/empty output, exact evidence, and credential redaction are normalized. | Passing 2026-07-16 |
 | S1/R3-S3 owner-retry service portion | `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts` | An owner can queue new opening work after terminal failure against the same source/generation; another account receives the same not-found result as a missing Adventure. | Passing 2026-07-16 |
 | S1/R3-S1..R3-S4 durable worker behavior | `apps/backend/tests/functional/adventure_opening_worker.spec.ts` | One worker claims work; expired leases recover or terminate within the retry bound; successful opening state publishes atomically; failed/empty output exposes no prose; reset/delete invalidate stale finalization; evidence and logs omit credentials. | Passing 2026-07-16 |
-| Remaining S1/R1-R4 API behavior and S1/R5 | Not verified yet. | HTTP contracts, World inspection playability, lifecycle API behavior, process startup, and UI await later slices in this Change. | Pending |
+| S1/R1-S1..R1-S3, R2-S3, and R4 HTTP boundary | `apps/backend/tests/functional/adventure_api.spec.ts` | Authenticated creation/read/lifecycle routes, owner isolation, anonymous denial, CSRF, bounded validation, idempotency, malformed identity, stable conflicts, playability, and owner-only World summaries. | Passing 2026-07-16 |
+| S1/R2-S1 disclosure boundary | `apps/backend/tests/functional/adventure_api.spec.ts` and `world_catalog.spec.ts` | Player-facing World and Adventure projections omit raw snapshots, author identity, prompt evidence, and private Character knowledge. | Passing 2026-07-16 |
+| Remaining S1/R2-S2 API/E2E behavior and S1/R5 | Not verified yet. | New-version selection, typed frontend contracts, process startup, and UI await later slices in this Change. | Pending |
 
 #### Verification Gaps
 
 - `R2-S2` still needs API/E2E proof that a newly created Adventure selects the newer current version; service projection proof covers preservation of the existing Adventure.
-- `R2-S3` still needs API and World-inspection proof that unplayable source returns a clear conflict while inspection remains available.
-- `R1-S3` still needs anonymous and cross-account Adventure API proof; service-level source non-disclosure is covered.
 - `R3` still needs process-startup, polling/reload, deterministic E2E, and live-provider evidence over the passing worker/provider boundaries.
-- `R5` awaits implementation and scenario-mapped evidence; `R4` still needs HTTP/UI/E2E proof over the passing service boundary.
+- `R5` awaits implementation and scenario-mapped evidence; `R4` still needs typed-client/UI/E2E proof over the passing service and HTTP boundaries.
 - Live-provider narrative quality and final responsive UI acceptance require separate evidence from deterministic tests.
 
 #### Story Notes

@@ -2,6 +2,8 @@ import Adventure, { type AdventureStatus } from '#models/adventure'
 import AdventureStoryEntry from '#models/adventure_story_entry'
 import World from '#models/world'
 
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 export type AdventureSummaryDto = {
   id: string
   playerName: string
@@ -84,6 +86,8 @@ export default class AdventureQueryService {
   }
 
   async findForOwner(ownerId: number, adventureId: string): Promise<AdventureDetailDto | null> {
+    if (!uuidPattern.test(adventureId)) return null
+
     const adventure = await Adventure.query()
       .where('id', adventureId)
       .where('ownerId', ownerId)

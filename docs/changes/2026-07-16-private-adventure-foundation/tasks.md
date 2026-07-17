@@ -73,9 +73,9 @@ status: in_progress
 
 ### 7. Typed API Boundary
 
-- [ ] 7.1 RED: add functional tests for World playability/Adventure summaries, create/read/retry/reset/delete routes, anonymous denial, cross-account non-disclosure, CSRF, validation, idempotency, and busy/unplayable conflicts.
-- [ ] 7.2 Add Vine validators and thin controllers over Adventure application services under authenticated `/api/v1` routes.
-- [ ] 7.3 Extend the World detail DTO with playability and current-owner Adventure summaries; keep author account data and raw version data minimized.
+- [x] 7.1 RED: add functional tests for World playability/Adventure summaries, create/read/retry/reset/delete routes, anonymous denial, cross-account non-disclosure, CSRF, validation, idempotency, and busy/unplayable conflicts.
+- [x] 7.2 Add Vine validators and thin controllers over Adventure application services under authenticated `/api/v1` routes.
+- [x] 7.3 Extend the World detail DTO with playability and current-owner Adventure summaries; keep author account data and raw version data minimized.
 - [ ] 7.4 Add typed Tuyau client contracts, runtime response validators, account-scoped query keys, and stable error mapping for `404`, `409`, `422`, and network failures.
 - [ ] 7.5 Confirm future clients can reuse lifecycle APIs without depending on React presentation behavior.
 
@@ -127,8 +127,9 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 Adventure creation | delegated RED tests; main-agent implementation and verification | Adventure creation service and focused functional tests | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | `54bb3a4` |
 | 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | `3a716ee` |
 | 2026-07-16 | LC-003/S1 story-generation boundary | delegated backend TDD slice; main-agent review and sequential verification | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass | `73bd761` |
-| 2026-07-16 | LC-003/S1 owner opening retry | main-agent RED-to-GREEN lifecycle extension | Adventure lifecycle service and focused functional test | Owner-only terminal retry queues new work against the same source/generation while preserving failed evidence; cross-owner access remains non-disclosing | pending commit |
-| 2026-07-16 | LC-003/S1 durable opening worker | main-agent TDD and concurrency-harness correction | opening worker and focused functional tests | Transactional claims, leases, bounded retry, crash recovery, atomic publication, stale finalization rejection, sanitized evidence, and correlated logs pass | pending commit |
+| 2026-07-16 | LC-003/S1 owner opening retry | main-agent RED-to-GREEN lifecycle extension | Adventure lifecycle service and focused functional test | Owner-only terminal retry queues new work against the same source/generation while preserving failed evidence; cross-owner access remains non-disclosing | `a919fd4` |
+| 2026-07-16 | LC-003/S1 durable opening worker | main-agent TDD and concurrency-harness correction | opening worker and focused functional tests | Transactional claims, leases, bounded retry, crash recovery, atomic publication, stale finalization rejection, sanitized evidence, and correlated logs pass | `e77e6b3` |
+| 2026-07-16 | LC-003/S1 authenticated Adventure API | delegated API implementation; main-agent disclosure and boundary review | Adventure controller/routes/validator, World detail projection, and functional tests | Server DTOs, CSRF mutations, owner-only lifecycle, stable validation/conflicts, malformed-ID handling, playability, and private-knowledge minimization pass | pending commit |
 
 ## Verification Ledger
 
@@ -156,6 +157,8 @@ status: in_progress
 | 2026-07-16 | Adventure lifecycle suite after owner retry | focused functional test | `LC-003/S1 R3-S3` owner-only manual retry preserves frozen source and creates exactly one new pending job | Passed; 5 tests total |
 | 2026-07-16 | Adventure opening worker suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R3-S1..R3-S4` one claimant, lease reclaim/exhaustion, bounded retry, atomic publication, stale reset/delete rejection, sanitized evidence, and correlated logs | Passed; 5 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after opening worker and API review | broad supporting gates | Worker and current API boundary compile cleanly and satisfy repository formatting/static-analysis policy | Passed |
+| 2026-07-16 | Adventure API suite against isolated scratch Neon schema | focused functional API test | Create/read/retry/reset/delete, playability/summaries, anonymous and cross-owner denial, CSRF, validation, idempotency, malformed identity, and busy/unplayable conflicts | Passed; 14 tests |
+| 2026-07-16 | World catalog regression suite after disclosure minimization | focused functional API test | Existing catalog behavior remains green while private Character knowledge no longer crosses the player-facing API | Passed; 9 tests |
 
 ## Manual Feedback
 

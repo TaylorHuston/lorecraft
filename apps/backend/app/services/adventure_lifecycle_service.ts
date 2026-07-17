@@ -1,6 +1,8 @@
 import type { WorldVersionSnapshot } from '#models/world_version'
 import db from '@adonisjs/lucid/services/db'
 
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 export type AdventureResetResult = {
   adventureId: string
   status: 'opening_pending'
@@ -33,6 +35,8 @@ function frozenStartingLocation(snapshot: WorldVersionSnapshot, startingPointKey
 
 export default class AdventureLifecycleService {
   async retryOpening(adventureId: string, ownerId: number): Promise<AdventureResetResult> {
+    this.#assertAdventureId(adventureId)
+
     return db.transaction(async (trx) => {
       const adventure = await trx
         .from('adventures')
@@ -96,6 +100,8 @@ export default class AdventureLifecycleService {
   }
 
   async reset(adventureId: string, ownerId: number): Promise<AdventureResetResult> {
+    this.#assertAdventureId(adventureId)
+
     return db.transaction(async (trx) => {
       const adventure = await trx
         .from('adventures')
@@ -196,6 +202,8 @@ export default class AdventureLifecycleService {
   }
 
   async delete(adventureId: string, ownerId: number): Promise<void> {
+    this.#assertAdventureId(adventureId)
+
     await db.transaction(async (trx) => {
       const adventure = await trx
         .from('adventures')
@@ -210,5 +218,11 @@ export default class AdventureLifecycleService {
 
       await trx.from('adventures').where('id', adventure.id).delete()
     })
+  }
+
+  #assertAdventureId(adventureId: string) {
+    if (!uuidPattern.test(adventureId)) {
+      throw new AdventureLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
+    }
   }
 }

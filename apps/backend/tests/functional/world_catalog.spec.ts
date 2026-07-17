@@ -144,8 +144,6 @@ test.group('World catalog API', (group) => {
           {
             key: 'mira',
             name: 'Mira',
-            privateKnowledge:
-              'Mira knows the storm began after the chapel bell rang at midnight, but she is afraid to say that plainly.',
             location: { key: 'chapel', name: 'Chapel' },
           },
         ],
@@ -153,6 +151,8 @@ test.group('World catalog API', (group) => {
     })
     assert.notProperty(response.body().data, 'authorId')
     assert.notProperty(response.body().data, 'author')
+    assert.notInclude(JSON.stringify(response.body()), 'privateKnowledge')
+    assert.notInclude(JSON.stringify(response.body()), 'storm began after the chapel bell')
     assert.notInclude(JSON.stringify(response.body()), author.email)
     const missing = await withBrowserSession(client.get('/api/v1/worlds/unknown-world'), viewer)
     missing.assertStatus(404)
