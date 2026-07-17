@@ -196,15 +196,6 @@ export function AdventureWorkbench({
   if (mobile) {
     return (
       <div className={styles.mobileWorkbench}>
-        <div
-          className={styles.mobilePanel}
-          id={`adventure-panel-${activePane}`}
-          role="tabpanel"
-          aria-labelledby={`adventure-tab-${activePane}`}
-          tabIndex={0}
-        >
-          {paneFor(activePane)}
-        </div>
         <nav className={styles.mobileTabs} role="tablist" aria-label="Adventure views">
           {paneOrder.map((pane) => (
             <button
@@ -222,6 +213,15 @@ export function AdventureWorkbench({
             </button>
           ))}
         </nav>
+        <div
+          className={styles.mobilePanel}
+          id={`adventure-panel-${activePane}`}
+          role="tabpanel"
+          aria-labelledby={`adventure-tab-${activePane}`}
+          tabIndex={0}
+        >
+          {paneFor(activePane)}
+        </div>
       </div>
     )
   }
