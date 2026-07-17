@@ -43,9 +43,9 @@ status: in_progress
 ### 4. Frozen Source Foundation
 
 - [x] 4.1 RED-to-GREEN, one invariant at a time: add migration/database tests and implementation for World Adventure guidance, same-World Starting Point references, one default Starting Point, immutable version identity, and current-version ownership.
-- [ ] 4.2 RED-to-GREEN, one behavior at a time: add publication tests and implementation proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
-- [ ] 4.3 Complete the relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshot models after the invariant cycles pass.
-- [ ] 4.4 Complete the provider-independent WorldVersion publication service after its behavior cycles pass; validate all stable-key references before insert and never update an existing version.
+- [x] 4.2 RED-to-GREEN, one behavior at a time: add publication tests and implementation proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
+- [x] 4.3 Complete the relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshot models after the invariant cycles pass.
+- [x] 4.4 Complete the provider-independent WorldVersion publication service after its behavior cycles pass; validate all stable-key references before insert and never update an existing version.
 - [ ] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
 - [ ] 4.6 Verify repeated seed installation remains exact and does not alter Adventures already bound to an older version.
 - [ ] 4.7 Map Phase 4 implementation and publication/preservation evidence for `LC-003/S1 R2`; leave Adventure-binding and creation-conflict portions of `R2-S1..R2-S3` explicit until Tasks 5 and 7 can prove them, and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
@@ -121,6 +121,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 promotion | main agent, `sdd change promote` and `sdd epic create` | active Change, LC-003, LC-002, ADRs | Promoted and reconciled; implementation not started | `develop` |
 | 2026-07-16 | LC-003/S1 apply Discovery | main orchestrator; delegated backend discovery; `tdd` and current framework guidance selected | repository policy, Change/Epic/ADRs, backend schema and tests | Scoped validation passed; implementation branch created; frozen-source foundation selected as first vertical slice | `change/private-adventure-foundation` |
 | 2026-07-16 | LC-003/S1 R2 migration invariants | delegated backend implementation; orchestrator-verified | frozen-source migration and database tests | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending | `605c881` |
+| 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | commit pending |
 
 ## Verification Ledger
 
@@ -132,6 +133,8 @@ status: in_progress
 | 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault --json` | artifact validation | Active Change and Epic structure before implementation | Passed; 0 errors, 0 warnings |
 | 2026-07-16 | Focused frozen-source migration suite against isolated scratch Neon schema | focused database test | `LC-003/S1 R2` same-World Starting Point/default constraints, UUID version identity, insert-only rows, and same-World current-version ownership | Passed; 2 tests |
 | 2026-07-16 | Existing World migration/seed/catalog regression suite against isolated scratch Neon schema | focused database and functional tests | Pre-change World integrity, seed provenance, exact reconciliation, authorization, and catalog behavior remain green | Passed; 11 tests |
+| 2026-07-16 | WorldVersion publication suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R2` deterministic ordering/hash, stable-key rejection, identical reuse, changed-content insertion, and old-snapshot preservation | Passed; 4 tests |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after publication slice | broad supporting gates | Publication implementation is formatted and type-safe | Passed |
 
 ## Manual Feedback
 
