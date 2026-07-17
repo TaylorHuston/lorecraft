@@ -6,7 +6,7 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: implemented the app-owned control baseline and LC-001 password disclosure through routed tests and deterministic Storybook states; commit pending.
+- Last completed action: implemented and committed the app-owned control baseline and LC-001 password disclosure at `d8f7721` with focused routed, component, Storybook, typecheck, and lint evidence.
 - Next action: integrate and verify the parallel LC-002 World and LC-003 Adventure presentation migrations.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
@@ -111,7 +111,7 @@ status: in_progress
 | Date       | Scope                                              | Result                                                                                                                                                                                                                    | Commit         |
 | ---------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | 2026-07-17 | Promotion and final-Epic reconciliation discovery  | Promoted the private Change into Lorecraft after the prerequisite Epic reconciliation closed; created the policy-compliant implementation branch and reconciled semantic duplicates onto stable existing Scenario IDs.    | `7d42eca`      |
-| 2026-07-17 | App-owned controls and LC-001 account presentation | Added locally owned button, icon-button, field, textarea, and Base UI-backed dialog behavior; migrated sign-up/sign-in to independently controllable password disclosure without changing auth calls or layout ownership. | commit pending |
+| 2026-07-17 | App-owned controls and LC-001 account presentation | Added locally owned button, icon-button, field, textarea, and Base UI-backed dialog behavior; migrated sign-up/sign-in to independently controllable password disclosure without changing auth calls or layout ownership. | `d8f7721` |
 
 ## Verification Ledger
 
