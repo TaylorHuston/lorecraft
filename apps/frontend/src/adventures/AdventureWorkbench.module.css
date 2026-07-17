@@ -30,6 +30,14 @@
   grid-template-rows: auto minmax(0, 1fr);
 }
 
+.storyRegion:focus-visible {
+  outline: none;
+}
+
+.storyRegion:focus-visible > .panelHeading {
+  border-bottom-color: var(--focus-ring);
+}
+
 .panelHeading {
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
