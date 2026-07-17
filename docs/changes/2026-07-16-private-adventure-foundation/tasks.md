@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
-- Next action: collect Taylor's remaining desktop and catalog/lifecycle manual UI confirmation
+- Next action: collect Taylor's remaining desktop Adventure-shell and reset-placement manual confirmation
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
 - Known blockers: Taylor's final manual UI confirmation
@@ -188,8 +188,9 @@ status: in_review
 | Date       | Feedback                                                                           | Classification         | Action / Artifact Updates                                                    | Status   |
 | ---------- | ---------------------------------------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------- | -------- |
 | 2026-07-16 | World/Adventure isolation and core Adventure behavior resolved during exploration. | requirement refinement | Incorporated into proposal and design; turn loop staged as later candidates. | resolved |
-| 2026-07-16 | `/worlds` should directly launch playable Worlds and list/resume/delete every owned Adventure under its source World. | in-scope experience refinement | Extended the catalog API projection and made the World catalog the primary cross-World Adventure manager while preserving World-detail controls. | implemented; manual confirmation pending |
-| 2026-07-17 | Mobile Adventure interface looks good. | manual acceptance | Recorded the responsive mobile interface as accepted; desktop and catalog/lifecycle placement remain to be confirmed. | accepted |
+| 2026-07-16 | `/worlds` should directly launch playable Worlds and list/resume/delete every owned Adventure under its source World. | in-scope experience refinement | Extended the catalog API projection and made the World catalog the primary cross-World Adventure manager while preserving World-detail controls. | accepted 2026-07-17 |
+| 2026-07-17 | Mobile Adventure interface looks good. | manual acceptance | Recorded the responsive mobile interface as accepted; desktop Adventure-shell and reset placement remain to be confirmed. | accepted |
+| 2026-07-17 | Desktop World catalog creates Adventures, resumes through the linked Adventure row, and deletes with confirmation. | manual acceptance | Recorded catalog discovery and lifecycle placement as accepted; clarified that resume is row-based rather than a separate button. | accepted |
 
 ## Planning Updates
 
@@ -208,7 +209,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: mobile accepted 2026-07-17; desktop and catalog/lifecycle confirmation pending
+- Status: mobile and desktop catalog accepted 2026-07-17; desktop Adventure shell and reset placement pending
 - App URL / route: `http://localhost:4310/worlds`, `/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
 - Steps for the user: create directly from the World catalog; confirm owned Adventures appear under the correct World with resume metadata and confirmed deletion; review dedicated form validation; inspect pending/recovery and ready Story/Player/Scene states; use mobile top tabs; reset from the Adventure menu; verify World-detail controls remain available
