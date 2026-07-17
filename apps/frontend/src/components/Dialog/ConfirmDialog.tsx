@@ -39,9 +39,9 @@ export function ConfirmDialog({
         if (!nextOpen) onCancel()
       }}
       open={open}
+      description={children}
       title={title}
     >
-      <div className={styles.description}>{children}</div>
       {error ? (
         <p aria-atomic="true" className={styles.error} role="alert">
           {error}

@@ -53,6 +53,9 @@
   font-size: 0.875rem;
   line-height: 1.5;
 }
+.description p {
+  margin: 0;
+}
 .content {
   min-inline-size: 0;
 }

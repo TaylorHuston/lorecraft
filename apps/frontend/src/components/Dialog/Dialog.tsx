@@ -46,7 +46,7 @@ export function Dialog({
               <div className={styles.heading}>
                 <BaseDialog.Title className={styles.title}>{title}</BaseDialog.Title>
                 {description ? (
-                  <BaseDialog.Description className={styles.description}>
+                  <BaseDialog.Description className={styles.description} render={<div />}>
                     {description}
                   </BaseDialog.Description>
                 ) : null}

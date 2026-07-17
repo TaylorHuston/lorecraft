@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "storybook": "storybook dev -p 4312 --host localhost --exact-port",
+    "storybook": "storybook dev -p 4312 --host 127.0.0.1 --exact-port",
     "build-storybook": "storybook build",
     "test:storybook": "vitest run --config vitest.storybook.config.ts"
   },

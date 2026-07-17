@@ -91,6 +91,44 @@ function ConfirmationPreview() {
   )
 }
 
+function DisabledFieldsPreview() {
+  return (
+    <div className={styles.fields}>
+      <TextField
+        defaultValue="Stormbound Chapel"
+        disabled
+        label="Disabled World name"
+        supportingText="This value cannot be changed."
+      />
+      <Textarea
+        defaultValue="Rain taps against warped shutters."
+        disabled
+        label="Disabled description"
+        supportingText="This description cannot be changed."
+      />
+    </div>
+  )
+}
+
+function PendingFieldsPreview() {
+  return (
+    <div className={styles.fields}>
+      <TextField
+        defaultValue="Stormbound Chapel"
+        label="Pending World name"
+        pending
+        supportingText="Lorecraft is saving this value."
+      />
+      <Textarea
+        defaultValue="Rain taps against warped shutters."
+        label="Pending description"
+        pending
+        supportingText="Lorecraft is saving this description."
+      />
+    </div>
+  )
+}
+
 const meta = {
   title: 'Application/Foundations/Controls',
   component: ControlsPreview,
@@ -115,4 +153,38 @@ export const PasswordDisclosure: Story = {
 
 export const DestructiveConfirmation: Story = {
   render: () => <ConfirmationPreview />,
+}
+
+export const DisabledFields: Story = {
+  render: () => <DisabledFieldsPreview />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const name = canvas.getByLabelText('Disabled World name')
+    const description = canvas.getByLabelText('Disabled description')
+    await expect(name).toBeDisabled()
+    await expect(name).toHaveValue('Stormbound Chapel')
+    await expect(name).toHaveAccessibleDescription('This value cannot be changed.')
+    await expect(description).toBeDisabled()
+    await expect(description).toHaveValue('Rain taps against warped shutters.')
+    await expect(description).toHaveAccessibleDescription('This description cannot be changed.')
+  },
+}
+
+export const PendingFields: Story = {
+  render: () => <PendingFieldsPreview />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const name = canvas.getByLabelText('Pending World name')
+    const description = canvas.getByLabelText('Pending description')
+    await expect(name).toHaveAttribute('aria-busy', 'true')
+    await expect(name).not.toBeDisabled()
+    await expect(name).toHaveValue('Stormbound Chapel')
+    await expect(name).toHaveAccessibleDescription('Lorecraft is saving this value.')
+    await expect(description).toHaveAttribute('aria-busy', 'true')
+    await expect(description).not.toBeDisabled()
+    await expect(description).toHaveValue('Rain taps against warped shutters.')
+    await expect(description).toHaveAccessibleDescription(
+      'Lorecraft is saving this description.'
+    )
+  },
 }

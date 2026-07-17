@@ -72,11 +72,12 @@ describe('Dialog', () => {
         pendingLabel="Deleting Adventure…"
         title="Delete Adventure?"
       >
-        This cannot be undone.
+        <p>This cannot be undone.</p>
       </ConfirmDialog>
     )
 
     const dialog = screen.getByRole('dialog', { name: 'Delete Adventure?' })
+    expect(dialog).toHaveAccessibleDescription('This cannot be undone.')
     expect(within(dialog).getByRole('alert')).toHaveTextContent(
       'Lorecraft could not delete this Adventure.'
     )

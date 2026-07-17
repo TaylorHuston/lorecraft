@@ -28,7 +28,12 @@ function PlayerRegion({ adventure }: { adventure: AdventureView }) {
   const { player } = adventure
 
   return (
-    <section className={styles.sideRegion} aria-label="Player">
+    <section
+      className={styles.sideRegion}
+      aria-label="Player"
+      data-slot="player-scroll-region"
+      tabIndex={0}
+    >
       <PanelHeading eyebrow="Player" id="adventure-player-heading" title={player.name} />
       <dl className={styles.details}>
         <div>
@@ -86,7 +91,7 @@ function StoryRegion({
       tabIndex={-1}
     >
       <PanelHeading eyebrow="Chronicle" id="adventure-story-heading" title="Story" />
-      <div className={styles.storyContent}>
+      <div className={styles.storyContent} data-slot="story-scroll-region" tabIndex={0}>
         {openingInProgress ? (
           <div className={styles.storyState} role="status" aria-live="polite" aria-atomic="true">
             <p className={styles.stateEyebrow}>Game Master</p>
@@ -131,7 +136,12 @@ function SceneRegion({ adventure }: { adventure: AdventureView }) {
   const { scene } = adventure
 
   return (
-    <section className={styles.sideRegion} aria-label="Scene">
+    <section
+      className={styles.sideRegion}
+      aria-label="Scene"
+      data-slot="scene-scroll-region"
+      tabIndex={0}
+    >
       <PanelHeading eyebrow="Scene" id="adventure-scene-heading" title={scene.location.name} />
       <p className={styles.sceneDescription}>{scene.location.description}</p>
       <section className={styles.sceneNpcs} aria-labelledby="adventure-npcs-heading">
@@ -215,7 +225,7 @@ export function AdventureWorkbench({
 
   if (mobile) {
     return (
-      <div className={styles.mobileWorkbench}>
+      <div className={styles.mobileWorkbench} data-slot="adventure-workbench">
         <nav className={styles.mobileTabs} role="tablist" aria-label="Adventure views">
           {paneOrder.map((pane) => (
             <Button
@@ -248,7 +258,7 @@ export function AdventureWorkbench({
   }
 
   return (
-    <div className={styles.desktopGrid}>
+    <div className={styles.desktopGrid} data-slot="adventure-workbench">
       <PlayerRegion adventure={adventure} />
       <StoryRegion
         adventure={adventure}
