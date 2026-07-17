@@ -11,6 +11,8 @@ The format is based on Keep a Changelog 1.1.0.
 - Account creation, sign-in, persistent browser sessions, sign-out, and a protected Lorecraft workspace.
 - An authenticated World catalog with a shared read-only `Stormbound Chapel` starter World.
 - Structured World detail for canonical Locations and Characters, including character descriptions, backgrounds, personalities, voices, knowledge, and locations.
+- Private Adventures created from a frozen World version, with player identity and visible starting Scene context.
+- Durable Game Master openings that survive reloads and can be resumed, retried after failure, reset, or deleted without changing the source World.
 
 ### Changed
 

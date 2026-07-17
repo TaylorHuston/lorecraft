@@ -504,7 +504,7 @@ test.group('Adventure API', (group) => {
     })
 
     response.assertStatus(422)
-    const body = response.body() as { errors: Array<{ field: string }> }
+    const body = response.body() as unknown as { errors: Array<{ field: string }> }
     assert.includeMembers(
       body.errors.map((error) => error.field),
       ['creationRequestId', 'player.name', 'player.physicalDescription', 'player.backstory']
@@ -546,6 +546,7 @@ test.group('Adventure API', (group) => {
 
   test('LC-003/S1/R2-S3: an unplayable World remains inspectable and creation returns conflict', async ({
     client,
+    assert,
   }) => {
     const ownerEmail = 'api-unplayable-owner@example.com'
     const browser = await createAuthenticatedBrowser(client, ownerEmail)
@@ -577,7 +578,7 @@ test.group('Adventure API', (group) => {
       player: { name: 'Mara Venn' },
     })
     response.assertStatus(409)
-    response.assertBody({
+    assert.deepEqual(response.body() as unknown, {
       errors: [
         {
           code: 'WORLD_NOT_PLAYABLE',
@@ -589,6 +590,7 @@ test.group('Adventure API', (group) => {
 
   test('LC-003/S1/R4-S2: pending opening work returns stable lifecycle conflicts', async ({
     client,
+    assert,
   }) => {
     const ownerEmail = 'api-busy-owner@example.com'
     const browser = await createAuthenticatedBrowser(client, ownerEmail)
@@ -616,7 +618,7 @@ test.group('Adventure API', (group) => {
     )
 
     reset.assertStatus(409)
-    reset.assertBody({
+    assert.deepEqual(reset.body() as unknown, {
       errors: [
         {
           code: 'ADVENTURE_BUSY',
@@ -625,7 +627,7 @@ test.group('Adventure API', (group) => {
       ],
     })
     retry.assertStatus(409)
-    retry.assertBody({
+    assert.deepEqual(retry.body() as unknown, {
       errors: [
         {
           code: 'ADVENTURE_NOT_RETRYABLE',

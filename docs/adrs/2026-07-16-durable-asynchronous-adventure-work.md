@@ -53,7 +53,7 @@ The first web client polls persisted status. Worker finalization atomically publ
 
 Implementation and review must prove that pending work survives reload, expired leases are reclaimable, only one opening publishes, transient failure retries are bounded, terminal failure is recoverable, stale workers cannot commit after reset or delete, and secrets never enter persisted evidence or logs.
 
-The focused opening-worker suite proves transactional single-claim behavior, lease reclaim and exhaustion, one automatic retry, terminal owner retry, atomic root publication, reset/delete stale-worker rejection, and sanitized evidence/logging. Process startup and browser polling remain implementation work in the related Change.
+The opening-worker suite proves transactional single-claim behavior, lease reclaim and exhaustion, one automatic retry, terminal owner retry, atomic root publication, reset/delete stale-worker rejection, and sanitized evidence/logging. The supervised development topology and deterministic desktop/mobile browser journey prove the API and worker run together, pending state survives reload, polling reaches one complete opening, and reset queues a new durable generation.
 
 ## Reconsider When
 

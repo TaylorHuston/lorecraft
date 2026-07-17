@@ -45,7 +45,7 @@ Normal APIs and seed paths SHALL NOT update an existing WorldVersion. Corrected 
 
 ## Validation
 
-The frozen-source migration and publication tests prove deterministic ordering and content identity, same-World references, serialized concurrent publication, identical-content reuse, changed-content version creation, preservation of earlier snapshots, insert-only database enforcement, and exact Stormbound seed reuse. Adventure binding, same-version reset, and old-versus-new Adventure reads remain scenario-mapped gaps until the Adventure aggregate and lifecycle services are implemented by this Change.
+The frozen-source migration, publication, creation, query, lifecycle, API, and browser suites prove deterministic identity, same-World references, changed-content version creation, preservation of earlier snapshots, Adventure binding, old-version reads, same-version reset, and exact Stormbound seed reuse. Raw snapshots remain internal while the player-facing API exposes minimized frozen projections.
 
 ## Reconsider When
 
