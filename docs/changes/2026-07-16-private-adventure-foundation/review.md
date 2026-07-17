@@ -14,7 +14,7 @@ blocked
 | Requirements and Scenarios | pass | Deterministic and live-provider evidence remains scenario-mapped; final human evidence is explicit. |
 | Story reference traceability | pass | No duplicate or conflicting Story references found. |
 | Tests and verification | pass | Post-remediation backend and Playwright suites pass against separate acknowledged disposable Neon schemas. |
-| Manual UI confirmation | blocked | Taylor's final desktop/mobile acceptance is pending. |
+| Manual UI confirmation | blocked | Taylor accepted the mobile interface on 2026-07-17; desktop and catalog/lifecycle placement confirmation remain pending. |
 | Code review | pass after remediation | Discovery findings were fixed in `976767a`; regression rereview found no new issues. |
 | Visual / UX consistency | pass after remediation | Compact-width overflow and error-feedback gaps were fixed; top tabs are canonical. |
 | Security review | pass with follow-up | Creation is account-throttled and provider responses are bounded. A durable Adventure quota can be considered before paid multi-user operation. |
@@ -27,7 +27,7 @@ blocked
 
 ### BLOCKING
 
-- [ ] Obtain Taylor's manual confirmation of World discovery, creation, lifecycle recovery, ready Player/Story/Scene presentation, top mobile tabs, reset/delete placement, and compact desktop behavior.
+- [ ] Obtain Taylor's remaining manual confirmation of desktop World discovery, creation, lifecycle recovery, ready Player/Story/Scene presentation, and reset/delete placement. Mobile presentation is accepted.
 
 ### REQUIRED
 
@@ -104,3 +104,4 @@ blocked
 - 2026-07-16: Guarded PostgreSQL backend and desktop/mobile Playwright suites passed against isolated disposable Neon schemas.
 - 2026-07-16: Live Gemma evidence exposed hidden-reasoning token exhaustion; provider controls, truncation rejection, and catalog-level Adventure management were implemented and deterministically verified pending live/manual rerun.
 - 2026-07-17: A clean live `gemma4:31b` opening completed in one attempt with reasoning disabled, `finish_reason: stop`, and complete grounded narration; only final manual UI acceptance remains.
+- 2026-07-17: Taylor accepted the mobile interface; desktop and catalog/lifecycle placement confirmation remain.
