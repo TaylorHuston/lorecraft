@@ -1,14 +1,14 @@
 ---
-status: planned
+status: in_progress
 ---
 # Tasks: Private Adventure Foundation
 
 ## Resume Here
 
-- Last completed action: confirmed and recorded the production Adventure experience contract through `/sdd-design`
-- Next action: invoke `/sdd-apply`; create `change/private-adventure-foundation` from current `develop`, then start Task 4.1 with failing database tests
-- Active branch/ref: `develop` for promotion documentation; implementation branch not created
-- Expected dirty files: none after the design-readiness commit; application files begin only on `change/private-adventure-foundation`
+- Last completed action: `/sdd-apply` Discovery passed and created the policy-compliant implementation branch
+- Next action: complete Task 4.1 as the first RED-to-GREEN frozen-source database slice, then continue publication behavior vertically
+- Active branch/ref: `change/private-adventure-foundation` from local `develop` at `2037271`
+- Expected dirty files: this Change's task ledger plus scoped backend migrations, World/Starting Point/WorldVersion models and services, seed data, and focused tests
 - Known blockers: none
 
 ## Task Checklist
@@ -28,7 +28,7 @@ status: planned
 - [x] 2.1 Remove the unnecessary Deep Steel Blue SDD artifacts and merge its final maintenance delta into `develop`.
 - [x] 2.2 Fetch `origin/develop`, confirm the official repository is clean, and preserve the local unpushed maintenance commit as the promotion base.
 - [x] 2.3 Promote the private folder to `docs/changes/2026-07-16-private-adventure-foundation/` and remove the private duplicate.
-- [ ] 2.4 At `/sdd-apply` start, create `change/private-adventure-foundation` from current `develop` before editing application code.
+- [x] 2.4 At `/sdd-apply` start, create `change/private-adventure-foundation` from current `develop` before editing application code.
 - [ ] 2.5 Re-read repository guidance and current AdonisJS/Lucid/Tuyau documentation for version-sensitive worker, transaction, JSONB, and route APIs.
 
 ### 3. Epic And ADR Artifacts
@@ -42,18 +42,18 @@ status: planned
 
 ### 4. Frozen Source Foundation
 
-- [ ] 4.1 RED: add migration/database tests for World Adventure guidance, same-World Starting Point references, one default Starting Point, immutable version identity, and current-version ownership.
-- [ ] 4.2 RED: add publication tests proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
-- [ ] 4.3 Implement relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshots.
-- [ ] 4.4 Implement a provider-independent WorldVersion publication service that validates all stable-key references before insert and never updates an existing version.
+- [x] 4.1 RED-to-GREEN, one invariant at a time: add migration/database tests and implementation for World Adventure guidance, same-World Starting Point references, one default Starting Point, immutable version identity, and current-version ownership.
+- [ ] 4.2 RED-to-GREEN, one behavior at a time: add publication tests and implementation proving deterministic ordering/hash behavior, identical-content reuse, changed-content version creation, and immutable existing snapshots.
+- [ ] 4.3 Complete the relational `world_starting_points`, World Adventure guidance/current-version fields, and immutable schema-versioned `world_versions` JSONB snapshot models after the invariant cycles pass.
+- [ ] 4.4 Complete the provider-independent WorldVersion publication service after its behavior cycles pass; validate all stable-key references before insert and never update an existing version.
 - [ ] 4.5 Extend Stormbound Chapel with Adventure guidance, a default Chapel Starting Point, and creator-authored opening premise; publish after explicit seed reconciliation only.
 - [ ] 4.6 Verify repeated seed installation remains exact and does not alter Adventures already bound to an older version.
-- [ ] 4.7 Map implementation and evidence for `LC-003/S1 R2/R2-S1..R2-S3` and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
+- [ ] 4.7 Map Phase 4 implementation and publication/preservation evidence for `LC-003/S1 R2`; leave Adventure-binding and creation-conflict portions of `R2-S1..R2-S3` explicit until Tasks 5 and 7 can prove them, and update the relational World aggregate ADR consequences if snapshot boundaries need clarification.
 
 ### 5. Adventure Aggregate And Authorization
 
-- [ ] 5.1 RED: add domain/service tests for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
-- [ ] 5.2 RED: add database tests for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
+- [ ] 5.1 RED-to-GREEN, one behavior at a time: add domain/service tests and implementation for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
+- [ ] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
 - [ ] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
 - [ ] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
 - [ ] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
@@ -119,6 +119,8 @@ status: planned
 |---|---|---|---|---|---|
 | 2026-07-16 | LC-003/S1 planning | main agent, `/sdd-change --plan` | private proposal/design/tasks | Planned; implementation not started | private plan |
 | 2026-07-16 | LC-003/S1 promotion | main agent, `sdd change promote` and `sdd epic create` | active Change, LC-003, LC-002, ADRs | Promoted and reconciled; implementation not started | `develop` |
+| 2026-07-16 | LC-003/S1 apply Discovery | main orchestrator; delegated backend discovery; `tdd` and current framework guidance selected | repository policy, Change/Epic/ADRs, backend schema and tests | Scoped validation passed; implementation branch created; frozen-source foundation selected as first vertical slice | `change/private-adventure-foundation` |
+| 2026-07-16 | LC-003/S1 R2 migration invariants | delegated backend implementation; orchestrator-verified | frozen-source migration and database tests | Same-World Starting Points, one default, immutable UUID WorldVersion identity, and current-version ownership implemented; publication remains pending | commit pending |
 
 ## Verification Ledger
 
@@ -127,6 +129,9 @@ status: planned
 | 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --json` | artifact validation | Private Change structure, planned status, and references | Passed; 0 errors, 0 warnings |
 | 2026-07-16 | Scoped Change and `LC-003` validation after promotion | artifact validation | Canonical Change, Epic, Story, ADR links, and repository references | Passed; 0 errors, 0 warnings |
 | 2026-07-16 | Scoped Change validation after `/sdd-design` | artifact validation | Confirmed experience contract remains structurally valid and implementation-ready | Passed; 0 errors, 0 warnings |
+| 2026-07-16 | `sdd validate lorecraft --change 2026-07-16-private-adventure-foundation --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault --json` | artifact validation | Active Change and Epic structure before implementation | Passed; 0 errors, 0 warnings |
+| 2026-07-16 | Focused frozen-source migration suite against isolated scratch Neon schema | focused database test | `LC-003/S1 R2` same-World Starting Point/default constraints, UUID version identity, insert-only rows, and same-World current-version ownership | Passed; 2 tests |
+| 2026-07-16 | Existing World migration/seed/catalog regression suite against isolated scratch Neon schema | focused database and functional tests | Pre-change World integrity, seed provenance, exact reconciliation, authorization, and catalog behavior remain green | Passed; 11 tests |
 
 ## Manual Feedback
 
@@ -140,6 +145,7 @@ status: planned
 |---|---|---|---|---|
 | 2026-07-16 | Official checkout contains an unrelated Change in review and dirty UI files. | technical constraint | Kept planning private; added clean-branch promotion preflight. | Task 2.1 |
 | 2026-07-16 | Deep Steel Blue was reclassified as maintenance and removed as an SDD Change. | in-scope refinement | Cleared the promotion gate and updated Resume Here plus preflight truth. | Task 2.4 |
+| 2026-07-16 | Phase 4 grouped all RED work before implementation and implied it could fully verify Adventure-binding Scenarios before the Adventure aggregate exists. | implementation-planning correction | Reframed Tasks 4.1-4.4 as vertical RED-to-GREEN cycles and made Task 4.7 preserve the remaining `R2` evidence gap for Tasks 5 and 7. | Task 4.1 |
 
 ## Design Updates
 
@@ -164,7 +170,7 @@ status: planned
 
 ## Closeout
 
-- Change status: planned; implementation not started
+- Change status: in_progress; implementation started with the frozen-source foundation
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: planned `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: pending
@@ -177,6 +183,6 @@ status: planned
 - `review.md` findings resolved: not applicable yet
 - Planning updates resolved: yes
 - Manual UI confirmation status: pending user after implementation
-- PR / merge state: promotion documentation on local `develop`; no implementation branch or PR
+- PR / merge state: local `change/private-adventure-foundation`; no PR
 - Deferred scope accepted: yes, recorded in proposal/design
 - Change moved to `docs/changes/closed/`: no
