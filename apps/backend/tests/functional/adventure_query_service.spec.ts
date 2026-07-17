@@ -9,6 +9,7 @@ import { publishWorldVersion } from '#services/world_version_publication_service
 import testUtils from '@adonisjs/core/services/test_utils'
 import db from '@adonisjs/lucid/services/db'
 import { test } from '@japa/runner'
+import { DateTime } from 'luxon'
 
 async function createUser(email: string) {
   return User.create({ email, password: 'correct horse battery staple' })
@@ -212,13 +213,17 @@ test.group('AdventureQueryService', (group) => {
     const newerVersion = await publishWorldVersion(world.id)
     assert.notEqual(newerVersion.id, version.id)
 
-    const result = await new AdventureQueryService().findForOwner(owner.id, created.adventureId)
+    const resumedAt = DateTime.fromISO('2026-07-16T20:15:00.000Z', { zone: 'utc' })
+    const result = await new AdventureQueryService(() => resumedAt).findForOwner(
+      owner.id,
+      created.adventureId
+    )
 
     assert.deepEqual(result, {
       id: created.adventureId,
       status: 'ready',
       turnCount: 0,
-      lastPlayedAt: '2026-07-16T19:45:00.000Z',
+      lastPlayedAt: '2026-07-16T20:15:00.000Z',
       route: `/adventures/${created.adventureId}`,
       sourceWorld: {
         slug: 'query-read-world',
@@ -259,5 +264,39 @@ test.group('AdventureQueryService', (group) => {
         },
       ],
     })
+    const resumed = await db
+      .from('adventures')
+      .where('id', created.adventureId)
+      .select('last_played_at')
+      .firstOrFail()
+    assert.equal(new Date(resumed.last_played_at).toISOString(), '2026-07-16T20:15:00.000Z')
+  })
+
+  test('LC-003/S1/R4-S1: pending polling does not change last played time', async ({ assert }) => {
+    const author = await createUser('query-pending-author@example.com')
+    const owner = await createUser('query-pending-owner@example.com')
+    const { world } = await createPlayableWorld(author.id, 'query-pending-world', 'public')
+    const created = await createAdventure(
+      owner.id,
+      world.slug,
+      '44444444-4444-4444-8444-444444444444',
+      'Mara Venn'
+    )
+    const original = new Date('2026-07-16T18:00:00.000Z')
+    await db
+      .from('adventures')
+      .where('id', created.adventureId)
+      .update({ last_played_at: original })
+
+    await new AdventureQueryService(() =>
+      DateTime.fromISO('2026-07-16T21:00:00.000Z', { zone: 'utc' })
+    ).findForOwner(owner.id, created.adventureId)
+
+    const pending = await db
+      .from('adventures')
+      .where('id', created.adventureId)
+      .select('last_played_at')
+      .firstOrFail()
+    assert.equal(new Date(pending.last_played_at).toISOString(), original.toISOString())
   })
 })

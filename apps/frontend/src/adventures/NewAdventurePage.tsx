@@ -30,6 +30,8 @@ export function NewAdventurePage({
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const nameRef = useRef<HTMLInputElement>(null)
+  const physicalDescriptionRef = useRef<HTMLTextAreaElement>(null)
+  const backstoryRef = useRef<HTMLTextAreaElement>(null)
   const requestIdRef = useRef(creationRequestId())
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -90,6 +92,11 @@ export function NewAdventurePage({
         if (error.code === 'validation') {
           setFieldErrors(error.fieldErrors)
           if (error.fieldErrors['player.name']) nameRef.current?.focus()
+          else if (error.fieldErrors['player.physicalDescription']) {
+            physicalDescriptionRef.current?.focus()
+          } else if (error.fieldErrors['player.backstory']) {
+            backstoryRef.current?.focus()
+          }
           return
         }
         if (error.code === 'unauthorized') return
@@ -167,6 +174,7 @@ export function NewAdventurePage({
             <div className={styles.field}>
               <label htmlFor="player-description">Physical description <span>(optional)</span></label>
               <textarea
+                ref={physicalDescriptionRef}
                 id="player-description"
                 name="physicalDescription"
                 rows={4}
@@ -176,7 +184,7 @@ export function NewAdventurePage({
                 }
               />
               {fieldErrors['player.physicalDescription'] ? (
-                <p className={styles.fieldError} id="player-description-error">
+                <p className={styles.fieldError} id="player-description-error" role="alert">
                   {fieldErrors['player.physicalDescription']}
                 </p>
               ) : null}
@@ -184,6 +192,7 @@ export function NewAdventurePage({
             <div className={styles.field}>
               <label htmlFor="player-backstory">Backstory <span>(optional)</span></label>
               <textarea
+                ref={backstoryRef}
                 id="player-backstory"
                 name="backstory"
                 rows={5}
@@ -191,7 +200,7 @@ export function NewAdventurePage({
                 aria-describedby={fieldErrors['player.backstory'] ? 'player-backstory-error' : undefined}
               />
               {fieldErrors['player.backstory'] ? (
-                <p className={styles.fieldError} id="player-backstory-error">
+                <p className={styles.fieldError} id="player-backstory-error" role="alert">
                   {fieldErrors['player.backstory']}
                 </p>
               ) : null}

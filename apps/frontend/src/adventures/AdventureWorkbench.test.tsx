@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { AdventureWorkbench, type AdventureView } from './AdventureWorkbench'
 
 const readyAdventure: AdventureView = {
@@ -59,6 +59,22 @@ describe('AdventureWorkbench', () => {
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /act|pass|guide|send/i })).not.toBeInTheDocument()
     expect(screen.queryByText(/private knowledge|personality|director observation/i)).not.toBeInTheDocument()
+  })
+
+  it('renders repeated narration paragraphs without duplicate React keys', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          story: [{ ...readyAdventure.story[0], content: 'The bell rings.\n\nThe bell rings.' }],
+        }}
+      />
+    )
+
+    expect(screen.getAllByText('The bell rings.')).toHaveLength(2)
+    expect(consoleError).not.toHaveBeenCalledWith(expect.stringContaining('same key'))
+    consoleError.mockRestore()
   })
 
   it('LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending', () => {

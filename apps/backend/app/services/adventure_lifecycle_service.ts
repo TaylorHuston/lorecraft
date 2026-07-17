@@ -1,5 +1,6 @@
 import type { WorldVersionSnapshot } from '#models/world_version'
 import db from '@adonisjs/lucid/services/db'
+import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -33,14 +34,33 @@ function frozenStartingLocation(snapshot: WorldVersionSnapshot, startingPointKey
   return snapshot.locations.find((candidate) => candidate.key === startingPoint.locationKey) ?? null
 }
 
+async function lockAdventureJobs(trx: TransactionClientContract, adventureId: string) {
+  return trx
+    .from('adventure_jobs')
+    .where('adventure_id', adventureId)
+    .select('id', 'type', 'status')
+    .forUpdate()
+}
+
 export default class AdventureLifecycleService {
   async retryOpening(adventureId: string, ownerId: number): Promise<AdventureResetResult> {
     this.#assertAdventureId(adventureId)
 
     return db.transaction(async (trx) => {
-      const adventure = await trx
+      const candidate = await trx
         .from('adventures')
         .where('id', adventureId)
+        .where('owner_id', ownerId)
+        .select('id')
+        .first()
+      if (!candidate) {
+        throw new AdventureLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
+      }
+
+      const jobs = await lockAdventureJobs(trx, candidate.id)
+      const adventure = await trx
+        .from('adventures')
+        .where('id', candidate.id)
         .where('owner_id', ownerId)
         .select('id', 'status', 'generation')
         .forUpdate()
@@ -56,13 +76,9 @@ export default class AdventureLifecycleService {
         )
       }
 
-      const activeJob = await trx
-        .from('adventure_jobs')
-        .where('adventure_id', adventure.id)
-        .where('type', 'opening')
-        .whereIn('status', ['pending', 'processing'])
-        .select('id')
-        .first()
+      const activeJob = jobs.find(
+        (job) => job.type === 'opening' && ['pending', 'processing'].includes(job.status)
+      )
       if (activeJob) {
         throw new AdventureLifecycleError(
           'ADVENTURE_BUSY',
@@ -103,9 +119,20 @@ export default class AdventureLifecycleService {
     this.#assertAdventureId(adventureId)
 
     return db.transaction(async (trx) => {
-      const adventure = await trx
+      const candidate = await trx
         .from('adventures')
         .where('id', adventureId)
+        .where('owner_id', ownerId)
+        .select('id')
+        .first()
+      if (!candidate) {
+        throw new AdventureLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
+      }
+
+      const jobs = await lockAdventureJobs(trx, candidate.id)
+      const adventure = await trx
+        .from('adventures')
+        .where('id', candidate.id)
         .where('owner_id', ownerId)
         .select('id', 'world_version_id', 'starting_point_key', 'status', 'generation')
         .forUpdate()
@@ -122,13 +149,9 @@ export default class AdventureLifecycleService {
         )
       }
 
-      const activeJob = await trx
-        .from('adventure_jobs')
-        .where('adventure_id', adventure.id)
-        .where('type', 'opening')
-        .whereIn('status', ['pending', 'processing'])
-        .select('id')
-        .first()
+      const activeJob = jobs.find(
+        (job) => job.type === 'opening' && ['pending', 'processing'].includes(job.status)
+      )
       if (activeJob) {
         throw new AdventureLifecycleError(
           'ADVENTURE_BUSY',
@@ -205,9 +228,19 @@ export default class AdventureLifecycleService {
     this.#assertAdventureId(adventureId)
 
     await db.transaction(async (trx) => {
-      const adventure = await trx
+      const candidate = await trx
         .from('adventures')
         .where('id', adventureId)
+        .where('owner_id', ownerId)
+        .select('id')
+        .first()
+      if (!candidate) {
+        throw new AdventureLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
+      }
+      await lockAdventureJobs(trx, candidate.id)
+      const adventure = await trx
+        .from('adventures')
+        .where('id', candidate.id)
         .where('owner_id', ownerId)
         .select('id')
         .forUpdate()

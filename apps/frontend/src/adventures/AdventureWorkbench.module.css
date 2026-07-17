@@ -141,6 +141,10 @@
   color: var(--danger);
 }
 
+.retryError {
+  color: var(--danger);
+}
+
 .stateActions {
   display: flex;
   flex-wrap: wrap;

@@ -251,6 +251,30 @@ test.group('OpenAI-compatible story generator', () => {
     }
   })
 
+  test('rejects a provider response that exceeds the configured evidence limit', async ({
+    assert,
+  }) => {
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async () => new Response('x'.repeat(65)),
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'provider-secret-key',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 100,
+      maxResponseBytes: 64,
+    })
+
+    try {
+      await generator.generateOpening(openingInput)
+      assert.fail('Expected oversized provider response to fail')
+    } catch (error) {
+      if (!(error instanceof StoryGenerationError)) throw error
+      assert.equal(error.code, 'malformed_response')
+      assert.equal(error.message, 'Story provider response exceeded the allowed size')
+      assert.isNull(error.evidence.rawResponse)
+    }
+  })
+
   test('aborts and normalizes a request that exceeds the configured timeout', async ({
     assert,
   }) => {

@@ -61,10 +61,12 @@ function StoryRegion({
   adventure,
   onRetry,
   retrying,
+  retryError,
 }: {
   adventure: AdventureView
   onRetry?: () => void
   retrying: boolean
+  retryError?: string | null
 }) {
   const openingInProgress =
     adventure.status === 'opening_pending' || adventure.status === 'opening_processing'
@@ -96,6 +98,7 @@ function StoryRegion({
             <p className={styles.stateEyebrow}>Opening interrupted</p>
             <h3>Lorecraft couldn't prepare your opening</h3>
             <p>No partial story was saved. Try again when you're ready.</p>
+            {retryError ? <p className={styles.retryError}>{retryError}</p> : null}
             <div className={styles.stateActions}>
               <button type="button" disabled={retrying} onClick={retryOpening}>
                 {retrying ? 'Trying again…' : 'Try again'}
@@ -106,8 +109,8 @@ function StoryRegion({
         ) : null}
         {adventure.story.map((entry) => (
           <article className={styles.storyEntry} key={entry.id}>
-            {entry.content.split(/\n\n+/).map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {entry.content.split(/\n\n+/).map((paragraph, index) => (
+              <p key={`${entry.id}-${index}`}>{paragraph}</p>
             ))}
           </article>
         ))}
@@ -146,21 +149,23 @@ export function AdventureWorkbench({
   adventure,
   onRetry,
   retrying = false,
+  retryError = null,
   layout = 'auto',
 }: {
   adventure: AdventureView
   onRetry?: () => void
   retrying?: boolean
+  retryError?: string | null
   layout?: 'auto' | 'desktop' | 'mobile'
 }) {
   const [narrowViewport, setNarrowViewport] = useState(
-    () => window.matchMedia?.('(max-width: 52rem)').matches ?? false
+    () => window.matchMedia?.('(max-width: 60rem)').matches ?? false
   )
   const [activePane, setActivePane] = useState<AdventurePane>('story')
 
   useEffect(() => {
     if (layout !== 'auto' || !window.matchMedia) return
-    const media = window.matchMedia('(max-width: 52rem)')
+    const media = window.matchMedia('(max-width: 60rem)')
     const update = () => setNarrowViewport(media.matches)
     update()
     media.addEventListener('change', update)
@@ -172,7 +177,14 @@ export function AdventureWorkbench({
   function paneFor(pane: AdventurePane) {
     if (pane === 'player') return <PlayerRegion adventure={adventure} />
     if (pane === 'scene') return <SceneRegion adventure={adventure} />
-    return <StoryRegion adventure={adventure} onRetry={onRetry} retrying={retrying} />
+    return (
+      <StoryRegion
+        adventure={adventure}
+        onRetry={onRetry}
+        retrying={retrying}
+        retryError={retryError}
+      />
+    )
   }
 
   function handleTabKey(event: KeyboardEvent<HTMLButtonElement>, pane: AdventurePane) {
@@ -229,7 +241,12 @@ export function AdventureWorkbench({
   return (
     <div className={styles.desktopGrid}>
       <PlayerRegion adventure={adventure} />
-      <StoryRegion adventure={adventure} onRetry={onRetry} retrying={retrying} />
+      <StoryRegion
+        adventure={adventure}
+        onRetry={onRetry}
+        retrying={retrying}
+        retryError={retryError}
+      />
       <SceneRegion adventure={adventure} />
     </div>
   )

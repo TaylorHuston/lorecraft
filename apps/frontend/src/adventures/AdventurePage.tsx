@@ -118,6 +118,12 @@ export function AdventurePage({
     )
   }
 
+  const retryError = retry.error
+    ? retry.error instanceof AdventureApiError && retry.error.code === 'conflict'
+      ? (retry.error.reason ?? retry.error.message)
+      : 'Lorecraft could not retry this opening. Try again.'
+    : null
+
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
@@ -152,6 +158,7 @@ export function AdventurePage({
       <AdventureWorkbench
         adventure={adventure.data}
         retrying={retry.isPending}
+        retryError={retryError}
         onRetry={() => retry.mutate()}
       />
       {resetOpen ? (

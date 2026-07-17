@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: in_review
 ---
 
 # Tasks: Private Adventure Foundation
@@ -87,7 +87,7 @@ status: in_progress
 - [x] 8.3 Add `/worlds/:slug/adventures/new` with preserved World identity, required name, optional physical description/backstory, associated validation, one idempotent submission, Cancel, and safe navigation.
 - [x] 8.4 Adapt the selected Adventure workbench prototype into real feature components while removing its composer, action controls, Director observation, change badge, editable Player data, and spoiler-bearing NPC fields.
 - [x] 8.5 Add `/adventures/:id` with populated Player/Scene regions during pending and failure states, Story-local preparation/failure/ready content, filtered NPC disclosure, compact navigation, and reset menu.
-- [x] 8.6 Add persistent desktop Player/Story/Scene regions and mobile bottom tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
+- [x] 8.6 Add persistent desktop Player/Story/Scene regions and mobile top tabs with Story default, keyboard navigation, focus management, restrained status announcements, confirmation behavior, touch targets, reduced motion, and overflow checks.
 - [x] 8.7 Add Storybook stories for World Adventure list, creation form states, pending populated shell, terminal failure/retry, ready desktop, mobile Story/Player/Scene, empty NPC scene, and destructive confirmations; run configured accessibility checks.
 - [x] 8.8 Map implementation and evidence for `LC-003/S1 R4` and `R5`.
 
@@ -191,14 +191,14 @@ status: in_progress
 | Date       | Feedback / Discovery                                                                              | Classification        | Reference / Target                                      | Preserve / Change / Non-Goals                                                                                                                                                                                                               | Artifact Updates                                | Next Apply Starting Point |
 | ---------- | ------------------------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------- |
 | 2026-07-16 | Existing Adventure workbench prototype supplies composition evidence but not production behavior. | experience refinement | `apps/frontend/src/prototypes/adventure/`               | Preserve story-first Player/Story/Scene hierarchy; replace fake state and avoid exact MVP recreation.                                                                                                                                       | `design.md` Experience Design                   | Task 8.1                  |
-| 2026-07-16 | Taylor confirmed the production Adventure direction one decision at a time.                       | experience refinement | stable prototype Storybook IDs and current World detail | Preserve three-region desktop and bottom-tab mobile composition; add dedicated creation, populated pending/failure shells, read-only filtered context, no composer, and compact navigation. Exact top-nav polish remains safely deferrable. | `design.md` Experience Design and Tasks 8.2-8.7 | Task 2.4, then Task 4.1   |
+| 2026-07-16 | Taylor confirmed the production Adventure direction one decision at a time.                       | experience refinement | stable prototype Storybook IDs and current World detail | Preserve three-region desktop and tabbed mobile composition; add dedicated creation, populated pending/failure shells, read-only filtered context, no composer, and compact navigation. Exact top-nav polish remains safely deferrable. | `design.md` Experience Design and Tasks 8.2-8.7 | Task 2.4, then Task 4.1   |
 
 ## Manual UI Confirmation
 
 - Status: pending user
 - App URL / route: `http://localhost:4310/worlds/stormbound-chapel`, `/worlds/stormbound-chapel/adventures/new`, and generated `/adventures/<id>`
 - Required setup or test data: authenticated account, explicitly installed/versioned Stormbound Chapel, configured live model for narrative-quality check
-- Steps for the user: create from the compact World Adventure list; review dedicated form validation; inspect the populated pending shell; reload and recover; inspect terminal failure/retry; verify ready Story/Player/Scene disclosure; use mobile bottom tabs; reset from the Adventure menu; delete from World detail
+- Steps for the user: create from the compact World Adventure list; review dedicated form validation; inspect the populated pending shell; reload and recover; inspect terminal failure/retry; verify ready Story/Player/Scene disclosure; use mobile top tabs; reset from the Adventure menu; delete from World detail
 - Expected result: the shell remains story-first and stable across lifecycle states, no deferred controls or hidden NPC knowledge leak, the frozen Adventure survives reload, and reset/delete remain clearly separated
 - Feedback that would change artifacts: different discovery placement, creation route, panel composition, disclosure boundary, pending/failure treatment, reset/delete placement, or mobile navigation
 

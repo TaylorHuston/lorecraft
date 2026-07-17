@@ -124,6 +124,33 @@ describe('Adventure routes', () => {
     })
   })
 
+  it('LC-003/S1/R1-S2 focuses and announces the first optional field rejected by the API', async () => {
+    const user = userEvent.setup()
+    const createAdventure = vi.fn().mockRejectedValue(
+      new AdventureApiError('validation', 'Invalid profile', {
+        'player.physicalDescription': 'Physical description is too long.',
+        'player.backstory': 'Backstory is too long.',
+      })
+    )
+    renderTestApp({
+      route: '/worlds/stormbound-chapel/adventures/new',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => playableWorld },
+      adventureApi: { createAdventure },
+    })
+
+    await user.type(await screen.findByLabelText('Player name (required)'), 'Elara Vance')
+    await user.type(screen.getByLabelText('Physical description (optional)'), 'Description')
+    await user.type(screen.getByLabelText('Backstory (optional)'), 'Backstory')
+    await user.click(screen.getByRole('button', { name: 'Start Adventure' }))
+
+    expect(await screen.findByText('Physical description is too long.')).toHaveAttribute(
+      'role',
+      'alert'
+    )
+    expect(screen.getByLabelText('Physical description (optional)')).toHaveFocus()
+  })
+
   it('LC-003/S1/R3-S2 polls pending work until the ready opening is authoritative', async () => {
     const readyAdventure: AdventureDetail = {
       ...pendingAdventure,
@@ -176,6 +203,26 @@ describe('Adventure routes', () => {
 
     expect(retryOpening).toHaveBeenCalledWith(pendingAdventure.id)
     expect(await screen.findByRole('status')).toHaveTextContent('Preparing your opening')
+    expect(screen.getByRole('region', { name: 'Story' })).toHaveFocus()
+  })
+
+  it('LC-003/S1/R3-S3 reports a failed opening retry', async () => {
+    const user = userEvent.setup()
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'opening_failed' }),
+        retryOpening: async () => {
+          throw new AdventureApiError('network', 'Unavailable')
+        },
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Try again' }))
+
+    expect(await screen.findByText('Lorecraft could not retry this opening. Try again.')).toBeVisible()
     expect(screen.getByRole('region', { name: 'Story' })).toHaveFocus()
   })
 

@@ -1,6 +1,7 @@
 import Adventure, { type AdventureStatus } from '#models/adventure'
 import AdventureStoryEntry from '#models/adventure_story_entry'
 import World from '#models/world'
+import { DateTime } from 'luxon'
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
@@ -67,6 +68,8 @@ function summaryFor(adventure: Adventure): AdventureSummaryDto {
 }
 
 export default class AdventureQueryService {
+  constructor(private readonly now: () => DateTime = () => DateTime.utc()) {}
+
   async listForWorld(ownerId: number, worldSlug: string): Promise<AdventureSummaryDto[] | null> {
     const world = await World.query()
       .where('slug', worldSlug)
@@ -96,6 +99,11 @@ export default class AdventureQueryService {
       .first()
 
     if (!adventure) return null
+
+    if (adventure.status === 'ready') {
+      adventure.lastPlayedAt = this.now()
+      await adventure.save()
+    }
 
     const snapshot = adventure.worldVersion.snapshot
     const currentLocation = snapshot.locations.find(

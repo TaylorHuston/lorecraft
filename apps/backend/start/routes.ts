@@ -10,7 +10,12 @@
 import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 import { controllers } from '#generated/controllers'
-import { csrfBootstrapThrottle, loginThrottle, signupThrottle } from '#start/limiter'
+import {
+  adventureCreationThrottle,
+  csrfBootstrapThrottle,
+  loginThrottle,
+  signupThrottle,
+} from '#start/limiter'
 
 const AdventuresController = () => import('#controllers/adventures_controller')
 
@@ -66,6 +71,7 @@ router
         router
           .post(':slug/adventures', [AdventuresController, 'store'])
           .use(middleware.browserCsrf())
+          .use(adventureCreationThrottle)
       })
       .prefix('worlds')
       .use(middleware.requireSessionCookie())

@@ -348,7 +348,7 @@ any owned state -> deleted                  (owner delete)
 ### Responsive Composition
 
 - Desktop keeps persistent Player, Story, and Scene regions, with Story visibly wider and primary. Each region may scroll independently so long content does not move navigation or obscure the opening.
-- Mobile uses a persistent bottom tab bar ordered Story, Player, Scene. Story is selected by default; arrow-key behavior follows the existing tab prototype. No Scene change badge appears until context can mutate.
+- Mobile uses a persistent top tab bar ordered Story, Player, Scene. Story is selected by default; arrow-key behavior follows the existing tab prototype. No Scene change badge appears until context can mutate.
 - The same pending, failure, and ready states occupy the Story region on both layouts; Player and Scene remain available throughout.
 - Narrow desktop and tablet widths must not squeeze three unreadable columns. They may adopt the mobile tab composition at the implementation's tested breakpoint.
 - Loading, error, confirmation, and long-content states must not cause horizontal overflow or incoherent layout shifts.

@@ -1,4 +1,6 @@
-import AdventureOpeningWorker from '#services/adventure_opening_worker'
+import AdventureOpeningWorker, {
+  leaseDurationForProviderTimeout,
+} from '#services/adventure_opening_worker'
 import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
 import { BaseCommand } from '@adonisjs/core/ace'
 import env from '#start/env'
@@ -78,6 +80,7 @@ export default class WorkAdventureOpenings extends BaseCommand {
         timeoutMs,
       }),
       workerId,
+      leaseDurationMs: leaseDurationForProviderTimeout(timeoutMs),
       logger: {
         info(event, fields) {
           logger.info(fields, event)

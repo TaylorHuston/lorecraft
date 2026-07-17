@@ -11,6 +11,7 @@ import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import { randomUUID } from 'node:crypto'
 
 const defaultLeaseDurationMs = 60_000
+const leaseFinalizationMarginMs = 30_000
 const maximumAttempts = 2
 const defaultPlatformInstructions = [
   "You are Lorecraft's Game Master.",
@@ -41,6 +42,14 @@ export type AdventureOpeningWorkerOptions = {
   leaseDurationMs?: number
   retryDelayMs?: number
   platformInstructions?: string
+}
+
+export function leaseDurationForProviderTimeout(timeoutMs: number) {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
+    throw new Error('Story provider timeout must be positive.')
+  }
+
+  return timeoutMs + leaseFinalizationMarginMs
 }
 
 export type AdventureOpeningWorkerResult =

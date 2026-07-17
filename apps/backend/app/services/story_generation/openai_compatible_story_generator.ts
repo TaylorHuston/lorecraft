@@ -22,9 +22,50 @@ export type OpenAICompatibleStoryGeneratorConfig = {
   provider?: string
   settings: StoryGenerationSettings
   timeoutMs: number
+  maxResponseBytes?: number
 }
 
 class RequestTimeoutError extends Error {}
+class ResponseTooLargeError extends Error {}
+
+const defaultMaxResponseBytes = 1_000_000
+
+async function readBoundedResponse(response: Response, maxBytes: number) {
+  const contentLength = Number(response.headers.get('content-length'))
+  if (Number.isFinite(contentLength) && contentLength > maxBytes) {
+    await response.body?.cancel()
+    throw new ResponseTooLargeError()
+  }
+
+  if (!response.body) return ''
+
+  const reader = response.body.getReader()
+  const chunks: Uint8Array[] = []
+  let received = 0
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      received += value.byteLength
+      if (received > maxBytes) {
+        await reader.cancel()
+        throw new ResponseTooLargeError()
+      }
+      chunks.push(value)
+    }
+  } finally {
+    reader.releaseLock()
+  }
+
+  const combined = new Uint8Array(received)
+  let offset = 0
+  for (const chunk of chunks) {
+    combined.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+  return new TextDecoder().decode(combined)
+}
 
 function narrationFrom(rawResponse: string, evidence: StoryGenerationEvidence): string {
   let parsed: unknown
@@ -109,6 +150,11 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
     let rawResponse: string
     const abortController = new AbortController()
     let timeout: ReturnType<typeof setTimeout> | undefined
+    const maxResponseBytes = this.config.maxResponseBytes ?? defaultMaxResponseBytes
+
+    if (!Number.isFinite(maxResponseBytes) || maxResponseBytes <= 0) {
+      throw new Error('Story provider response limit must be positive.')
+    }
 
     try {
       const request = async () => {
@@ -123,7 +169,10 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
           signal: abortController.signal,
         })
 
-        return { response: providerResponse, rawResponse: await providerResponse.text() }
+        return {
+          response: providerResponse,
+          rawResponse: await readBoundedResponse(providerResponse, maxResponseBytes),
+        }
       }
       const timeoutReached = new Promise<never>((_resolve, reject) => {
         timeout = setTimeout(() => {
@@ -138,6 +187,14 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
         throw new StoryGenerationError(
           'timeout',
           'Story provider request timed out',
+          pendingEvidence
+        )
+      }
+
+      if (error instanceof ResponseTooLargeError) {
+        throw new StoryGenerationError(
+          'malformed_response',
+          'Story provider response exceeded the allowed size',
           pendingEvidence
         )
       }

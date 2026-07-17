@@ -1,5 +1,7 @@
 import AdventureCreationService from '#services/adventure_creation_service'
-import AdventureOpeningWorker from '#services/adventure_opening_worker'
+import AdventureOpeningWorker, {
+  leaseDurationForProviderTimeout,
+} from '#services/adventure_opening_worker'
 import Character from '#models/character'
 import Location from '#models/location'
 import StartingPoint from '#models/starting_point'
@@ -147,6 +149,10 @@ async function createOpeningFixture(suffix: string) {
 }
 
 test.group('AdventureOpeningWorker', (group) => {
+  test('keeps the worker lease beyond the configured provider timeout', ({ assert }) => {
+    assert.equal(leaseDurationForProviderTimeout(120_000), 150_000)
+  })
+
   group.each.setup(async () => {
     await db.rawQuery(`
       TRUNCATE TABLE
