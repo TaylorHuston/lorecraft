@@ -352,4 +352,61 @@ test.group('AdventureLifecycleService', (group) => {
     assert.isNotNull(await db.from('worlds').where('id', source.world.id).first())
     assert.isNotNull(await db.from('world_versions').where('id', source.version.id).first())
   })
+
+  test('LC-003/S1/R3-S3: an owner can retry a terminal opening failure against the same source', async ({
+    assert,
+  }) => {
+    const owner = await createUser('lifecycle-retry-owner@example.com')
+    const otherOwner = await createUser('lifecycle-retry-other@example.com')
+    const source = await createWorld({ authorId: owner.id, slug: 'lifecycle-retry-world' })
+    const created = await createAdventure(
+      owner.id,
+      source.world.slug,
+      '99999999-9999-4999-8999-999999999999'
+    )
+    await db.from('adventure_jobs').where('adventure_id', created.adventureId).update({
+      status: 'failed',
+      attempt_count: 2,
+      failure_code: 'provider_failure',
+      failure_message: 'Opening generation failed.',
+      updated_at: new Date(),
+    })
+    await db.from('adventures').where('id', created.adventureId).update({
+      status: 'opening_failed',
+      updated_at: new Date(),
+    })
+    const service = new AdventureLifecycleService()
+
+    const missing = await captureError(() =>
+      service.retryOpening(created.adventureId, otherOwner.id)
+    )
+    const result = await service.retryOpening(created.adventureId, owner.id)
+
+    assert.equal(missing.code, 'ADVENTURE_NOT_FOUND')
+    assert.deepEqual(result, {
+      adventureId: created.adventureId,
+      status: 'opening_pending',
+      generation: 1,
+    })
+    const adventure = await db.from('adventures').where('id', created.adventureId).firstOrFail()
+    assert.deepInclude(adventure, {
+      world_version_id: source.version.id,
+      starting_point_key: source.startingPoint.key,
+      status: 'opening_pending',
+      generation: 1,
+      turn_count: 0,
+    })
+    const jobs = await db
+      .from('adventure_jobs')
+      .where('adventure_id', created.adventureId)
+      .orderBy('created_at')
+    assert.lengthOf(jobs, 2)
+    assert.equal(jobs[0].status, 'failed')
+    assert.deepInclude(jobs[1], {
+      generation: 1,
+      type: 'opening',
+      status: 'pending',
+      attempt_count: 0,
+    })
+  })
 })

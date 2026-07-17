@@ -8,7 +8,7 @@ export type AdventureResetResult = {
 }
 
 type AdventureLifecycleErrorCode =
-  'ADVENTURE_NOT_FOUND' | 'ADVENTURE_BUSY' | 'ADVENTURE_SOURCE_INVALID'
+  'ADVENTURE_NOT_FOUND' | 'ADVENTURE_BUSY' | 'ADVENTURE_NOT_RETRYABLE' | 'ADVENTURE_SOURCE_INVALID'
 
 export class AdventureLifecycleError extends Error {
   declare code: AdventureLifecycleErrorCode
@@ -32,6 +32,69 @@ function frozenStartingLocation(snapshot: WorldVersionSnapshot, startingPointKey
 }
 
 export default class AdventureLifecycleService {
+  async retryOpening(adventureId: string, ownerId: number): Promise<AdventureResetResult> {
+    return db.transaction(async (trx) => {
+      const adventure = await trx
+        .from('adventures')
+        .where('id', adventureId)
+        .where('owner_id', ownerId)
+        .select('id', 'status', 'generation')
+        .forUpdate()
+        .first()
+      if (!adventure) {
+        throw new AdventureLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
+      }
+      if (adventure.status !== 'opening_failed') {
+        throw new AdventureLifecycleError(
+          'ADVENTURE_NOT_RETRYABLE',
+          409,
+          'Adventure opening is not ready to retry.'
+        )
+      }
+
+      const activeJob = await trx
+        .from('adventure_jobs')
+        .where('adventure_id', adventure.id)
+        .where('type', 'opening')
+        .whereIn('status', ['pending', 'processing'])
+        .select('id')
+        .first()
+      if (activeJob) {
+        throw new AdventureLifecycleError(
+          'ADVENTURE_BUSY',
+          409,
+          'Adventure cannot retry while opening work is active.'
+        )
+      }
+
+      const now = new Date()
+      await trx.table('adventure_jobs').insert({
+        adventure_id: adventure.id,
+        generation: adventure.generation,
+        type: 'opening',
+        status: 'pending',
+        attempt_count: 0,
+        available_at: now,
+        lease_owner: null,
+        lease_expires_at: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: now,
+        updated_at: null,
+      })
+      await trx.from('adventures').where('id', adventure.id).update({
+        status: 'opening_pending',
+        updated_at: now,
+      })
+
+      return {
+        adventureId: adventure.id,
+        status: 'opening_pending',
+        generation: adventure.generation,
+      }
+    })
+  }
+
   async reset(adventureId: string, ownerId: number): Promise<AdventureResetResult> {
     return db.transaction(async (trx) => {
       const adventure = await trx

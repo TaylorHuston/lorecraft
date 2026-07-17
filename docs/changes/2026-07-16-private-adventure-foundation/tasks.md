@@ -126,7 +126,8 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification | Adventure aggregate migration, Lucid models, and focused database tests | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass | `794c005` |
 | 2026-07-16 | LC-003/S1 Adventure creation | delegated RED tests; main-agent implementation and verification | Adventure creation service and focused functional tests | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | `54bb3a4` |
 | 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | `3a716ee` |
-| 2026-07-16 | LC-003/S1 story-generation boundary | delegated backend TDD slice; main-agent review and sequential verification | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass | pending commit |
+| 2026-07-16 | LC-003/S1 story-generation boundary | delegated backend TDD slice; main-agent review and sequential verification | provider-neutral contract, deterministic prompt assembly, OpenAI-compatible adapter, and unit tests | Exact sanitized evidence, frozen opening context, prose-only output, timeout, transport/HTTP failure, malformed response, and empty narration behavior pass | `73bd761` |
+| 2026-07-16 | LC-003/S1 owner opening retry | main-agent RED-to-GREEN lifecycle extension | Adventure lifecycle service and focused functional test | Owner-only terminal retry queues new work against the same source/generation while preserving failed evidence; cross-owner access remains non-disclosing | pending commit |
 
 ## Verification Ledger
 
@@ -151,6 +152,7 @@ status: in_progress
 | 2026-07-16 | Full backend test suite after Adventure creation | broad supporting test | Authentication, catalog, publication, migration, and Adventure creation regressions remain green together | Passed; 63 tests |
 | 2026-07-16 | Story-generation prompt and adapter unit suites | focused unit test | `LC-003/S1 R3-S1` structured frozen context plus provider-neutral success, timeout, failure, malformed/empty output, exact evidence, and credential redaction | Passed; 8 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after query/lifecycle/provider slices | broad supporting gates | New service boundaries and tests are formatted and type-safe | Passed |
+| 2026-07-16 | Adventure lifecycle suite after owner retry | focused functional test | `LC-003/S1 R3-S3` owner-only manual retry preserves frozen source and creates exactly one new pending job | Passed; 5 tests total |
 
 ## Manual Feedback
 
