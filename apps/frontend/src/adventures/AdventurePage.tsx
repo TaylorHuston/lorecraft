@@ -35,6 +35,7 @@ export function AdventurePage({
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [resetError, setResetError] = useState<string | null>(null)
+  const [retryingLoad, setRetryingLoad] = useState(false)
   const queryKey = adventureQueryKeys.detail(account?.id ?? 0, id)
   const adventure = useQuery({
     queryKey,
@@ -88,7 +89,7 @@ export function AdventurePage({
     }
   }, [adventure.error, endSession, reset.error, retry.error])
 
-  if (adventure.isPending) {
+  if (adventure.isPending && !retryingLoad) {
     return (
       <main className={styles.stateShell} aria-busy="true">
         <div role="status" aria-live="polite">
@@ -115,7 +116,15 @@ export function AdventurePage({
               : 'Lorecraft could not load this Adventure. Try again.'}
           </p>
           {!missing ? (
-            <Button onClick={() => void adventure.refetch()} size="touch">
+            <Button
+              onClick={() => {
+                setRetryingLoad(true)
+                void adventure.refetch().finally(() => setRetryingLoad(false))
+              }}
+              pending={retryingLoad}
+              pendingLabel="Trying again…"
+              size="touch"
+            >
               Try again
             </Button>
           ) : null}

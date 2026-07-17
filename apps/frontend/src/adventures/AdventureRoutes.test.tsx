@@ -114,6 +114,16 @@ describe('Adventure routes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start Adventure' }))
     expect(screen.getByRole('button', { name: 'Starting Adventure…' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Starting Adventure…' }).closest('form')).toHaveAttribute(
+      'aria-busy',
+      'true'
+    )
+    expect(screen.getByLabelText('Player name (required)')).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByLabelText('Physical description (optional)')).toHaveAttribute(
+      'aria-busy',
+      'true'
+    )
+    expect(screen.getByLabelText('Backstory (optional)')).toHaveAttribute('aria-busy', 'true')
     expect(createAdventure).toHaveBeenCalledTimes(2)
     expect(createAdventure.mock.calls[0][1].creationRequestId).toBe(
       createAdventure.mock.calls[1][1].creationRequestId
@@ -122,6 +132,25 @@ describe('Adventure routes', () => {
       name: 'Elara Vance',
       physicalDescription: 'A scholar in a salt-stained cloak.',
     })
+  })
+
+  it('LC-003/S1/R3-S3 prevents duplicate unavailable-Adventure retries', async () => {
+    const user = userEvent.setup()
+    const getAdventure = vi
+      .fn()
+      .mockRejectedValueOnce(new AdventureApiError('network', 'Unavailable'))
+      .mockReturnValueOnce(new Promise(() => undefined))
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: { getAdventure },
+    })
+
+    const retry = await screen.findByRole('button', { name: 'Try again' })
+    await user.click(retry)
+
+    expect(screen.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
+    expect(getAdventure).toHaveBeenCalledTimes(2)
   })
 
   it('LC-003/S1/R1-S2 focuses and announces the first optional field rejected by the API', async () => {

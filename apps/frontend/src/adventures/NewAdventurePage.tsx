@@ -159,7 +159,12 @@ export function NewAdventurePage({
             <Link to={returnRoute}>Return to World</Link>
           </section>
         ) : (
-          <form className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
+          <form
+            aria-busy={create.isPending}
+            className={styles.form}
+            onSubmit={(event) => void submit(event)}
+            noValidate
+          >
             {formError ? (
               <p className={styles.formError} role="alert">
                 {formError}
@@ -175,6 +180,7 @@ export function NewAdventurePage({
               }
               id="player-name"
               name="playerName"
+              pending={create.isPending}
               required
               autoComplete="off"
             />
@@ -188,6 +194,7 @@ export function NewAdventurePage({
               }
               id="player-description"
               name="physicalDescription"
+              pending={create.isPending}
               rows={4}
             />
             <Textarea
@@ -200,6 +207,7 @@ export function NewAdventurePage({
               }
               id="player-backstory"
               name="backstory"
+              pending={create.isPending}
               rows={5}
             />
             <div className={styles.actions}>
