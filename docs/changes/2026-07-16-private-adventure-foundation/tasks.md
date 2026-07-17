@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: deterministic desktop/mobile Adventure E2E and full backend/frontend/Storybook regression gates passed
-- Next action: run scoped artifact validation, keep development services running, then request live-provider and manual UI confirmation before `/sdd-review`
+- Last completed action: independent review discovery, safe-fix remediation, static regression rereview, and local commit `976767a`
+- Next action: rerun the PostgreSQL-backed suite against an acknowledged disposable database, restore the development stack, then collect live-provider and manual UI confirmation
 - Active branch/ref: `change/private-adventure-foundation`
-- Expected dirty files: final README, CHANGELOG, Epic, ADR, and Change evidence reconciliation only
-- Known blockers: live-provider playtest and Taylor's manual UI confirmation are human evidence gates, not implementation blockers
+- Expected dirty files: review evidence reconciliation only
+- Known blockers: post-remediation PostgreSQL verification, live-provider playtest, and Taylor's manual UI confirmation
 
 ## Task Checklist
 
@@ -110,7 +110,7 @@ status: in_review
 - [x] 10.3 Update `LC-003/S1 Implemented By`, scenario-mapped `Verified By`, and real `Verification Gaps`; update ADR statuses based on implementation evidence.
 - [x] 10.4 Run scoped `sdd validate` and resolve deterministic artifact drift before review.
 - [ ] 10.5 Request user manual confirmation of World discovery, creation, pending/recovery, ready story/Player/Scene, reset/delete placement, and desktop/mobile presentation.
-- [ ] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
+- [x] 10.6 Run independent `/sdd-review`; address findings or record explicitly accepted non-blocking deferrals.
 - [x] 10.7 Confirm proposal/design/tasks/Epic/ADR/README/CHANGELOG truth matches implementation and no candidate Story is described as implemented.
 - [ ] 10.8 Keep Change status `in_review` through review and authorized PR/merge, then close through `sdd change close` rather than editing a closed status manually.
 
@@ -135,6 +135,7 @@ status: in_review
 | 2026-07-16 | LC-003/S1 typed Adventure client         | delegated frontend boundary; main-agent generated-registry reconciliation                     | typed lifecycle adapter, runtime validators, query keys, and generated Tuyau registry                | Provider-neutral client contract, disclosure validation, stable client errors, and reusable non-React lifecycle API pass                                                                                                | `ff1170d`, `bb8252c`                  |
 | 2026-07-16 | LC-003/S1 Adventure experience           | delegated UI implementation; main-agent integration, accessibility, and regression review     | World Adventure list, creation route, Adventure workbench, responsive tabs, tests, and stories       | Creation, pending/failure/ready, resume, retry, reset, delete, filtered context, focus, keyboard, responsive, and accessibility behavior pass                                                                           | `7ad66a5`                             |
 | 2026-07-16 | LC-003/S1 deterministic E2E journey      | main-agent implementation and browser verification                                            | fake OpenAI-compatible service, supervised Playwright topology, and desktop/mobile Adventure journey | Production prompt/provider/job/worker/persistence path passes reload, opening, reset, resume, anonymous/cross-owner denial, responsive behavior, and cleanup deletion without an external model                         | `ac82245`, `46ce874`                  |
+| 2026-07-16 | LC-003/S1 review remediation             | delegated artifact/backend/security/UI review; main-agent remediation; delegated regression rereview | worker/lifecycle/provider/query services, Adventure UI, tests, and Change artifacts | Fixed lease/timeout mismatch, lock ordering, resume timestamps, response bounds, creation throttling, compact-width overflow, retry/validation feedback, duplicate paragraph keys, and top-tab artifact drift; static rereview found no regressions | `976767a` |
 
 ## Verification Ledger
 
@@ -171,6 +172,10 @@ status: in_review
 | 2026-07-16 | Full backend suite against isolated scratch Neon schema                                                                                                      | broad backend regression              | Database, account, security, World, snapshot, Adventure API/service/worker, provider, and publication behavior remain green together                                         | Passed; 97 tests                                   |
 | 2026-07-16 | Full Playwright suite with supervised API/worker and deterministic provider                                                                                  | desktop/mobile E2E                    | Account and World regressions plus Adventure create, pending reload, opening, privacy, reset, resume, responsive tabs, overflow, and cleanup deletion                        | Passed; 7 tests                                    |
 | 2026-07-16 | Frontend/backend lint, typecheck, production build, and `git diff --check`                                                                                   | broad static/build gates              | Generated contracts, both applications, process scripts, tests, styles, and production bundles are coherent                                                                  | Passed                                             |
+| 2026-07-16 | Post-review frontend Vitest suite                                                                                                                               | focused and broad frontend regression | Retry errors, optional-field focus/announcement, repeated narration paragraphs, responsive shell behavior, and existing frontend behavior                                    | Passed; 99 tests                                   |
+| 2026-07-16 | Post-review Storybook interaction/accessibility suite                                                                                                         | component interaction/a11y            | Existing Adventure and World stories remain accessible after review remediation                                                                                               | Passed; 64 tests                                   |
+| 2026-07-16 | Post-review backend unit execution                                                                                                                              | focused unit evidence                 | Provider response bounding and lease-duration derivation pass without a database                                                                                              | Passed; 15 unit tests; broader command then stopped on missing acknowledged test database |
+| 2026-07-16 | Post-review lint, typecheck, production build, `git diff --check`, merge-tree, and scoped SDD validation                                                      | static/build/integration gates         | Remediation compiles, formats, builds, remains conflict-free with `develop`, and preserves valid artifact structure                                                           | Passed; validation 0 errors, 0 warnings            |
 
 ## Manual Feedback
 
@@ -205,11 +210,12 @@ status: in_review
 ## Blockers / Open Questions
 
 - No planning questions remain.
-- No operational or planning blocker remains.
+- PostgreSQL-backed regression tests require an acknowledged disposable `TEST_DATABASE_URL`; the current environment correctly refused database writes.
+- Live-provider narrative quality and final manual UI acceptance remain pending.
 
 ## Closeout
 
-- Change status: in_progress; implementation and deterministic verification complete, human evidence gates pending
+- Change status: in_review; implementation and deterministic verification complete, review remediation committed, final evidence gates pending
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: yes
@@ -217,11 +223,11 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
 - ADR status: immutable snapshots and durable asynchronous work accepted and validated
 - Release communication current: README and user-facing CHANGELOG updated
-- `sdd-review` verdict: pending implementation
-- Review record: none
-- `review.md` findings resolved: not applicable yet
+- `sdd-review` verdict: blocked on post-remediation PostgreSQL verification, live-provider evidence, and manual UI confirmation
+- Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
+- `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
 - Planning updates resolved: yes
-- Manual UI confirmation status: pending user after implementation
+- Manual UI confirmation status: pending user
 - PR / merge state: local `change/private-adventure-foundation`; no PR
 - Deferred scope accepted: yes, recorded in proposal/design
 - Change moved to `docs/changes/closed/`: no
