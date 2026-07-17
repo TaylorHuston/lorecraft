@@ -5,10 +5,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: the fresh-context implementation self-check finding was remediated, focused regression evidence passes, and the Change was transitioned to `in_review`.
-- Next action: run independent `/sdd-review`, address or explicitly accept any findings, then request merge authorization.
+- Last completed action: independent `/sdd-review` completed, the consolidated safe artifact/evidence findings were remediated, and the regression rereview passes.
+- Next action: commit the safe review batch, record its ref, then request authorization to merge into `develop` and close the Change.
 - Active branch/ref: `change/epic-truth-reconciliation` from `develop`.
-- Expected dirty files: this active Change; LC-001/2/3 Epics and audit reports; affected account, World, and frontend test files; README, AGENTS, and CHANGELOG; related closed Changes and ADRs; plus the private PRD update in the vault repository.
+- Expected dirty files: none at reviewed implementation commit `abb810a`; the private PRD is committed in vault ref `5075f2037`. Review remediation is limited to this Change, affected Epic/supporting artifacts, and the private Lorecraft entry points; unrelated vault changes remain excluded.
 - Known blockers: none.
 
 ## Task Checklist
@@ -56,8 +56,8 @@ status: in_review
 
 ### 6. Review And Closeout
 
-- [ ] 6.1 Run `/sdd-review` as the independent local gate for artifact truth, security boundaries, scenario coverage, docs, and branch readiness.
-- [ ] 6.2 Address findings or record explicit accepted gaps.
+- [x] 6.1 Run `/sdd-review` as the independent local gate for artifact truth, security boundaries, scenario coverage, docs, and branch readiness.
+- [x] 6.2 Address findings or record explicit accepted gaps.
 - [x] 6.3 Manual UI confirmation: `not applicable`; implementation changed no runtime or presentation behavior.
 - [x] 6.4 Confirm proposal/design/tasks/reviews and related closed artifacts do not claim accepted work is pending or use obsolete manual status vocabulary.
 - [ ] 6.5 Merge only after review is ready and Taylor authorizes it; close through `sdd change close` after integration.
@@ -72,6 +72,7 @@ status: in_review
 | 2026-07-17 | LC-002 visibility/disclosure truth | bounded TDD delegation, integrated and verified locally | LC-002 Epic and World catalog functional test | Added owner-private visibility/non-disclosure proof; preserved minimized Character disclosure with no production-code change | `713f9a7` |
 | 2026-07-17 | LC-003 and supporting truth | main orchestrator | LC-003, ADRs, closed Changes, README, AGENTS, CHANGELOG | Narrowed implemented outcome, normalized lifecycle records, linked accepted ADRs, and aligned public/private product posture | `713f9a7` |
 | 2026-07-17 | Fresh-context implementation self-check | delegated review integrated by main orchestrator | LC-001 security evidence and reconciliation artifacts | Added direct user/session state-invariance assertions to malformed and oversized auth payload tests; no unresolved safe finding remains | `713f9a7` |
+| 2026-07-17 | Independent SDD review and safe remediation | delegated artifact/traceability passes plus orchestrator code, verification, security, and integration review | Epics, Change/closed artifacts, private Idea entry points | Reconciled six evidence/supporting-truth findings; no runtime or security defect remains | commit pending |
 
 ## Verification Ledger
 
@@ -97,6 +98,8 @@ status: in_review
 | 2026-07-17 | Changed-surface orphan audit, one pass per Epic | reverse traceability | No missing Implemented By or Verified By paths; cross-Epic test candidates are owned by the other affected Epics | passed after path qualification |
 | 2026-07-17 | Focused account-security rerun on isolated `lorecraft_test` schema | focused automated test | Final R4 request-boundary evidence directly proves malformed and oversized requests leave user and session counts unchanged | 18 passed; database-safety suite 16 passed |
 | 2026-07-17 | Final lint, `git diff --check`, scoped validation, and repository validation | implementation and artifact integrity | Final patch remains lint-clean and all affected Change/Epic/repository structures are valid | passed; 0 SDD errors, 0 warnings |
+| 2026-07-17 | Independent full backend/frontend/Storybook/Playwright regression union | focused, broad, and deterministic E2E | Reviewed source `abb810a` retains current account, World, and Adventure behavior | 16 safety, 102 backend, 101 frontend, 64 Storybook, and 7 Playwright tests passed; lint/typecheck/builds passed |
+| 2026-07-17 | Post-remediation artifact and regression rereview | artifact, reverse-traceability, security, and integration review | Safe documentation batch resolves every validated finding without changing runtime behavior | passed; Change/repository validation 0 errors and 0 warnings; no missing Epic evidence paths |
 
 ## Manual Feedback
 
@@ -137,11 +140,11 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes
 - ADR status: accepted July 17 ADRs preserved, linked, and aligned with closed Change paths
 - Release communication current: yes; user-facing Character disclosure wording corrected
-- `/sdd-review` verdict: pending
-- Review record: pending
-- `review.md` findings resolved: not applicable yet
+- `/sdd-review` verdict: ready
+- Review record: `docs/changes/2026-07-17-epic-truth-reconciliation/review.md`
+- `review.md` findings resolved: yes; six safe evidence/supporting-truth findings resolved
 - Planning updates resolved: yes; private PRD aligned
 - Manual UI confirmation status: not applicable
-- PR / merge state: active on `change/epic-truth-reconciliation`; not pushed or merged
+- PR / merge state: technically ready on `change/epic-truth-reconciliation`; not pushed or merged, pending explicit merge-and-close authorization
 - Deferred scope accepted: yes
 - Change moved to `docs/changes/closed/`: no

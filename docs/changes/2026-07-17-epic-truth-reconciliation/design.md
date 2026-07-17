@@ -149,8 +149,8 @@ It preserves current behavior, closes the highest-value traceability and securit
 ## ADRs
 
 - Required: no
-- ADR path: not applicable
-- Decision summary: no architecture decision changes; existing accepted ADRs remain authoritative.
+- ADR paths: `docs/adrs/2026-07-17-immutable-adventure-revisions.md` and `docs/adrs/2026-07-17-provider-neutral-ai-boundary.md`
+- Decision summary: no architecture decision changed during this reconciliation. The branch incorporates these pre-existing retrospective captures for decisions already implemented by the Private Adventure Foundation.
 - Reconsider when: remediation uncovers a contract or disclosure change rather than documentation drift.
 
 ## Implementation Constraints

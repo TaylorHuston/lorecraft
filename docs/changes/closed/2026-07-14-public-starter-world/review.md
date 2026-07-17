@@ -102,8 +102,8 @@ The committed implementation and reconciled SDD truth satisfy LC-002. All requir
 - Conflict check: clean
 - Commit state: all Change code and safe review fixes committed; unrelated pre-existing edits remain unstaged
 - PR status: not requested and not required for routine integration
-- Merge status: locally ready; merge-and-close requires explicit user authorization
-- Closeout status: ready after the authorized merge; active folder remains in place
+- Merge status: merged locally into `develop` as `ab3796f`
+- Closeout status: complete; the Change is archived under `docs/changes/closed/2026-07-14-public-starter-world/`
 
 ## Review Log
 

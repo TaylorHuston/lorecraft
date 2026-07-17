@@ -72,7 +72,7 @@ Leaving this drift in place would make the next Adventure-turn or World-authorin
 - Code: test-description/reference corrections only unless focused verification exposes a defect.
 - Tests: add owner-private World catalog authorization coverage; rerun focused backend/frontend, Storybook, and guarded E2E suites.
 - Docs: update all three Epics, related closed Change artifacts, README, changelog, and PRD posture through its owning workflow.
-- ADRs: no new decision required; existing auth, canon/isolation, revision, provider, and worker ADRs remain authoritative.
+- ADRs: no new architecture decision was made by this Change. It incorporates the pre-existing retrospective captures for immutable Adventure revisions and the provider-neutral AI boundary, alongside the existing auth, canon/isolation, snapshot, and worker ADRs.
 
 ## Release Communication Impact
 

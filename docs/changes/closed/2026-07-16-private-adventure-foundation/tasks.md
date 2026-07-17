@@ -236,7 +236,7 @@ status: in_review
 - Implemented By maps current: yes
 - Scenario-mapped Verified By maps current: yes
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
-- ADR status: immutable snapshots and durable asynchronous work accepted and validated
+- ADR status: immutable World snapshots and durable asynchronous work were accepted during implementation; immutable Adventure revisions and the provider-neutral AI boundary were captured retrospectively and now point back to this Change
 - Release communication current: README and user-facing CHANGELOG updated
 - `sdd-review` verdict: pass
 - Review record: `docs/changes/closed/2026-07-16-private-adventure-foundation/review.md`
