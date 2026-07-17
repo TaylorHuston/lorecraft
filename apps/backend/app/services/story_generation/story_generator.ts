@@ -34,6 +34,7 @@ export type StoryGenerationSettings = {
   temperature: number
   maxTokens: number
   topP?: number
+  reasoningEffort?: 'none' | 'low' | 'medium' | 'high'
 }
 
 export type SanitizedStoryGenerationRequest = {

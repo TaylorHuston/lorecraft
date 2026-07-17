@@ -1,7 +1,13 @@
 import { createTuyau } from '@tuyau/core/client'
 import { registry } from '@lorecraft/backend/registry'
 import type { AdventureSummary, AdventureStatus } from '../adventures/adventureApi'
-import { WorldApiError, type WorldApi, type WorldDetail, type WorldSummary } from './worldApi'
+import {
+  WorldApiError,
+  type WorldApi,
+  type WorldCatalogItem,
+  type WorldDetail,
+  type WorldSummary,
+} from './worldApi'
 
 const adventureStatuses = new Set<AdventureStatus>([
   'opening_pending',
@@ -33,10 +39,6 @@ function isWorldSummary(value: unknown): value is WorldSummary {
     (value.visibility === 'public' || value.visibility === 'private') &&
     typeof value.readOnly === 'boolean'
   )
-}
-
-function isWorldCatalog(value: unknown): value is WorldSummary[] {
-  return Array.isArray(value) && value.every(isWorldSummary)
 }
 
 function isWorldLocation(value: unknown): value is WorldDetail['locations'][number] {
@@ -90,6 +92,22 @@ function isWorldPlayability(value: unknown): value is WorldDetail['playability']
     typeof value.available === 'boolean' &&
     (value.reason === null || typeof value.reason === 'string')
   )
+}
+
+function isWorldCatalogItem(value: unknown): value is WorldCatalogItem {
+  if (!isRecord(value)) return false
+  const playability = value.playability
+  const adventures = value.adventures
+  return (
+    isWorldSummary(value) &&
+    isWorldPlayability(playability) &&
+    Array.isArray(adventures) &&
+    adventures.every(isAdventureSummary)
+  )
+}
+
+function isWorldCatalog(value: unknown): value is WorldCatalogItem[] {
+  return Array.isArray(value) && value.every(isWorldCatalogItem)
 }
 
 function isWorldDetail(value: unknown): value is WorldDetail {

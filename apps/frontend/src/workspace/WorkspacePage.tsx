@@ -1,15 +1,46 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {
+  AdventureApiError,
+  type AdventureApi,
+  type AdventureSummary,
+} from '../adventures/adventureApi'
+import { ConfirmDialog } from '../adventures/ConfirmDialog'
 import { AuthApiError } from '../auth/authApi'
 import { useAuth } from '../auth/authContext'
 import { WorldApiError, worldQueryKeys, type WorldApi } from '../worlds/worldApi'
 import styles from './WorkspacePage.module.css'
 
-export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
+const adventureStatusLabels = {
+  opening_pending: 'Opening pending',
+  opening_processing: 'Opening in progress',
+  opening_failed: 'Opening failed',
+  ready: 'Ready',
+} as const
+
+function formatLastPlayed(value: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value))
+}
+
+export function WorkspacePage({
+  worldApi,
+  adventureApi,
+}: {
+  worldApi: WorldApi
+  adventureApi: AdventureApi
+}) {
   const { account, api, endSession } = useAuth()
   const navigate = useNavigate()
   const [isRetrying, setIsRetrying] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<AdventureSummary | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const catalogHeadingRef = useRef<HTMLHeadingElement>(null)
+  const queryClient = useQueryClient()
+  const catalogQueryKey = worldQueryKeys.catalog(account?.id ?? 0)
   const signOut = useMutation({
     mutationFn: () => api.signOut(),
     retry: false,
@@ -19,16 +50,39 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
     },
   })
   const worlds = useQuery({
-    queryKey: worldQueryKeys.catalog(account?.id ?? 0),
+    queryKey: catalogQueryKey,
     queryFn: () => worldApi.listWorlds(),
     enabled: account !== null,
   })
+  const deleteAdventure = useMutation({
+    mutationFn: (adventureId: string) => adventureApi.deleteAdventure(adventureId),
+    onSuccess: (_result, adventureId) => {
+      queryClient.setQueryData<typeof worldList>(catalogQueryKey, (current) =>
+        current?.map((world) => ({
+          ...world,
+          adventures: world.adventures.filter((item) => item.id !== adventureId),
+        }))
+      )
+      setDeleteTarget(null)
+      setDeleteError(null)
+      requestAnimationFrame(() => catalogHeadingRef.current?.focus())
+    },
+    onError: (error) => {
+      if (!(error instanceof AdventureApiError && error.code === 'unauthorized')) {
+        setDeleteError('Lorecraft could not delete this Adventure. Try again.')
+      }
+    },
+  })
 
   useEffect(() => {
-    if (worlds.error instanceof WorldApiError && worlds.error.code === 'unauthorized') {
+    const error = worlds.error ?? deleteAdventure.error
+    if (
+      (error instanceof WorldApiError || error instanceof AdventureApiError) &&
+      error.code === 'unauthorized'
+    ) {
       endSession()
     }
-  }, [endSession, worlds.error])
+  }, [deleteAdventure.error, endSession, worlds.error])
 
   async function retryWorlds() {
     setIsRetrying(true)
@@ -103,7 +157,12 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
           </div>
         ) : worldList.length > 0 ? (
           <section className={styles.catalog} aria-labelledby="available-worlds-title">
-            <h2 className={styles.sectionTitle} id="available-worlds-title">
+            <h2
+              ref={catalogHeadingRef}
+              className={styles.sectionTitle}
+              id="available-worlds-title"
+              tabIndex={-1}
+            >
               Available Worlds
             </h2>
             <ul className={styles.worldList}>
@@ -122,6 +181,55 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
                       </div>
                     </div>
                     <p className={styles.worldDescription}>{world.description}</p>
+                    <div className={styles.worldActions}>
+                      {world.playability.available ? (
+                        <Link
+                          className={styles.newAdventure}
+                          to={`/worlds/${world.slug}/adventures/new`}
+                        >
+                          New Adventure
+                        </Link>
+                      ) : (
+                        <span className={styles.unavailableWorld}>{world.playability.reason}</span>
+                      )}
+                    </div>
+                    {world.adventures.length > 0 ? (
+                      <div className={styles.adventureList} aria-label={`${world.name} Adventures`}>
+                        {world.adventures.map((adventure) => (
+                          <article className={styles.adventureRow} key={adventure.id}>
+                            <Link
+                              className={styles.adventureLink}
+                              to={adventure.route}
+                              aria-label={`Resume Adventure as ${adventure.playerName}`}
+                            >
+                              <strong>{adventure.playerName}</strong>
+                              <span>{adventureStatusLabels[adventure.status]}</span>
+                            </Link>
+                            <div className={styles.adventureMeta}>
+                              <span>
+                                {adventure.turnCount} {adventure.turnCount === 1 ? 'turn' : 'turns'}
+                              </span>
+                              <time dateTime={adventure.lastPlayedAt}>
+                                Last played {formatLastPlayed(adventure.lastPlayedAt)}
+                              </time>
+                            </div>
+                            <button
+                              className={styles.deleteAdventure}
+                              type="button"
+                              aria-label={`Delete Adventure for ${adventure.playerName}`}
+                              onClick={() => {
+                                setDeleteError(null)
+                                setDeleteTarget(adventure)
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className={styles.noAdventures}>No Adventures started in this World.</p>
+                    )}
                   </article>
                 </li>
               ))}
@@ -137,6 +245,24 @@ export function WorkspacePage({ worldApi }: { worldApi: WorldApi }) {
           </section>
         )}
       </div>
+      {deleteTarget ? (
+        <ConfirmDialog
+          title={`Delete ${deleteTarget.playerName}'s Adventure?`}
+          confirmLabel="Delete Adventure"
+          pendingLabel="Deleting Adventure…"
+          pending={deleteAdventure.isPending}
+          error={deleteError}
+          onCancel={() => {
+            setDeleteTarget(null)
+            setDeleteError(null)
+          }}
+          onConfirm={() => deleteAdventure.mutate(deleteTarget.id)}
+        >
+          <p>
+            This permanently removes this Adventure and its generated story. The World is unchanged.
+          </p>
+        </ConfirmDialog>
+      ) : null}
     </main>
   )
 }

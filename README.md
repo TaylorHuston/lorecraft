@@ -100,7 +100,7 @@ Backend configuration lives in `apps/backend/.env`:
 - `CORS_ORIGIN` must match the frontend origin, normally `http://localhost:4310`.
 - `STARTER_WORLD_AUTHOR_EMAIL` is optional and is used only by the explicit starter-World seed.
 - `LLM_BASE_URL`, `LLM_MODEL`, and the optional `LLM_API_KEY` configure the OpenAI-compatible provider used by the Adventure worker.
-- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded opening generation and queue polling.
+- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, optional `LLM_REASONING_EFFORT`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded opening generation and queue polling. Set reasoning effort to `none` for compatible local models that otherwise spend the narration budget on hidden reasoning.
 
 Frontend configuration lives in `apps/frontend/.env`:
 

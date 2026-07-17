@@ -119,6 +119,10 @@ test.group('AdventureQueryService', (group) => {
     ])
     assert.isNull(await service.findForOwner(owner.id, otherOwned.adventureId))
     assert.isNull(await service.listForWorld(owner.id, inaccessible.world.slug))
+
+    const grouped = await service.listForWorldIds(owner.id, [world.id, inaccessible.world.id])
+    assert.deepEqual(grouped.get(world.id), result)
+    assert.deepEqual(grouped.get(inaccessible.world.id), [])
   })
 
   test('LC-003/S1/R2-S2 + R4-S1: reads visible Adventure state from its frozen source projection', async ({

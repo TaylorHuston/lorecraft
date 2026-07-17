@@ -68,7 +68,12 @@ test.group('OpenAI-compatible story generator', () => {
       apiKey: 'provider-secret-key',
       model: 'story-model-v2',
       provider: 'local-openai-compatible',
-      settings: { temperature: 0.4, maxTokens: 900, topP: 0.85 },
+      settings: {
+        temperature: 0.4,
+        maxTokens: 900,
+        topP: 0.85,
+        reasoningEffort: 'none',
+      },
       timeoutMs: 250,
     })
 
@@ -118,6 +123,7 @@ test.group('OpenAI-compatible story generator', () => {
       temperature: 0.4,
       max_tokens: 900,
       top_p: 0.85,
+      reasoning_effort: 'none',
     }
     assert.equal(actualUrl, 'https://story.example.test/v1/chat/completions')
     assert.deepEqual(JSON.parse(String(actualInit?.body)), expectedBody)
@@ -129,7 +135,12 @@ test.group('OpenAI-compatible story generator', () => {
       narration: 'The bell moved without a hand.',
       provider: 'local-openai-compatible',
       model: 'story-model-v2',
-      settings: { temperature: 0.4, maxTokens: 900, topP: 0.85 },
+      settings: {
+        temperature: 0.4,
+        maxTokens: 900,
+        topP: 0.85,
+        reasoningEffort: 'none',
+      },
       redactedRequest: {
         method: 'POST',
         url: 'https://story.example.test/v1/chat/completions',
@@ -167,6 +178,35 @@ test.group('OpenAI-compatible story generator', () => {
       assert.equal(error.message, 'Story provider returned empty narration')
       assert.equal(error.evidence.rawResponse, rawResponse)
       assert.notInclude(JSON.stringify(error.evidence), 'provider-secret-key')
+    }
+  })
+
+  test('rejects narration truncated by the provider token limit', async ({ assert }) => {
+    const rawResponse = JSON.stringify({
+      choices: [
+        {
+          finish_reason: 'length',
+          message: { content: 'The chapel door opened, and' },
+        },
+      ],
+    })
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async () => new Response(rawResponse, { status: 200 }),
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'provider-secret-key',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 100,
+    })
+
+    try {
+      await generator.generateOpening(openingInput)
+      assert.fail('Expected truncated narration to fail')
+    } catch (error) {
+      if (!(error instanceof StoryGenerationError)) throw error
+      assert.equal(error.code, 'malformed_response')
+      assert.equal(error.message, 'Story provider returned truncated narration')
+      assert.equal(error.evidence.rawResponse, rawResponse)
     }
   })
 

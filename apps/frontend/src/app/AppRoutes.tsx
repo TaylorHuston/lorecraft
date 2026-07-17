@@ -225,7 +225,10 @@ export function AppRoutes({
         <Route path="/sign-in" element={<SignInPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="/worlds" element={<WorkspacePage worldApi={worldApi} />} />
+        <Route
+          path="/worlds"
+          element={<WorkspacePage worldApi={worldApi} adventureApi={adventureApi} />}
+        />
         <Route
           path="/worlds/:slug"
           element={<WorldDetailPage worldApi={worldApi} adventureApi={adventureApi} />}
@@ -237,10 +240,7 @@ export function AppRoutes({
         <Route
           path="/adventures/:id"
           element={
-            <AdventurePage
-              adventureApi={adventureApi}
-              pollIntervalMs={adventurePollIntervalMs}
-            />
+            <AdventurePage adventureApi={adventureApi} pollIntervalMs={adventurePollIntervalMs} />
           }
         />
       </Route>

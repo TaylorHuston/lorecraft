@@ -88,6 +88,24 @@ export default class AdventureQueryService {
     return adventures.map(summaryFor)
   }
 
+  async listForWorldIds(ownerId: number, worldIds: number[]) {
+    const grouped = new Map<number, AdventureSummaryDto[]>()
+    for (const worldId of worldIds) grouped.set(worldId, [])
+    if (worldIds.length === 0) return grouped
+
+    const adventures = await Adventure.query()
+      .where('ownerId', ownerId)
+      .whereIn('worldId', worldIds)
+      .preload('player')
+      .orderBy('lastPlayedAt', 'desc')
+      .orderBy('createdAt', 'desc')
+
+    for (const adventure of adventures) {
+      grouped.get(adventure.worldId)?.push(summaryFor(adventure))
+    }
+    return grouped
+  }
+
   async findForOwner(ownerId: number, adventureId: string): Promise<AdventureDetailDto | null> {
     if (!uuidPattern.test(adventureId)) return null
 

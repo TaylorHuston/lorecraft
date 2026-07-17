@@ -12,6 +12,11 @@ export type WorldSummary = {
   readOnly: boolean
 }
 
+export type WorldCatalogItem = WorldSummary & {
+  playability: WorldPlayability
+  adventures: AdventureSummary[]
+}
+
 export type WorldLocation = {
   key: string
   name: string
@@ -41,7 +46,7 @@ export type WorldDetail = WorldSummary & {
 }
 
 export interface WorldApi {
-  listWorlds(): Promise<WorldSummary[]>
+  listWorlds(): Promise<WorldCatalogItem[]>
   getWorld(slug: string): Promise<WorldDetail>
 }
 

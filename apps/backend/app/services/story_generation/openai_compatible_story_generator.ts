@@ -100,6 +100,14 @@ function narrationFrom(rawResponse: string, evidence: StoryGenerationEvidence): 
     )
   }
 
+  if ('finish_reason' in parsed.choices[0] && parsed.choices[0].finish_reason === 'length') {
+    throw new StoryGenerationError(
+      'malformed_response',
+      'Story provider returned truncated narration',
+      evidence
+    )
+  }
+
   const narration = parsed.choices[0].message.content.trim()
 
   if (!narration) {
@@ -128,6 +136,9 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
       temperature: this.config.settings.temperature,
       max_tokens: this.config.settings.maxTokens,
       ...(this.config.settings.topP === undefined ? {} : { top_p: this.config.settings.topP }),
+      ...(this.config.settings.reasoningEffort === undefined
+        ? {}
+        : { reasoning_effort: this.config.settings.reasoningEffort }),
     }
     const redactedRequest: SanitizedStoryGenerationRequest = {
       method: 'POST',

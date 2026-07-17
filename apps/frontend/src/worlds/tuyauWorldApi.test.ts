@@ -18,6 +18,40 @@ vi.mock('@tuyau/core/client', () => ({
 }))
 
 describe('Tuyau World adapter', () => {
+  it('returns catalog playability and owner Adventure summaries', async () => {
+    tuyau.listWorlds.mockResolvedValue({
+      data: [
+        {
+          id: 1,
+          slug: 'stormbound-chapel',
+          name: 'Stormbound Chapel',
+          description: 'A storm-battered sanctuary.',
+          visibility: 'public',
+          readOnly: true,
+          playability: { available: true, reason: null },
+          adventures: [
+            {
+              id: '11111111-1111-4111-8111-111111111111',
+              playerName: 'Mara Venn',
+              status: 'ready',
+              turnCount: 3,
+              lastPlayedAt: '2026-07-16T19:00:00.000Z',
+              route: '/adventures/11111111-1111-4111-8111-111111111111',
+            },
+          ],
+        },
+      ],
+    })
+    const api = createTuyauWorldApi('http://frontend.example.test')
+
+    await expect(api.listWorlds()).resolves.toMatchObject([
+      {
+        playability: { available: true },
+        adventures: [{ playerName: 'Mara Venn', status: 'ready' }],
+      },
+    ])
+  })
+
   it('rejects a malformed successful catalog response as a recoverable World API error', async () => {
     tuyau.listWorlds.mockResolvedValue({
       data: [

@@ -7,7 +7,7 @@ const opening =
   'Rain drums against the chapel doors as you step beneath the cracked lintel. Mira watches from the aisle while Brother Alden steadies the lantern, and somewhere above them the bell sounds once without a hand on its rope.'
 
 async function deleteAdventureIfPresent(page: Page, playerName: string) {
-  await page.goto('/worlds/stormbound-chapel')
+  await page.goto('/worlds')
   const deleteButton = page.getByRole('button', {
     name: `Delete Adventure for ${playerName}`,
   })
@@ -35,8 +35,6 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
 
   try {
     await expect(page).toHaveURL(/\/worlds$/)
-    await page.getByRole('link', { name: 'Stormbound Chapel' }).click()
-    await expect(page.getByRole('heading', { level: 1, name: 'Stormbound Chapel' })).toBeVisible()
     await expect(page.getByText('No Adventures started in this World.')).toBeVisible()
 
     const newAdventure = page.getByRole('link', { name: 'New Adventure' })
@@ -112,6 +110,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('link', { name: 'Return to World' }).click()
+    await page.getByRole('link', { name: 'Back to Worlds' }).click()
     const resume = page.getByRole('link', { name: `Resume Adventure as ${playerName}` })
     await expect(resume).toBeVisible()
     await expect(page.getByText('0 turns')).toBeVisible()

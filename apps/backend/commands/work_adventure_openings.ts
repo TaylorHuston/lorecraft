@@ -76,7 +76,11 @@ export default class WorkAdventureOpenings extends BaseCommand {
         baseUrl,
         apiKey: env.get('LLM_API_KEY') ?? 'local-provider',
         model,
-        settings: { temperature, maxTokens },
+        settings: {
+          temperature,
+          maxTokens,
+          reasoningEffort: env.get('LLM_REASONING_EFFORT'),
+        },
         timeoutMs,
       }),
       workerId,

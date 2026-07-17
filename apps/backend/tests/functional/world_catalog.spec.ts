@@ -101,6 +101,8 @@ test.group('World catalog API', (group) => {
           description: 'A rain-lashed chapel and its nearby village haunts.',
           visibility: 'public',
           readOnly: true,
+          playability: { available: false },
+          adventures: [],
         },
       ],
     })

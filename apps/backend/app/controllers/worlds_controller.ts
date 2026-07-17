@@ -12,7 +12,17 @@ export type WorldDetailResponseDto = {
 
 export default class WorldsController {
   async index({ auth }: HttpContext) {
-    return { data: await new WorldCatalogService().listFor(auth.user!.id) }
+    const worlds = await new WorldCatalogService().listFor(auth.user!.id)
+    const adventuresByWorld = await new AdventureQueryService().listForWorldIds(
+      auth.user!.id,
+      worlds.map((world) => world.id)
+    )
+    return {
+      data: worlds.map((world) => ({
+        ...world,
+        adventures: adventuresByWorld.get(world.id) ?? [],
+      })),
+    }
   }
 
   async show({ auth, params, response }: HttpContext) {

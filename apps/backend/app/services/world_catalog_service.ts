@@ -55,8 +55,9 @@ export default class WorldCatalogService {
     const worlds = await World.query()
       .where('visibility', 'public')
       .orWhere('authorId', userId)
+      .preload('currentVersion')
       .orderBy('name')
-    return worlds.map(summary)
+    return worlds.map((world) => ({ ...summary(world), playability: playabilityFor(world) }))
   }
 
   async findFor(userId: number, slug: string) {

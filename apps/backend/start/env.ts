@@ -34,6 +34,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   LLM_TIMEOUT_MS: Env.schema.number.optional(),
   LLM_MAX_TOKENS: Env.schema.number.optional(),
   LLM_TEMPERATURE: Env.schema.number.optional(),
+  LLM_REASONING_EFFORT: Env.schema.enum.optional(['none', 'low', 'medium', 'high'] as const),
   ADVENTURE_WORKER_POLL_INTERVAL_MS: Env.schema.number.optional(),
 
   // Session

@@ -2,15 +2,17 @@ import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
-import { WorldApiError, type WorldDetail, type WorldSummary } from './worldApi'
+import { WorldApiError, type WorldCatalogItem, type WorldDetail } from './worldApi'
 
-const stormboundChapel: WorldSummary = {
+const stormboundChapel: WorldCatalogItem = {
   id: 1,
   slug: 'stormbound-chapel',
   name: 'Stormbound Chapel',
   description: 'A storm-battered sanctuary where old vows still shape the living.',
   visibility: 'public',
   readOnly: true,
+  playability: { available: true, reason: null },
+  adventures: [],
 }
 
 const stormboundDetail: WorldDetail = {
@@ -50,7 +52,48 @@ describe('World catalog and detail routes', () => {
       'href',
       '/worlds/stormbound-chapel'
     )
+    expect(screen.getByRole('link', { name: 'New Adventure' })).toHaveAttribute(
+      'href',
+      '/worlds/stormbound-chapel/adventures/new'
+    )
     expect(listWorlds).toHaveBeenCalledTimes(1)
+  })
+
+  it('lists and deletes an owner Adventure directly from the World catalog', async () => {
+    const user = userEvent.setup()
+    const deleteAdventure = vi.fn().mockResolvedValue(undefined)
+    const adventure = {
+      id: '11111111-1111-4111-8111-111111111111',
+      playerName: 'Mara Venn',
+      status: 'ready' as const,
+      turnCount: 3,
+      lastPlayedAt: '2026-07-16T19:00:00.000Z',
+      route: '/adventures/11111111-1111-4111-8111-111111111111',
+    }
+
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        listWorlds: async () => [{ ...stormboundChapel, adventures: [adventure] }],
+      },
+      adventureApi: { deleteAdventure },
+    })
+
+    expect(
+      await screen.findByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    ).toHaveAttribute('href', adventure.route)
+    expect(screen.getByText('3 turns')).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Delete Adventure for Mara Venn' }))
+    expect(screen.getByRole('dialog')).toHaveTextContent('The World is unchanged.')
+    await user.click(screen.getByRole('button', { name: 'Delete Adventure' }))
+
+    await waitFor(() => expect(deleteAdventure).toHaveBeenCalledWith(adventure.id))
+    expect(
+      screen.queryByRole('link', { name: 'Resume Adventure as Mara Venn' })
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('No Adventures started in this World.')).toBeVisible()
   })
 
   it('isolates the catalog across account changes and purges the previous account cache', async () => {
@@ -285,9 +328,7 @@ describe('World catalog and detail routes', () => {
 
     expect(deleteAdventure).toHaveBeenCalledWith(adventure.id)
     expect(await screen.findByText('No Adventures started in this World.')).toBeVisible()
-    await waitFor(() =>
-      expect(screen.getByRole('heading', { name: 'Adventures' })).toHaveFocus()
-    )
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Adventures' })).toHaveFocus())
   })
 
   it('LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy', async () => {

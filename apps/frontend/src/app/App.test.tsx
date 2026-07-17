@@ -658,6 +658,8 @@ describe('account workspace entry', () => {
             description: 'A weathered sanctuary above the tide line.',
             visibility: 'private',
             readOnly: true,
+            playability: { available: false, reason: 'Not published.' },
+            adventures: [],
           },
         ],
       },
