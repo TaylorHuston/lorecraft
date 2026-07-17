@@ -159,7 +159,7 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 
 #### Verification Gaps
 
-- The app-owned `S1/R2-S4` evidence is complete. User confirmation and cross-application UI Foundations comparison capture remain Change-level closeout work.
+- The app-owned `S1/R2-S4` evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
 
 #### Story Notes
 
@@ -255,7 +255,7 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 
 #### Verification Gaps
 
-- The strengthened `S2/R2-S2` app-owned evidence is complete. User confirmation and cross-application UI Foundations comparison capture remain Change-level closeout work.
+- The strengthened `S2/R2-S2` app-owned evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
 
 #### Story Notes
 
