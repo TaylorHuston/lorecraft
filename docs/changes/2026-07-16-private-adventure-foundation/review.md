@@ -47,6 +47,7 @@ blocked
 | Backend unit execution | focused unit test | `LC-003/S1 R3` | 15 unit tests passed | Response bounding and lease derivation behave deterministically. |
 | Guarded backend suite against isolated `lorecraft_test` Neon schema | broad backend regression | `LC-001`, `LC-002`, `LC-003/S1` | 100 passed | Post-remediation database, auth, catalog, snapshot, lifecycle, query, worker, provider, and API behavior remains green. |
 | `npm run test:e2e` against isolated `lorecraft_e2e` Neon schema | desktop/mobile E2E | `LC-001`, `LC-002`, `LC-003/S1` | 7 passed | The supervised API, worker, deterministic provider, and responsive Adventure lifecycle journey pass end to end. |
+| Post-feedback backend/frontend/Storybook suites | regression and interaction | `LC-003/S1 R3-R5` | backend 101, frontend 101, Storybook 64 passed | Reasoning control, truncated-output rejection, and catalog launch/list/delete behavior remain green with existing behavior. |
 | `npm run lint`, `npm run typecheck`, `npm run build` | broad supporting gates | cross-cutting | passed | Both applications compile, format, and build after remediation. |
 | Scoped `sdd validate` | artifact validation | `LC-003/S1` | 0 errors, 0 warnings | Change and Epic structure remain valid. |
 | `git merge-tree --write-tree develop HEAD` | integration check | branch readiness | clean tree | The reviewed branch is structurally mergeable into `develop`. |
@@ -54,10 +55,10 @@ blocked
 ## Review Bundle
 
 - Source branch/ref: `change/private-adventure-foundation`
-- Reviewed source commit: `408b92e5aba389b8c759010ffd445b269f7cef69`
+- Reviewed source commit: `7773a03982d61397c393bcf3ea011625db81b1bc`
 - Target branch/ref: `develop` at `20372717193a524e3486d45176a332562c5383ba`
 - Merge base: `20372717193a524e3486d45176a332562c5383ba`
-- Source-only commits: feature implementation plus review remediation and review-record reconciliation through `408b92e`
+- Source-only commits: feature implementation plus review remediation and manual-feedback implementation through `7773a03`
 - Target-only commits: none
 - Changed files: 84 files before review remediation; 18 files in the safe-fix batch
 - Diff stat: approximately 10.7k insertions across the complete Change
@@ -80,6 +81,7 @@ blocked
 ## Consolidated Remediation
 
 - Root causes addressed: mismatched timeout/lease defaults, inconsistent row-lock order, missing resume touch semantics, untested intermediate viewport, incomplete error feedback, unbounded provider evidence, burst abuse, unstable paragraph keys, and artifact drift after manual UI refinement.
+- Live-provider follow-up: the first Gemma opening exhausted all 500 completion tokens on hidden reasoning or persisted a length-truncated sentence. The adapter now supports configured reasoning effort and rejects `finish_reason: length`; a clean live rerun remains required.
 - Safe-fix batch: committed as `976767a`.
 - Deferred or unsafe findings: durable quota policy requires a later product/operations decision.
 - Affected verification union: backend worker/lifecycle/query/provider, frontend Adventure routes/workbench, Storybook, static/build, artifact validation, and mergeability.
@@ -89,7 +91,7 @@ blocked
 ## PR / Merge Readiness
 
 - Source branch: `change/private-adventure-foundation`
-- Reviewed source commit: `408b92e5aba389b8c759010ffd445b269f7cef69`
+- Reviewed source commit: `7773a03982d61397c393bcf3ea011625db81b1bc`
 - Target branch: `develop`
 - Conflict check: clean
 - Commit state: code and review remediation committed; current evidence reconciliation is documentation-only
@@ -100,3 +102,4 @@ blocked
 
 - 2026-07-16: Deep review completed, safe findings remediated, and final evidence blockers recorded.
 - 2026-07-16: Guarded PostgreSQL backend and desktop/mobile Playwright suites passed against isolated disposable Neon schemas.
+- 2026-07-16: Live Gemma evidence exposed hidden-reasoning token exhaustion; provider controls, truncation rejection, and catalog-level Adventure management were implemented and deterministically verified pending live/manual rerun.
