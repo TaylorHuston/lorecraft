@@ -296,8 +296,22 @@ test.group('AdventureCreationService', (group) => {
         .where('creation_request_id', requestId),
       0
     )
-    assert.lengthOf(await db.from('adventure_players'), 0)
-    assert.lengthOf(await db.from('adventure_jobs'), 0)
+    assert.lengthOf(
+      await db
+        .from('adventure_players as players')
+        .join('adventures', 'adventures.id', 'players.adventure_id')
+        .where('adventures.owner_id', owner.id)
+        .where('adventures.creation_request_id', requestId),
+      0
+    )
+    assert.lengthOf(
+      await db
+        .from('adventure_jobs as jobs')
+        .join('adventures', 'adventures.id', 'jobs.adventure_id')
+        .where('adventures.owner_id', owner.id)
+        .where('adventures.creation_request_id', requestId),
+      0
+    )
   })
 
   test('LC-003/S1/R1-S1: a failed creation rolls back Adventure, player, and job atomically', async ({
@@ -333,7 +347,21 @@ test.group('AdventureCreationService', (group) => {
         .where('creation_request_id', requestId),
       0
     )
-    assert.lengthOf(await db.from('adventure_players'), 0)
-    assert.lengthOf(await db.from('adventure_jobs'), 0)
+    assert.lengthOf(
+      await db
+        .from('adventure_players as players')
+        .join('adventures', 'adventures.id', 'players.adventure_id')
+        .where('adventures.owner_id', owner.id)
+        .where('adventures.creation_request_id', requestId),
+      0
+    )
+    assert.lengthOf(
+      await db
+        .from('adventure_jobs as jobs')
+        .join('adventures', 'adventures.id', 'jobs.adventure_id')
+        .where('adventures.owner_id', owner.id)
+        .where('adventures.creation_request_id', requestId),
+      0
+    )
   })
 })

@@ -12,10 +12,16 @@ npm run typecheck
 npm run build
 ```
 
-Normal root development starts this API and the separate Adventure-opening worker together. For backend-only operation, run them in separate terminals:
+Normal root or backend-workspace development supervises this API and the separate Adventure-opening worker together:
 
 ```bash
 npm run dev
+```
+
+For intentional process isolation, run these in separate terminals:
+
+```bash
+npm run dev:api
 npm run dev:worker
 ```
 

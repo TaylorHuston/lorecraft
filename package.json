@@ -12,7 +12,7 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "turbo run dev dev:worker",
+    "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
     "test:e2e": "playwright test --config apps/frontend/playwright.config.ts",
