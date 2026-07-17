@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: post-remediation PostgreSQL backend and desktop/mobile Playwright suites passed against isolated disposable Neon schemas
-- Next action: rerun the live-provider opening with hidden reasoning disabled, then collect manual UI confirmation of the revised World catalog
+- Last completed action: a live `gemma4:31b` opening completed in one attempt with hidden reasoning disabled and persisted complete grounded narration
+- Next action: collect Taylor's final manual UI confirmation of the revised World catalog and Adventure shell
 - Active branch/ref: `change/private-adventure-foundation`
 - Expected dirty files: review evidence reconciliation only
-- Known blockers: live-provider playtest and Taylor's manual UI confirmation
+- Known blockers: Taylor's final manual UI confirmation
 
 ## Task Checklist
 
@@ -98,7 +98,7 @@ status: in_review
 - [x] 9.3 E2E: create from Stormbound Chapel, reload while pending, observe exactly one opening, resume from World detail, and verify zero completed turns plus stable Player/Scene context.
 - [x] 9.4 Prove source version isolation and delete isolation at the service/database boundary, and prove same-version reset, anonymous denial, and cross-account non-disclosure through the routed E2E journey; no World-authoring browser route exists for an artificial source-change flow.
 - [x] 9.5 E2E: verify desktop/mobile layout, keyboard path, status announcements, touch targets, and no horizontal overflow.
-- [ ] 9.6 Live-provider playtest: verify the opening follows the authored premise and frozen starting context with a configured local or compatible model.
+- [x] 9.6 Live-provider playtest: verify the opening follows the authored premise and frozen starting context with a configured local or compatible model.
 - [x] 9.7 Inspect one successful and one failed opening unit for redacted exact request/response, provider/model/settings, retry, timing, and final status.
 - [x] 9.8 Run `npm run lint`, `npm run test`, `npm run typecheck`, `npm run build`, `npm run test:storybook`, and `npm run test:e2e`; record what each command actually exercised.
 - [x] 9.9 Keep the dev servers and worker running after verification unless the user asks to stop them.
@@ -181,6 +181,7 @@ status: in_review
 | 2026-07-16 | Post-review Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | Supervised API/worker/provider topology and responsive Adventure create/open/resume/reset/delete journey remain green                                                        | Passed; 7 tests                                    |
 | 2026-07-16 | Post-feedback backend, frontend, and Storybook suites                                                                                                           | broad regression and interaction      | Reasoning control, truncated-output rejection, grouped owner summaries, catalog launch/list/delete, and existing account/World/Adventure behavior                              | Passed; backend 101, frontend 101, Storybook 64    |
 | 2026-07-16 | Post-feedback Playwright suite against isolated `lorecraft_e2e` Neon schema                                                                                      | desktop/mobile E2E                    | The production catalog now launches, lists, resumes, and cleans up Adventures across responsive routes while the full lifecycle remains green                                 | Passed; 7 tests                                    |
+| 2026-07-17 | Live `gemma4:31b` opening against the frozen Stormbound Chapel context                                                                                          | configured-provider playtest          | Hidden reasoning is disabled, generation completes without token truncation, and the opening uses the player, starting Location, present Characters, storm, and unexplained bell | Passed in one attempt; 19.8 seconds; `finish_reason: stop` |
 
 ## Manual Feedback
 
@@ -216,11 +217,11 @@ status: in_review
 ## Blockers / Open Questions
 
 - No planning questions remain.
-- Live-provider narrative quality and final manual UI acceptance remain pending.
+- Final manual UI acceptance remains pending.
 
 ## Closeout
 
-- Change status: in_review; implementation, deterministic verification, and review remediation complete; live-provider and manual evidence gates pending
+- Change status: in_review; implementation, deterministic verification, review remediation, and live-provider evidence complete; final manual acceptance pending
 - Epic files updated: `LC-003` created; `LC-002` deferred ownership reconciled
 - Story labels/references and Requirement/Scenario IDs current: implemented `LC-003/S1`; candidates intentionally unnumbered
 - Implemented By maps current: yes
@@ -228,7 +229,7 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes; `LC-002` now points Adventure ownership to `LC-003`
 - ADR status: immutable snapshots and durable asynchronous work accepted and validated
 - Release communication current: README and user-facing CHANGELOG updated
-- `sdd-review` verdict: blocked on live-provider evidence and manual UI confirmation
+- `sdd-review` verdict: blocked on final manual UI confirmation
 - Review record: `docs/changes/2026-07-16-private-adventure-foundation/review.md`
 - `review.md` findings resolved: safe code/artifact findings resolved in `976767a`; evidence blockers remain
 - Planning updates resolved: yes
