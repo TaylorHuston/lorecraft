@@ -52,10 +52,10 @@ status: in_progress
 
 ### 5. Adventure Aggregate And Authorization
 
-- [ ] 5.1 RED-to-GREEN, one behavior at a time: add domain/service tests and implementation for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
+- [x] 5.1 RED-to-GREEN, one behavior at a time: add domain/service tests and implementation for valid creation, profile validation, owner-scoped idempotency, inaccessible/unplayable Worlds, and atomic rollback on failure.
 - [x] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
 - [x] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
-- [ ] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
+- [x] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
 - [ ] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
 - [ ] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
 - [ ] 5.7 Map implementation and evidence for `LC-003/S1 R1`, `R2`, and `R4` as each Scenario passes.
@@ -124,6 +124,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 R2 deterministic publication | delegated backend implementation; orchestrator lint correction and verification | World/StartingPoint/WorldVersion models, publication service, focused functional tests | Ordered schema-v1 snapshots, stable-key validation, canonical SHA-256 identity, identical-content reuse, changed-content version creation, and old-snapshot preservation pass | `889460b` |
 | 2026-07-16 | LC-003/S1 R2 playable Stormbound seed | delegated RED test; main-agent implementation and verification | Stormbound seed, catalog/seed tests, isolated publication race test | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass | `db38048` |
 | 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification | Adventure aggregate migration, Lucid models, and focused database tests | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass | `794c005` |
+| 2026-07-16 | LC-003/S1 Adventure creation | delegated RED tests; main-agent implementation and verification | Adventure creation service and focused functional tests | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | pending commit |
 
 ## Verification Ledger
 
@@ -141,6 +142,8 @@ status: in_progress
 | 2026-07-16 | Isolated concurrent World publication check | focused database test | Two publishers serialize on the World row and reuse one ordinal/version | Passed within 3-test frozen-source migration suite |
 | 2026-07-16 | Adventure aggregate migration suite against isolated scratch Neon schema | focused database test | `LC-003/S1 R1-R4` storage invariants, UUID identity, ownership boundaries, immutable opening history, selective Adventure cascade, and guarded rollback | Passed; 6 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure aggregate migration | broad supporting gates | Aggregate migration and tests are formatted and type-safe before service implementation | Passed |
+| 2026-07-16 | Adventure creation service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R1-S1..R1-S3`, creation portion of `R2-S1`, and creation conflict portion of `R2-S3` | Passed; 6 tests |
+| 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure creation | broad supporting gates | Creation service and tests are formatted and type-safe | Passed |
 
 ## Manual Feedback
 

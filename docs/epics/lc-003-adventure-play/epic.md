@@ -196,6 +196,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | `apps/backend/app/models/world.ts`, `starting_point.ts`, and `world_version.ts` | Maps the relational authoring aggregate and immutable version metadata. | Recheck when snapshot schema or World relationships change. |
 | `apps/backend/app/services/world_version_publication_service.ts` | Validates stable-key references and deterministically publishes or reuses immutable schema-v1 snapshots. | Recheck when canonical World fields or publication concurrency semantics change. |
 | `apps/backend/app/services/stormbound_chapel_seed.ts` | Reconciles the first playable World, default Starting Point, guidance, premise, and current version in one transaction. | Recheck when starter canon or explicit installation behavior changes. |
+| `apps/backend/database/migrations/1784236800000_create_adventure_aggregate.ts`, `apps/backend/app/models/adventure*.ts`, and `model_call.ts` | Defines the private Adventure aggregate, one player, durable jobs/calls, and immutable revision/story ownership boundaries. | Recheck when Adventure ownership, lifecycle persistence, or cascade semantics change. |
+| `apps/backend/app/services/adventure_creation_service.ts` | Validates and atomically creates an owner-idempotent Adventure from the accessible current WorldVersion and its frozen default Starting Point. | Recheck when creation input, source access, idempotency, or initial-state semantics change. |
 
 #### Verified By
 
@@ -204,14 +206,18 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | S1/R2 foundation | `apps/backend/tests/database/frozen_world_source_migration.spec.ts` | Same-World Starting Points, one default, immutable UUID version identity, same-World current-version ownership, and serialized concurrent publication. | Passing 2026-07-16 |
 | S1/R2-S1 publication portion | `apps/backend/tests/functional/world_version_publication.spec.ts` and `world_catalog.spec.ts` | Deterministic complete snapshots, stable-key validation, content identity, playable Stormbound guidance/default Starting Point, and same-transaction publication. | Passing 2026-07-16 |
 | S1/R2-S2 publication portion | `apps/backend/tests/functional/world_version_publication.spec.ts` | Changed canon creates a new ordinal while the earlier snapshot remains unchanged; identical canon reuses the prior version. | Passing 2026-07-16 |
-| S1/R1, remaining R2, and S1/R3-R5 | Not verified yet. | Adventure binding, playability conflict, opening generation, lifecycle, authorization, and UI await later slices in this Change. | Pending |
+| S1/R1-S1 and R1-S2 service boundary | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Valid player creation, durable pending route, owner-idempotent replay, field validation, and atomic rollback. | Passing 2026-07-16 |
+| S1/R1-S3 source-access portion | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Public and owner-private sources are accepted while another owner's private source is indistinguishable from missing and creates no Adventure. | Passing 2026-07-16 |
+| S1/R2-S1 creation binding | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Creation binds the Adventure and initial player Location to the selected current snapshot's frozen default Starting Point. | Passing 2026-07-16 |
+| S1/R2-S3 creation conflict | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Missing current version or valid frozen default Starting Point creates no Adventure and returns a playability conflict. | Passing 2026-07-16 |
+| Remaining S1/R1-R2 and S1/R3-R5 | Not verified yet. | Adventure API authorization, later-version isolation, World inspection playability, opening generation, lifecycle, and UI await later slices in this Change. | Pending |
 
 #### Verification Gaps
 
-- `R2-S1` still needs proof that Adventure creation binds its player and Scene to the versioned default Starting Point.
 - `R2-S2` still needs proof that an existing Adventure keeps its original version while a new Adventure selects the newer current version.
-- `R2-S3` still needs service/API proof that missing playable source returns a clear conflict while World inspection remains available.
-- `R1`, `R3`, `R4`, and `R5` await implementation and scenario-mapped evidence.
+- `R2-S3` still needs API and World-inspection proof that unplayable source returns a clear conflict while inspection remains available.
+- `R1-S3` still needs anonymous and cross-account Adventure API proof; service-level source non-disclosure is covered.
+- `R3`, `R4`, and `R5` await implementation and scenario-mapped evidence.
 - Live-provider narrative quality and final responsive UI acceptance require separate evidence from deterministic tests.
 
 #### Story Notes
