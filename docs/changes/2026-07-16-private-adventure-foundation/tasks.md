@@ -56,9 +56,9 @@ status: in_progress
 - [x] 5.2 RED-to-GREEN alongside each aggregate behavior: add only the database invariants needed for Adventure-to-WorldVersion ownership, one player per Adventure, revision/story immutability, job/call ownership, cascade boundaries, and safe migrations.
 - [x] 5.3 Implement UUID-backed Adventures, one-to-one player profiles, root revisions, story entries, durable jobs, and model-call evidence records.
 - [x] 5.4 Implement Adventure creation from the current accessible WorldVersion and default Starting Point in one transaction, including the initial player Location and pending opening job.
-- [ ] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
-- [ ] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
-- [ ] 5.7 Map implementation and evidence for `LC-003/S1 R1`, `R2`, and `R4` as each Scenario passes.
+- [x] 5.5 Implement owner-filtered list/read projections that combine frozen source with Adventure-owned player state and never return raw snapshots, private prompt evidence, or another owner's data.
+- [x] 5.6 RED then implement reset and delete domain behavior, including same-version reset, pending-work conflict, stale-job invalidation, and source/other-Adventure isolation.
+- [x] 5.7 Map implementation and evidence for `LC-003/S1 R1`, `R2`, and `R4` as each Scenario passes.
 
 ### 6. Durable Opening Generation
 
@@ -125,6 +125,7 @@ status: in_progress
 | 2026-07-16 | LC-003/S1 R2 playable Stormbound seed | delegated RED test; main-agent implementation and verification | Stormbound seed, catalog/seed tests, isolated publication race test | Guidance, default Chapel Starting Point, opening premise, same-transaction publication, stale-point cleanup, repeated version reuse, and serialized concurrent publication pass | `db38048` |
 | 2026-07-16 | LC-003/S1 Adventure aggregate invariants | delegated backend implementation; main-agent migration correction and verification | Adventure aggregate migration, Lucid models, and focused database tests | Owner idempotency, WorldVersion ownership, bounded one-player profile, durable job/call ownership, immutable history, selective cascade, and guarded rollback pass | `794c005` |
 | 2026-07-16 | LC-003/S1 Adventure creation | delegated RED tests; main-agent implementation and verification | Adventure creation service and focused functional tests | Accessible current source selection, frozen default Starting Point binding, player/job initialization, owner-idempotent replay, validation, non-disclosing source access, unplayable conflict, and atomic rollback pass | `54bb3a4` |
+| 2026-07-16 | LC-003/S1 Adventure query and lifecycle | two delegated backend TDD slices; main-agent review and sequential verification | owner-filtered projections, reset/delete services, and focused functional tests | Frozen minimized reads, owner-only list/read, same-version reset, busy conflict, generation cleanup, non-disclosing lifecycle access, and isolated delete pass | pending commit |
 
 ## Verification Ledger
 
@@ -144,6 +145,9 @@ status: in_progress
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure aggregate migration | broad supporting gates | Aggregate migration and tests are formatted and type-safe before service implementation | Passed |
 | 2026-07-16 | Adventure creation service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R1-S1..R1-S3`, creation portion of `R2-S1`, and creation conflict portion of `R2-S3` | Passed; 6 tests |
 | 2026-07-16 | Backend lint, typecheck, and `git diff --check` after Adventure creation | broad supporting gates | Creation service and tests are formatted and type-safe | Passed |
+| 2026-07-16 | Adventure query service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R2-S2` frozen reads and `R4-S1` owner-only list/read projections without private evidence | Passed; 2 tests |
+| 2026-07-16 | Adventure lifecycle service suite against isolated scratch Neon schema | focused functional test | `LC-003/S1 R1-S3` lifecycle non-disclosure and `R4-S2..R4-S3` same-version reset, busy conflict, cleanup, and isolated deletion | Passed; 4 tests |
+| 2026-07-16 | Full backend test suite after Adventure creation | broad supporting test | Authentication, catalog, publication, migration, and Adventure creation regressions remain green together | Passed; 63 tests |
 
 ## Manual Feedback
 

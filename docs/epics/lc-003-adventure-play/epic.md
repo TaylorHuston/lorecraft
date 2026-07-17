@@ -198,6 +198,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | `apps/backend/app/services/stormbound_chapel_seed.ts` | Reconciles the first playable World, default Starting Point, guidance, premise, and current version in one transaction. | Recheck when starter canon or explicit installation behavior changes. |
 | `apps/backend/database/migrations/1784236800000_create_adventure_aggregate.ts`, `apps/backend/app/models/adventure*.ts`, and `model_call.ts` | Defines the private Adventure aggregate, one player, durable jobs/calls, and immutable revision/story ownership boundaries. | Recheck when Adventure ownership, lifecycle persistence, or cascade semantics change. |
 | `apps/backend/app/services/adventure_creation_service.ts` | Validates and atomically creates an owner-idempotent Adventure from the accessible current WorldVersion and its frozen default Starting Point. | Recheck when creation input, source access, idempotency, or initial-state semantics change. |
+| `apps/backend/app/services/adventure_query_service.ts` | Projects owner-filtered Adventure summaries and visible Player/Scene/story state from the frozen source without raw snapshot or prompt evidence. | Recheck when Adventure disclosure, read projection, or story history semantics change. |
+| `apps/backend/app/services/adventure_lifecycle_service.ts` | Resets an owned Adventure to its same frozen source and deletes only the selected private aggregate. | Recheck when reset generations, active-work conflicts, or deletion boundaries change. |
 
 #### Verified By
 
@@ -210,14 +212,16 @@ The system SHALL present creation, pending, failure, ready, reset, delete, and r
 | S1/R1-S3 source-access portion | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Public and owner-private sources are accepted while another owner's private source is indistinguishable from missing and creates no Adventure. | Passing 2026-07-16 |
 | S1/R2-S1 creation binding | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Creation binds the Adventure and initial player Location to the selected current snapshot's frozen default Starting Point. | Passing 2026-07-16 |
 | S1/R2-S3 creation conflict | `apps/backend/tests/functional/adventure_creation_service.spec.ts` | Missing current version or valid frozen default Starting Point creates no Adventure and returns a playability conflict. | Passing 2026-07-16 |
-| Remaining S1/R1-R2 and S1/R3-R5 | Not verified yet. | Adventure API authorization, later-version isolation, World inspection playability, opening generation, lifecycle, and UI await later slices in this Change. | Pending |
+| S1/R2-S2 Adventure isolation and R4-S1 service boundary | `apps/backend/tests/functional/adventure_query_service.spec.ts` | Owner-only list/read projections continue using the original frozen version after newer canon is published and omit private model/prompt evidence. | Passing 2026-07-16 |
+| S1/R1-S3 lifecycle portion and R4-S2..R4-S3 service boundary | `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts` | Cross-owner lifecycle calls are non-disclosing; reset uses the same frozen source and clears prior work; delete preserves source and sibling Adventures. | Passing 2026-07-16 |
+| Remaining S1/R1-R4 API behavior and S1/R3/R5 | Not verified yet. | HTTP authorization/contracts, World inspection playability, opening generation, lifecycle API behavior, and UI await later slices in this Change. | Pending |
 
 #### Verification Gaps
 
-- `R2-S2` still needs proof that an existing Adventure keeps its original version while a new Adventure selects the newer current version.
+- `R2-S2` still needs API/E2E proof that a newly created Adventure selects the newer current version; service projection proof covers preservation of the existing Adventure.
 - `R2-S3` still needs API and World-inspection proof that unplayable source returns a clear conflict while inspection remains available.
 - `R1-S3` still needs anonymous and cross-account Adventure API proof; service-level source non-disclosure is covered.
-- `R3`, `R4`, and `R5` await implementation and scenario-mapped evidence.
+- `R3` and `R5` await implementation and scenario-mapped evidence; `R4` still needs HTTP/UI/E2E proof over the passing service boundary.
 - Live-provider narrative quality and final responsive UI acceptance require separate evidence from deterministic tests.
 
 #### Story Notes
