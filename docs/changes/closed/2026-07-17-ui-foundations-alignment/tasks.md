@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: reconciled Lorecraft idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage/capture at UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`.
-- Next action: none; Lorecraft integration and Change closeout are complete.
-- Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
-- Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
-- Known blockers: none for Lorecraft integration or closeout. The invalid vault-level SDD configuration is an external workspace issue, was not edited, and prevents a fresh SDD validation claim.
+- Last completed action: independent focused rereview passed for post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897` against `develop`; review reconciliation was committed at `d00ab22`.
+- Next action: merge the confirmed post-close contrast fix into `develop`, then resume `/sdd-release`.
+- Active branch/ref: `fix/sign-in-button-contrast` from `develop` at `8060a80`.
+- Expected dirty files: none after the ledger follow-up commit.
+- Known blockers: none for Lorecraft integration or closeout. The previously invalid workspace configuration was repaired externally; fresh scoped validation passes.
 
 ## Task Checklist
 
@@ -119,6 +119,7 @@ status: in_review
 | 2026-07-17 | Shared comparison registration | Registered Lorecraft and the retained 49th Floor source in the shared UI Foundations Storybook and capture matrix from an isolated worktree. | UI Foundations `db250f3` |
 | 2026-07-17 | Independent review remediation | Exposed Adventure creation field pending state, kept unavailable-Adventure retry contextual and duplicate-safe, and removed the dialog shadow that conflicted with Lorecraft visual guidance. | `3797c8b` |
 | 2026-07-17 | Final cross-repository reconciliation | Updated LC-002 comparison truth, aligned private visual identity with the implemented Adventure foundation, and rebased Lorecraft registration onto the current 49th Floor comparison lineage. | App `4e90773`; vault `85c451a7c`; UI Foundations `41259aa` |
+| 2026-07-18 | Release-gate sign-in contrast remediation | Removed the sign-in-only white label exception so the primary action again uses the shared accessible Burnished Orange/dark-foreground pairing. | `c1dfc3f` |
 
 ## Verification Ledger
 
@@ -151,12 +152,16 @@ status: in_review
 | 2026-07-17 | `git merge-tree --write-tree develop 3797c8b244a38c602b1344184eec154fc0adaff3` | integration verification | The exact independent-review remediation source merges cleanly into `develop` | Passed: tree `b923a90d69eb5a721e893beb5b673792ebe713c9` |
 | 2026-07-17 | final app regression, security, and integration gates | complete technical review | Current application source remains coherent after cross-repository artifact reconciliation | Passed: backend 102; frontend 115; Storybook 78; E2E 7; builds, typecheck, lint, audit, reverse traceability, and merge tree |
 | 2026-07-17 | UI Foundations `npm run check:all`, audit, and `npm run compare:capture` at `41259aa` | shared comparison verification | Current shared lineage retains all four app references, stable IDs, truthful labels, and complete captures | Passed: 10 tests, static build, 0 audit vulnerabilities, 20 captures, 5 Lorecraft cells |
+| 2026-07-18 | `npm run test:storybook` | deterministic component-preview accessibility tests | Sign-in and all other production stories meet the configured interaction and accessibility checks after restoring the shared primary-button foreground | Passed: 11 files, 78 tests |
+| 2026-07-18 | focused auth tests, frontend typecheck, and frontend lint | focused regression and broad supporting gates | Sign-in behavior and frontend static integration remain coherent after removing the presentation-only exception | Passed: auth 11 tests; typecheck and lint passed |
+| 2026-07-18 | changed-surface reverse-traceability audit from `develop` scoped to LC-001 | traceability audit | The two changed account source files remain owned by LC-001 and all referenced implementation/verification paths resolve | Passed: 0 unowned source files, 0 unowned tests, 0 missing references |
+| 2026-07-18 | scoped closed-Change SDD validation | deterministic artifact validation | The closed Change and all three affected Epics resolve under the current workspace topology after the external configuration repair | Passed: 1 closed Change, 3 Epics, 0 errors, 0 warnings |
 
 ## Manual Feedback
 
 - 2026-07-17 follow-up review, classified as in-scope defects and verification gaps: expose destructive consequences through the Dialog description contract; assert the resulting accessible description; constrain stable desktop/mobile comparison stories to production-equivalent viewport height; deterministically exercise internal scrolling geometry; add the designed disabled and pending TextField/Textarea previews; refresh exact review SHAs and merge-tree evidence; and complete the separately tracked shared UI Foundations registration and retained capture. No accepted product requirement, Scenario, ownership boundary, or architecture decision changed, so `/sdd-change --replan` was not required.
-- Manual visual confirmation remains pending for the user after deterministic remediation is complete.
-- 2026-07-18: user authorized close and merge after the prepared walkthrough; recorded as `user confirmed`. The final sign-in correction preserves the accepted design while ensuring the primary action label remains white on Burnished Orange.
+- Manual visual confirmation was pending after deterministic remediation and was completed before the authorized merge.
+- 2026-07-18: user authorized close and merge after the prepared walkthrough; recorded as `user confirmed`. The release-gate defect fix preserves the accepted design while restoring the shared accessible dark foreground on Burnished Orange.
 
 ## Planning Updates
 
@@ -169,7 +174,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 ## Manual UI Confirmation
 
-- Status: user confirmed.
+- Status: user confirmed, including the focused post-close dark-label-on-Burnished-Orange correction.
 - App URL / route: Lorecraft frontend at `http://localhost:4310`; Storybook at exact `http://127.0.0.1:4312`.
 - Required setup or test data: deterministic account fixtures plus representative empty, populated, failed, and retryable Worlds; ready, pending, failed, settings, reset, and delete Adventure fixtures.
 - Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories and the retained shared-hub matrix at `/private/tmp/ui-foundations-lorecraft/comparison-report/index.html`.
@@ -181,7 +186,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Planning blockers: none.
 - Promotion dependency: resolved; `2026-07-17-epic-truth-reconciliation` is integrated and closed.
 - Shared-hub dependency: resolved on isolated UI Foundations branch `misc/register-lorecraft-comparison` at `41259aa96ce551ffde96616a295b74a9c019cf7f`, descended from current lineage `3989806`; the canonical checkout was not modified.
-- Closeout dependency: Lorecraft merge and close authorization received on 2026-07-18. The external SDD config still prevents fresh validation but does not contradict repository-local implementation or Epic truth.
+- Closeout dependency: Lorecraft merge and close authorization received on 2026-07-18; fresh scoped SDD validation passes.
 - Open product or visual questions: none under the confirmed constraints.
 
 ## Closeout
@@ -194,11 +199,11 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: technical `ready` at app `4e9077383792f2ade3e8eca80103684f978e8bb8` and UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`; manual confirmation remains pending and no fresh SDD validation is claimed while the external config is invalid.
-- Review record: `docs/changes/2026-07-17-ui-foundations-alignment/review.md`.
+- `sdd-review` verdict: technical `ready` at post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897`; focused manual confirmation is `user confirmed`. Fresh scoped validation passes.
+- Review record: `docs/changes/closed/2026-07-17-ui-foundations-alignment/review.md`.
 - `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
-- Manual UI confirmation status: user confirmed.
+- Manual UI confirmation status: user confirmed, including the focused post-close sign-in label correction.
 - PR / merge state: locally merged `change/ui-foundations-alignment` into `develop` with merge commit `b256714`; no PR or push was required or performed.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
 - Change moved to `docs/changes/closed/`: yes; closed on 2026-07-18 after user confirmation and explicit integration/close authorization.
