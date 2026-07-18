@@ -6,6 +6,18 @@ import type { ApiDefinition } from './tree.d.ts'
 const placeholder: any = {}
 
 const routes = {
+  'health_checks.live': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/health/live',
+    tokens: [{"old":"/api/health/live","type":0,"val":"api","end":""},{"old":"/api/health/live","type":0,"val":"health","end":""},{"old":"/api/health/live","type":0,"val":"live","end":""}],
+    types: placeholder as Registry['health_checks.live']['types'],
+  },
+  'health_checks.ready': {
+    methods: ["GET","HEAD"],
+    pattern: '/api/health/ready',
+    tokens: [{"old":"/api/health/ready","type":0,"val":"api","end":""},{"old":"/api/health/ready","type":0,"val":"health","end":""},{"old":"/api/health/ready","type":0,"val":"ready","end":""}],
+    types: placeholder as Registry['health_checks.ready']['types'],
+  },
   'auth.csrf': {
     methods: ["GET","HEAD"],
     pattern: '/api/v1/auth/csrf',

@@ -107,7 +107,7 @@ export function AdventurePage({
       <main className={styles.stateShell}>
         <div role="alert">
           <p className={styles.stateLabel}>{missing ? 'Not found' : 'Connection error'}</p>
-          <h1 className={styles.stateTitle}>
+          <h1 className={styles.stateTitle} data-route-heading>
             {missing ? 'Adventure not found' : 'Adventure unavailable'}
           </h1>
           <p className={styles.stateCopy}>

@@ -29,6 +29,8 @@ tmp/*
 .env.*
 !.env.example
 !.env.test
+!deploy/.env.production.example
+deploy/.release-state.json
 
 # Test and browser artifacts
 playwright-report/

@@ -77,6 +77,15 @@ function StoryRegion({
   const openingInProgress =
     adventure.status === 'opening_pending' || adventure.status === 'opening_processing'
   const regionRef = useRef<HTMLElement>(null)
+  const wasOpening = useRef(openingInProgress)
+  const [completionAnnouncement, setCompletionAnnouncement] = useState('')
+
+  useEffect(() => {
+    if (wasOpening.current && adventure.status === 'ready') {
+      setCompletionAnnouncement('Your Adventure opening is ready.')
+    }
+    wasOpening.current = openingInProgress
+  }, [adventure.status, openingInProgress])
 
   function retryOpening() {
     onRetry?.()
@@ -90,17 +99,24 @@ function StoryRegion({
       aria-labelledby="adventure-story-heading"
       tabIndex={-1}
     >
-      <PanelHeading eyebrow="Chronicle" id="adventure-story-heading" title="Story" />
-      <div className={styles.storyContent} data-slot="story-scroll-region" tabIndex={0}>
+      <header className={styles.panelHeading}>
+        <p>Chronicle</p>
+        <h1 data-route-heading id="adventure-story-heading">Story</h1>
+      </header>
+      <div role="status" aria-live="polite" aria-atomic="true">
         {openingInProgress ? (
-          <div className={styles.storyState} role="status" aria-live="polite" aria-atomic="true">
+          <div className={styles.storyState}>
             <p className={styles.stateEyebrow}>Game Master</p>
             <h3>Preparing your opening</h3>
             <p>
               Your Adventure is safe. You can leave this page and return while the story begins.
             </p>
           </div>
-        ) : null}
+        ) : (
+          <p className={styles.srOnly}>{completionAnnouncement}</p>
+        )}
+      </div>
+      <div className={styles.storyContent} data-slot="story-scroll-region" tabIndex={0}>
         {adventure.status === 'opening_failed' ? (
           <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
             <p className={styles.stateEyebrow}>Opening interrupted</p>

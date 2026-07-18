@@ -18,6 +18,10 @@ import {
 } from '#start/limiter'
 
 const AdventuresController = () => import('#controllers/adventures_controller')
+const HealthChecksController = () => import('#controllers/health_checks_controller')
+
+router.get('/api/health/live', [HealthChecksController, 'live'])
+router.get('/api/health/ready', [HealthChecksController, 'ready'])
 
 router.get('/', () => {
   return { hello: 'world' }

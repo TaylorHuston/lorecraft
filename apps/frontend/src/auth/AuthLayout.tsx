@@ -14,7 +14,7 @@ export function AuthLayout({ title, description, children, footer }: AuthLayoutP
       <section className={styles.content} aria-labelledby="auth-title">
         <header className={styles.header}>
           <p className={styles.brand}>Lorecraft</p>
-          <h1 className={styles.title} id="auth-title">
+          <h1 className={styles.title} data-route-heading id="auth-title">
             {title}
           </h1>
           <p className={styles.description}>{description}</p>

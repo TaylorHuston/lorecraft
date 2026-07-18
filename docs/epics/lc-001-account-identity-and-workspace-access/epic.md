@@ -2,8 +2,8 @@
 id: LC-001
 status: implemented
 created: 2026-07-12
-modified: 2026-07-17
-last_verified: 2026-07-17
+modified: 2026-07-18
+last_verified: 2026-07-18
 stories:
   - S1
   - S2
@@ -66,7 +66,7 @@ A user can create an account, return through a secure browser session, reach a p
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-17
+Modified: 2026-07-18
 Last verified: 2026-07-17
 
 As a new user, I want to create an account and enter my private workspace, so that I can begin using Lorecraft.
@@ -104,6 +104,12 @@ The system SHALL establish an authenticated browser session after successful acc
 - WHEN account creation succeeds
 - THEN the browser receives a secure session without receiving a reusable bearer token in client-accessible storage
 - AND the user sees the authenticated World workspace.
+
+###### Scenario R2-S2: Private Production Signup
+
+- WHEN a visitor creates the first production account through the private HTTPS origin
+- THEN the same-origin `/api` path establishes an HTTP-only session cookie with the `Secure` attribute
+- AND the authenticated workspace opens without exposing an application listener on the LAN or public Internet.
 
 ##### Requirement R3: Accessible Account Creation Presentation
 
@@ -192,7 +198,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 #### Verification Gaps
 
-- Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
+- `S1/R2-S2` is not implemented or verified yet. It requires the private HTTPS deployment, same-origin production proxy, browser cookie inspection, normal signup flow, and listener inspection.
 
 #### Story Notes
 
@@ -202,7 +208,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-17
+Modified: 2026-07-18
 Last verified: 2026-07-17
 
 As a returning user, I want Lorecraft to recognize or re-authenticate me, so that I can resume my private workspace without unnecessary friction.
@@ -247,6 +253,12 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 - AND the visitor's unfinished input remains available when the server still reports no authenticated session
 - AND a failed background check leaves the draft mounted with a non-destructive retry action.
 
+###### Scenario R2-S4: Restored Production Session Data
+
+- WHEN the production database is restored into an isolated recovery target and the deployed application is connected to that target
+- THEN the production account can sign in through the private HTTPS origin
+- AND a valid restored session remains restorable across a browser refresh.
+
 ##### Requirement R3: Focused Sign-In And Session Recovery
 
 The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with independently controllable password disclosure, actionable feedback, and visible keyboard focus.
@@ -290,6 +302,12 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 - THEN the request is rejected without authenticating the browser
 - AND the visitor receives generic guidance to wait and retry without credential disclosure.
 
+###### Scenario R4-S4: Secure Production Browser Session
+
+- WHEN valid credentials are submitted through the private production HTTPS origin
+- THEN sign-in and subsequent state-changing requests use the same-origin `/api` path with CSRF protection
+- AND the session credential is HTTP-only and `Secure` without a bearer token in browser-accessible storage.
+
 #### Implemented By
 
 | Path                                                                                                         | Role                                                                                                                      | Recheck Trigger                                               |
@@ -326,7 +344,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 #### Verification Gaps
 
-- Production HTTPS verification of the session cookie's `Secure` attribute is explicitly deferred until before production deployment.
+- `S2/R2-S4` and `S2/R4-S4` are not implemented or verified yet. They require an isolated database restore, deployed same-origin sign-in/session restoration, CSRF checks, and production HTTPS cookie/storage inspection.
 
 #### Story Notes
 
@@ -336,7 +354,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 Status: implemented
 Created: 2026-07-12
-Modified: 2026-07-17
+Modified: 2026-07-18
 Last verified: 2026-07-17
 
 As an account holder, I want my workspace protected and my session terminable, so that only I can access my private Lorecraft data.
@@ -372,6 +390,12 @@ The system SHALL deny unauthenticated access to both the workspace UI and protec
 - THEN the client ends its shared authenticated session state
 - AND protected content is replaced by the sign-in journey.
 
+###### Scenario R1-S5: Private Same-Origin Production Reachability
+
+- WHEN an authorized tailnet device opens Lorecraft's private production HTTPS origin
+- THEN browser application and `/api` traffic remain on that origin and protected routes require a Lorecraft session
+- AND the application is unavailable through LAN and public interfaces.
+
 ##### Requirement R2: Logout Invalidation
 
 The system SHALL invalidate the active server-side session when the user signs out.
@@ -393,6 +417,22 @@ The system SHALL invalidate the active server-side session when the user signs o
 - THEN the existing authenticated session remains active
 - AND the client keeps the user in the protected workspace with actionable recovery guidance.
 
+##### Requirement R3: Route Context Across Account And Workspace Navigation
+
+The system SHALL identify each account or workspace destination through its document title and primary page heading while preserving focus during background refresh.
+
+###### Scenario R3-S1: Destination Navigation Or Redirect
+
+- WHEN navigation or an authentication redirect replaces the current account or workspace destination
+- THEN the document title identifies the destination
+- AND focus moves to the destination's primary heading without exposing protected content first.
+
+###### Scenario R3-S2: Background Refresh Preserves Focus
+
+- WHEN session or route data refreshes without changing the current destination
+- THEN the document title remains accurate
+- AND the currently focused control or reading position is not displaced.
+
 #### Implemented By
 
 | Path                                                                                                                                                  | Role                                                                                                   | Recheck Trigger                                          |
@@ -406,6 +446,7 @@ The system SHALL invalidate the active server-side session when the user signs o
 | `apps/frontend/src/auth/authContext.ts`                                                                                                               | Exposes the shared session-ending boundary used by protected feature routes.                           | Recheck when account-owned client session state changes. |
 | `apps/frontend/src/workspace/WorkspacePage.tsx`, `apps/frontend/src/worlds/WorldDetailPage.tsx`, and `apps/frontend/src/adventures/AdventurePage.tsx` | End shared client session state when protected World or Adventure requests report authentication loss. | Recheck when protected feature error handling changes.   |
 | `apps/frontend/src/workspace/WorkspacePage.tsx`                                                                                                       | Presents account identity and logout within the protected workspace.                                   | Recheck when workspace behavior changes.                 |
+| `apps/frontend/vite.config.ts`                                                                                                                        | Keeps browser API traffic on the same origin through the development proxy.                            | Recheck when browser/API deployment topology changes.    |
 
 #### Verified By
 
@@ -420,10 +461,12 @@ The system SHALL invalidate the active server-side session when the user signs o
 | S3/R2-S3                     | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | CSRF and throttle failures preserve the authenticated session while presenting actionable recovery.                                                             | Passing 2026-07-17        |
 | S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                                                                                  | Protected transitions, session restoration, and logout behaved as intended.                                                                                     | user confirmed 2026-07-14 |
 | S3/R1-S3, S3/R2-S1           | User-confirmed desktop/mobile UI walkthrough                                                                                                      | Current protected-session recovery and sign-out presentation are accepted.                                                                                      | user confirmed 2026-07-15 |
+| S3/R3-S1 and S3/R3-S2        | `apps/frontend/src/app/RoutePresentation.test.tsx`                                                                                                | Account/workspace destinations receive stable titles and heading focus only when the route changes.                                                              | Passing 2026-07-18        |
+| S3/R1-S2 supporting same-origin boundary | `apps/frontend/vite.config.test.ts`                                                                                                      | The development browser/API proxy remains same-origin and pinned to the reserved backend target.                                                                 | Passing 2026-07-18        |
 
 #### Verification Gaps
 
-- None.
+- `S3/R1-S5` is not implemented or verified yet. It requires deployed gateway/API routing plus private-overlay, LAN, and public listener checks.
 
 #### Story Notes
 
@@ -455,7 +498,8 @@ The system SHALL invalidate the active server-side session when the user signs o
 
 ### Cross-Story Verification Gaps
 
-- A dedicated Lorecraft Neon test branch and provider smoke check are explicitly deferred until before production deployment; current database-backed evidence uses fresh isolated schemas on the available Neon service.
+- Dedicated Lorecraft production, development, and disposable validation targets are not provisioned or verified yet; current database-backed evidence uses fresh isolated schemas on the available Neon service.
+- Private HTTPS signup/sign-in, `Secure` cookie behavior, same-origin production `/api`, isolated-restore sign-in, and private-only reachability remain unimplemented and unverified deployment obligations.
 
 ## Open Decisions
 

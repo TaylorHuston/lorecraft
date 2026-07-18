@@ -1,5 +1,8 @@
 import { test } from '@japa/runner'
-import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
+import {
+  OpenAICompatibleStoryGenerator,
+  parseRetryAfter,
+} from '#services/story_generation/openai_compatible_story_generator'
 import {
   StoryGenerationError,
   type OpeningStoryInput,
@@ -29,6 +32,15 @@ const openingInput: OpeningStoryInput = {
 }
 
 test.group('OpenAI-compatible story generator', () => {
+  test('normalizes delta-seconds and HTTP-date retry guidance with a hard cap', ({ assert }) => {
+    const now = Date.parse('2026-07-18T12:00:00.000Z')
+    assert.equal(parseRetryAfter('12', now), 12_000)
+    assert.equal(parseRetryAfter('Sat, 18 Jul 2026 12:00:30 GMT', now), 30_000)
+    assert.equal(parseRetryAfter('3600', now), 60_000)
+    assert.isUndefined(parseRetryAfter('not-a-delay', now))
+    assert.isUndefined(parseRetryAfter('-1', now))
+    assert.isUndefined(parseRetryAfter('Sat, 18 Jul 2026 11:59:00 GMT', now))
+  })
   test('returns non-empty opening narration through the provider-neutral contract', async ({
     assert,
   }) => {
@@ -50,7 +62,31 @@ test.group('OpenAI-compatible story generator', () => {
     assert.equal(result.narration, 'Thunder shook the chapel.')
   })
 
-  test('returns exact provider evidence with authorization removed', async ({ assert }) => {
+  test('omits arbitrary provider-controlled finish reason metadata', async ({ assert }) => {
+    const privateValue = 'private-reflected-provider-value-' + 'x'.repeat(500)
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async () =>
+        new Response(
+          JSON.stringify({
+            choices: [{ finish_reason: privateValue, message: { content: 'Safe narration.' } }],
+          }),
+          { status: 200 }
+        ),
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'test-secret',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 100,
+    })
+
+    const result = await generator.generateOpening(openingInput)
+    assert.notProperty(result.response, 'finishReason')
+    assert.notInclude(JSON.stringify(result), privateValue)
+  })
+
+  test('returns bounded metadata without retaining private request or provider prose', async ({
+    assert,
+  }) => {
     const rawResponse = JSON.stringify({
       id: 'completion-1',
       choices: [{ message: { content: 'The bell moved without a hand.' } }],
@@ -141,21 +177,20 @@ test.group('OpenAI-compatible story generator', () => {
         topP: 0.85,
         reasoningEffort: 'none',
       },
-      redactedRequest: {
-        method: 'POST',
-        url: 'https://story.example.test/v1/chat/completions',
-        headers: {
-          'accept': 'application/json',
-          'content-type': 'application/json',
-        },
-        body: expectedBody,
+      request: {
+        byteCount: new TextEncoder().encode(JSON.stringify(expectedBody)).byteLength,
         timeoutMs: 250,
       },
-      rawResponse,
+      response: {
+        byteCount: new TextEncoder().encode(rawResponse).byteLength,
+        statusCode: 200,
+        promptTokens: 201,
+        completionTokens: 9,
+      },
     })
     assert.notInclude(JSON.stringify(result), 'provider-secret-key')
-    assert.notProperty(result.redactedRequest.headers, 'authorization')
-    assert.notProperty(result.redactedRequest.body, 'response_format')
+    assert.notInclude(JSON.stringify(result), 'Mara came seeking her vanished brother')
+    assert.notInclude(JSON.stringify(result), rawResponse)
   })
 
   test('normalizes an empty narration response', async ({ assert }) => {
@@ -176,7 +211,8 @@ test.group('OpenAI-compatible story generator', () => {
       if (!(error instanceof StoryGenerationError)) throw error
       assert.equal(error.code, 'empty_narration')
       assert.equal(error.message, 'Story provider returned empty narration')
-      assert.equal(error.evidence.rawResponse, rawResponse)
+      assert.equal(error.evidence.response.byteCount, rawResponse.length)
+      assert.notInclude(JSON.stringify(error.evidence), rawResponse)
       assert.notInclude(JSON.stringify(error.evidence), 'provider-secret-key')
     }
   })
@@ -206,7 +242,7 @@ test.group('OpenAI-compatible story generator', () => {
       if (!(error instanceof StoryGenerationError)) throw error
       assert.equal(error.code, 'malformed_response')
       assert.equal(error.message, 'Story provider returned truncated narration')
-      assert.equal(error.evidence.rawResponse, rawResponse)
+      assert.equal(error.evidence.response.byteCount, rawResponse.length)
     }
   })
 
@@ -233,7 +269,8 @@ test.group('OpenAI-compatible story generator', () => {
         if (!(error instanceof StoryGenerationError)) throw error
         assert.equal(error.code, 'malformed_response')
         assert.equal(error.message, 'Story provider returned a malformed response')
-        assert.equal(error.evidence.rawResponse, rawResponse)
+        assert.equal(error.evidence.response.byteCount, rawResponse.length)
+        assert.notInclude(JSON.stringify(error.evidence), rawResponse)
       }
     }
   })
@@ -243,7 +280,8 @@ test.group('OpenAI-compatible story generator', () => {
   }) => {
     const rawResponse = JSON.stringify({ error: { message: 'Model is unavailable' } })
     const generator = new OpenAICompatibleStoryGenerator({
-      fetch: async () => new Response(rawResponse, { status: 503 }),
+      fetch: async () =>
+        new Response(rawResponse, { status: 503, headers: { 'retry-after': '120' } }),
       baseUrl: 'https://story.example.test/v1',
       apiKey: 'provider-secret-key',
       model: 'story-model',
@@ -259,7 +297,10 @@ test.group('OpenAI-compatible story generator', () => {
       assert.equal(error.code, 'provider_failure')
       assert.equal(error.message, 'Story provider request failed')
       assert.equal(error.providerStatus, 503)
-      assert.equal(error.evidence.rawResponse, rawResponse)
+      assert.equal(error.evidence.response.statusCode, 503)
+      assert.equal(error.evidence.response.byteCount, rawResponse.length)
+      assert.equal(error.evidence.response.retryAfterMs, 60_000)
+      assert.notInclude(JSON.stringify(error.evidence), 'Model is unavailable')
       assert.notInclude(JSON.stringify(error.evidence), 'provider-secret-key')
     }
   })
@@ -285,7 +326,7 @@ test.group('OpenAI-compatible story generator', () => {
       if (!(error instanceof StoryGenerationError)) throw error
       assert.equal(error.code, 'provider_failure')
       assert.equal(error.message, 'Story provider request failed')
-      assert.isNull(error.evidence.rawResponse)
+      assert.equal(error.evidence.response.byteCount, 0)
       assert.notInclude(JSON.stringify(error), 'provider-secret-key')
       assert.notInclude(JSON.stringify(error.evidence), 'provider-secret-key')
     }
@@ -311,7 +352,7 @@ test.group('OpenAI-compatible story generator', () => {
       if (!(error instanceof StoryGenerationError)) throw error
       assert.equal(error.code, 'malformed_response')
       assert.equal(error.message, 'Story provider response exceeded the allowed size')
-      assert.isNull(error.evidence.rawResponse)
+      assert.equal(error.evidence.response.byteCount, 0)
     }
   })
 
@@ -339,10 +380,70 @@ test.group('OpenAI-compatible story generator', () => {
       if (!(error instanceof StoryGenerationError)) throw error
       assert.equal(error.code, 'timeout')
       assert.equal(error.message, 'Story provider request timed out')
-      assert.isNull(error.evidence.rawResponse)
+      assert.equal(error.evidence.response.byteCount, 0)
       assert.isBelow(Date.now() - startedAt, 250)
       assert.isTrue((requestSignal as AbortSignal | null)?.aborted)
       assert.notInclude(JSON.stringify(error.evidence), 'provider-secret-key')
     }
+  })
+
+  test('propagates operational cancellation without classifying it as provider failure', async ({
+    assert,
+  }) => {
+    const cancellation = new AbortController()
+    let requestSignal: AbortSignal | undefined
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async (_url, init) => {
+        requestSignal = init?.signal ?? undefined
+        return new Promise<Response>((_resolve, reject) => {
+          requestSignal?.addEventListener('abort', () => reject(new Error('aborted')), {
+            once: true,
+          })
+        })
+      },
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'provider-secret-key',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 10_000,
+    })
+
+    const generation = generator.generateOpening(openingInput, cancellation.signal)
+    cancellation.abort()
+
+    try {
+      await generation
+      assert.fail('Expected cancellation')
+    } catch (error) {
+      if (!(error instanceof StoryGenerationError)) throw error
+      assert.equal(error.code, 'cancelled')
+      assert.isTrue(requestSignal?.aborted)
+    }
+  })
+
+  test('does not call the provider when work is already cancelled', async ({ assert }) => {
+    const cancellation = new AbortController()
+    cancellation.abort()
+    let fetchCalls = 0
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async () => {
+        fetchCalls += 1
+        return new Response('{}')
+      },
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'test-secret',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 100,
+    })
+
+    try {
+      await generator.generateOpening(openingInput, cancellation.signal)
+      assert.fail('Expected cancellation')
+    } catch (error) {
+      if (!(error instanceof StoryGenerationError)) throw error
+      assert.equal(error.code, 'cancelled')
+    }
+    assert.equal(fetchCalls, 0)
   })
 })

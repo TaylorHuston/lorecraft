@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-07-17
-- Related change: `docs/changes/closed/2026-07-16-private-adventure-foundation/`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/2026-07-18-audit-hardening/`
 - Related Epics / Stories: `LC-003/S1`, especially `R3`
 
 ## Context
@@ -17,7 +17,9 @@ Define each AI capability through a backend-owned operation interface with struc
 
 Provider adapters own authentication, protocol translation, provider-specific settings, response bounds, response parsing, and failure normalization. The initial adapter uses the OpenAI-compatible `/chat/completions` protocol and server-side environment configuration, but that protocol is an adapter choice rather than Lorecraft's permanent AI contract.
 
-Browser, mobile, and other clients SHALL call Lorecraft application APIs and SHALL NOT call model providers directly. Persisted model-call evidence remains backend-owned and credential-redacted as required by the durable asynchronous work ADR; retention and debug-access policy require a separate decision.
+Browser, mobile, and other clients SHALL call Lorecraft application APIs and SHALL NOT call model providers directly. Before a user submits private World or player context for model processing, the client SHALL explain that Lorecraft sends that context to the configured AI provider.
+
+Normal operation SHALL persist metadata-only model-call evidence. Provider/model identity, bounded settings, timing, status, retry relationships, usage, size/hash data, and normalized failures may be retained; assembled prompts, provider request messages, raw provider responses, credentials, and authorization material SHALL NOT be persisted or logged. Accepted narration remains Adventure-owned product content rather than operational evidence. Any future raw-content capture requires a separate decision covering necessity, consent/disclosure, privileged access, encryption, expiry, purge, and backup behavior.
 
 ## Options Considered
 
@@ -42,14 +44,14 @@ Browser, mobile, and other clients SHALL call Lorecraft application APIs and SHA
 ## Consequences
 
 - Positive: Lorecraft can test with local OpenAI-compatible models and adopt hosted providers without changing Adventure domain services or client contracts.
-- Positive: Prompt assembly, response validation, failure handling, and credential redaction remain centralized and testable.
+- Positive: Prompt assembly, response validation, failure handling, evidence minimization, and credential redaction remain centralized and testable.
 - Negative: Provider-specific features require explicit adapter capabilities rather than leaking through an untyped options object.
 - Negative: Streaming, multimodal input, tool use, or multi-model workflows may require operation-specific interface evolution.
-- Follow-up: Add new AI operations as narrow interfaces; do not turn `StoryGenerator` into a universal provider abstraction. Decide model-call retention and privacy before production use with sensitive World content.
+- Follow-up: Add new AI operations as narrow interfaces; do not turn `StoryGenerator` into a universal provider abstraction. Revisit raw-content capture only when a concrete debugging or regulated-audit need justifies the complete privacy lifecycle.
 
 ## Validation
 
-Unit tests prove deterministic prompt assembly, bounded response handling, normalized timeout/provider/malformed/empty failures, truncation rejection, settings capture, and credential redaction. The supervised Playwright journey exercises the production worker through a fake OpenAI-compatible endpoint, and a live `gemma4:31b` playtest proves that the same adapter works with a local provider without changing the application contract.
+Unit and production-path tests prove deterministic prompt assembly, bounded response handling, normalized failures, abort handling, metadata-only persistence/logging, and credential redaction. The supervised Playwright journey exercises the production worker through a fake OpenAI-compatible endpoint; live-provider playtests may prove portability but must not depend on retaining raw provider bodies.
 
 ## Reconsider When
 

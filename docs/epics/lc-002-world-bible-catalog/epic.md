@@ -2,8 +2,8 @@
 id: LC-002
 status: implemented
 created: 2026-07-14
-modified: 2026-07-17
-last_verified: 2026-07-17
+modified: 2026-07-18
+last_verified: 2026-07-18
 stories:
   - S1
   - S2
@@ -65,7 +65,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 
 Status: implemented
 Created: 2026-07-14
-Modified: 2026-07-17
+Modified: 2026-07-18
 Last verified: 2026-07-17
 
 As a signed-in account holder, I want to browse Worlds available to me, so that I can choose canon to inspect.
@@ -100,6 +100,12 @@ The system SHALL list public Worlds and Worlds privately owned by the current ac
 - THEN the author can see and open that World
 - AND the other account receives neither catalog disclosure nor distinguishable detail about it.
 
+###### Scenario R1-S5: Clean Production Starter Catalog
+
+- WHEN a clean migrated production database receives the creator's account and the explicit starter-World seed
+- THEN the deployed catalog shows exactly one `Stormbound Chapel` World owned by that creator
+- AND no development accounts, Adventures, or other development Worlds appear.
+
 ##### Requirement R2: Coherent World Catalog Presentation
 
 The system SHALL present the World catalog and its loading, failure, empty, populated, retry, and sign-out states through one responsive Lorecraft interface with predictable app-owned action and state grammar.
@@ -129,6 +135,21 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 - AND controls expose distinct keyboard focus, pending, disabled, and pressed states where applicable
 - AND the interface introduces no horizontal overflow at supported desktop or mobile widths.
 
+##### Requirement R3: World Catalog Route Context
+
+The system SHALL identify the World catalog destination through its document title and primary heading without moving focus during background catalog refresh.
+
+###### Scenario R3-S1: Catalog Navigation
+
+- WHEN an account holder navigates to the World catalog
+- THEN the document title identifies the catalog
+- AND focus begins at the catalog heading.
+
+###### Scenario R3-S2: Catalog Refresh
+
+- WHEN catalog data refreshes without a route change
+- THEN the current title and user focus remain stable.
+
 #### Implemented By
 
 | Path                                                                                       | Role                                                                               | Recheck Trigger                                                 |
@@ -153,13 +174,15 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 | S1/R1-S1                     | `apps/frontend/e2e/starter-world.setup.ts` and `apps/frontend/e2e/starter-world.spec.ts`                   | Real seed command and populated catalog path at desktop and mobile sizes.                                   | Passing 2026-07-17   |
 | S1/R1-S1                     | User-confirmed desktop/mobile catalog review                                                                | Visual acceptance of the populated catalog.                                                                 | User confirmed 2026-07-14 |
 | S1/R2-S1, S1/R2-S2, S1/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated, empty, loading, failure, retry, sign-out, responsive, and Storybook accessibility states.        | Passing 2026-07-17   |
+| S1/R3-S1 and S1/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | Catalog navigation receives title/heading focus while background refresh preserves focus. | Passing 2026-07-18 |
 | S1/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts` and `apps/frontend/e2e/account-workspace.spec.ts`                | Catalog navigation, Adventure summaries/actions, no horizontal overflow, and representative mobile touch targets. | Passing 2026-07-17 |
 | S1/R2-S1, S1/R2-S2, S1/R2-S3 | User-confirmed desktop/mobile UI walkthrough                                                                | Current catalog hierarchy, loading, empty, recovery, sign-out, focus, and responsive behavior are accepted. | User confirmed 2026-07-15 |
 | S1/R2-S4                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/workspace/WorkspacePage.stories.tsx`, `apps/frontend/src/comparison/Workbench.stories.tsx`, and `apps/frontend/e2e/account-workspace.spec.ts` | Stable catalog context, distinct pending/disabled/focus treatment, deterministic comparison states, touch targets, and overflow-free desktop/mobile behavior. | Passing 2026-07-17 |
 
 #### Verification Gaps
 
-- The app-owned `S1/R2-S4` evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
+- The previously accepted catalog presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
+- `S1/R1-S5` is not implemented or verified yet. It requires the clean production database, normal production account creation, idempotent starter seed, deployed catalog inspection, and negative inspection for copied development data.
 
 #### Story Notes
 
@@ -171,7 +194,7 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 
 Status: implemented
 Created: 2026-07-14
-Modified: 2026-07-17
+Modified: 2026-07-18
 Last verified: 2026-07-17
 
 As a signed-in account holder, I want to inspect a World's structured Locations and Characters, so that I can understand its established canon.
@@ -201,6 +224,12 @@ The system SHALL return and render an accessible World with deterministic Locati
 - THEN exactly one starter World remains
 - AND each canonical Location and Character remains exactly once with the configured content.
 
+###### Scenario R1-S4: Restored Starter World
+
+- WHEN the production database is restored into an isolated recovery target and the deployed application is connected to it
+- THEN the creator can open the restored `Stormbound Chapel` World
+- AND its canonical Locations and Characters match the production source without duplicate starter content.
+
 ##### Requirement R2: Readable Structured World Detail
 
 The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy using the same app-owned control and state grammar as the catalog.
@@ -224,6 +253,21 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 - THEN each empty collection is communicated explicitly without inventing canonical content
 - AND the World identity and document hierarchy remain stable and readable.
 
+##### Requirement R3: World Detail Route Context
+
+The system SHALL identify an accessible World detail destination through its document title and primary heading without moving focus during background detail refresh.
+
+###### Scenario R3-S1: World Detail Navigation
+
+- WHEN an account holder opens an accessible World
+- THEN the document title identifies the World detail destination
+- AND focus begins at the World heading.
+
+###### Scenario R3-S2: World Detail Refresh Or Unavailable State
+
+- WHEN World detail refreshes in place, focus remains stable
+- AND when navigation resolves to a missing or inaccessible World state, the title and primary heading identify that destination state.
+
 #### Implemented By
 
 | Path                                                                                                                  | Role                                                                                 | Recheck Trigger                                                           |
@@ -243,6 +287,7 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 | ---------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------- |
 | S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts`                              | Structured minimized detail, private-knowledge omission, safe not-found behavior, immutable seed provenance, and exact reconciliation. | Passing 2026-07-17 |
 | S2/R1-S3                     | `apps/backend/tests/database/world_seed_identity_migration.spec.ts`                | Existing rows survive upgrade and starter provenance remains unique.                                                        | Passing 2026-07-15   |
+| S2/R3-S1 and S2/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | World detail and unavailable destinations receive stable route titles/heading focus without refresh focus theft. | Passing 2026-07-18 |
 | S2/R1-S1                     | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Same-World Character Location integrity and upgrade safety.                                                                 | Passing 2026-07-15   |
 | S2/R1-S1, S2/R1-S2           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Detail, disclosure, missing, error, retry, and Adventure-summary presentation states. | Passing 2026-07-17 |
 | S2/R1-S1                     | `apps/frontend/src/worlds/tuyauWorldApi.test.ts`                                   | Minimized detail contract validation and API error mapping.                                                                 | Passing 2026-07-17 |
@@ -255,7 +300,8 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 
 #### Verification Gaps
 
-- The strengthened `S2/R2-S2` app-owned evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
+- The previously accepted World-detail presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
+- `S2/R1-S4` is not implemented or verified yet. It requires an isolated Neon restore and deployed browser inspection of the restored starter World and its structured canon.
 
 #### Story Notes
 
