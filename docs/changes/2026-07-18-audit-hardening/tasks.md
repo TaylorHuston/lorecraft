@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: full release gate passed and public release communication was committed at `d64d5b0c2d27b1d17e78bbdfe54d825d99ed5133`; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: push `develop` and open the production release PR to `main`.
-- Active branch/ref: `develop`; release-note commit `d64d5b0` with this ledger-only reconciliation following it.
+- Last completed action: full release gate passed, `develop` was pushed, and production release PR #2 was opened from `develop` to `main`; local UI remains user confirmed and private production acceptance remains pending.
+- Next action: use `/sdd-pr` to steward PR #2 through hosted CI and image-build review before requesting merge authorization.
+- Active branch/ref: `develop`; initial reconciled PR head `f13fd4f`, with this PR-state reconciliation following it.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -238,7 +238,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: `in_review`; release-gate accessibility remediation is implemented, verified, and awaiting a refreshed independent review
+- Change status: `in_review`; local review and release gate pass, while production PR, deployment, restore, and private-production acceptance remain pending
 - Epic files updated: LC-001/002/003 Requirements, Scenarios, implementation maps, evidence, and honest production gaps are current
 - Story labels/references and Requirement/Scenario IDs current: yes; no duplicate or missing references found
 - Implemented By maps current: yes; deployment/runtime support is mapped to LC-001/LC-003 and database environment behavior to the accepted PostgreSQL ADR
@@ -251,6 +251,6 @@ status: in_review
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
 - Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
-- PR / merge state: no PR required; locally merged `change/audit-hardening` into `develop` at `92895f7`
+- PR / merge state: non-production changes locally merged into `develop`; production release PR #2 is open from `develop` to `main` and is not authorized to merge
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
 - Change moved to `docs/changes/closed/`: no
