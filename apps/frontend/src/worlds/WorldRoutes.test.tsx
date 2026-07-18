@@ -185,6 +185,53 @@ describe('World catalog and detail routes', () => {
     expect(listWorlds).toHaveBeenCalledTimes(2)
   })
 
+  it('LC-002/S1/R2-S4 preserves catalog context while retry is pending', async () => {
+    const user = userEvent.setup()
+    const listWorlds = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('service unavailable'))
+      .mockReturnValueOnce(new Promise(() => undefined))
+
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { listWorlds },
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Worlds could not be loaded. Try again.'
+    )
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
+    expect(screen.getByLabelText('Signed in as member@example.com')).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+
+    const pendingRetry = screen.getByRole('button', { name: 'Trying again…' })
+    expect(pendingRetry).toBeDisabled()
+    expect(pendingRetry).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
+    expect(screen.getByLabelText('Signed in as member@example.com')).toBeVisible()
+  })
+
+  it('LC-002/S1/R2-S4 keeps the catalog visible while named sign-out is pending', async () => {
+    const user = userEvent.setup()
+
+    renderTestApp({
+      route: '/worlds',
+      session: { id: 4, email: 'member@example.com' },
+      api: { signOut: () => new Promise(() => undefined) },
+      worldApi: { listWorlds: async () => [stormboundChapel] },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Sign out' }))
+
+    const pendingSignOut = screen.getByRole('button', { name: 'Signing out…' })
+    expect(pendingSignOut).toBeDisabled()
+    expect(pendingSignOut).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Stormbound Chapel' })).toBeVisible()
+  })
+
   it('LC-001/S3/R1-S4 ends the shared session when the catalog reports unauthorized', async () => {
     const user = userEvent.setup()
     const listWorlds = vi
@@ -216,6 +263,10 @@ describe('World catalog and detail routes', () => {
       worldApi: { getWorld: async () => stormboundDetail },
     })
     expect(await screen.findByRole('heading', { name: 'Stormbound Chapel' })).toBeVisible()
+    const canonDocument = screen.getByRole('article', { name: 'Stormbound Chapel' })
+    expect(canonDocument).toContainElement(screen.getByRole('region', { name: 'Locations' }))
+    expect(canonDocument).toContainElement(screen.getByRole('region', { name: 'Characters' }))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(screen.getByText(stormboundDetail.description)).toBeVisible()
     expect(screen.getByText('Read only')).toBeVisible()
     expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
@@ -266,10 +317,7 @@ describe('World catalog and detail routes', () => {
     expect(adventures).toHaveTextContent('Opening pending')
     expect(adventures).toHaveTextContent('0 turns')
     const resume = screen.getByRole('link', { name: 'Resume Adventure as Elara Vance' })
-    expect(resume).toHaveAttribute(
-      'href',
-      '/adventures/11111111-1111-4111-8111-111111111111'
-    )
+    expect(resume).toHaveAttribute('href', '/adventures/11111111-1111-4111-8111-111111111111')
     expect(resume).toHaveTextContent('Resume')
     expect(screen.getByRole('link', { name: 'New Adventure' })).toHaveAttribute(
       'href',
@@ -333,6 +381,38 @@ describe('World catalog and detail routes', () => {
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Adventures' })).toHaveFocus())
   })
 
+  it('LC-003 keeps World canon stable while an Adventure delete is pending', async () => {
+    const user = userEvent.setup()
+    const adventure = {
+      id: '11111111-1111-4111-8111-111111111111',
+      playerName: 'Elara Vance',
+      status: 'ready' as const,
+      turnCount: 0,
+      lastPlayedAt: '2026-07-16T20:30:00.000Z',
+      route: '/adventures/11111111-1111-4111-8111-111111111111',
+    }
+    const deleteAdventure = vi.fn(() => new Promise<void>(() => undefined))
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => ({ ...stormboundDetail, adventures: [adventure] }) },
+      adventureApi: { deleteAdventure },
+    })
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Delete Adventure for Elara Vance' })
+    )
+    const dialog = screen.getByRole('dialog', { name: "Delete Elara Vance's Adventure?" })
+    await user.click(within(dialog).getByRole('button', { name: 'Delete Adventure' }))
+
+    const pendingDelete = within(dialog).getByRole('button', { name: 'Deleting Adventure…' })
+    expect(pendingDelete).toBeDisabled()
+    expect(pendingDelete).toHaveAttribute('aria-busy', 'true')
+    expect(deleteAdventure).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('heading', { name: 'Locations', hidden: true })).toBeInTheDocument()
+  })
+
   it('LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy', async () => {
     renderTestApp({
       route: '/worlds/stormbound-chapel',
@@ -392,7 +472,11 @@ describe('World catalog and detail routes', () => {
     })
 
     await user.click(await screen.findByRole('button', { name: 'Try again' }))
-    expect(screen.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
+    const pendingRetry = screen.getByRole('button', { name: 'Trying again…' })
+    expect(pendingRetry).toBeDisabled()
+    expect(pendingRetry).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByRole('heading', { name: 'World unavailable' })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
 
     await act(async () => resolveRetry(stormboundDetail))
 

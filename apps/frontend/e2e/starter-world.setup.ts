@@ -29,7 +29,7 @@ test('LC-002/S2/R1-S3 installs the starter World through the documented command'
     await page.goto('/sign-up')
     await page.getByLabel('Email').fill(authorEmail)
     await page.getByLabel('Password', { exact: true }).fill(password)
-    await page.getByLabel('Confirm password').fill(password)
+    await page.getByLabel('Confirm password', { exact: true }).fill(password)
     await page.getByRole('button', { name: 'Create account' }).click()
   }
 

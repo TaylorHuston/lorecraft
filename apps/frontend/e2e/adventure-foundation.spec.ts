@@ -30,7 +30,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
   await page.goto('/sign-up')
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password', { exact: true }).fill(password)
-  await page.getByLabel('Confirm password').fill(password)
+  await page.getByLabel('Confirm password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Create account' }).click()
 
   try {
@@ -80,7 +80,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await outsiderPage.goto('/sign-up')
     await outsiderPage.getByLabel('Email').fill(`outsider-${testInfo.project.name}-${identity}@example.com`)
     await outsiderPage.getByLabel('Password', { exact: true }).fill(password)
-    await outsiderPage.getByLabel('Confirm password').fill(password)
+    await outsiderPage.getByLabel('Confirm password', { exact: true }).fill(password)
     await outsiderPage.getByRole('button', { name: 'Create account' }).click()
     await expect(outsiderPage).toHaveURL(/\/worlds$/)
     await outsiderPage.goto(adventureUrl)

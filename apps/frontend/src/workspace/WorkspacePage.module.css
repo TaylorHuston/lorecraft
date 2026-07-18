@@ -48,34 +48,8 @@
   white-space: nowrap;
 }
 
-.signOut,
-.retryWorlds {
-  min-height: var(--control-touch);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--control-boundary);
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 650;
-  cursor: pointer;
-  transition:
-    color var(--motion-fast) ease,
-    border-color var(--motion-fast) ease,
-    background var(--motion-fast) ease;
-}
-
-.signOut:hover:not(:disabled),
-.retryWorlds:hover:not(:disabled) {
-  border-color: var(--control-boundary);
-  background: var(--surface-interactive);
-  color: var(--text-primary);
-}
-
-.signOut:disabled,
-.retryWorlds:disabled {
-  cursor: wait;
-  opacity: 0.6;
+.signOut {
+  white-space: nowrap;
 }
 
 .content {
@@ -132,8 +106,6 @@
 
 .retryWorlds {
   margin-top: var(--space-4);
-  background: var(--surface-interactive);
-  color: var(--text-primary);
 }
 
 .catalog {
@@ -302,8 +274,7 @@
   gap: var(--space-1);
 }
 
-.resumeAdventure,
-.deleteAdventure {
+.resumeAdventure {
   display: inline-flex;
   min-width: var(--control-touch);
   min-height: var(--control-touch);
@@ -329,11 +300,7 @@
 }
 
 .deleteAdventure {
-  color: var(--danger);
-}
-
-.deleteAdventure:hover {
-  background: var(--danger-muted);
+  font-size: 0.75rem;
 }
 
 .noAdventures {

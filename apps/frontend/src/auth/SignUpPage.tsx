@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Button } from '../components/Button/Button'
+import { TextField } from '../components/TextField/TextField'
 import { sessionQueryKey, useAuth } from './authContext'
 import { AuthApiError, type SignUpInput } from './authApi'
 import formStyles from './AuthForm.module.css'
 import { AuthLayout } from './AuthLayout'
+import { PasswordField } from './PasswordField'
 
 type SignUpField = 'email' | 'password' | 'passwordConfirmation'
 type SignUpErrors = Partial<Record<SignUpField, string>>
@@ -127,100 +130,50 @@ export function SignUpPage() {
             {formError}
           </p>
         ) : null}
-        <div className={formStyles.field}>
-          <label className={formStyles.label} htmlFor="signup-email">
-            Email
-          </label>
-          <input
-            className={formStyles.input}
-            ref={emailRef}
-            id="signup-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={
-              errors.email ? 'signup-email-help signup-email-error' : 'signup-email-help'
-            }
-          />
-          <p className={formStyles.help} id="signup-email-help">
-            Email verification and recovery are not enabled yet. For local testing, any
-            valid-looking email address will work.
-          </p>
-          {errors.email ? (
-            <p
-              className={formStyles.fieldError}
-              id="signup-email-error"
-              role="alert"
-              aria-atomic="true"
-            >
-              {errors.email}
-            </p>
-          ) : null}
-        </div>
+        <TextField
+          ref={emailRef}
+          id="signup-email"
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          error={errors.email}
+          pending={signUp.isPending}
+          supportingText="Email verification and recovery are not enabled yet. For local testing, any valid-looking email address will work."
+        />
 
-        <div className={formStyles.field}>
-          <label className={formStyles.label} htmlFor="signup-password">
-            Password
-          </label>
-          <input
-            className={formStyles.input}
-            ref={passwordRef}
-            id="signup-password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby={errors.password ? 'signup-password-error' : 'signup-password-help'}
-          />
-          {errors.password ? (
-            <p
-              className={formStyles.fieldError}
-              id="signup-password-error"
-              role="alert"
-              aria-atomic="true"
-            >
-              {errors.password}
-            </p>
-          ) : (
-            <p className={formStyles.help} id="signup-password-help">
-              12–128 characters.
-            </p>
-          )}
-        </div>
+        <PasswordField
+          ref={passwordRef}
+          id="signup-password"
+          label="Password"
+          name="password"
+          autoComplete="new-password"
+          required
+          error={errors.password}
+          pending={signUp.isPending}
+          supportingText={errors.password ? undefined : '12–128 characters.'}
+        />
 
-        <div className={formStyles.field}>
-          <label className={formStyles.label} htmlFor="signup-confirmation">
-            Confirm password
-          </label>
-          <input
-            className={formStyles.input}
-            ref={confirmationRef}
-            id="signup-confirmation"
-            name="passwordConfirmation"
-            type="password"
-            autoComplete="new-password"
-            required
-            aria-invalid={Boolean(errors.passwordConfirmation)}
-            aria-describedby={errors.passwordConfirmation ? 'signup-confirmation-error' : undefined}
-          />
-          {errors.passwordConfirmation ? (
-            <p
-              className={formStyles.fieldError}
-              id="signup-confirmation-error"
-              role="alert"
-              aria-atomic="true"
-            >
-              {errors.passwordConfirmation}
-            </p>
-          ) : null}
-        </div>
+        <PasswordField
+          ref={confirmationRef}
+          id="signup-confirmation"
+          label="Confirm password"
+          name="passwordConfirmation"
+          autoComplete="new-password"
+          required
+          error={errors.passwordConfirmation}
+          pending={signUp.isPending}
+        />
 
-        <button className={formStyles.submit} type="submit" disabled={signUp.isPending}>
-          {signUp.isPending ? 'Creating account…' : 'Create account'}
-        </button>
+        <Button
+          pending={signUp.isPending}
+          pendingLabel="Creating account…"
+          size="touch"
+          type="submit"
+        >
+          Create account
+        </Button>
       </form>
     </AuthLayout>
   )

@@ -7,8 +7,9 @@ import {
   type AdventureApi,
   type AdventureSummary,
 } from '../adventures/adventureApi'
-import { ConfirmDialog } from '../adventures/ConfirmDialog'
 import { useAuth } from '../auth/authContext'
+import { Button } from '../components/Button/Button'
+import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { WorldApiError, worldQueryKeys, type WorldApi, type WorldDetail } from './worldApi'
 import styles from './WorldDetailPage.module.css'
 
@@ -134,14 +135,15 @@ export function WorldDetailPage({
           </div>
           <div className={styles.stateActions}>
             {!missing ? (
-              <button
-                className={styles.retry}
-                type="button"
-                disabled={isRetrying}
+              <Button
                 onClick={() => void retry()}
+                pending={isRetrying}
+                pendingLabel="Trying again…"
+                size="touch"
+                variant="secondary"
               >
-                {isRetrying ? 'Trying again…' : 'Try again'}
-              </button>
+                Try again
+              </Button>
             ) : null}
           </div>
         </section>
@@ -166,15 +168,17 @@ export function WorldDetailPage({
   return (
     <main className={styles.shell}>
       <DetailHeader readOnly={worldData.readOnly} />
-      <article className={styles.content}>
+      <article className={styles.content} aria-labelledby="world-title">
         <header className={styles.worldIdentity}>
           <p className={styles.eyebrow}>{worldData.visibility} World</p>
-          <h1>{worldData.name}</h1>
+          <h1 id="world-title">{worldData.name}</h1>
           <p className={styles.lede}>{worldData.description}</p>
         </header>
         <section aria-labelledby="adventures-title">
           <div className={styles.sectionHeading}>
-            <h2 ref={adventuresHeadingRef} id="adventures-title" tabIndex={-1}>Adventures</h2>
+            <h2 ref={adventuresHeadingRef} id="adventures-title" tabIndex={-1}>
+              Adventures
+            </h2>
             {worldData.playability.available ? (
               <Link className={styles.newAdventure} to={`/worlds/${worldData.slug}/adventures/new`}>
                 New Adventure
@@ -205,17 +209,18 @@ export function WorldDetailPage({
                     >
                       Resume
                     </Link>
-                    <button
+                    <Button
                       className={styles.deleteAdventure}
-                      type="button"
                       aria-label={`Delete Adventure for ${adventure.playerName}`}
                       onClick={() => {
                         setDeleteError(null)
                         setDeleteTarget(adventure)
                       }}
+                      size="touch"
+                      variant="destructive"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </article>
               ))}
@@ -272,6 +277,7 @@ export function WorldDetailPage({
       </article>
       {deleteTarget ? (
         <ConfirmDialog
+          open={true}
           title={`Delete ${deleteTarget.playerName}'s Adventure?`}
           confirmLabel="Delete Adventure"
           pendingLabel="Deleting Adventure…"
@@ -283,7 +289,9 @@ export function WorldDetailPage({
           }}
           onConfirm={() => deleteAdventure.mutate(deleteTarget.id)}
         >
-          <p>This permanently removes this Adventure and its generated story. The World is unchanged.</p>
+          <p>
+            This permanently removes this Adventure and its generated story. The World is unchanged.
+          </p>
         </ConfirmDialog>
       ) : null}
     </main>

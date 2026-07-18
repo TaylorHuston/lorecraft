@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Settings, X } from 'lucide-react'
+import { ArrowLeft, Settings } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
+import { Button } from '../components/Button/Button'
+import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
+import { Dialog } from '../components/Dialog/Dialog'
+import { IconButton } from '../components/IconButton/IconButton'
 import { worldQueryKeys } from '../worlds/worldApi'
 import { AdventureWorkbench } from './AdventureWorkbench'
-import { ConfirmDialog } from './ConfirmDialog'
-import { ModalDialog } from './ModalDialog'
 import {
   AdventureApiError,
   adventureQueryKeys,
@@ -16,9 +18,7 @@ import {
 import styles from './AdventurePage.module.css'
 
 function isOpeningActive(adventure: AdventureDetail | undefined) {
-  return (
-    adventure?.status === 'opening_pending' || adventure?.status === 'opening_processing'
-  )
+  return adventure?.status === 'opening_pending' || adventure?.status === 'opening_processing'
 }
 
 export function AdventurePage({
@@ -31,17 +31,17 @@ export function AdventurePage({
   const { id = '' } = useParams()
   const { account, endSession } = useAuth()
   const queryClient = useQueryClient()
-  const settingsCloseRef = useRef<HTMLButtonElement>(null)
+  const settingsTriggerRef = useRef<HTMLButtonElement>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [resetOpen, setResetOpen] = useState(false)
   const [resetError, setResetError] = useState<string | null>(null)
+  const [retryingLoad, setRetryingLoad] = useState(false)
   const queryKey = adventureQueryKeys.detail(account?.id ?? 0, id)
   const adventure = useQuery({
     queryKey,
     queryFn: () => adventureApi.getAdventure(id),
     enabled: account !== null,
-    refetchInterval: (query) =>
-      isOpeningActive(query.state.data) ? pollIntervalMs : false,
+    refetchInterval: (query) => (isOpeningActive(query.state.data) ? pollIntervalMs : false),
   })
   const retry = useMutation({
     mutationFn: () => adventureApi.retryOpening(id),
@@ -70,6 +70,7 @@ export function AdventurePage({
         })
       }
       setResetOpen(false)
+      setSettingsOpen(false)
       setResetError(null)
     },
     onError: (error) => {
@@ -88,7 +89,7 @@ export function AdventurePage({
     }
   }, [adventure.error, endSession, reset.error, retry.error])
 
-  if (adventure.isPending) {
+  if (adventure.isPending && !retryingLoad) {
     return (
       <main className={styles.stateShell} aria-busy="true">
         <div role="status" aria-live="polite">
@@ -114,7 +115,19 @@ export function AdventurePage({
               ? 'This Adventure does not exist or is not available to this account.'
               : 'Lorecraft could not load this Adventure. Try again.'}
           </p>
-          {!missing ? <button type="button" onClick={() => void adventure.refetch()}>Try again</button> : null}
+          {!missing ? (
+            <Button
+              onClick={() => {
+                setRetryingLoad(true)
+                void adventure.refetch().finally(() => setRetryingLoad(false))
+              }}
+              pending={retryingLoad}
+              pendingLabel="Trying again…"
+              size="touch"
+            >
+              Try again
+            </Button>
+          ) : null}
         </div>
       </main>
     )
@@ -140,15 +153,14 @@ export function AdventurePage({
             <span title={adventure.data.sourceWorld.name}>{adventure.data.sourceWorld.name}</span>
           </div>
         </div>
-        <button
+        <IconButton
           className={styles.settingsButton}
-          type="button"
-          aria-label="Adventure settings"
-          title="Adventure settings"
+          label="Adventure settings"
           onClick={() => setSettingsOpen(true)}
+          ref={settingsTriggerRef}
         >
           <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
-        </button>
+        </IconButton>
       </header>
       <AdventureWorkbench
         adventure={adventure.data}
@@ -157,57 +169,51 @@ export function AdventurePage({
         onRetry={() => retry.mutate()}
       />
       {settingsOpen ? (
-        <ModalDialog
+        <Dialog
+          closeLabel="Close Adventure settings"
+          open={settingsOpen}
           title="Adventure settings"
-          onClose={() => setSettingsOpen(false)}
-          initialFocusRef={settingsCloseRef}
+          onOpenChange={setSettingsOpen}
         >
-          <button
-            ref={settingsCloseRef}
-            className={styles.settingsClose}
-            type="button"
-            aria-label="Close Adventure settings"
-            title="Close"
-            onClick={() => setSettingsOpen(false)}
-          >
-            <X aria-hidden="true" size={18} strokeWidth={1.8} />
-          </button>
           <div className={styles.settingsContent}>
-            <button
+            <Button
               className={styles.resetAction}
-              type="button"
               disabled={isOpeningActive(adventure.data)}
               aria-describedby={isOpeningActive(adventure.data) ? 'reset-unavailable' : undefined}
               onClick={() => {
                 setResetError(null)
                 setSettingsOpen(false)
-                setResetOpen(true)
+                window.setTimeout(() => setResetOpen(true), 0)
               }}
+              size="touch"
+              variant="destructive"
             >
               Reset Adventure
-            </button>
+            </Button>
             {isOpeningActive(adventure.data) ? (
               <p id="reset-unavailable">Reset is unavailable while the opening is active.</p>
             ) : null}
           </div>
-        </ModalDialog>
+        </Dialog>
       ) : null}
       {resetOpen ? (
         <ConfirmDialog
-          title="Reset Adventure?"
           confirmLabel="Reset Adventure"
-          pendingLabel="Resetting Adventure…"
-          pending={reset.isPending}
           error={resetError}
+          finalFocusRef={settingsTriggerRef}
           onCancel={() => {
             setResetOpen(false)
             setResetError(null)
           }}
           onConfirm={() => reset.mutate()}
+          open={resetOpen}
+          pending={reset.isPending}
+          pendingLabel="Resetting Adventure…"
+          title="Reset Adventure?"
         >
           <p>
-            This replaces the current opening and runtime state while preserving the original
-            player profile and frozen World source.
+            This replaces the current opening and runtime state while preserving the original player
+            profile and frozen World source.
           </p>
         </ConfirmDialog>
       ) : null}

@@ -12,6 +12,12 @@
   overflow: auto;
 }
 
+.sideRegion:focus-visible,
+.storyContent:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
 .sideRegion {
   padding: var(--space-5);
   background: var(--surface);
@@ -153,7 +159,6 @@
   margin-top: var(--space-5);
 }
 
-.stateActions button,
 .stateActions a {
   display: inline-flex;
   min-height: var(--control-touch);
@@ -163,17 +168,6 @@
   border-radius: var(--radius-control);
   font-size: 0.875rem;
   font-weight: 700;
-}
-
-.stateActions button {
-  border: 1px solid var(--action);
-  background: var(--action);
-  color: var(--action-foreground);
-}
-
-.stateActions button:disabled {
-  cursor: wait;
-  opacity: 0.65;
 }
 
 .stateActions a {
@@ -244,6 +238,7 @@
   border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--text-muted);
+  border-radius: 0;
 }
 
 .mobileTabs button[aria-selected='true'] {

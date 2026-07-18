@@ -17,3 +17,4 @@ The format is based on Keep a Changelog 1.1.0.
 ### Changed
 
 - Account access and World-browsing screens now share a consistent, responsive creator-focused interface.
+- Password visibility, World recovery actions, Adventure forms, and destructive confirmations now use consistent accessible controls with clear pending and error feedback.

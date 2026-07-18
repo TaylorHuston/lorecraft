@@ -102,7 +102,7 @@ The system SHALL list public Worlds and Worlds privately owned by the current ac
 
 ##### Requirement R2: Coherent World Catalog Presentation
 
-The system SHALL present the World catalog and its loading, failure, empty, populated, retry, and sign-out states through one responsive Lorecraft interface.
+The system SHALL present the World catalog and its loading, failure, empty, populated, retry, and sign-out states through one responsive Lorecraft interface with predictable app-owned action and state grammar.
 
 ###### Scenario R2-S1: Populated Catalog
 
@@ -122,6 +122,13 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 - THEN the interface presents an actionable error without hiding available context
 - AND any retry action has visible focus and a touch-accessible target.
 
+###### Scenario R2-S4: Preserve Catalog Context Across States And Actions
+
+- WHEN the catalog transitions among loading, failure, empty, and populated states or the user invokes World navigation or retry
+- THEN available World identity and page context remain stable
+- AND controls expose distinct keyboard focus, pending, disabled, and pressed states where applicable
+- AND the interface introduces no horizontal overflow at supported desktop or mobile widths.
+
 #### Implemented By
 
 | Path                                                                                       | Role                                                                               | Recheck Trigger                                                 |
@@ -133,6 +140,8 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 | `apps/frontend/src/worlds/worldApi.ts` and `apps/frontend/src/worlds/tuyauWorldApi.ts`     | Define and implement the validated typed client boundary.                          | Recheck when World DTO fields or API error semantics change.    |
 | `apps/frontend/src/auth/accountQueryKeys.ts` and `apps/frontend/src/auth/AuthProvider.tsx` | Scope account-owned data and clear it when the session changes.                    | Recheck when session or account cache ownership changes.        |
 | `apps/frontend/src/adventures/NewAdventurePage.tsx` and `apps/frontend/src/adventures/adventureApi.ts` | Add LC-003-owned Adventure creation behavior to the shared World workflow. | Recheck when Adventure launch or World playability changes. |
+| `apps/frontend/src/components/Button/Button.tsx` and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx` | Provide the app-owned action, pending, and confirmation grammar used on World surfaces. | Recheck when shared control or confirmation behavior changes. |
+| `apps/frontend/src/comparison/Workbench.stories.tsx` and `apps/frontend/src/comparison/Workbench.stories.module.css` | Expose deterministic, production-height catalog, empty, error, desktop, and mobile comparison fixtures without backend dependencies. | Recheck when the comparison protocol or representative World states change. |
 
 #### Verified By
 
@@ -146,10 +155,11 @@ The system SHALL present the World catalog and its loading, failure, empty, popu
 | S1/R2-S1, S1/R2-S2, S1/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated, empty, loading, failure, retry, sign-out, responsive, and Storybook accessibility states.        | Passing 2026-07-17   |
 | S1/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts` and `apps/frontend/e2e/account-workspace.spec.ts`                | Catalog navigation, Adventure summaries/actions, no horizontal overflow, and representative mobile touch targets. | Passing 2026-07-17 |
 | S1/R2-S1, S1/R2-S2, S1/R2-S3 | User-confirmed desktop/mobile UI walkthrough                                                                | Current catalog hierarchy, loading, empty, recovery, sign-out, focus, and responsive behavior are accepted. | User confirmed 2026-07-15 |
+| S1/R2-S4                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/workspace/WorkspacePage.stories.tsx`, `apps/frontend/src/comparison/Workbench.stories.tsx`, and `apps/frontend/e2e/account-workspace.spec.ts` | Stable catalog context, distinct pending/disabled/focus treatment, deterministic comparison states, touch targets, and overflow-free desktop/mobile behavior. | Passing 2026-07-17 |
 
 #### Verification Gaps
 
-- None.
+- The app-owned `S1/R2-S4` evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
 
 #### Story Notes
 
@@ -193,7 +203,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 ##### Requirement R2: Readable Structured World Detail
 
-The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy.
+The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy using the same app-owned control and state grammar as the catalog.
 
 ###### Scenario R2-S1: Structured Detail At Supported Viewports
 
@@ -205,7 +215,8 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 
 - WHEN World detail is missing, loading, or temporarily unavailable
 - THEN the state is clearly distinguished from loaded canon
-- AND available retry or return navigation remains keyboard and touch accessible.
+- AND available retry or return navigation is clearly named and remains keyboard and touch accessible
+- AND pending or disabled behavior is exposed when applicable through the same app-owned control grammar as the catalog.
 
 ###### Scenario R2-S3: Empty Structured Collections
 
@@ -224,6 +235,7 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 | `apps/backend/app/services/world_catalog_service.ts`                                                                  | Loads deterministic structured detail without account data.                          | Recheck when detail fields or authorization rules change.                 |
 | `apps/frontend/src/worlds/WorldDetailPage.tsx`                                                                        | Presents minimized read-only Locations and Character fields plus LC-003-owned Adventure actions and summaries. | Recheck when detail presentation, disclosure, or shared Adventure integration changes. |
 | `apps/frontend/src/worlds/WorldDetailPage.module.css` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Define and expose responsive loaded, empty-collection, missing, and recovery states. | Recheck when detail presentation changes. |
+| `apps/frontend/src/components/Button/Button.tsx` and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx` | Provide consistent retry, pending, and destructive confirmation behavior on the World detail surface. | Recheck when shared World action behavior changes. |
 
 #### Verified By
 
@@ -239,10 +251,11 @@ The system SHALL present World metadata, Locations, Characters, navigation, and 
 | S2/R2-S1, S2/R2-S2, S2/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Responsive structured detail, fixture-based empty collections, missing/unavailable/retry states, Adventure summaries, and accessibility. | Passing 2026-07-17 |
 | S2/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts`                                          | Loaded detail, Adventure actions, and return navigation remain readable, overflow-free, and touch accessible.                | Passing 2026-07-17 |
 | S2/R2-S1, S2/R2-S2, S2/R2-S3 | User-confirmed desktop/mobile UI walkthrough                                       | Current structured detail hierarchy, empty collections, recovery states, focus, and responsive behavior are accepted.       | User confirmed 2026-07-15 |
+| S2/R2-S2                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`, and `apps/frontend/e2e/starter-world.spec.ts` | Clearly named recovery/navigation, consistent pending control grammar, loaded-canon distinction, touch access, and overflow-free desktop/mobile behavior. | Passing 2026-07-17 |
 
 #### Verification Gaps
 
-- None.
+- The strengthened `S2/R2-S2` app-owned evidence and cross-application UI Foundations comparison capture are complete. User confirmation remains Change-level closeout work.
 
 #### Story Notes
 

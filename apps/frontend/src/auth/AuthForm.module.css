@@ -3,63 +3,8 @@
   gap: var(--space-5);
 }
 
-.field {
-  display: grid;
-  min-width: 0;
-  gap: var(--space-2);
-}
-
-.label {
-  color: var(--text-primary);
-  font-size: 0.8125rem;
-  font-weight: 650;
-}
-
-.input {
-  width: 100%;
-  min-height: var(--control-touch);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--control-boundary);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--text-primary);
-  caret-color: var(--action);
-  transition:
-    border-color var(--motion-fast) ease,
-    background var(--motion-fast) ease;
-}
-
-.input:hover {
-  border-color: var(--action-hover);
-}
-
-.input:focus-visible {
-  border-color: var(--focus-ring);
-  background: var(--surface-raised);
-}
-
-.input[aria-invalid='true'] {
-  border-color: var(--danger);
-}
-
-.help,
-.fieldError,
 .formError {
   overflow-wrap: anywhere;
-}
-
-.help {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-.fieldError {
-  margin: 0;
-  color: var(--danger);
-  font-size: 0.8125rem;
-  line-height: 1.5;
 }
 
 .formError {
@@ -73,28 +18,6 @@
   line-height: 1.5;
 }
 
-.submit {
-  min-height: var(--control-touch);
-  margin-top: var(--space-1);
-  padding: 0 var(--space-4);
-  border: 1px solid var(--action);
-  border-radius: var(--radius-control);
-  background: var(--action);
-  color: var(--action-foreground);
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background var(--motion-fast) ease,
-    border-color var(--motion-fast) ease;
-}
-
-.submit:hover:not(:disabled) {
-  border-color: var(--action-hover);
-  background: var(--action-hover);
-}
-
-.submit:disabled {
-  cursor: wait;
-  opacity: 0.62;
+.form .signInButton {
+  color: #fff;
 }

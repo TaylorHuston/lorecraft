@@ -98,6 +98,7 @@ export const Populated: Story = {
     const resume = canvas.getByRole('link', { name: 'Resume Adventure as Mara Venn' })
     await expect(resume).toBeVisible()
     await expect(resume).toHaveTextContent('Resume')
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument()
     await expect(canvas.getByLabelText('Signed in as keeper@lorecraft.test')).toBeVisible()
   },
 }
@@ -171,7 +172,10 @@ export const RetryPending: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await userEvent.click(await canvas.findByRole('button', { name: 'Try again' }))
-    await expect(canvas.getByRole('button', { name: 'Trying again…' })).toBeDisabled()
+    const pendingRetry = canvas.getByRole('button', { name: 'Trying again…' })
+    await expect(pendingRetry).toBeDisabled()
+    await expect(pendingRetry).toHaveAttribute('aria-busy', 'true')
+    await expect(canvas.getByRole('heading', { name: 'Worlds' })).toBeVisible()
   },
 }
 
@@ -189,7 +193,12 @@ export const SignOutPending: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await userEvent.click(await canvas.findByRole('button', { name: 'Sign out' }))
-    await expect(canvas.getByRole('button', { name: 'Signing out…' })).toBeDisabled()
+    const pendingSignOut = canvas.getByRole('button', { name: 'Signing out…' })
+    await expect(pendingSignOut).toBeDisabled()
+    await expect(pendingSignOut).toHaveAttribute('aria-busy', 'true')
+    await expect(
+      canvas.findByRole('heading', { name: 'No Worlds available' })
+    ).resolves.toBeVisible()
   },
 }
 

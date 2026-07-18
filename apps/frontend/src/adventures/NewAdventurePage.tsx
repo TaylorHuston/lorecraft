@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
+import { Button } from '../components/Button/Button'
+import { Textarea } from '../components/Textarea/Textarea'
+import { TextField } from '../components/TextField/TextField'
 import { WorldApiError, worldQueryKeys, type WorldApi } from '../worlds/worldApi'
 import {
   AdventureApiError,
@@ -116,7 +119,9 @@ export function NewAdventurePage({
   if (world.isPending) {
     return (
       <main className={styles.shell} aria-busy="true">
-        <p role="status" aria-live="polite">Loading Adventure setup…</p>
+        <p role="status" aria-live="polite">
+          Loading Adventure setup…
+        </p>
       </main>
     )
   }
@@ -154,61 +159,66 @@ export function NewAdventurePage({
             <Link to={returnRoute}>Return to World</Link>
           </section>
         ) : (
-          <form className={styles.form} onSubmit={(event) => void submit(event)} noValidate>
-            {formError ? <p className={styles.formError} role="alert">{formError}</p> : null}
-            <div className={styles.field}>
-              <label htmlFor="player-name">Player name <span>(required)</span></label>
-              <input
-                ref={nameRef}
-                id="player-name"
-                name="playerName"
-                required
-                autoComplete="off"
-                aria-invalid={Boolean(fieldErrors['player.name'])}
-                aria-describedby={fieldErrors['player.name'] ? 'player-name-error' : undefined}
-              />
-              {fieldErrors['player.name'] ? (
-                <p className={styles.fieldError} id="player-name-error">{fieldErrors['player.name']}</p>
-              ) : null}
-            </div>
-            <div className={styles.field}>
-              <label htmlFor="player-description">Physical description <span>(optional)</span></label>
-              <textarea
-                ref={physicalDescriptionRef}
-                id="player-description"
-                name="physicalDescription"
-                rows={4}
-                aria-invalid={Boolean(fieldErrors['player.physicalDescription'])}
-                aria-describedby={
-                  fieldErrors['player.physicalDescription'] ? 'player-description-error' : undefined
-                }
-              />
-              {fieldErrors['player.physicalDescription'] ? (
-                <p className={styles.fieldError} id="player-description-error" role="alert">
-                  {fieldErrors['player.physicalDescription']}
-                </p>
-              ) : null}
-            </div>
-            <div className={styles.field}>
-              <label htmlFor="player-backstory">Backstory <span>(optional)</span></label>
-              <textarea
-                ref={backstoryRef}
-                id="player-backstory"
-                name="backstory"
-                rows={5}
-                aria-invalid={Boolean(fieldErrors['player.backstory'])}
-                aria-describedby={fieldErrors['player.backstory'] ? 'player-backstory-error' : undefined}
-              />
-              {fieldErrors['player.backstory'] ? (
-                <p className={styles.fieldError} id="player-backstory-error" role="alert">
-                  {fieldErrors['player.backstory']}
-                </p>
-              ) : null}
-            </div>
+          <form
+            aria-busy={create.isPending}
+            className={styles.form}
+            onSubmit={(event) => void submit(event)}
+            noValidate
+          >
+            {formError ? (
+              <p className={styles.formError} role="alert">
+                {formError}
+              </p>
+            ) : null}
+            <TextField
+              ref={nameRef}
+              error={fieldErrors['player.name']}
+              label={
+                <>
+                  Player name <span>(required)</span>
+                </>
+              }
+              id="player-name"
+              name="playerName"
+              pending={create.isPending}
+              required
+              autoComplete="off"
+            />
+            <Textarea
+              ref={physicalDescriptionRef}
+              error={fieldErrors['player.physicalDescription']}
+              label={
+                <>
+                  Physical description <span>(optional)</span>
+                </>
+              }
+              id="player-description"
+              name="physicalDescription"
+              pending={create.isPending}
+              rows={4}
+            />
+            <Textarea
+              ref={backstoryRef}
+              error={fieldErrors['player.backstory']}
+              label={
+                <>
+                  Backstory <span>(optional)</span>
+                </>
+              }
+              id="player-backstory"
+              name="backstory"
+              pending={create.isPending}
+              rows={5}
+            />
             <div className={styles.actions}>
-              <button type="submit" disabled={create.isPending}>
-                {create.isPending ? 'Starting Adventure…' : 'Start Adventure'}
-              </button>
+              <Button
+                pending={create.isPending}
+                pendingLabel="Starting Adventure…"
+                size="touch"
+                type="submit"
+              >
+                Start Adventure
+              </Button>
               <Link to={returnRoute}>Cancel</Link>
             </div>
           </form>

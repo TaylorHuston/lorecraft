@@ -15,7 +15,7 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await expectMobileTouchTarget(page.getByRole('button', { name: 'Create account' }), testInfo)
   await page.getByLabel('Email').fill('not-an-email')
   await page.getByLabel('Password', { exact: true }).fill('short')
-  await page.getByLabel('Confirm password').fill('different')
+  await page.getByLabel('Confirm password', { exact: true }).fill('different')
   await page.getByRole('button', { name: 'Create account' }).click()
 
   await expect(page.getByText('Enter a valid email address.')).toBeVisible()
@@ -23,12 +23,22 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await expect(page.getByText('Passwords must match.')).toBeVisible()
   await expect(page.getByLabel('Email')).toHaveValue('not-an-email')
   await expect(page.getByLabel('Password', { exact: true })).toHaveValue('short')
-  await expect(page.getByLabel('Confirm password')).toHaveValue('different')
+  await expect(page.getByLabel('Confirm password', { exact: true })).toHaveValue('different')
+  await page.getByRole('button', { name: 'Show Password' }).click()
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'text')
+  await expect(page.getByLabel('Confirm password', { exact: true })).toHaveAttribute(
+    'type',
+    'password'
+  )
+  await page.getByRole('button', { name: 'Show Confirm password' }).click()
+  await expect(page.getByLabel('Confirm password', { exact: true })).toHaveAttribute('type', 'text')
+  await page.getByRole('button', { name: 'Hide Password' }).click()
+  await page.getByRole('button', { name: 'Hide Confirm password' }).click()
   await expectNoHorizontalOverflow(page)
 
   await page.getByLabel('Email').fill(` ${email.toUpperCase()} `)
   await page.getByLabel('Password', { exact: true }).fill(password)
-  await page.getByLabel('Confirm password').fill(password)
+  await page.getByLabel('Confirm password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Create account' }).click()
 
   await expect(page).toHaveURL(/\/worlds$/)
@@ -71,6 +81,10 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
 
   await page.getByLabel('Email').fill('unknown@example.com')
   await page.getByLabel('Password', { exact: true }).fill('incorrect password')
+  await page.getByRole('button', { name: 'Show Password' }).click()
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'text')
+  await expect(page.getByLabel('Password', { exact: true })).toHaveValue('incorrect password')
+  await page.getByRole('button', { name: 'Hide Password' }).click()
   await page.getByRole('button', { name: 'Sign in' }).click()
   await expect(page.getByRole('alert')).toHaveText('Email or password is incorrect. Try again.')
 
@@ -84,7 +98,7 @@ test('LC-001 completes the account and protected workspace journey', async ({ pa
   await expect(page.getByRole('heading', { name: 'Create your Lorecraft account' })).toBeVisible()
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password', { exact: true }).fill(password)
-  await page.getByLabel('Confirm password').fill(password)
+  await page.getByLabel('Confirm password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Create account' }).click()
   await expect(page.getByText('An account with this email already exists.')).toBeVisible()
 
