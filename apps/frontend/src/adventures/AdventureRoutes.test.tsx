@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
 import type { WorldDetail } from '../worlds/worldApi'
-import { AdventureApiError, type AdventureDetail } from './adventureApi'
+import {
+  AdventureApiError,
+  adventureQueryKeys,
+  type AdventureDetail,
+} from './adventureApi'
 
 const playableWorld: WorldDetail = {
   id: 1,
@@ -279,13 +283,14 @@ describe('Adventure routes', () => {
       status: 'opening_pending',
       generation: 2,
     })
-    renderTestApp({
+    const { queryClient } = renderTestApp({
       route: pendingAdventure.route,
       session: { id: 4, email: 'member@example.com' },
       adventureApi: {
         getAdventure: async () => ({
           ...pendingAdventure,
           status: 'ready',
+          turnCount: 3,
           story: [{ id: 'opening', kind: 'narration', content: 'An opening.' }],
         }),
         resetAdventure,
@@ -312,6 +317,11 @@ describe('Adventure routes', () => {
     expect(resetAdventure).toHaveBeenCalledWith(pendingAdventure.id)
     expect(await screen.findByRole('status')).toHaveTextContent('Preparing your opening')
     expect(screen.queryByText('An opening.')).not.toBeInTheDocument()
+    expect(
+      queryClient.getQueryData<AdventureDetail>(
+        adventureQueryKeys.detail(4, pendingAdventure.id)
+      )?.turnCount
+    ).toBe(0)
   })
 
   it('LC-003/S1/R5-S3 keeps reset unavailable while opening work is active', async () => {

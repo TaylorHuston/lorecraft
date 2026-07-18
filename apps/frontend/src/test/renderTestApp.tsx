@@ -63,7 +63,7 @@ export function renderTestApp({
     ...adventureApiOverrides,
   }
 
-  return render(
+  const result = render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider api={api}>
         <MemoryRouter initialEntries={[route]}>
@@ -76,4 +76,6 @@ export function renderTestApp({
       </AuthProvider>
     </QueryClientProvider>
   )
+
+  return { ...result, queryClient }
 }

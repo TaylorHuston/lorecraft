@@ -495,4 +495,55 @@ test.group('AdventureOpeningWorker', (group) => {
       assert.lengthOf(await db.from(table).where('adventure_id', deleteFixture.adventureId), 0)
     }
   })
+
+  test('LC-003/S1/R3-S2: stale queued jobs are consumed instead of being reclaimed forever', async ({
+    assert,
+  }) => {
+    const pendingFixture = await createOpeningFixture('6')
+    await db
+      .from('adventures')
+      .where('id', pendingFixture.adventureId)
+      .update({ generation: 2, status: 'opening_pending' })
+    const generator = new SequenceGenerator([successfulResult()])
+    const worker = new AdventureOpeningWorker({
+      generator,
+      workerId: 'stale-job-worker',
+      now: () => new Date(now),
+    })
+
+    assert.deepEqual(await worker.runOnce(), { status: 'idle' })
+    assert.lengthOf(generator.calls, 0)
+    assert.deepInclude(
+      await db
+        .from('adventure_jobs')
+        .where('adventure_id', pendingFixture.adventureId)
+        .firstOrFail(),
+      { status: 'failed', failure_code: 'stale_adventure' }
+    )
+
+    const exhaustedFixture = await createOpeningFixture('7')
+    await db
+      .from('adventure_jobs')
+      .where('adventure_id', exhaustedFixture.adventureId)
+      .update({
+        status: 'processing',
+        attempt_count: 2,
+        lease_owner: 'expired-worker',
+        lease_expires_at: new Date(now.getTime() - 1),
+      })
+    await db
+      .from('adventures')
+      .where('id', exhaustedFixture.adventureId)
+      .update({ generation: 2, status: 'opening_pending' })
+
+    assert.deepEqual(await worker.runOnce(), { status: 'idle' })
+    assert.deepInclude(
+      await db
+        .from('adventure_jobs')
+        .where('adventure_id', exhaustedFixture.adventureId)
+        .firstOrFail(),
+      { status: 'failed', failure_code: 'stale_adventure' }
+    )
+    assert.deepEqual(await worker.runOnce(), { status: 'idle' })
+  })
 })

@@ -481,6 +481,52 @@ test.group('Adventure API', (group) => {
     }
   })
 
+  test('LC-003/S1/R3-S5: generation-queuing mutations share an account burst limit', async ({
+    client,
+  }) => {
+    const ownerEmail = 'api-generation-throttle-owner@example.com'
+    const browser = await createAuthenticatedBrowser(client, ownerEmail)
+    const owner = await User.findByOrFail('email', ownerEmail)
+    const { world } = await createWorld({ authorId: owner.id, slug: 'api-generation-throttle' })
+    const created = await withBrowserSession(
+      client.post(`/api/v1/worlds/${world.slug}/adventures`),
+      browser,
+      { csrf: true }
+    ).json({
+      creationRequestId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      player: { name: 'Mara Venn' },
+    })
+    created.assertStatus(201)
+    const adventureId = (created.body() as { data: { id: string } }).data.id
+
+    for (let index = 0; index < 9; index += 1) {
+      const request =
+        index % 2 === 0
+          ? client.post(`/api/v1/adventures/${adventureId}/opening/retry`)
+          : client.post(`/api/v1/adventures/${adventureId}/reset`)
+      const response = await withBrowserSession(request, browser, { csrf: true })
+      response.assertStatus(409)
+    }
+
+    const overQuota = await withBrowserSession(
+      client.post(`/api/v1/adventures/${adventureId}/opening/retry`),
+      browser,
+      { csrf: true }
+    )
+    overQuota.assertStatus(429)
+
+    const otherBrowser = await createAuthenticatedBrowser(
+      client,
+      'api-generation-throttle-other@example.com'
+    )
+    const independentRequest = await withBrowserSession(
+      client.post('/api/v1/adventures/44444444-4444-4444-8444-444444444444/reset'),
+      otherBrowser,
+      { csrf: true }
+    )
+    independentRequest.assertStatus(404)
+  })
+
   test('LC-003/S1/R1-S2: Vine rejects invalid creation identity and bounded player fields before writes', async ({
     client,
     assert,

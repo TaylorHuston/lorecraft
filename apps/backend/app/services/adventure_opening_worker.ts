@@ -370,7 +370,17 @@ export default class AdventureOpeningWorker {
         .select('id', 'world_version_id', 'starting_point_key', 'generation')
         .forUpdate()
         .first()
-      if (!adventure) return null
+      if (!adventure) {
+        await trx.from('adventure_jobs').where('id', job.id).update({
+          status: 'failed',
+          lease_owner: null,
+          lease_expires_at: null,
+          failure_code: 'stale_adventure',
+          failure_message: 'Opening generation stopped because the Adventure state changed.',
+          updated_at: claimedAt,
+        })
+        return null
+      }
 
       const version = await trx
         .from('world_versions')
@@ -445,7 +455,17 @@ export default class AdventureOpeningWorker {
         .select('id')
         .forUpdate()
         .first()
-      if (!adventure) return null
+      if (!adventure) {
+        await trx.from('adventure_jobs').where('id', job.id).update({
+          status: 'failed',
+          lease_owner: null,
+          lease_expires_at: null,
+          failure_code: 'stale_adventure',
+          failure_message: 'Opening generation stopped because the Adventure state changed.',
+          updated_at: completedAt,
+        })
+        return null
+      }
 
       await this.#recordExpiredLease(trx, job, completedAt)
       await trx.from('adventure_jobs').where('id', job.id).update({

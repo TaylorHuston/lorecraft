@@ -67,7 +67,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 Status: implemented
 Created: 2026-07-16
 Modified: 2026-07-17
-Last verified: 2026-07-17
+Last verified: 2026-07-18
 
 As a signed-in account holder, I want to start and resume a private Adventure from an accessible World, so that I can enter stable canon as my own player character.
 
@@ -145,6 +145,12 @@ The system SHALL durably generate and atomically publish one opening narration b
 - WHEN generation does not produce valid non-empty narration or persistence fails
 - THEN no opening story entry or root revision becomes visible
 - AND the Adventure does not report ready.
+
+###### Scenario R3-S5: Account Generation Burst Limit
+
+- WHEN one account exceeds the accepted burst budget across Adventure creation, opening retry, and reset requests
+- THEN Lorecraft rejects further generation-queuing requests before creating or replacing work
+- AND another account retains its own independent burst budget.
 
 ##### Requirement R4: Resume And Lifecycle
 
@@ -243,7 +249,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R3-S1 prompt/provider boundary and R3-S3/R3-S4 provider-error portions | `apps/backend/tests/unit/story_generation/opening_prompt.spec.ts` and `apps/backend/tests/unit/story_generation/openai_compatible_story_generator.spec.ts` | Frozen opening context is assembled deterministically; prose, timeout, provider failure, malformed/empty output, exact evidence, and credential redaction are normalized.                                                                                     | Passing 2026-07-16 |
 | S1/R3-S3 owner-retry service portion                                      | `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts`                                                                                 | An owner can queue new opening work after terminal failure against the same source/generation; another account receives the same not-found result as a missing Adventure.                                                                                         | Passing 2026-07-16 |
 | S1/R1-S2 creation pending and R3-S3 unavailable-retry client behavior      | `apps/frontend/src/adventures/AdventureRoutes.test.tsx`                                                                                              | Creation exposes pending semantics through the submitted fields, and an unavailable Adventure keeps retry context visible while preventing duplicate refetch activation.                                                                                         | Passing 2026-07-17 |
-| S1/R3-S1..R3-S4 durable worker behavior                                   | `apps/backend/tests/functional/adventure_opening_worker.spec.ts`                                                                                    | One worker claims work; expired leases recover or terminate within the retry bound; successful opening state publishes atomically; failed/empty output exposes no prose; reset/delete invalidate stale finalization; evidence and logs omit credentials.          | Passing 2026-07-16 |
+| S1/R3-S1..R3-S4 durable worker behavior                                   | `apps/backend/tests/functional/adventure_opening_worker.spec.ts`                                                                                    | One worker claims work; expired leases recover or terminate within the retry bound; stale generation/state jobs are consumed instead of being reclaimed forever; successful opening state publishes atomically; failed/empty output exposes no prose; reset/delete invalidate stale finalization; evidence and logs omit credentials.          | Passing 2026-07-18 |
+| S1/R3-S5 generation burst limit                                           | `apps/backend/tests/functional/adventure_api.spec.ts`                                                                                                | Adventure creation, retry, and reset share one account-keyed generation budget and excess requests are rejected before lifecycle mutation.                                                                                                                         | Passing 2026-07-18 |
 | S1/R1-S1..R1-S3, R2-S3, and R4 HTTP boundary                              | `apps/backend/tests/functional/adventure_api.spec.ts`                                                                                               | Authenticated creation/read/lifecycle routes, owner isolation, anonymous denial, CSRF, bounded validation, idempotency, malformed identity, stable conflicts, playability, and owner-only World summaries.                                                        | Passing 2026-07-16 |
 | S1/R2-S1 disclosure boundary                                              | `apps/backend/tests/functional/adventure_api.spec.ts` and `apps/backend/tests/functional/world_catalog.spec.ts`                                    | Player-facing World and Adventure projections omit raw snapshots, author identity, prompt evidence, and private Character knowledge.                                                                                                                              | Passing 2026-07-16 |
 | S1/R4 and R5 client behavior                                              | `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `apps/frontend/src/worlds/WorldRoutes.test.tsx`, and `apps/frontend/src/adventures/AdventurePage.stories.tsx` | Typed creation/lifecycle behavior, explicit Resume, gear-triggered settings, confirmed reset/delete, pending polling, retry/reset conflicts, filtered responsive context, keyboard/focus, and automated accessibility checks.                       | Passing 2026-07-17 |

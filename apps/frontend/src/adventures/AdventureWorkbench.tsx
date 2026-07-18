@@ -232,7 +232,7 @@ export function AdventureWorkbench({
               key={pane}
               id={`adventure-tab-${pane}`}
               role="tab"
-              aria-controls={`adventure-panel-${pane}`}
+              aria-controls={activePane === pane ? `adventure-panel-${pane}` : undefined}
               aria-selected={activePane === pane}
               tabIndex={activePane === pane ? 0 : -1}
               onClick={() => setActivePane(pane)}

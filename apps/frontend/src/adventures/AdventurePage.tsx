@@ -61,7 +61,7 @@ export function AdventurePage({
     mutationFn: () => adventureApi.resetAdventure(id),
     onSuccess: () => {
       queryClient.setQueryData<AdventureDetail>(queryKey, (current) =>
-        current ? { ...current, status: 'opening_pending', story: [] } : current
+        current ? { ...current, status: 'opening_pending', turnCount: 0, story: [] } : current
       )
       const source = adventure.data?.sourceWorld
       if (account && source) {

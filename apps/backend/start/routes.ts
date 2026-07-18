@@ -11,7 +11,7 @@ import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 import { controllers } from '#generated/controllers'
 import {
-  adventureCreationThrottle,
+  adventureGenerationThrottle,
   csrfBootstrapThrottle,
   loginThrottle,
   signupThrottle,
@@ -71,7 +71,7 @@ router
         router
           .post(':slug/adventures', [AdventuresController, 'store'])
           .use(middleware.browserCsrf())
-          .use(adventureCreationThrottle)
+          .use(adventureGenerationThrottle)
       })
       .prefix('worlds')
       .use(middleware.requireSessionCookie())
@@ -84,7 +84,11 @@ router
         router
           .post(':id/opening/retry', [AdventuresController, 'retryOpening'])
           .use(middleware.browserCsrf())
-        router.post(':id/reset', [AdventuresController, 'reset']).use(middleware.browserCsrf())
+          .use(adventureGenerationThrottle)
+        router
+          .post(':id/reset', [AdventuresController, 'reset'])
+          .use(middleware.browserCsrf())
+          .use(adventureGenerationThrottle)
         router.delete(':id', [AdventuresController, 'destroy']).use(middleware.browserCsrf())
       })
       .prefix('adventures')

@@ -122,6 +122,9 @@ describe('AdventureWorkbench', () => {
 
     const storyTab = screen.getByRole('tab', { name: 'Story' })
     expect(storyTab).toHaveAttribute('aria-selected', 'true')
+    expect(storyTab).toHaveAttribute('aria-controls', 'adventure-panel-story')
+    expect(screen.getByRole('tab', { name: 'Player' })).not.toHaveAttribute('aria-controls')
+    expect(screen.getByRole('tab', { name: 'Scene' })).not.toHaveAttribute('aria-controls')
     expect(screen.getByRole('tabpanel', { name: 'Story' })).toHaveTextContent(
       'The chapel doors open against the storm.'
     )
@@ -129,6 +132,11 @@ describe('AdventureWorkbench', () => {
     storyTab.focus()
     await user.keyboard('{ArrowRight}')
     expect(screen.getByRole('tab', { name: 'Player' })).toHaveFocus()
+    expect(screen.getByRole('tab', { name: 'Player' })).toHaveAttribute(
+      'aria-controls',
+      'adventure-panel-player'
+    )
+    expect(storyTab).not.toHaveAttribute('aria-controls')
     expect(screen.getByRole('tabpanel', { name: 'Player' })).toHaveTextContent('Elara Vance')
 
     await user.keyboard('{End}')
