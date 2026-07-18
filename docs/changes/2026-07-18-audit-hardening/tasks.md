@@ -1,14 +1,14 @@
 ---
-status: in_progress
+status: in_review
 ---
 
 # Tasks: Audit Hardening
 
 ## Resume Here
 
-- Last completed action: `/sdd-release` found four Storybook accessibility failures because pending and failed Adventure states skip from the Story `h1` to an `h3`; the Change returned to implementation for the bounded heading-order fix.
-- Next action: correct and verify `LC-003/S1 R5` heading hierarchy, reconcile evidence, and return the Change to review.
-- Active branch/ref: `fix/adventure-heading-order` from `develop` at `d70201d`.
+- Last completed action: fixed and verified `LC-003/S1 R5` pending/failure heading order at `47dbaeac0a6c5c8a676002ee43d6e327d2b0e9b1` after the release gate exposed four Storybook accessibility failures.
+- Next action: run `/sdd-review` for the post-review accessibility commit, then merge it into `develop` and rerun `/sdd-release`.
+- Active branch/ref: `fix/adventure-heading-order` at `47dbaea` from `develop`.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -152,7 +152,7 @@ status: in_progress
 | 2026-07-18 | Disposable Neon validation                   | main orchestrator after explicit authorization                     | validation schema, migrations, backend, browser E2E                                                                | Up/down/up passed; remote latency exposed and drove a shutdown-after-claim cancellation fix; full backend and desktop/mobile E2E passed                                               | uncommitted    |
 | 2026-07-18 | Initial production migration                 | main orchestrator after explicit authorization                     | production candidate and recovery branch                                                                           | Snapshotted the empty schema-only candidate, rebuilt public from migrations, and retained zero application rows                                                                       | provider state |
 | 2026-07-18 | Release and rollback command                 | main orchestrator                                                  | Compose, production template, release command/tests, README                                                        | Added immutable SHA deployment, recovery acknowledgement, coordinated writers/migration/start, health verification, retained rollback SHA, and explicit no-database-rollback boundary | uncommitted    |
-| 2026-07-18 | Adventure state heading order               | main orchestrator; release-gate feedback                           | `AdventureWorkbench` pending/failure markup, styles, focused tests                                                  | Replaced skipped `h3` state titles with `h2` headings beneath the Story `h1`; added semantic-level assertions                                                                          | commit pending |
+| 2026-07-18 | Adventure state heading order               | main orchestrator; release-gate feedback                           | `AdventureWorkbench` pending/failure markup, styles, focused tests                                                  | Replaced skipped `h3` state titles with `h2` headings beneath the Story `h1`; added semantic-level assertions                                                                          | `47dbaea`      |
 
 ## Verification Ledger
 
@@ -237,7 +237,7 @@ status: in_progress
 
 ## Closeout
 
-- Change status: `in_progress`; release-gate accessibility remediation is implemented and awaiting final apply checks plus a refreshed independent review
+- Change status: `in_review`; release-gate accessibility remediation is implemented, verified, and awaiting a refreshed independent review
 - Epic files updated: LC-001/002/003 Requirements, Scenarios, implementation maps, evidence, and honest production gaps are current
 - Story labels/references and Requirement/Scenario IDs current: yes; no duplicate or missing references found
 - Implemented By maps current: yes; deployment/runtime support is mapped to LC-001/LC-003 and database environment behavior to the accepted PostgreSQL ADR
