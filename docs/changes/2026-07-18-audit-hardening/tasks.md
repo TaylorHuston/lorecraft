@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: refreshed `/sdd-review` passed at source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: merge `fix/adventure-heading-order` into `develop`, then rerun `/sdd-release`.
-- Active branch/ref: `fix/adventure-heading-order`; reviewed source `0c026d6`, with review record committed at `25176c9` and this ledger-only reconciliation following it.
+- Last completed action: merged reviewed `fix/adventure-heading-order` locally into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`; local UI remains user confirmed and private production acceptance remains pending.
+- Next action: rerun `/sdd-release` from `develop`.
+- Active branch/ref: `develop` at merge commit `76239fa`.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 

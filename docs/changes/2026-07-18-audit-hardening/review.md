@@ -115,7 +115,7 @@ The consolidated implementation findings and release-gate heading-order defect a
 - Conflict check: passed
 - Commit state: reviewed source committed at `0c026d6`; refreshed review record committed at `25176c9`; subsequent ledger-only reconciliation does not change reviewed behavior
 - PR status: none; not authorized
-- Merge status: heading fix not yet merged; prior audit-hardening integration remains on `develop` at `92895f7`; no push performed
+- Merge status: heading fix locally merged into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`; no push performed
 
 ## Review Log
 
@@ -123,3 +123,4 @@ The consolidated implementation findings and release-gate heading-order defect a
 - 2026-07-18: Implementation committed at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; generated contracts and merge-tree conflict check passed; verdict advanced to `ready` with manual acceptance pending.
 - 2026-07-18: User authorized close and merge; local integration into `develop` completed at `92895f7`. Closeout remains pending the accepted private deployment, restore drill, and production acceptance scope.
 - 2026-07-18: Release gate exposed skipped heading levels in Adventure pending/failure states. Fix commit `47dbaea` and handoff commit `0c026d6` passed focused semantic assertions, all Storybook accessibility tests, conflict checking, traceability, artifact, security, docs, Idea, PRD, and branch-readiness review. Verdict remains `ready`; deployment acceptance and closeout remain pending.
+- 2026-07-18: User authorized local integration of the reviewed heading fix; merged `fix/adventure-heading-order` into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`. No push, branch deletion, deployment, or closeout occurred.
