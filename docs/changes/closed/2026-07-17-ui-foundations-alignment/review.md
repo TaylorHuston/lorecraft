@@ -4,7 +4,7 @@
 
 ready
 
-The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. User manual visual confirmation, merge authorization, integration, and closeout are complete. The previously invalid workspace configuration was repaired externally, and fresh scoped SDD validation passes.
+The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. The original walkthrough, integration, and closeout are complete; focused manual confirmation of the post-close sign-in label correction remains pending. The previously invalid workspace configuration was repaired externally, and fresh scoped SDD validation passes.
 
 ## Gate Scorecard
 
@@ -17,16 +17,16 @@ The Lorecraft application, supporting product truth, Epic evidence, and shared c
 | Story reference traceability | Pass | Existing Story ownership remains stable across the three affected Epics. |
 | Reverse traceability | Pass | 57 changed candidates; 0 missing references, unowned source files, or unowned tests. |
 | Tests and verification | Pass | Backend 102, frontend 115, Storybook 78, build, lint, typecheck, and desktop/mobile E2E 7 gates pass. |
-| Manual UI confirmation | Pass | User confirmed the prepared walkthrough and authorized close and merge on 2026-07-18. |
-| Code review | Pass | Delegated frontend, test, security, and artifact passes completed; pending-state and visual-identity code findings were remediated. |
-| Visual / UX consistency | Pass | Production-height desktop/mobile stories exercise isolated internal scrolling; retained shared-hub captures preserve Lorecraft hierarchy and identity. |
+| Manual UI confirmation | Pending user | The broader walkthrough was confirmed; the focused dark-label-on-Burnished-Orange correction awaits visual confirmation. |
+| Code review | Pass | Focused rereview at `02ed717` found no correctness, maintainability, security, or scope findings in the post-close defect diff. |
+| Visual / UX consistency | Pass | The sign-in-only white override is removed; all 78 Storybook interaction/accessibility checks pass with the shared accessible primary-button pairing. |
 | Shared UI Foundations comparison | Pass | Lorecraft is registered at UI Foundations commit `41259aa` on lineage `3989806` and appears in all five cells of the retained 20-image comparison matrix. |
 | Security review | Pass | No security findings; production dependency audit reports 0 vulnerabilities. |
 | Documentation | Pass | Changelog and affected Epic evidence are current and user-facing. |
 | Idea repository / current-state truth | Pass | `spaces/ideas/lorecraft/visual-identity.md` now records the implemented private Adventure foundation while retaining the creator-first World bible as the primary baseline. |
 | Release communication | Pass | `CHANGELOG.md` contains the user-facing control/accessibility change only. |
 | SDD workspace validation | Pass | Fresh closed-Change validation resolves all three affected Epics with 0 errors and 0 warnings after the external workspace repair. |
-| Branch conflict check | Pass | Exact reviewed source merges cleanly; source is twelve commits ahead of and zero commits behind `develop`. |
+| Branch conflict check | Pass | Exact reviewed source `02ed717` merges cleanly; source is three commits ahead of and zero commits behind `develop`. |
 | PRD alignment | Pass | Creator-first World work and frozen non-canonical Adventure boundaries are unchanged. |
 
 ## Findings
@@ -141,3 +141,4 @@ None within Lorecraft or the shared comparison branch. The earlier external work
 - 2026-07-17: Reconciled idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage at `41259aa96ce551ffde96616a295b74a9c019cf7f`. Full app, security, shared-hub, capture, traceability, and merge-tree gates pass; technical verdict is `ready`, manual confirmation remains pending, and no fresh SDD validation is claimed.
 - 2026-07-18: User confirmed the prepared walkthrough and authorized Lorecraft close and merge. The final sign-in contrast correction passed the focused auth suite, frontend typecheck, and frontend lint; classified as an existing-contract presentation fix with no Requirement, Scenario, ownership, or architecture change.
 - 2026-07-18: The production release gate found that the sign-in-only white label override reduced contrast against Burnished Orange to 2.61:1. Removed the exception so sign-in again uses the shared primary button's dark `--action-foreground`; this is a defect fix to the accepted accessible-control contract, with no Requirement, Scenario, ownership, or architecture change.
+- 2026-07-18: Focused independent rereview covered `fix/sign-in-button-contrast` at `02ed717af3e512fffd4cc64c2502b1192a6f5897` against `develop` at `8060a8095a3be73e427fcc14290b720cd9ea5ba9`. Code, LC-001 ownership, Storybook accessibility, auth regression, static gates, scoped SDD validation, Idea-side truth, release communication, security, and conflict checks pass; verdict remains `ready`, with focused manual confirmation pending user.

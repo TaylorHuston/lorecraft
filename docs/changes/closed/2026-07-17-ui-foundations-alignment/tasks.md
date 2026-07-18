@@ -6,8 +6,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: fixed the release-gate sign-in contrast regression and reconciled current validation/manual-confirmation truth in `c1dfc3f`.
-- Next action: confirm the sign-in button's dark label on Burnished Orange, then run independent `/sdd-review` for the post-close defect fix and resume `/sdd-release`.
+- Last completed action: independent focused rereview passed for post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897` against `develop`.
+- Next action: confirm the sign-in button's dark label on Burnished Orange, then resume `/sdd-release`.
 - Active branch/ref: `fix/sign-in-button-contrast` from `develop` at `8060a80`.
 - Expected dirty files: none after the ledger follow-up commit.
 - Known blockers: none for Lorecraft integration or closeout. The previously invalid workspace configuration was repaired externally; fresh scoped validation passes.
@@ -199,7 +199,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: the original Change review is technical `ready`; post-close defect commits `c1dfc3f` and `762b773` require focused independent rereview, and focused manual confirmation is pending user. Fresh scoped validation passes.
+- `sdd-review` verdict: technical `ready` at post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897`; focused manual confirmation is pending user. Fresh scoped validation passes.
 - Review record: `docs/changes/closed/2026-07-17-ui-foundations-alignment/review.md`.
 - `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
