@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: fixed and verified `LC-003/S1 R5` pending/failure heading order at `47dbaeac0a6c5c8a676002ee43d6e327d2b0e9b1` after the release gate exposed four Storybook accessibility failures.
-- Next action: run `/sdd-review` for the post-review accessibility commit, then merge it into `develop` and rerun `/sdd-release`.
-- Active branch/ref: `fix/adventure-heading-order` at `47dbaea` from `develop`.
+- Last completed action: refreshed `/sdd-review` passed at source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; local UI remains user confirmed and private production acceptance remains pending.
+- Next action: merge `fix/adventure-heading-order` into `develop`, then rerun `/sdd-release`.
+- Active branch/ref: `fix/adventure-heading-order` at reviewed source `0c026d6` from `develop`; review-record follow-up commit pending.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -245,7 +245,7 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
 - Release communication current: required and pending the release handoff; no established changelog exists
-- `sdd-review` verdict: prior review was ready at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; the post-review heading fix requires a refreshed review watermark
+- `sdd-review` verdict: ready at refreshed source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; private-production acceptance remains pending
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
