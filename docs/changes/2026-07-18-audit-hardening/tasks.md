@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: full release gate passed, `develop` was pushed, and production release PR #2 was opened from `develop` to `main`; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: use `/sdd-pr` to steward PR #2 through hosted CI and image-build review before requesting merge authorization.
-- Active branch/ref: `develop`; initial reconciled PR head `f13fd4f`, with this PR-state reconciliation following it.
+- Last completed action: six automated-review findings on production PR #2 were remediated at `11509c2`, independently rereviewed, and reconciled into LC-001/LC-003; local UI remains user confirmed and private production acceptance remains pending.
+- Next action: push the reconciled PR head, resolve the six handled review threads, and wait for hosted CI and Greptile before assessing merge authorization.
+- Active branch/ref: `develop`; reviewed semantic PR head `11509c2`, with the review-record reconciliation following it.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -153,7 +153,7 @@ status: in_review
 | 2026-07-18 | Initial production migration                 | main orchestrator after explicit authorization                     | production candidate and recovery branch                                                                           | Snapshotted the empty schema-only candidate, rebuilt public from migrations, and retained zero application rows                                                                       | provider state |
 | 2026-07-18 | Release and rollback command                 | main orchestrator                                                  | Compose, production template, release command/tests, README                                                        | Added immutable SHA deployment, recovery acknowledgement, coordinated writers/migration/start, health verification, retained rollback SHA, and explicit no-database-rollback boundary | uncommitted    |
 | 2026-07-18 | Adventure state heading order               | main orchestrator; release-gate feedback                           | `AdventureWorkbench` pending/failure markup, styles, focused tests                                                  | Replaced skipped `h3` state titles with `h2` headings beneath the Story `h1`; added semantic-level assertions                                                                          | `47dbaea`      |
-| 2026-07-18 | Production PR review remediation            | main orchestrator; PR #2 automated review                          | release env parsing, evidence byte counts, retry bounds, proxy scheme, delayed route focus, focused tests            | Accepted six narrow findings: normalized quoted/spaced env values, avoided byte-count buffers, bounded extreme attempts, fixed trusted HTTPS forwarding, and preserved user-selected focus during delayed route rendering | uncommitted    |
+| 2026-07-18 | Production PR review remediation            | main orchestrator; PR #2 automated review                          | release env parsing, evidence byte counts, retry bounds, proxy scheme, delayed route focus, focused tests            | Accepted six narrow findings: normalized quoted/spaced env values, avoided byte-count buffers, bounded extreme attempts, fixed trusted HTTPS forwarding, and preserved user-selected focus during delayed route rendering | `11509c2`      |
 
 ## Verification Ledger
 
@@ -250,7 +250,7 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
 - Release communication current: committed in `CHANGELOG.md` under `[Unreleased]` at `d64d5b0`
-- `sdd-review` verdict: ready at refreshed source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; private-production acceptance remains pending
+- `sdd-review` verdict: ready at refreshed semantic source watermark `11509c267b77d027a9c907b6ac7a90e2b50b0ec1`; private-production acceptance remains pending
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes

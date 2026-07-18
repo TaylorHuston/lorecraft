@@ -4,7 +4,7 @@
 
 ready
 
-The consolidated implementation findings and release-gate heading-order defect are remediated, regression checks pass, and commit `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1` is the refreshed immutable review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
+The consolidated implementation findings, release-gate heading defect, and six production-PR review findings are remediated. Independent code/security, artifact/traceability, and verification/UI regression passes are clean, and commit `11509c267b77d027a9c907b6ac7a90e2b50b0ec1` is the refreshed immutable semantic review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
 
 ## Gate Scorecard
 
@@ -16,15 +16,15 @@ The consolidated implementation findings and release-gate heading-order defect a
 | Requirements and Scenarios            | pass                                          | No duplicate or missing Story/Requirement/Scenario references.                                                                                        |
 | Story reference traceability          | pass                                          | All referenced implementation and verification files exist.                                                                                           |
 | Reverse traceability                  | pass                                          | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure.                             |
-| Tests and verification                | pass with external gaps                       | Focused heading tests and all 78 Storybook browser tests pass; prior local, disposable-Neon, and deterministic E2E evidence remains current; real Docker/GHCR/host/restore proof remains pending. |
+| Tests and verification                | pass with external gaps                       | PR-focused tests, all 120 frontend tests, build, lint, typecheck, contracts, and scoped validation pass; prior disposable-Neon/E2E evidence remains current; real Docker/host/restore proof remains pending. |
 | Manual UI confirmation                | local user confirmed; production pending user | Taylor approved the provider-backed pending-to-ready Adventure UI and generated opening; private HTTPS/session/host/recovery checks await deployment. |
-| Code review                           | pass after remediation                        | Release recovery, production entrypoints, keyless provider configuration, main-only publication, and Adventure state heading hierarchy are corrected. |
+| Code review                           | pass after remediation                        | Release env parsing, retry bounds, evidence byte counting, trusted HTTPS forwarding, and delayed-route focus preservation are corrected and independently rereviewed. |
 | Visual / UX consistency               | pass                                          | Pending/failure headings now follow the Story `h1`; focused and Storybook accessibility tests pass, with no visual redesign.                           |
-| Security review                       | pass                                          | Metadata-only evidence, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved.                              |
+| Security review                       | pass                                          | Metadata-only evidence, trusted private-HTTPS forwarding, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved. |
 | Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
 | Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and no hosted deployment is claimed.                                                                |
-| Release communication                 | pending                                       | Required at release handoff; no project changelog is established.                                                                                     |
-| Branch and merge readiness            | technically ready                             | Committed source merges cleanly to `develop`; manual acceptance and explicit integration authorization remain pending.                                |
+| Release communication                 | pass                                          | Public-safe `[Unreleased]` notes are committed in `CHANGELOG.md`.                                                                                      |
+| Branch and merge readiness            | technically ready, remote gate pending        | `develop` merges cleanly to `main`; PR #2 checks/review must refresh on the reconciled head, and private-production acceptance remains pending.        |
 | PRD alignment                         | pass                                          | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved.                                           |
 
 ## Findings
@@ -50,7 +50,7 @@ The consolidated implementation findings and release-gate heading-order defect a
 
 | Command / Scenario                                          | Evidence Type                  | Requirement / Scenario                     | Result                    | What It Proves                                                                                                    |
 | ----------------------------------------------------------- | ------------------------------ | ------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `npm run test:deployment`                                   | focused automated test         | LC-003/S1 R3-S9..R3-S10 support            | 5 passed                  | Immutable image derivation, release order, explicit recovery, and failed-health restoration.                      |
+| `npm run test:deployment`                                   | focused automated test         | LC-003/S1 R3-S9..R3-S10 support            | 6 passed                  | Tolerant production env parsing, immutable image derivation, release order, explicit recovery, and failed-health restoration. |
 | `npm run test:containers`                                   | focused automated test         | LC-001 production support; LC-003/S1 R3-S9 | 6 passed                  | Loopback gateway, same-origin proxy, health boundaries, production commands, migration isolation, and log bounds. |
 | `npm run test:images`                                       | focused automated test         | production image provenance                | 1 passed                  | PR builds and immutable publication are restricted to `main`.                                                     |
 | `node --test apps/backend/scripts/database-safety.test.mjs` | focused automated test         | database safety boundary                   | 20 passed                 | Disposable and production URL identity, pooled/direct, acknowledgement, and environment guards.                   |
@@ -58,29 +58,32 @@ The consolidated implementation findings and release-gate heading-order defect a
 | Full backend against disposable Neon                        | production-path automated test | LC-001/002/003 database behavior           | 112 passed                | Migration, auth, catalog, Adventure, retry, cancellation, and persistence behavior.                               |
 | Desktop/mobile Playwright against disposable Neon           | deterministic E2E              | LC-001/002/003 journeys                    | 7 passed                  | Signup/workspace, starter World, and full Adventure lifecycle.                                                    |
 | Focused frontend review rerun                               | focused automated test         | route/disclosure/completion behavior       | 16 passed                 | Route titles/focus, notice, UUID fallback, and non-stealing announcement.                                         |
+| `RoutePresentation.test.tsx` after PR feedback              | focused automated test         | LC-001/S3 R3-S1..R3-S2                     | 4 passed                  | Navigation still focuses headings while user-selected focus survives delayed route data.                         |
+| Full frontend Vitest after PR feedback                      | broad supporting gate          | frontend regression surface                | 120 passed                | The focus correction does not regress account, World, or Adventure client behavior.                              |
+| `npm run verify:contracts` after PR feedback                | generated-contract gate        | API consumer boundary                      | passed                    | PR remediation leaves the tracked generated client clean.                                                        |
 | `sdd validate ... --json`                                   | structural gate                | active Change and affected Epics           | passed, 0 errors; 3 legacy-schema warnings | Artifact structure and declared references remain valid; LC-001/002/003 retain their accepted legacy shape.                           |
 | Focused `AdventureWorkbench.test.tsx`                       | focused automated test         | LC-003/S1 R5 pending/failure headings      | 5 passed                  | State titles are level-two headings beneath the Story heading.                                                     |
 | `npm run test:storybook`                                    | browser accessibility          | LC-003/S1 R5 desktop/mobile states         | 78 passed                 | Pending and failure stories have no automated accessibility violations.                                           |
 
 ## Review Bundle
 
-- Source branch/ref: `fix/adventure-heading-order`
-- Reviewed source commit: `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`
-- Target branch/ref: `develop` at `d70201d18784d23826b4e669274302c20e660921`
-- Merge base: `d70201d18784d23826b4e669274302c20e660921`
-- Source-only commits: `47dbaea Fix Adventure state heading order`; `0c026d6 Record heading fix handoff`
+- Source branch/ref: `develop`
+- Reviewed source commit: `11509c267b77d027a9c907b6ac7a90e2b50b0ec1`
+- Target branch/ref: `origin/main` at `1dd901c3a5fe0df0f898acda39ba18fcb065e11c`
+- Merge base: `cfe17b8f65892ff75a3497487bfbae06e3ebce6d`
+- Source-only commits: 16, ending with `11509c2 Address release PR feedback`
 - Target-only commits: none
-- Changed files: 5
-- Diff stat: 24 insertions, 9 deletions
-- Conflict check: `git merge-tree --write-tree develop HEAD` passed and produced tree `0a7473d4bd8dd5b87e32481d0473377eeb21c6c5`
+- Changed files in PR-remediation regression scope: 12
+- Diff stat in PR-remediation regression scope: 104 insertions, 15 deletions
+- Conflict check: `git merge-tree --write-tree origin/main develop` passed and produced tree `d269128e00971e599b283b288c251b472928eee2`
 - Dirty state: only private-local `.neon` remains untracked
-- Branch policy: `fix/*` to non-production `develop` is correct; no PR/merge authorized
-- Reverse-traceability command/result: packaged orphan audit with `--changed-from develop --epic LC-003`; changed source/tests are owned. Its stripped-leading-dot `.github/workflows/images.yml` report is a classified parser false positive.
+- Branch policy: production release PR `develop` to `main` is correct; merge remains unauthorized
+- Reverse-traceability command/result: packaged orphan audits with `--changed-from df92d33` for LC-001 and LC-003; the combined changed source/tests are owned. The stripped-leading-dot `.github/workflows/images.yml` report remains a classified parser false positive.
 
 ## Reverse Traceability
 
-- Candidate scope: six changed/local candidates, including two source files, one test, two SDD artifacts, and excluded `.neon` state.
-- Epic ownership reconciled: the heading markup/style and focused test map to LC-003/S1 R5.
+- Candidate scope: 13 changed/local candidates across the semantic PR-remediation commit plus excluded `.neon` state.
+- Epic ownership reconciled: focus behavior/test map to LC-001/S3 R3; provider/retry/deployment behavior and tests map to LC-003/S1 R3.
 - Support/generated/framework classifications: CI/image workflows, Tuyau output, database guards, root scripts, Compose contracts, and package/config files are supporting infrastructure.
 - Stranded refactor surfaces checked: worker entrypoint, generated contracts, routes, migration, provider evidence fields, old raw evidence names, and unused Neon driver dependency.
 - Explicit gaps or tracked cleanup: `.neon` is excluded private-local state; live Docker/GHCR/LXC/Tailscale/restore evidence remains tracked in Tasks 13-15.
@@ -89,10 +92,10 @@ The consolidated implementation findings and release-gate heading-order defect a
 
 | Pass                                            | Reviewer                                | Result                    | Notes                                                                                                   |
 | ----------------------------------------------- | --------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Artifact truth                                  | delegated fresh-context review          | findings remediated       | Stale task closeout and LC-003 DB gaps corrected.                                                       |
+| Artifact truth                                  | delegated fresh-context review          | pass after reconciliation | Stale PR head, next action, commit reference, and review watermark corrected.                           |
 | Reverse traceability                            | delegated review plus packaged audit    | pass after remediation    | Deployment/support paths classified and mapped.                                                         |
-| Code diff                                       | delegated code review plus orchestrator | findings remediated       | Production entrypoint issue was additionally found from build output.                                   |
-| Verification coverage                           | delegated verification review           | pass with external gaps   | Static deployment proof is not presented as live deployment proof.                                      |
+| Code diff                                       | delegated code/security review plus orchestrator | pass             | Six automated-review fixes are narrow and correct.                                                       |
+| Verification coverage                           | delegated verification/UI review        | pass with external gaps   | Focused and broad regressions pass; static deployment proof is not presented as live deployment proof.   |
 | Security                                        | delegated security review               | pass after remediation    | Main provenance and recovery boundaries corrected.                                                      |
 | UI / visual identity                            | delegated UI review                     | pass, pending manual      | Focused UI tests passed.                                                                                |
 | Docs / Idea truth / release communication / PRD | delegated artifact and docs reviews     | pass with release pending | Idea lifecycle and PRD align.                                                                           |
@@ -100,8 +103,8 @@ The consolidated implementation findings and release-gate heading-order defect a
 
 ## Consolidated Remediation
 
-- Root causes addressed: release provenance/recovery assumptions, source-vs-build command mismatch, and stale evidence/closeout truth.
-- Safe-fix batch: release command/tests, Compose/production migration entrypoints, image workflow/test, README, ADRs, LC-003, and tasks ledger.
+- Root causes addressed: permissive env parsing, unbounded unexpected retry input, unnecessary byte-count allocation, untrusted proxy scheme propagation, delayed focus theft, and stale review state.
+- Safe-fix batch: release parser/tests, provider/retry implementation/tests, gateway contract, route presentation/test, LC-001/LC-003 evidence, tasks ledger, and review record.
 - Deferred or unsafe findings: none from code review; external production execution remains an explicit workflow gate.
 - Affected verification union: deployment/container/image/database-safety tests, lint, typecheck, build, reverse traceability, and scoped validation.
 - Regression-focused rereview: passed for the remediated code/artifact surfaces and committed review watermark.
@@ -109,13 +112,13 @@ The consolidated implementation findings and release-gate heading-order defect a
 
 ## PR / Merge Readiness
 
-- Source branch: `fix/adventure-heading-order`
-- Reviewed source commit: `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`
-- Target branch: `develop`
+- Source branch: `develop`
+- Reviewed source commit: `11509c267b77d027a9c907b6ac7a90e2b50b0ec1`
+- Target branch: `main`
 - Conflict check: passed
-- Commit state: reviewed source committed at `0c026d6`; refreshed review record committed at `25176c9`; subsequent ledger-only reconciliation does not change reviewed behavior
-- PR status: none; not authorized
-- Merge status: heading fix locally merged into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`; no push performed
+- Commit state: reviewed semantic source committed at `11509c2`; this review/task reconciliation is documentation-only
+- PR status: #2 open; reconciled head not yet pushed
+- Merge status: not authorized; remote checks/review and required acceptance policy remain gates
 
 ## Review Log
 
@@ -125,3 +128,4 @@ The consolidated implementation findings and release-gate heading-order defect a
 - 2026-07-18: Release gate exposed skipped heading levels in Adventure pending/failure states. Fix commit `47dbaea` and handoff commit `0c026d6` passed focused semantic assertions, all Storybook accessibility tests, conflict checking, traceability, artifact, security, docs, Idea, PRD, and branch-readiness review. Verdict remains `ready`; deployment acceptance and closeout remain pending.
 - 2026-07-18: User authorized local integration of the reviewed heading fix; merged `fix/adventure-heading-order` into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`. No push, branch deletion, deployment, or closeout occurred.
 - 2026-07-18: `/sdd-release` passed the full local gate, committed public release communication, pushed `develop`, and opened production release PR #2 to `main`. Hosted CI, PR image builds, remote review, merge authorization, deployment, restore, and production acceptance remain pending.
+- 2026-07-18: PR #2 automated review produced six accepted findings. Semantic remediation commit `11509c2` passed focused deployment/container/backend/frontend checks, all 120 frontend tests, lint, typecheck, build, generated-contract cleanliness, conflict checking, scoped validation, reverse traceability, and three independent regression passes. Verdict remains `ready`; the remote gate and private-production acceptance remain pending.
