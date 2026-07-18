@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: committed the reviewed implementation at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; generated contracts reproduce exactly and the committed source merges cleanly into `develop`.
-- Next action: record the review-watermark follow-up commit, then complete the pending manual UI walkthrough before PR/integration or private-host release work.
-- Active branch/ref: `change/audit-hardening` from `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`.
+- Last completed action: locally merged reviewed `change/audit-hardening` into `develop` at merge commit `92895f7`; local UI acceptance is user confirmed and private production acceptance remains pending.
+- Next action: use `/sdd-release` to promote the reviewed integration state toward `main`, publish immutable images after authorization, and complete private-host deployment and recovery verification before closing.
+- Active branch/ref: `develop` at `92895f7` after local non-production integration.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -242,6 +242,6 @@ status: in_review
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
 - Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
-- PR / merge state: none
+- PR / merge state: no PR required; locally merged `change/audit-hardening` into `develop` at `92895f7`
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
 - Change moved to `docs/changes/closed/`: no
