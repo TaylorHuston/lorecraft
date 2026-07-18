@@ -6,9 +6,9 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: merged reviewed `fix/adventure-heading-order` locally into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: commit the prepared public release communication, push `develop`, and open the production release PR to `main`.
-- Active branch/ref: `develop` at merge commit `76239fa`.
+- Last completed action: full release gate passed and public release communication was committed at `d64d5b0c2d27b1d17e78bbdfe54d825d99ed5133`; local UI remains user confirmed and private production acceptance remains pending.
+- Next action: push `develop` and open the production release PR to `main`.
+- Active branch/ref: `develop`; release-note commit `d64d5b0` with this ledger-only reconciliation following it.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -245,7 +245,7 @@ status: in_review
 - Scenario-mapped Verified By maps current: local and disposable-Neon evidence current; live private-production and restore evidence remains a gap
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
-- Release communication current: prepared in `CHANGELOG.md` under `[Unreleased]`; release commit pending
+- Release communication current: committed in `CHANGELOG.md` under `[Unreleased]` at `d64d5b0`
 - `sdd-review` verdict: ready at refreshed source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; private-production acceptance remains pending
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
