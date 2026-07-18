@@ -130,8 +130,8 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 - Conflict check: clean before remediation; rechecked after remediation
 - Commit state: implementation, Epic, idea, and shared comparison remediations are committed locally; final review artifact reconciliation is represented by the commit containing this record
 - PR status: not created
-- Merge status: not merged
-- Closeout status: user confirmed; explicit Lorecraft merge/close authorization received on 2026-07-18
+- Merge status: merged locally into `develop` at `b256714`
+- Closeout status: closed on 2026-07-18 after user confirmation and explicit Lorecraft merge/close authorization
 
 ## Review Log
 

@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: reconciled Lorecraft idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage/capture at UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`.
-- Next action: integrate the authorized Lorecraft branch into `develop`, close the Change, and record final branch/folder truth.
+- Next action: none; Lorecraft integration and Change closeout are complete.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
 - Known blockers: none for Lorecraft integration or closeout. The invalid vault-level SDD configuration is an external workspace issue, was not edited, and prevents a fresh SDD validation claim.
@@ -104,7 +104,7 @@ status: in_review
 - [x] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
 - [x] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
 - [x] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
-- [ ] 9.7 Follow the repository's authorized PR/merge policy, then run `sdd change close` only after review, integration, acceptance, and closeout truth are complete.
+- [x] 9.7 Follow the repository's authorized PR/merge policy, then run `sdd change close` only after review, integration, acceptance, and closeout truth are complete.
 
 ## Implementation Ledger
 
@@ -199,6 +199,6 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
 - Manual UI confirmation status: user confirmed.
-- PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
+- PR / merge state: locally merged `change/ui-foundations-alignment` into `develop` with merge commit `b256714`; no PR or push was required or performed.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
-- Change moved to `docs/changes/closed/`: no; it remains active until user confirmation, explicit integration authorization, integration, and explicit close authorization are complete.
+- Change moved to `docs/changes/closed/`: yes; closed on 2026-07-18 after user confirmation and explicit integration/close authorization.
