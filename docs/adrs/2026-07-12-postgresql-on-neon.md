@@ -2,8 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-12
-- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/`
-- Related Epics / Stories: `LC-001/S1`, `LC-001/S2`, and `LC-001/S3`
+- Related change: `docs/changes/closed/2026-07-12-account-workspace-entry/` and `docs/changes/2026-07-18-audit-hardening/`
+- Related Epics / Stories: `LC-001/S1`, `LC-001/S2`, `LC-001/S3`, `LC-002/S1`, `LC-002/S2`, and `LC-003/S1`
 
 ## Context
 
@@ -11,7 +11,9 @@ The scaffold uses SQLite, while Lorecraft's production-oriented data model will 
 
 ## Decision
 
-Use standard PostgreSQL through Lucid and the `pg` driver, hosted in a dedicated Neon project. Maintain isolated Neon `main`, `develop`, and resettable `test` branches/databases. Connect through `DATABASE_URL` in ignored environment configuration and keep application persistence portable rather than depending on Neon-specific data APIs.
+Use standard PostgreSQL through Lucid and the `pg` driver, hosted in a dedicated Neon project. Maintain one long-lived production branch, one long-lived development branch, and disposable validation targets for migration, backend-test, and E2E work. Production starts from a clean migrated schema and receives only explicitly seeded or creator-entered data; development accounts, Adventures, and other working data are not promoted implicitly.
+
+Long-running application processes use a pooled connection string. Schema migrations, recovery checks, and other administrative operations use a direct connection string through an explicit one-shot command. Connection strings remain ignored runtime secrets, and application persistence stays portable rather than depending on Neon-specific data APIs. A local PostgreSQL server is not required while hosted development and disposable validation remain reliable.
 
 ## Options Considered
 
@@ -37,11 +39,11 @@ Use standard PostgreSQL through Lucid and the `pg` driver, hosted in a dedicated
 
 - Positive: Application data uses production-relevant PostgreSQL semantics with resettable test isolation.
 - Negative: Local development is less self-contained and database credentials require careful handling.
-- Follow-up: Document environment setup, protect production/development branches from destructive tests, and keep migrations standard PostgreSQL.
+- Follow-up: Protect production where the selected Neon plan supports it, keep production/development credentials isolated from disposable validation, document pooled runtime versus direct migration connections, and keep migrations standard PostgreSQL.
 
 ## Validation
 
-Routine migration, integration, and browser tests must pass against disposable standard PostgreSQL, including the isolated database provisioned by CI. That evidence passes. A separate smoke check against an isolated Lorecraft Neon test branch was explicitly deferred by the user on 2026-07-14 and remains required before production deployment. No connection string may appear in source, logs, frontend bundles, or public artifacts.
+Routine migration, integration, and browser tests must pass against disposable standard PostgreSQL, including the isolated database provisioned by CI. Before initial production deployment, the migration must pass against an isolated Neon validation target, production must be created independently from development data, and an isolated restore target must prove the recovery path. No connection string may appear in source, logs, frontend bundles, or public artifacts.
 
 ## Reconsider When
 

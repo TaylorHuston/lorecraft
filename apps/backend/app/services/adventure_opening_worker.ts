@@ -6,6 +6,7 @@ import type {
   StoryGenerator,
 } from '#services/story_generation/story_generator'
 import { StoryGenerationError } from '#services/story_generation/story_generator'
+import { retryDelayMs, retryDisposition } from '#services/adventure_opening_policy'
 import db from '@adonisjs/lucid/services/db'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import { randomUUID } from 'node:crypto'
@@ -13,6 +14,7 @@ import { randomUUID } from 'node:crypto'
 const defaultLeaseDurationMs = 60_000
 const leaseFinalizationMarginMs = 30_000
 const maximumAttempts = 2
+const defaultRetryDelayMs = 1_000
 const defaultPlatformInstructions = [
   "You are Lorecraft's Game Master.",
   'Write a vivid opening grounded only in the supplied frozen World and Adventure context.',
@@ -36,11 +38,13 @@ const silentLogger: AdventureOpeningLogger = {
 export type AdventureOpeningWorkerOptions = {
   generator: StoryGenerator
   workerId: string
+  repository?: AdventureOpeningRepository
   database?: WorkerDatabase
   logger?: AdventureOpeningLogger
   now?: () => Date
   leaseDurationMs?: number
   retryDelayMs?: number
+  jitter?: () => number
   platformInstructions?: string
 }
 
@@ -59,7 +63,7 @@ export type AdventureOpeningWorkerResult =
   | { status: 'failed'; adventureId: string; jobId: string; attempt: number }
   | { status: 'stale'; adventureId: string; jobId: string; attempt: number }
 
-type ClaimedOpening = {
+export type ClaimedOpening = {
   adventureId: string
   jobId: string
   generation: number
@@ -69,40 +73,19 @@ type ClaimedOpening = {
   input: OpeningStoryInput
 }
 
-type OpeningFailure = {
+export type OpeningFailure = {
   code: 'timeout' | 'provider_failure' | 'malformed_response' | 'empty_narration'
   message: string
   evidence: StoryGenerationEvidence
+  providerStatus?: number
 }
 
 const unavailableEvidence: StoryGenerationEvidence = {
   provider: 'unknown',
   model: 'unknown',
   settings: { temperature: 0, maxTokens: 0 },
-  redactedRequest: {
-    method: 'POST',
-    url: 'unavailable',
-    headers: {},
-    body: {},
-    timeoutMs: 0,
-  },
-  rawResponse: null,
-}
-
-function removeCredentials(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(removeCredentials)
-  if (!value || typeof value !== 'object') {
-    return typeof value === 'string' && /^Bearer\s/i.test(value) ? '[REDACTED]' : value
-  }
-
-  return Object.fromEntries(
-    Object.entries(value).map(([key, nested]) => [
-      key,
-      /(authorization|cookie|api[-_]?key|secret|token)/i.test(key)
-        ? '[REDACTED]'
-        : removeCredentials(nested),
-    ])
-  )
+  request: { byteCount: 0, timeoutMs: 0 },
+  response: { byteCount: 0, statusCode: null },
 }
 
 function safeEvidence(evidence: StoryGenerationEvidence): StoryGenerationEvidence {
@@ -110,10 +93,8 @@ function safeEvidence(evidence: StoryGenerationEvidence): StoryGenerationEvidenc
     provider: evidence.provider.trim() || 'unknown',
     model: evidence.model.trim() || 'unknown',
     settings: evidence.settings,
-    redactedRequest: removeCredentials(
-      evidence.redactedRequest
-    ) as StoryGenerationEvidence['redactedRequest'],
-    rawResponse: typeof evidence.rawResponse === 'string' ? evidence.rawResponse : null,
+    request: evidence.request,
+    response: evidence.response,
   }
 }
 
@@ -127,9 +108,10 @@ function validatedResult(result: StoryGenerationResult): StoryGenerationResult {
     !result.provider.trim() ||
     typeof result.model !== 'string' ||
     !result.model.trim() ||
-    typeof result.rawResponse !== 'string' ||
-    !result.redactedRequest ||
-    typeof result.redactedRequest !== 'object' ||
+    !result.request ||
+    typeof result.request !== 'object' ||
+    !result.response ||
+    typeof result.response !== 'object' ||
     !result.settings ||
     typeof result.settings !== 'object'
   ) {
@@ -148,16 +130,17 @@ function validatedResult(result: StoryGenerationResult): StoryGenerationResult {
     ...result,
     narration: result.narration.trim(),
     ...safeEvidence(result),
-    rawResponse: result.rawResponse,
   }
 }
 
 function normalizedFailure(error: unknown): OpeningFailure {
   if (error instanceof StoryGenerationError) {
+    if (error.code === 'cancelled') throw error
     return {
       code: error.code,
       message: `Opening generation failed: ${error.code}.`,
       evidence: safeEvidence(error.evidence),
+      providerStatus: error.providerStatus,
     }
   }
 
@@ -225,14 +208,29 @@ function openingInput(
   }
 }
 
-export default class AdventureOpeningWorker {
+export interface AdventureOpeningRepository {
+  failOneExhaustedLease(): Promise<{
+    adventureId: string
+    jobId: string
+    generation: number
+    attempt: number
+  } | null>
+  claimOne(): Promise<ClaimedOpening | null>
+  rescheduleInterrupted(claim: ClaimedOpening): Promise<boolean>
+  finalizeSuccess(claim: ClaimedOpening, result: StoryGenerationResult): Promise<boolean>
+  finalizeFailure(
+    claim: ClaimedOpening,
+    failure: OpeningFailure
+  ): Promise<'retry_scheduled' | 'failed' | 'stale'>
+}
+
+export class LucidAdventureOpeningRepository implements AdventureOpeningRepository {
   readonly #database: WorkerDatabase
-  readonly #generator: StoryGenerator
   readonly #leaseDurationMs: number
-  readonly #logger: AdventureOpeningLogger
   readonly #now: () => Date
   readonly #platformInstructions: string
   readonly #retryDelayMs: number
+  readonly #jitter: () => number
   readonly #workerId: string
 
   constructor(options: AdventureOpeningWorkerOptions) {
@@ -243,102 +241,54 @@ export default class AdventureOpeningWorker {
     if ((options.leaseDurationMs ?? defaultLeaseDurationMs) <= 0) {
       throw new Error('Adventure opening worker lease duration must be positive.')
     }
-    if ((options.retryDelayMs ?? 0) < 0) {
+    if ((options.retryDelayMs ?? defaultRetryDelayMs) < 0) {
       throw new Error('Adventure opening worker retry delay cannot be negative.')
     }
 
     this.#database = options.database ?? db
-    this.#generator = options.generator
     this.#leaseDurationMs = options.leaseDurationMs ?? defaultLeaseDurationMs
-    this.#logger = options.logger ?? silentLogger
     this.#now = options.now ?? (() => new Date())
     this.#platformInstructions = options.platformInstructions ?? defaultPlatformInstructions
-    this.#retryDelayMs = options.retryDelayMs ?? 0
+    this.#retryDelayMs = options.retryDelayMs ?? defaultRetryDelayMs
+    this.#jitter = options.jitter ?? Math.random
     this.#workerId = workerId
   }
 
-  async runOnce(): Promise<AdventureOpeningWorkerResult> {
-    const exhausted = await this.#failOneExhaustedLease()
-    if (exhausted) {
-      this.#logger.info('adventure_opening.failed', {
-        adventureId: exhausted.adventureId,
-        jobId: exhausted.jobId,
-        generation: exhausted.generation,
-        attempt: exhausted.attempt,
-        status: 'failed',
-        durationMs: 0,
-      })
-      return {
-        status: 'failed',
-        adventureId: exhausted.adventureId,
-        jobId: exhausted.jobId,
-        attempt: exhausted.attempt,
-      }
-    }
+  async rescheduleInterrupted(claim: ClaimedOpening) {
+    return this.#database.transaction(async (trx) => {
+      const interruptedAt = this.#now()
+      const updated = await trx
+        .from('adventure_jobs')
+        .where('id', claim.jobId)
+        .where('adventure_id', claim.adventureId)
+        .where('generation', claim.generation)
+        .where('status', 'processing')
+        .where('attempt_count', claim.attempt)
+        .where('lease_owner', claim.leaseToken)
+        .update({
+          status: 'pending',
+          attempt_count: Math.max(0, claim.attempt - 1),
+          available_at: interruptedAt,
+          lease_owner: null,
+          lease_expires_at: null,
+          failure_code: null,
+          failure_message: null,
+          updated_at: interruptedAt,
+        })
+      if (!updated) return false
 
-    const claim = await this.#claimOne()
-    if (!claim) return { status: 'idle' }
-
-    this.#logger.info('adventure_opening.claimed', {
-      adventureId: claim.adventureId,
-      jobId: claim.jobId,
-      generation: claim.generation,
-      attempt: claim.attempt,
-      status: 'processing',
-    })
-
-    let result: StoryGenerationResult
-    try {
-      result = validatedResult(await this.#generator.generateOpening(claim.input))
-    } catch (error) {
-      const failure = normalizedFailure(error)
-      const status = await this.#finalizeFailure(claim, failure)
-      if (status === 'stale') {
-        this.#logCompletion('adventure_opening.stale', claim, 'stale')
-        return {
-          status,
-          adventureId: claim.adventureId,
-          jobId: claim.jobId,
-          attempt: claim.attempt,
-        }
-      }
-
-      this.#logCompletion(`adventure_opening.${status}`, claim, status)
-      return { status, adventureId: claim.adventureId, jobId: claim.jobId, attempt: claim.attempt }
-    }
-
-    const finalized = await this.#finalizeSuccess(claim, result)
-    if (!finalized) {
-      this.#logCompletion('adventure_opening.stale', claim, 'stale')
-      return {
-        status: 'stale',
-        adventureId: claim.adventureId,
-        jobId: claim.jobId,
-        attempt: claim.attempt,
-      }
-    }
-
-    this.#logCompletion('adventure_opening.succeeded', claim, 'succeeded')
-    return {
-      status: 'succeeded',
-      adventureId: claim.adventureId,
-      jobId: claim.jobId,
-      attempt: claim.attempt,
-    }
-  }
-
-  #logCompletion(event: string, claim: ClaimedOpening, status: string) {
-    this.#logger.info(event, {
-      adventureId: claim.adventureId,
-      jobId: claim.jobId,
-      generation: claim.generation,
-      attempt: claim.attempt,
-      status,
-      durationMs: Math.max(0, this.#now().getTime() - claim.startedAt.getTime()),
+      await trx
+        .from('adventures')
+        .where('id', claim.adventureId)
+        .where('generation', claim.generation)
+        .where('status', 'opening_processing')
+        .whereNull('head_revision_id')
+        .update({ status: 'opening_pending', updated_at: interruptedAt })
+      return true
     })
   }
 
-  async #claimOne(): Promise<ClaimedOpening | null> {
+  async claimOne(): Promise<ClaimedOpening | null> {
     return this.#database.transaction(async (trx) => {
       const claimedAt = this.#now()
       const job = await trx
@@ -431,7 +381,7 @@ export default class AdventureOpeningWorker {
     })
   }
 
-  async #failOneExhaustedLease() {
+  async failOneExhaustedLease() {
     return this.#database.transaction(async (trx) => {
       const completedAt = this.#now()
       const job = await trx
@@ -514,8 +464,8 @@ export default class AdventureOpeningWorker {
       adventure_id: job.adventure_id,
       job_id: job.id,
       operation: 'opening_generation',
-      redacted_request: unavailableEvidence.redactedRequest,
-      raw_response: null,
+      request_metadata: unavailableEvidence.request,
+      response_metadata: unavailableEvidence.response,
       provider: unavailableEvidence.provider,
       model: unavailableEvidence.model,
       settings: unavailableEvidence.settings,
@@ -531,7 +481,7 @@ export default class AdventureOpeningWorker {
     })
   }
 
-  async #finalizeSuccess(claim: ClaimedOpening, result: StoryGenerationResult) {
+  async finalizeSuccess(claim: ClaimedOpening, result: StoryGenerationResult) {
     return this.#database.transaction(async (trx) => {
       const completedAt = this.#now()
       const job = await trx
@@ -573,8 +523,8 @@ export default class AdventureOpeningWorker {
           adventure_id: claim.adventureId,
           job_id: claim.jobId,
           operation: 'opening_generation',
-          redacted_request: result.redactedRequest,
-          raw_response: result.rawResponse,
+          request_metadata: result.request,
+          response_metadata: result.response,
           provider: result.provider,
           model: result.model,
           settings: result.settings,
@@ -627,7 +577,7 @@ export default class AdventureOpeningWorker {
     })
   }
 
-  async #finalizeFailure(claim: ClaimedOpening, failure: OpeningFailure) {
+  async finalizeFailure(claim: ClaimedOpening, failure: OpeningFailure) {
     return this.#database.transaction(async (trx) => {
       const completedAt = this.#now()
       const job = await trx
@@ -667,8 +617,8 @@ export default class AdventureOpeningWorker {
         adventure_id: claim.adventureId,
         job_id: claim.jobId,
         operation: 'opening_generation',
-        redacted_request: evidence.redactedRequest,
-        raw_response: evidence.rawResponse,
+        request_metadata: evidence.request,
+        response_metadata: evidence.response,
         provider: evidence.provider,
         model: evidence.model,
         settings: evidence.settings,
@@ -683,14 +633,24 @@ export default class AdventureOpeningWorker {
         updated_at: null,
       })
 
-      const shouldRetry = claim.attempt < maximumAttempts
+      const shouldRetry =
+        claim.attempt < maximumAttempts &&
+        retryDisposition(failure.code, failure.providerStatus) === 'retry'
       await trx
         .from('adventure_jobs')
         .where('id', claim.jobId)
         .update({
           status: shouldRetry ? 'pending' : 'failed',
           available_at: shouldRetry
-            ? new Date(completedAt.getTime() + this.#retryDelayMs)
+            ? new Date(
+                completedAt.getTime() +
+                  retryDelayMs({
+                    attempt: claim.attempt,
+                    baseDelayMs: this.#retryDelayMs,
+                    jitter: this.#jitter(),
+                    retryAfterMs: evidence.response.retryAfterMs,
+                  })
+              )
             : completedAt,
           lease_owner: null,
           lease_expires_at: null,
@@ -707,6 +667,93 @@ export default class AdventureOpeningWorker {
         })
 
       return shouldRetry ? ('retry_scheduled' as const) : ('failed' as const)
+    })
+  }
+}
+
+export default class AdventureOpeningWorker {
+  readonly #generator: StoryGenerator
+  readonly #logger: AdventureOpeningLogger
+  readonly #now: () => Date
+  readonly #repository: AdventureOpeningRepository
+
+  constructor(options: AdventureOpeningWorkerOptions) {
+    this.#generator = options.generator
+    this.#logger = options.logger ?? silentLogger
+    this.#now = options.now ?? (() => new Date())
+    this.#repository = options.repository ?? new LucidAdventureOpeningRepository(options)
+  }
+
+  async runOnce(signal?: AbortSignal): Promise<AdventureOpeningWorkerResult> {
+    const exhausted = await this.#repository.failOneExhaustedLease()
+    if (exhausted) {
+      this.#logger.info('adventure_opening.failed', {
+        ...exhausted,
+        status: 'failed',
+        durationMs: 0,
+      })
+      return { status: 'failed', ...exhausted }
+    }
+
+    const claim = await this.#repository.claimOne()
+    if (!claim) return { status: 'idle' }
+    this.#logger.info('adventure_opening.claimed', {
+      adventureId: claim.adventureId,
+      jobId: claim.jobId,
+      generation: claim.generation,
+      attempt: claim.attempt,
+      status: 'processing',
+    })
+
+    if (signal?.aborted) {
+      const rescheduled = await this.#repository.rescheduleInterrupted(claim)
+      const status = rescheduled ? 'retry_scheduled' : 'stale'
+      this.#logCompletion('adventure_opening.interrupted', claim, status)
+      return this.#result(status, claim)
+    }
+
+    try {
+      const result = validatedResult(await this.#generator.generateOpening(claim.input, signal))
+      if (!(await this.#repository.finalizeSuccess(claim, result))) {
+        this.#logCompletion('adventure_opening.stale', claim, 'stale')
+        return this.#result('stale', claim)
+      }
+      this.#logCompletion('adventure_opening.succeeded', claim, 'succeeded')
+      return this.#result('succeeded', claim)
+    } catch (error) {
+      if (error instanceof StoryGenerationError && error.code === 'cancelled') {
+        const rescheduled = await this.#repository.rescheduleInterrupted(claim)
+        const status = rescheduled ? 'retry_scheduled' : 'stale'
+        this.#logCompletion('adventure_opening.interrupted', claim, status)
+        return this.#result(status, claim)
+      }
+
+      const status = await this.#repository.finalizeFailure(claim, normalizedFailure(error))
+      this.#logCompletion(`adventure_opening.${status}`, claim, status)
+      return this.#result(status, claim)
+    }
+  }
+
+  #result(
+    status: Exclude<AdventureOpeningWorkerResult['status'], 'idle'>,
+    claim: ClaimedOpening
+  ): AdventureOpeningWorkerResult {
+    return {
+      status,
+      adventureId: claim.adventureId,
+      jobId: claim.jobId,
+      attempt: claim.attempt,
+    }
+  }
+
+  #logCompletion(event: string, claim: ClaimedOpening, status: string) {
+    this.#logger.info(event, {
+      adventureId: claim.adventureId,
+      jobId: claim.jobId,
+      generation: claim.generation,
+      attempt: claim.attempt,
+      status,
+      durationMs: Math.max(0, this.#now().getTime() - claim.startedAt.getTime()),
     })
   }
 }

@@ -37,29 +37,34 @@ export type StoryGenerationSettings = {
   reasoningEffort?: 'none' | 'low' | 'medium' | 'high'
 }
 
-export type SanitizedStoryGenerationRequest = {
-  method: 'POST'
-  url: string
-  headers: Record<string, string>
-  body: Record<string, unknown>
+export type StoryGenerationRequestMetadata = {
+  byteCount: number
   timeoutMs: number
+}
+
+export type StoryGenerationResponseMetadata = {
+  byteCount: number
+  statusCode: number | null
+  finishReason?: string
+  promptTokens?: number
+  completionTokens?: number
+  retryAfterMs?: number
 }
 
 export type StoryGenerationEvidence = {
   provider: string
   model: string
   settings: StoryGenerationSettings
-  redactedRequest: SanitizedStoryGenerationRequest
-  rawResponse: string | null
+  request: StoryGenerationRequestMetadata
+  response: StoryGenerationResponseMetadata
 }
 
 export type StoryGenerationResult = StoryGenerationEvidence & {
   narration: string
-  rawResponse: string
 }
 
 export type StoryGenerationErrorCode =
-  'timeout' | 'provider_failure' | 'malformed_response' | 'empty_narration'
+  'timeout' | 'provider_failure' | 'malformed_response' | 'empty_narration' | 'cancelled'
 
 export class StoryGenerationError extends Error {
   readonly name = 'StoryGenerationError'
@@ -75,5 +80,5 @@ export class StoryGenerationError extends Error {
 }
 
 export interface StoryGenerator {
-  generateOpening(input: OpeningStoryInput): Promise<StoryGenerationResult>
+  generateOpening(input: OpeningStoryInput, signal?: AbortSignal): Promise<StoryGenerationResult>
 }

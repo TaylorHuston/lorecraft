@@ -209,6 +209,41 @@ function PublicOnlyRoute() {
   )
 }
 
+function routeTitle(pathname: string) {
+  if (pathname === '/sign-in') return 'Sign in | Lorecraft'
+  if (pathname === '/sign-up') return 'Create account | Lorecraft'
+  if (pathname === '/worlds') return 'Worlds | Lorecraft'
+  if (/^\/worlds\/[^/]+\/adventures\/new$/.test(pathname)) return 'Start an Adventure | Lorecraft'
+  if (/^\/worlds\/[^/]+$/.test(pathname)) return 'World | Lorecraft'
+  if (/^\/adventures\/[^/]+$/.test(pathname)) return 'Adventure | Lorecraft'
+  return 'Lorecraft'
+}
+
+function RoutePresentation() {
+  const location = useLocation()
+
+  useEffect(() => {
+    document.title = routeTitle(location.pathname)
+
+    const focusHeading = () => {
+      const heading = document.querySelector<HTMLElement>('[data-route-heading]')
+      if (!heading) return false
+      heading.tabIndex = -1
+      heading.focus()
+      return true
+    }
+
+    if (focusHeading()) return
+    const observer = new MutationObserver(() => {
+      if (focusHeading()) observer.disconnect()
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [location.pathname])
+
+  return null
+}
+
 export function AppRoutes({
   worldApi,
   adventureApi,
@@ -219,7 +254,9 @@ export function AppRoutes({
   adventurePollIntervalMs?: number
 }) {
   return (
-    <Routes>
+    <>
+      <RoutePresentation />
+      <Routes>
       <Route element={<PublicOnlyRoute />}>
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
@@ -245,6 +282,7 @@ export function AppRoutes({
         />
       </Route>
       <Route path="*" element={<Navigate to="/worlds" replace />} />
-    </Routes>
+      </Routes>
+    </>
   )
 }

@@ -13,13 +13,9 @@ import {
   type CreateAdventureInput,
 } from './adventureApi'
 import styles from './NewAdventurePage.module.css'
+import { creationRequestId } from './creationRequestId'
 
 type FieldErrors = Partial<Record<AdventureField, string>>
-
-function creationRequestId() {
-  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
-}
 
 export function NewAdventurePage({
   worldApi,
@@ -131,7 +127,7 @@ export function NewAdventurePage({
       <main className={styles.shell}>
         <div className={styles.state} role="alert">
           <p className={styles.eyebrow}>Adventure setup</p>
-          <h1>World unavailable</h1>
+          <h1 data-route-heading>World unavailable</h1>
           <p>Lorecraft could not load this World.</p>
           <Link to={returnRoute}>Return to World</Link>
         </div>
@@ -148,7 +144,7 @@ export function NewAdventurePage({
       <div className={styles.content}>
         <header className={styles.introduction}>
           <p className={styles.eyebrow}>{world.data.name}</p>
-          <h1>Start an Adventure</h1>
+          <h1 data-route-heading>Start an Adventure</h1>
           <p>Create the player who will enter this frozen version of the World.</p>
         </header>
 
@@ -210,6 +206,10 @@ export function NewAdventurePage({
               pending={create.isPending}
               rows={5}
             />
+            <p className={styles.processingNotice}>
+              Your player details and this frozen World context will be processed by Lorecraft's
+              configured AI provider to prepare the opening.
+            </p>
             <div className={styles.actions}>
               <Button
                 pending={create.isPending}

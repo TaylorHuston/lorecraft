@@ -89,6 +89,52 @@ function databaseIdentity(target) {
   return JSON.stringify(target)
 }
 
+export function assertDirectMigrationDatabase({
+  acknowledgement,
+  applicationDatabaseUrl,
+  migrationDatabaseUrl,
+  nodeEnvironment,
+}) {
+  if (nodeEnvironment !== 'production') {
+    throw new Error('Production migration tooling requires NODE_ENV=production.')
+  }
+
+  if (acknowledgement !== '1') {
+    throw new Error('Production migration requires ALLOW_PRODUCTION_DATABASE_MIGRATION=1.')
+  }
+
+  if (!applicationDatabaseUrl) {
+    throw new Error('DATABASE_URL is required to verify the production migration target.')
+  }
+
+  if (!migrationDatabaseUrl) {
+    throw new Error('MIGRATION_DATABASE_URL is required for production migrations.')
+  }
+
+  const runtimeUrl = new URL(applicationDatabaseUrl)
+  const migrationUrl = new URL(migrationDatabaseUrl)
+
+  if (
+    runtimeUrl.hostname.toLowerCase().endsWith('.neon.tech') &&
+    !/-pooler(?:\.|$)/i.test(runtimeUrl.hostname)
+  ) {
+    throw new Error('DATABASE_URL must use the pooled Neon endpoint for production runtime traffic.')
+  }
+
+  if (/-pooler(?:\.|$)/i.test(migrationUrl.hostname)) {
+    throw new Error('MIGRATION_DATABASE_URL must use a direct connection, not a pooled endpoint.')
+  }
+
+  const runtimeIdentity = databaseIdentity(databaseTarget(applicationDatabaseUrl, 'DATABASE_URL'))
+  const migrationIdentity = databaseIdentity(
+    databaseTarget(migrationDatabaseUrl, 'MIGRATION_DATABASE_URL')
+  )
+
+  if (runtimeIdentity !== migrationIdentity) {
+    throw new Error('MIGRATION_DATABASE_URL must identify the same database target as DATABASE_URL.')
+  }
+}
+
 const disposableIdentifier =
   /(^|[^a-z0-9])(test|testing|e2e|ci|ephemeral|disposable|preview|temp|tmp)([^a-z0-9]|$)/i
 

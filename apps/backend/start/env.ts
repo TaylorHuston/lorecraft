@@ -25,6 +25,7 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   // Database
   DATABASE_URL: Env.schema.string(),
+  MIGRATION_DATABASE_URL: Env.schema.string.optional(),
   STARTER_WORLD_AUTHOR_EMAIL: Env.schema.string.optional(),
 
   // Story generation worker

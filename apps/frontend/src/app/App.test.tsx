@@ -648,7 +648,7 @@ describe('account workspace entry', () => {
     expect(screen.queryByRole('heading', { name: 'Worlds' })).not.toBeInTheDocument()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
     expect(restoreSession).toHaveBeenCalledTimes(2)
-    expect(screen.getByLabelText('Email')).toHaveFocus()
+    expect(screen.getByRole('heading', { name: 'Sign in to Lorecraft' })).toHaveFocus()
   })
 
   it('LC-001/S3/R1-S3 restores workspace focus after a successful session revalidation', async () => {

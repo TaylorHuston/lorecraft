@@ -99,7 +99,7 @@ export default class WorkAdventureOpenings extends BaseCommand {
 
     try {
       while (!shutdown.signal.aborted) {
-        const result = await worker.runOnce()
+        const result = await worker.runOnce(shutdown.signal)
         if (result.status === 'idle') {
           await waitForNextPoll(pollIntervalMs, shutdown.signal)
         }

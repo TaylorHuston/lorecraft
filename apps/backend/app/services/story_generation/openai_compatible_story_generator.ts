@@ -1,6 +1,5 @@
 import type {
   OpeningStoryInput,
-  SanitizedStoryGenerationRequest,
   StoryGenerationEvidence,
   StoryGenerationResult,
   StoryGenerationSettings,
@@ -29,6 +28,21 @@ class RequestTimeoutError extends Error {}
 class ResponseTooLargeError extends Error {}
 
 const defaultMaxResponseBytes = 1_000_000
+const maximumRetryAfterMs = 60_000
+const knownFinishReasons = new Set(['stop', 'length', 'tool_calls', 'content_filter'])
+
+export function parseRetryAfter(value: string | null, nowMs = Date.now()) {
+  if (!value) return undefined
+  const trimmed = value.trim()
+  const seconds = Number(trimmed)
+  const delayMs =
+    trimmed !== '' && Number.isFinite(seconds) && seconds >= 0
+      ? seconds * 1_000
+      : Date.parse(trimmed) - nowMs
+
+  if (!Number.isFinite(delayMs) || delayMs < 0) return undefined
+  return Math.min(Math.round(delayMs), maximumRetryAfterMs)
+}
 
 async function readBoundedResponse(response: Response, maxBytes: number) {
   const contentLength = Number(response.headers.get('content-length'))
@@ -67,7 +81,7 @@ async function readBoundedResponse(response: Response, maxBytes: number) {
   return new TextDecoder().decode(combined)
 }
 
-function narrationFrom(rawResponse: string, evidence: StoryGenerationEvidence): string {
+function parsedResponseFrom(rawResponse: string, evidence: StoryGenerationEvidence) {
   let parsed: unknown
 
   try {
@@ -118,13 +132,36 @@ function narrationFrom(rawResponse: string, evidence: StoryGenerationEvidence): 
     )
   }
 
-  return narration
+  const usage =
+    'usage' in parsed && typeof parsed.usage === 'object' && parsed.usage !== null
+      ? parsed.usage
+      : null
+  return {
+    narration,
+    finishReason:
+      'finish_reason' in parsed.choices[0] &&
+      typeof parsed.choices[0].finish_reason === 'string' &&
+      knownFinishReasons.has(parsed.choices[0].finish_reason)
+        ? parsed.choices[0].finish_reason
+        : undefined,
+    promptTokens:
+      usage && 'prompt_tokens' in usage && typeof usage.prompt_tokens === 'number'
+        ? usage.prompt_tokens
+        : undefined,
+    completionTokens:
+      usage && 'completion_tokens' in usage && typeof usage.completion_tokens === 'number'
+        ? usage.completion_tokens
+        : undefined,
+  }
 }
 
 export class OpenAICompatibleStoryGenerator implements StoryGenerator {
   constructor(private readonly config: OpenAICompatibleStoryGeneratorConfig) {}
 
-  async generateOpening(input: OpeningStoryInput): Promise<StoryGenerationResult> {
+  async generateOpening(
+    input: OpeningStoryInput,
+    signal?: AbortSignal
+  ): Promise<StoryGenerationResult> {
     const url = `${this.config.baseUrl.replace(/\/$/, '')}/chat/completions`
     const prompt = assembleOpeningPrompt(input)
     const body = {
@@ -140,31 +177,35 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
         ? {}
         : { reasoning_effort: this.config.settings.reasoningEffort }),
     }
-    const redactedRequest: SanitizedStoryGenerationRequest = {
-      method: 'POST',
-      url,
-      headers: {
-        'accept': 'application/json',
-        'content-type': 'application/json',
-      },
-      body,
-      timeoutMs: this.config.timeoutMs,
-    }
+    const serializedBody = JSON.stringify(body)
     const pendingEvidence: StoryGenerationEvidence = {
       provider: this.config.provider ?? 'openai-compatible',
       model: this.config.model,
       settings: { ...this.config.settings },
-      redactedRequest,
-      rawResponse: null,
+      request: {
+        byteCount: new TextEncoder().encode(serializedBody).byteLength,
+        timeoutMs: this.config.timeoutMs,
+      },
+      response: { byteCount: 0, statusCode: null },
     }
     let response: Response
     let rawResponse: string
     const abortController = new AbortController()
+    const cancel = () => abortController.abort()
+    signal?.addEventListener('abort', cancel, { once: true })
     let timeout: ReturnType<typeof setTimeout> | undefined
     const maxResponseBytes = this.config.maxResponseBytes ?? defaultMaxResponseBytes
 
     if (!Number.isFinite(maxResponseBytes) || maxResponseBytes <= 0) {
       throw new Error('Story provider response limit must be positive.')
+    }
+
+    if (signal?.aborted) {
+      throw new StoryGenerationError(
+        'cancelled',
+        'Story provider request was cancelled',
+        pendingEvidence
+      )
     }
 
     try {
@@ -176,7 +217,7 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
             'authorization': `Bearer ${this.config.apiKey}`,
             'content-type': 'application/json',
           },
-          body: JSON.stringify(body),
+          body: serializedBody,
           signal: abortController.signal,
         })
 
@@ -194,6 +235,13 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
 
       ;({ response, rawResponse } = await Promise.race([request(), timeoutReached]))
     } catch (error) {
+      if (signal?.aborted) {
+        throw new StoryGenerationError(
+          'cancelled',
+          'Story provider request was cancelled',
+          pendingEvidence
+        )
+      }
       if (error instanceof RequestTimeoutError) {
         throw new StoryGenerationError(
           'timeout',
@@ -217,11 +265,18 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
       )
     } finally {
       clearTimeout(timeout)
+      signal?.removeEventListener('abort', cancel)
     }
 
     const evidence: StoryGenerationEvidence = {
       ...pendingEvidence,
-      rawResponse,
+      response: {
+        byteCount: new TextEncoder().encode(rawResponse).byteLength,
+        statusCode: response.status,
+        ...(parseRetryAfter(response.headers.get('retry-after')) === undefined
+          ? {}
+          : { retryAfterMs: parseRetryAfter(response.headers.get('retry-after')) }),
+      },
     }
 
     if (!response.ok) {
@@ -233,12 +288,19 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
       )
     }
 
-    const narration = narrationFrom(rawResponse, evidence)
+    const parsed = parsedResponseFrom(rawResponse, evidence)
 
     return {
-      narration,
+      narration: parsed.narration,
       ...evidence,
-      rawResponse,
+      response: {
+        ...evidence.response,
+        ...(parsed.finishReason === undefined ? {} : { finishReason: parsed.finishReason }),
+        ...(parsed.promptTokens === undefined ? {} : { promptTokens: parsed.promptTokens }),
+        ...(parsed.completionTokens === undefined
+          ? {}
+          : { completionTokens: parsed.completionTokens }),
+      },
     }
   }
 }
