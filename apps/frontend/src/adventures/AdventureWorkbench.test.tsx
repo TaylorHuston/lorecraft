@@ -85,6 +85,7 @@ describe('AdventureWorkbench', () => {
     )
 
     expect(screen.getByRole('status')).toHaveTextContent('Preparing your opening')
+    expect(screen.getByRole('heading', { name: 'Preparing your opening', level: 2 })).toBeVisible()
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Stormbound Chapel')
     expect(screen.queryByText('The chapel doors open against the storm.')).not.toBeInTheDocument()
@@ -106,6 +107,12 @@ describe('AdventureWorkbench', () => {
 
     const alert = screen.getByRole('alert')
     expect(alert).toHaveTextContent("couldn't prepare your opening")
+    expect(
+      screen.getByRole('heading', {
+        name: "Lorecraft couldn't prepare your opening",
+        level: 2,
+      })
+    ).toBeVisible()
     expect(screen.getByRole('link', { name: 'Return to World' })).toHaveAttribute(
       'href',
       '/worlds/stormbound-chapel'

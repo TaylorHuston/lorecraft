@@ -1,14 +1,14 @@
 ---
-status: in_review
+status: in_progress
 ---
 
 # Tasks: Audit Hardening
 
 ## Resume Here
 
-- Last completed action: locally merged reviewed `change/audit-hardening` into `develop` at merge commit `92895f7`; local UI acceptance is user confirmed and private production acceptance remains pending.
-- Next action: use `/sdd-release` to promote the reviewed integration state toward `main`, publish immutable images after authorization, and complete private-host deployment and recovery verification before closing.
-- Active branch/ref: `develop` at `92895f7` after local non-production integration.
+- Last completed action: `/sdd-release` found four Storybook accessibility failures because pending and failed Adventure states skip from the Story `h1` to an `h3`; the Change returned to implementation for the bounded heading-order fix.
+- Next action: correct and verify `LC-003/S1 R5` heading hierarchy, reconcile evidence, and return the Change to review.
+- Active branch/ref: `fix/adventure-heading-order` from `develop` at `d70201d`.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
@@ -152,6 +152,7 @@ status: in_review
 | 2026-07-18 | Disposable Neon validation                   | main orchestrator after explicit authorization                     | validation schema, migrations, backend, browser E2E                                                                | Up/down/up passed; remote latency exposed and drove a shutdown-after-claim cancellation fix; full backend and desktop/mobile E2E passed                                               | uncommitted    |
 | 2026-07-18 | Initial production migration                 | main orchestrator after explicit authorization                     | production candidate and recovery branch                                                                           | Snapshotted the empty schema-only candidate, rebuilt public from migrations, and retained zero application rows                                                                       | provider state |
 | 2026-07-18 | Release and rollback command                 | main orchestrator                                                  | Compose, production template, release command/tests, README                                                        | Added immutable SHA deployment, recovery acknowledgement, coordinated writers/migration/start, health verification, retained rollback SHA, and explicit no-database-rollback boundary | uncommitted    |
+| 2026-07-18 | Adventure state heading order               | main orchestrator; release-gate feedback                           | `AdventureWorkbench` pending/failure markup, styles, focused tests                                                  | Replaced skipped `h3` state titles with `h2` headings beneath the Story `h1`; added semantic-level assertions                                                                          | commit pending |
 
 ## Verification Ledger
 
@@ -182,14 +183,20 @@ status: in_review
 | 2026-07-18 | Playwright desktop/mobile against disposable Neon                                                                                               | browser E2E                                  | Signup/workspace, starter World, and full Adventure lifecycle through same-origin proxy                                                                                                                                                                                                          | passed; 7/7                                                                                               |
 | 2026-07-18 | Guarded production migration and sanitized row inspection                                                                                       | production database verification             | Direct migration target, ten migration ledger rows, and absence of copied development data                                                                                                                                                                                                       | passed; 0 users, Worlds, Adventures, and model calls                                                      |
 | 2026-07-18 | Deployment, container, and image workflow contract tests                                                                                        | focused release automation                   | Release/rollback plan, migration credential isolation, private Compose topology, immutable GHCR images                                                                                                                                                                                           | passed; 3 deployment, 6 container, and 1 image workflow tests; real Docker execution remains pending host |
+| 2026-07-18 | `AdventureWorkbench.test.tsx` RED/GREEN and `npm run test:storybook`                                                                             | focused UI and browser accessibility         | `LC-003/S1 R5` pending and failed state headings follow the Story-region hierarchy at desktop/mobile sizes                                                                                                                                                                                        | RED: 2 semantic-level assertions failed; GREEN: 5/5 focused and 78/78 Storybook tests passed              |
+| 2026-07-18 | Full frontend test, lint, typecheck, and build                                                                                                    | broad supporting gate                        | The semantic heading fix introduces no frontend behavior, static-analysis, type, or production-build regression                                                                                                                                                                                   | passed; 119 tests                                                                                         |
+| 2026-07-18 | Changed-surface orphan inventory from `develop`, scoped to LC-003                                                                                 | reverse traceability                         | Both changed source files and the focused test remain owned by LC-003; no changed source/test traceability gaps. The reported `github/workflows/images.yml` missing reference is a parser false positive for the existing correct `.github/workflows/images.yml` path.                                                                 | passed/classified; `.neon` remains excluded private-local state                                            |
 
 ## Manual Feedback
+
+- 2026-07-18 release-gate feedback: classified as a `defect` in existing `LC-003/S1 R5` accessibility behavior. Storybook axe reported `heading-order` violations for desktop/mobile pending and failure states because `AdventureWorkbench` rendered state titles as `h3` directly beneath the Story `h1`. No Requirement refinement or scope expansion is needed.
 
 | Date       | Feedback                                                       | Classification                           | Action / Artifact Updates                                                                                                                                                                                                                                     | Status   |
 | ---------- | -------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | 2026-07-18 | User requested planning for all audit fixes                    | requirement refinement                   | Scope all validated findings into one hardening Change                                                                                                                                                                                                        | resolved |
 | 2026-07-18 | User requested actual private deployment in the current Change | scope expansion                          | Add portable images, private host, isolated Neon environments, release/recovery, and production verification                                                                                                                                                  | resolved |
 | 2026-07-18 | User confirmed deployment decisions one at a time              | architecture and operational constraints | Docker Compose LXC; GHCR/manual promotion; layered auth; Neon-only environments; clean starter seed; required restore drill; minimal monitoring; existing private provider; `main` production images; host secrets; maintenance window; always-running worker | resolved |
+| 2026-07-18 | Release gate found skipped Adventure state heading levels      | defect                                   | Added level-specific assertions; changed pending/failure titles from `h3` to `h2`; reran focused and Storybook accessibility suites                                                                                              | resolved |
 
 ## Planning Updates
 
@@ -220,6 +227,7 @@ status: in_review
 - Expected result: disclosure is concise and readable at desktop/mobile widths; route context is clear; asynchronous completion is announced but non-disruptive; private HTTPS/session behavior is correct; and the production stack is independent of the laptop.
 - Feedback that would change artifacts: unclear provider wording is a requirement refinement; unexpected focus movement or silent completion is a defect; a requested consent choice/provider selector is scope expansion.
 - Confirmation: Taylor approved the local Adventure UI after creating an Adventure through the configured provider, observing the pending state recover to ready, and reviewing the generated opening with Player and Scene context. Private HTTPS, session-cookie, host-independence, and recovery checks remain pending deployment.
+- Heading remediation confirmation: no repeat manual walkthrough is required because the visible copy and styling are unchanged; level-specific DOM assertions and the desktop/mobile Storybook accessibility gate directly verify the semantic correction.
 
 ## Blockers / Open Questions
 
@@ -229,7 +237,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: `in_review`; local implementation is under independent review while external deployment and acceptance remain pending
+- Change status: `in_progress`; release-gate accessibility remediation is implemented and awaiting final apply checks plus a refreshed independent review
 - Epic files updated: LC-001/002/003 Requirements, Scenarios, implementation maps, evidence, and honest production gaps are current
 - Story labels/references and Requirement/Scenario IDs current: yes; no duplicate or missing references found
 - Implemented By maps current: yes; deployment/runtime support is mapped to LC-001/LC-003 and database environment behavior to the accepted PostgreSQL ADR
@@ -237,7 +245,7 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
 - Release communication current: required and pending the release handoff; no established changelog exists
-- `sdd-review` verdict: ready at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; manual acceptance pending
+- `sdd-review` verdict: prior review was ready at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; the post-review heading fix requires a refreshed review watermark
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
