@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: merged reviewed `fix/adventure-heading-order` locally into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: rerun `/sdd-release` from `develop`.
+- Next action: commit the prepared public release communication, push `develop`, and open the production release PR to `main`.
 - Active branch/ref: `develop` at merge commit `76239fa`.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
@@ -130,7 +130,7 @@ status: in_review
 - [x] 15.1 Run the complete `/sdd-apply` implementation self-check and remediate safe in-scope findings as one batch.
 - [x] 15.2 Run `/sdd-review` as the independent local PR gate and resolve findings before any production promotion.
 - [ ] 15.3 Record manual UI and private deployment confirmation as `pending user`, `user confirmed`, or `accepted gap` after the walkthrough.
-- [ ] 15.4 Add only user-facing privacy, recovery, accessibility, and availability changes to the project-defined release communication; omit private topology and SDD bookkeeping.
+- [x] 15.4 Add only user-facing privacy, recovery, accessibility, and availability changes to the project-defined release communication; omit private topology and SDD bookkeeping.
 - [ ] 15.5 Use the project release workflow to promote reviewed code through `main`; obtain fresh explicit authorization for image publication, Neon production mutation, host provisioning, migration, and deployment.
 - [ ] 15.6 Keep `status: in_review` until the authorized production deployment, recovery drill, manual confirmation, PR/merge, and closeout work are complete; do not write a `closed` status.
 
@@ -186,6 +186,7 @@ status: in_review
 | 2026-07-18 | `AdventureWorkbench.test.tsx` RED/GREEN and `npm run test:storybook`                                                                             | focused UI and browser accessibility         | `LC-003/S1 R5` pending and failed state headings follow the Story-region hierarchy at desktop/mobile sizes                                                                                                                                                                                        | RED: 2 semantic-level assertions failed; GREEN: 5/5 focused and 78/78 Storybook tests passed              |
 | 2026-07-18 | Full frontend test, lint, typecheck, and build                                                                                                    | broad supporting gate                        | The semantic heading fix introduces no frontend behavior, static-analysis, type, or production-build regression                                                                                                                                                                                   | passed; 119 tests                                                                                         |
 | 2026-07-18 | Changed-surface orphan inventory from `develop`, scoped to LC-003                                                                                 | reverse traceability                         | Both changed source files and the focused test remain owned by LC-003; no changed source/test traceability gaps. The reported `github/workflows/images.yml` missing reference is a parser false positive for the existing correct `.github/workflows/images.yml` path.                                                                 | passed/classified; `.neon` remains excluded private-local state                                            |
+| 2026-07-18 | Release gate: lint, typecheck, build, contracts, Storybook build/browser, deployment contracts, disposable migrations/tests, and desktop/mobile E2E | production release verification | Reviewed `develop` candidate compiles, generated contracts are clean, guarded database behavior passes from a fresh schema, and browser journeys cover desktop/mobile production boundaries | passed; backend 112, frontend 119, Storybook 78, E2E 7, container 6, image 1, deployment 5 |
 
 ## Manual Feedback
 
@@ -244,7 +245,7 @@ status: in_review
 - Scenario-mapped Verified By maps current: local and disposable-Neon evidence current; live private-production and restore evidence remains a gap
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
-- Release communication current: required and pending the release handoff; no established changelog exists
+- Release communication current: prepared in `CHANGELOG.md` under `[Unreleased]`; release commit pending
 - `sdd-review` verdict: ready at refreshed source watermark `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`; private-production acceptance remains pending
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
