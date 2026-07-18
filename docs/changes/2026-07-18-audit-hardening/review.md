@@ -4,7 +4,7 @@
 
 ready
 
-The consolidated implementation findings are remediated, regression checks pass, and commit `bb59d36dfc6e92ad13dd649c9c36d993a57da369` is the immutable review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
+The consolidated implementation findings and release-gate heading-order defect are remediated, regression checks pass, and commit `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1` is the refreshed immutable review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
 
 ## Gate Scorecard
 
@@ -16,10 +16,10 @@ The consolidated implementation findings are remediated, regression checks pass,
 | Requirements and Scenarios            | pass                                          | No duplicate or missing Story/Requirement/Scenario references.                                                                                        |
 | Story reference traceability          | pass                                          | All referenced implementation and verification files exist.                                                                                           |
 | Reverse traceability                  | pass                                          | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure.                             |
-| Tests and verification                | pass with external gaps                       | Local, disposable-Neon, and deterministic E2E evidence passes; real Docker/GHCR/host/restore proof remains pending.                                   |
+| Tests and verification                | pass with external gaps                       | Focused heading tests and all 78 Storybook browser tests pass; prior local, disposable-Neon, and deterministic E2E evidence remains current; real Docker/GHCR/host/restore proof remains pending. |
 | Manual UI confirmation                | local user confirmed; production pending user | Taylor approved the provider-backed pending-to-ready Adventure UI and generated opening; private HTTPS/session/host/recovery checks await deployment. |
-| Code review                           | pass after remediation                        | Release recovery, production entrypoints, keyless provider configuration, and main-only publication corrected.                                        |
-| Visual / UX consistency               | pass                                          | Focused UI tests pass; no visual redesign was introduced.                                                                                             |
+| Code review                           | pass after remediation                        | Release recovery, production entrypoints, keyless provider configuration, main-only publication, and Adventure state heading hierarchy are corrected. |
+| Visual / UX consistency               | pass                                          | Pending/failure headings now follow the Story `h1`; focused and Storybook accessibility tests pass, with no visual redesign.                           |
 | Security review                       | pass                                          | Metadata-only evidence, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved.                              |
 | Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
 | Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and no hosted deployment is claimed.                                                                |
@@ -58,27 +58,29 @@ The consolidated implementation findings are remediated, regression checks pass,
 | Full backend against disposable Neon                        | production-path automated test | LC-001/002/003 database behavior           | 112 passed                | Migration, auth, catalog, Adventure, retry, cancellation, and persistence behavior.                               |
 | Desktop/mobile Playwright against disposable Neon           | deterministic E2E              | LC-001/002/003 journeys                    | 7 passed                  | Signup/workspace, starter World, and full Adventure lifecycle.                                                    |
 | Focused frontend review rerun                               | focused automated test         | route/disclosure/completion behavior       | 16 passed                 | Route titles/focus, notice, UUID fallback, and non-stealing announcement.                                         |
-| `sdd validate ... --json`                                   | structural gate                | active Change and affected Epics           | passed, 0 errors/warnings | Artifact structure and declared references remain valid.                                                          |
+| `sdd validate ... --json`                                   | structural gate                | active Change and affected Epics           | passed, 0 errors; 3 legacy-schema warnings | Artifact structure and declared references remain valid; LC-001/002/003 retain their accepted legacy shape.                           |
+| Focused `AdventureWorkbench.test.tsx`                       | focused automated test         | LC-003/S1 R5 pending/failure headings      | 5 passed                  | State titles are level-two headings beneath the Story heading.                                                     |
+| `npm run test:storybook`                                    | browser accessibility          | LC-003/S1 R5 desktop/mobile states         | 78 passed                 | Pending and failure stories have no automated accessibility violations.                                           |
 
 ## Review Bundle
 
-- Source branch/ref: `change/audit-hardening`
-- Reviewed source commit: `bb59d36dfc6e92ad13dd649c9c36d993a57da369`
-- Target branch/ref: `develop` at `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`
-- Merge base: `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`
-- Source-only commits: `bb59d36 Harden Lorecraft and add private deployment`
+- Source branch/ref: `fix/adventure-heading-order`
+- Reviewed source commit: `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`
+- Target branch/ref: `develop` at `d70201d18784d23826b4e669274302c20e660921`
+- Merge base: `d70201d18784d23826b4e669274302c20e660921`
+- Source-only commits: `47dbaea Fix Adventure state heading order`; `0c026d6 Record heading fix handoff`
 - Target-only commits: none
-- Changed files: 65
-- Diff stat: 3,074 insertions, 311 deletions
-- Conflict check: `git merge-tree --write-tree develop HEAD` passed and produced tree `a9521396d0bbddcb39618db0e912962d2c0ba647`
+- Changed files: 5
+- Diff stat: 24 insertions, 9 deletions
+- Conflict check: `git merge-tree --write-tree develop HEAD` passed and produced tree `0a7473d4bd8dd5b87e32481d0473377eeb21c6c5`
 - Dirty state: only private-local `.neon` remains untracked
-- Branch policy: `change/*` to non-production `develop` is correct; no PR/merge authorized
-- Reverse-traceability command/result: packaged orphan audit with `--changed-from develop`, plus LC-001/002/003 passes; no missing references
+- Branch policy: `fix/*` to non-production `develop` is correct; no PR/merge authorized
+- Reverse-traceability command/result: packaged orphan audit with `--changed-from develop --epic LC-003`; changed source/tests are owned. Its stripped-leading-dot `.github/workflows/images.yml` report is a classified parser false positive.
 
 ## Reverse Traceability
 
-- Candidate scope: 65 source, test, support, generated, config, doc, and local-state candidates.
-- Epic ownership reconciled: product behavior maps to LC-001/002/003; deployment behavior maps to LC-001/LC-003.
+- Candidate scope: six changed/local candidates, including two source files, one test, two SDD artifacts, and excluded `.neon` state.
+- Epic ownership reconciled: the heading markup/style and focused test map to LC-003/S1 R5.
 - Support/generated/framework classifications: CI/image workflows, Tuyau output, database guards, root scripts, Compose contracts, and package/config files are supporting infrastructure.
 - Stranded refactor surfaces checked: worker entrypoint, generated contracts, routes, migration, provider evidence fields, old raw evidence names, and unused Neon driver dependency.
 - Explicit gaps or tracked cleanup: `.neon` is excluded private-local state; live Docker/GHCR/LXC/Tailscale/restore evidence remains tracked in Tasks 13-15.
@@ -107,16 +109,17 @@ The consolidated implementation findings are remediated, regression checks pass,
 
 ## PR / Merge Readiness
 
-- Source branch: `change/audit-hardening`
-- Reviewed source commit: `bb59d36dfc6e92ad13dd649c9c36d993a57da369`
+- Source branch: `fix/adventure-heading-order`
+- Reviewed source commit: `0c026d6a7180d3549a3a1414f0e23ef49da1ceb1`
 - Target branch: `develop`
 - Conflict check: passed
-- Commit state: committed; review-record follow-up commit pending
+- Commit state: reviewed source committed at `0c026d6`; refreshed review record committed at `25176c9`; subsequent ledger-only reconciliation does not change reviewed behavior
 - PR status: none; not authorized
-- Merge status: locally merged to `develop` at `92895f7`; no push performed
+- Merge status: heading fix not yet merged; prior audit-hardening integration remains on `develop` at `92895f7`; no push performed
 
 ## Review Log
 
 - 2026-07-18: Deep review discovery completed, consolidated safe remediation applied, and regression verification passed; commit/manual/external gates remain.
 - 2026-07-18: Implementation committed at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; generated contracts and merge-tree conflict check passed; verdict advanced to `ready` with manual acceptance pending.
 - 2026-07-18: User authorized close and merge; local integration into `develop` completed at `92895f7`. Closeout remains pending the accepted private deployment, restore drill, and production acceptance scope.
+- 2026-07-18: Release gate exposed skipped heading levels in Adventure pending/failure states. Fix commit `47dbaea` and handoff commit `0c026d6` passed focused semantic assertions, all Storybook accessibility tests, conflict checking, traceability, artifact, security, docs, Idea, PRD, and branch-readiness review. Verdict remains `ready`; deployment acceptance and closeout remain pending.

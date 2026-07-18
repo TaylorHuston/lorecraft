@@ -107,7 +107,7 @@ function StoryRegion({
         {openingInProgress ? (
           <div className={styles.storyState}>
             <p className={styles.stateEyebrow}>Game Master</p>
-            <h3>Preparing your opening</h3>
+            <h2>Preparing your opening</h2>
             <p>
               Your Adventure is safe. You can leave this page and return while the story begins.
             </p>
@@ -120,7 +120,7 @@ function StoryRegion({
         {adventure.status === 'opening_failed' ? (
           <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
             <p className={styles.stateEyebrow}>Opening interrupted</p>
-            <h3>Lorecraft couldn't prepare your opening</h3>
+            <h2>Lorecraft couldn't prepare your opening</h2>
             <p>No partial story was saved. Try again when you're ready.</p>
             {retryError ? <p className={styles.retryError}>{retryError}</p> : null}
             <div className={styles.stateActions}>
