@@ -6,8 +6,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: completed the independent review discovery wave and applied its consolidated safe remediation batch across image provenance, recovery confirmation, failed-health rollback, production console entrypoints, keyless provider support, and artifact traceability.
-- Next action: run the affected verification union and regression-focused rereview; then record the exact reviewed commit after the implementation is committed.
+- Last completed action: committed the reviewed implementation at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; generated contracts reproduce exactly and the committed source merges cleanly into `develop`.
+- Next action: record the review-watermark follow-up commit, then complete the pending manual UI walkthrough before PR/integration or private-host release work.
 - Active branch/ref: `change/audit-hardening` from `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
@@ -128,7 +128,7 @@ status: in_review
 ### 15. Review, Release, And Closeout
 
 - [x] 15.1 Run the complete `/sdd-apply` implementation self-check and remediate safe in-scope findings as one batch.
-- [ ] 15.2 Run `/sdd-review` as the independent local PR gate and resolve findings before any production promotion.
+- [x] 15.2 Run `/sdd-review` as the independent local PR gate and resolve findings before any production promotion.
 - [ ] 15.3 Record manual UI and private deployment confirmation as `pending user`, `user confirmed`, or `accepted gap` after the walkthrough.
 - [ ] 15.4 Add only user-facing privacy, recovery, accessibility, and availability changes to the project-defined release communication; omit private topology and SDD bookkeeping.
 - [ ] 15.5 Use the project release workflow to promote reviewed code through `main`; obtain fresh explicit authorization for image publication, Neon production mutation, host provisioning, migration, and deployment.
@@ -235,9 +235,9 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
 - Release communication current: required and pending the release handoff; no established changelog exists
-- `sdd-review` verdict: remediation verification pending
+- `sdd-review` verdict: ready at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; manual acceptance pending
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
-- `review.md` findings resolved: consolidated batch applied; regression verification pending
+- `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
 - Manual UI confirmation status: pending user for new UI behavior and private production
 - PR / merge state: none

@@ -2,9 +2,9 @@
 
 ## Verdict
 
-changes-requested
+ready
 
-The consolidated implementation findings are remediated and regression checks pass. Integration readiness remains blocked because the reviewed implementation is still uncommitted, so there is no immutable source commit for the review watermark. Manual UI and private-production acceptance also remain `pending user`.
+The consolidated implementation findings are remediated, regression checks pass, and commit `bb59d36dfc6e92ad13dd649c9c36d993a57da369` is the immutable review watermark. Manual UI and private-production acceptance remain `pending user`, so PR, merge, deployment, and closeout are not yet authorized or acceptance-ready.
 
 ## Gate Scorecard
 
@@ -24,14 +24,14 @@ The consolidated implementation findings are remediated and regression checks pa
 | Documentation | pass | README, ADRs, Epics, and Change ledger describe current local versus live-production truth. |
 | Idea repository / current-state truth | pass | Official repository remains active, MVP archived, and no hosted deployment is claimed. |
 | Release communication | pending | Required at release handoff; no project changelog is established. |
-| Branch and merge readiness | blocked | Correct source/target pair, but all implementation remains uncommitted and manual acceptance is pending. |
+| Branch and merge readiness | technically ready | Committed source merges cleanly to `develop`; manual acceptance and explicit integration authorization remain pending. |
 | PRD alignment | pass | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved. |
 
 ## Findings
 
 ### BLOCKING
 
-- [ ] Source working tree - The implementation has no immutable reviewed source commit; `change/audit-hardening` still points to the same commit as `develop`. Recommendation: create one policy-compliant implementation commit excluding user-owned `AGENTS.md` and private `.neon`, then rerun the stale-contract, conflict, and review-watermark checks.
+- [x] Source working tree - Commit the implementation and rerun stale-contract, conflict, and review-watermark checks. Resolved by `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; `.neon` remains excluded private-local state.
 
 ### REQUIRED
 
@@ -63,15 +63,15 @@ The consolidated implementation findings are remediated and regression checks pa
 ## Review Bundle
 
 - Source branch/ref: `change/audit-hardening`
-- Reviewed source commit: `91ea546a7b4133fba2b847ea764c4300fcf0d8a3` plus uncommitted working tree; immutable watermark pending
+- Reviewed source commit: `bb59d36dfc6e92ad13dd649c9c36d993a57da369`
 - Target branch/ref: `develop` at `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`
 - Merge base: `91ea546a7b4133fba2b847ea764c4300fcf0d8a3`
-- Source-only commits: none
+- Source-only commits: `bb59d36 Harden Lorecraft and add private deployment`
 - Target-only commits: none
-- Changed files: 65 changed-surface candidates before review artifact/remediation
-- Diff stat: tracked baseline was 39 files, 1,009 insertions, 258 deletions; untracked implementation included deployment, migration, tests, audit, ADR, and Change files
-- Conflict check: committed refs merge cleanly; meaningful source conflict check must be repeated after commit
-- Dirty state: intended Change files plus unrelated user-owned `AGENTS.md` and private-local `.neon`
+- Changed files: 65
+- Diff stat: 3,074 insertions, 311 deletions
+- Conflict check: `git merge-tree --write-tree develop HEAD` passed and produced tree `a9521396d0bbddcb39618db0e912962d2c0ba647`
+- Dirty state: only private-local `.neon` remains untracked
 - Branch policy: `change/*` to non-production `develop` is correct; no PR/merge authorized
 - Reverse-traceability command/result: packaged orphan audit with `--changed-from develop`, plus LC-001/002/003 passes; no missing references
 
@@ -94,7 +94,7 @@ The consolidated implementation findings are remediated and regression checks pa
 | Security | delegated security review | pass after remediation | Main provenance and recovery boundaries corrected. |
 | UI / visual identity | delegated UI review | pass, pending manual | Focused UI tests passed. |
 | Docs / Idea truth / release communication / PRD | delegated artifact and docs reviews | pass with release pending | Idea lifecycle and PRD align. |
-| Integration readiness | orchestrator | blocked | Immutable commit and manual acceptance are pending. |
+| Integration readiness | orchestrator | technically ready | Immutable commit and clean conflict check recorded; manual acceptance and authorization remain pending. |
 
 ## Consolidated Remediation
 
@@ -102,19 +102,20 @@ The consolidated implementation findings are remediated and regression checks pa
 - Safe-fix batch: release command/tests, Compose/production migration entrypoints, image workflow/test, README, ADRs, LC-003, and tasks ledger.
 - Deferred or unsafe findings: none from code review; external production execution remains an explicit workflow gate.
 - Affected verification union: deployment/container/image/database-safety tests, lint, typecheck, build, reverse traceability, and scoped validation.
-- Regression-focused rereview: passed for the remediated code/artifact surfaces; final commit watermark still required.
+- Regression-focused rereview: passed for the remediated code/artifact surfaces and committed review watermark.
 - New regressions introduced by remediation: none.
 
 ## PR / Merge Readiness
 
 - Source branch: `change/audit-hardening`
-- Reviewed source commit: pending implementation commit
+- Reviewed source commit: `bb59d36dfc6e92ad13dd649c9c36d993a57da369`
 - Target branch: `develop`
-- Conflict check: pending post-commit rerun
-- Commit state: uncommitted
+- Conflict check: passed
+- Commit state: committed; review-record follow-up commit pending
 - PR status: none; not authorized
 - Merge status: none; not authorized
 
 ## Review Log
 
 - 2026-07-18: Deep review discovery completed, consolidated safe remediation applied, and regression verification passed; commit/manual/external gates remain.
+- 2026-07-18: Implementation committed at `bb59d36dfc6e92ad13dd649c9c36d993a57da369`; generated contracts and merge-tree conflict check passed; verdict advanced to `ready` with manual acceptance pending.
