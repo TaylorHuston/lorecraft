@@ -183,7 +183,7 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
       model: this.config.model,
       settings: { ...this.config.settings },
       request: {
-        byteCount: new TextEncoder().encode(serializedBody).byteLength,
+        byteCount: Buffer.byteLength(serializedBody, 'utf8'),
         timeoutMs: this.config.timeoutMs,
       },
       response: { byteCount: 0, statusCode: null },
@@ -271,7 +271,7 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
     const evidence: StoryGenerationEvidence = {
       ...pendingEvidence,
       response: {
-        byteCount: new TextEncoder().encode(rawResponse).byteLength,
+        byteCount: Buffer.byteLength(rawResponse, 'utf8'),
         statusCode: response.status,
         ...(parseRetryAfter(response.headers.get('retry-after')) === undefined
           ? {}

@@ -33,3 +33,26 @@ it('LC-001/S3 route context applies after an authenticated redirect', async () =
   await waitFor(() => expect(heading).toHaveFocus())
   expect(document.title).toBe('Worlds | Lorecraft')
 })
+
+it('LC-001/S3 route context preserves focus chosen while a destination is loading', async () => {
+  const user = userEvent.setup()
+  let resolveWorlds: (worlds: []) => void = () => undefined
+  const worlds = new Promise<[]>((resolve) => {
+    resolveWorlds = resolve
+  })
+  renderTestApp({
+    route: '/worlds',
+    session: { id: 4, email: 'member@example.com' },
+    worldApi: { listWorlds: async () => worlds },
+  })
+
+  const focusedControl = document.createElement('button')
+  focusedControl.textContent = 'Keep focus here'
+  document.body.append(focusedControl)
+  await user.click(focusedControl)
+  resolveWorlds([])
+
+  await screen.findByRole('heading', { name: 'Worlds' })
+  await waitFor(() => expect(focusedControl).toHaveFocus())
+  focusedControl.remove()
+})

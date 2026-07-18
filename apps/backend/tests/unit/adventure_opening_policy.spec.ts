@@ -25,5 +25,6 @@ test.group('Adventure opening policy', () => {
       retryDelayMs({ attempt: 2, baseDelayMs: 1_000, jitter: 0.5, retryAfterMs: 120_000 }),
       60_000
     )
+    assert.equal(retryDelayMs({ attempt: Number.MAX_VALUE, baseDelayMs: 1_000, jitter: 1 }), 60_000)
   })
 })

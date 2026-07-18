@@ -23,6 +23,7 @@ export function retryDelayMs(options: {
   }
 
   const boundedJitter = Math.min(1, Math.max(0, options.jitter))
-  const exponential = options.baseDelayMs * 2 ** Math.max(0, options.attempt - 1)
+  const cappedAttempt = Math.min(options.attempt, 20)
+  const exponential = options.baseDelayMs * 2 ** Math.max(0, cappedAttempt - 1)
   return Math.min(Math.round(exponential * (0.5 + boundedJitter * 0.5)), maximumRetryDelayMs)
 }

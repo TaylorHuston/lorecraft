@@ -71,14 +71,23 @@ export function failureRecoveryPlan({ composeFile, currentSha }) {
   ]
 }
 
-function parseEnvironment(path) {
+export function parseEnvironment(path) {
   const values = {}
   for (const rawLine of readFileSync(path, 'utf8').split(/\r?\n/)) {
     const line = rawLine.trim()
     if (!line || line.startsWith('#')) continue
     const equals = line.indexOf('=')
     if (equals < 1) throw new Error(`Invalid environment entry in ${path}.`)
-    values[line.slice(0, equals)] = line.slice(equals + 1)
+    const key = line.slice(0, equals).trim()
+    if (!key) throw new Error(`Invalid environment entry in ${path}.`)
+    let value = line.slice(equals + 1).trim()
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1)
+    }
+    values[key] = value
   }
   return values
 }

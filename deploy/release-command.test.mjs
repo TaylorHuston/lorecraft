@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict'
+import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import test from 'node:test'
 
 import {
@@ -6,10 +9,31 @@ import {
   deploymentPlan,
   executeDeployment,
   failureRecoveryPlan,
+  parseEnvironment,
   validateDeploymentInput,
 } from './release-command.mjs'
 
 const sha = '0123456789abcdef0123456789abcdef01234567'
+
+test('parses whitespace and quoted production environment values', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'lorecraft-release-'))
+  const path = join(directory, '.env.production')
+  try {
+    await writeFile(
+      path,
+      [' IMAGE_REPOSITORY = "ghcr.io/example/lorecraft" ', "APP_URL='https://lorecraft.test'"].join(
+        '\n'
+      )
+    )
+
+    assert.deepEqual(parseEnvironment(path), {
+      IMAGE_REPOSITORY: 'ghcr.io/example/lorecraft',
+      APP_URL: 'https://lorecraft.test',
+    })
+  } finally {
+    await rm(directory, { recursive: true })
+  }
+})
 
 test('derives immutable frontend and backend images from one reviewed SHA', () => {
   assert.deepEqual(deploymentImages('ghcr.io/example/lorecraft', sha), {

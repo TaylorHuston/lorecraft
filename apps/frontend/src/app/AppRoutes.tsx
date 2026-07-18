@@ -224,21 +224,47 @@ function RoutePresentation() {
 
   useEffect(() => {
     document.title = routeTitle(location.pathname)
+    let userSelectedFocus = false
+    const markUserInteraction = () => {
+      userSelectedFocus = true
+    }
+    const removeInteractionListeners = () => {
+      document.removeEventListener('pointerdown', markUserInteraction, true)
+      document.removeEventListener('keydown', markUserInteraction, true)
+    }
+    document.addEventListener('pointerdown', markUserInteraction, true)
+    document.addEventListener('keydown', markUserInteraction, true)
 
     const focusHeading = () => {
       const heading = document.querySelector<HTMLElement>('[data-route-heading]')
       if (!heading) return false
-      heading.tabIndex = -1
+      const activeElement = document.activeElement
+      if (
+        userSelectedFocus &&
+        activeElement !== document.body &&
+        activeElement !== document.documentElement
+      )
+        return true
+      if (!heading.hasAttribute('tabindex')) heading.tabIndex = -1
       heading.focus()
       return true
     }
 
-    if (focusHeading()) return
+    if (focusHeading()) {
+      removeInteractionListeners()
+      return
+    }
     const observer = new MutationObserver(() => {
-      if (focusHeading()) observer.disconnect()
+      if (focusHeading()) {
+        observer.disconnect()
+        removeInteractionListeners()
+      }
     })
     observer.observe(document.body, { childList: true, subtree: true })
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      removeInteractionListeners()
+    }
   }, [location.pathname])
 
   return null

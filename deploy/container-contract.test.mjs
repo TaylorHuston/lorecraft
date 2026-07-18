@@ -21,6 +21,8 @@ test('gateway serves SPA routes, proxies same-origin API, and exposes health', a
 
   assert.match(nginx, /location \/api\//)
   assert.match(nginx, /proxy_pass http:\/\/api:4311/)
+  assert.match(nginx, /proxy_set_header X-Forwarded-Proto https/)
+  assert.doesNotMatch(nginx, /proxy_set_header X-Forwarded-Proto \$http_x_forwarded_proto/)
   assert.match(nginx, /try_files \$uri \$uri\/ \/index\.html/)
   assert.match(nginx, /location = \/healthz/)
 })
