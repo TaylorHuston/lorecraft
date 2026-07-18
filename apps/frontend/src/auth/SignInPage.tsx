@@ -129,7 +129,13 @@ export function SignInPage() {
           pending={signIn.isPending}
         />
 
-        <Button pending={signIn.isPending} pendingLabel="Signing in…" size="touch" type="submit">
+        <Button
+          className={formStyles.signInButton}
+          pending={signIn.isPending}
+          pendingLabel="Signing in…"
+          size="touch"
+          type="submit"
+        >
           Sign in
         </Button>
       </form>

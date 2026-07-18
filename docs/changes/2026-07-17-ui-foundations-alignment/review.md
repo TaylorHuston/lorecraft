@@ -17,7 +17,7 @@ The Lorecraft application, supporting product truth, Epic evidence, and shared c
 | Story reference traceability | Pass | Existing Story ownership remains stable across the three affected Epics. |
 | Reverse traceability | Pass | 57 changed candidates; 0 missing references, unowned source files, or unowned tests. |
 | Tests and verification | Pass | Backend 102, frontend 115, Storybook 78, build, lint, typecheck, and desktop/mobile E2E 7 gates pass. |
-| Manual UI confirmation | Pending user | Prepared walkthrough remains in `tasks.md`; this does not change the technical verdict. |
+| Manual UI confirmation | Pass | User confirmed the prepared walkthrough and authorized close and merge on 2026-07-18. |
 | Code review | Pass | Delegated frontend, test, security, and artifact passes completed; pending-state and visual-identity code findings were remediated. |
 | Visual / UX consistency | Pass | Production-height desktop/mobile stories exercise isolated internal scrolling; retained shared-hub captures preserve Lorecraft hierarchy and identity. |
 | Shared UI Foundations comparison | Pass | Lorecraft is registered at UI Foundations commit `41259aa` on lineage `3989806` and appears in all five cells of the retained 20-image comparison matrix. |
@@ -131,7 +131,7 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 - Commit state: implementation, Epic, idea, and shared comparison remediations are committed locally; final review artifact reconciliation is represented by the commit containing this record
 - PR status: not created
 - Merge status: not merged
-- Closeout status: pending user manual visual confirmation and explicit merge/close authorization
+- Closeout status: user confirmed; explicit Lorecraft merge/close authorization received on 2026-07-18
 
 ## Review Log
 
@@ -139,3 +139,4 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 - 2026-07-17: Reopened implementation for follow-up review findings, completed exact source remediation at `90f84b595a7ed71a0bf2f200de0c53434daedc04`, registered Lorecraft in UI Foundations at `db250f399bac1f19b1cfc1733620c52fc286053a`, and retained the complete comparison matrix; independent re-review and manual confirmation remain pending.
 - 2026-07-17: Reviewed `b931afb5ae2fa6b37bb17a7bff9e351bc3a602b3`, remediated Adventure pending-state and dialog-style findings at `3797c8b244a38c602b1344184eec154fc0adaff3`, and reverified frontend, Storybook, static, and E2E gates. Verdict remains `changes-requested` because vault SDD configuration and the external visual-identity note are not current; manual confirmation remains pending.
 - 2026-07-17: Reconciled idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage at `41259aa96ce551ffde96616a295b74a9c019cf7f`. Full app, security, shared-hub, capture, traceability, and merge-tree gates pass; technical verdict is `ready`, manual confirmation remains pending, and no fresh SDD validation is claimed.
+- 2026-07-18: User confirmed the prepared walkthrough and authorized Lorecraft close and merge. The final sign-in contrast correction passed the focused auth suite, frontend typecheck, and frontend lint; classified as an existing-contract presentation fix with no Requirement, Scenario, ownership, or architecture change.

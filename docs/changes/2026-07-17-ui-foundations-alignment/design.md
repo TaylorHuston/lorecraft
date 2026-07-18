@@ -280,7 +280,7 @@ Keep World catalog/detail and Adventure composition in their current feature own
 - Applicability: required and resolved by confirmed product constraints plus current production and Storybook references.
 - Confirmed direction: selective foundational alignment inside the existing dark, compact, creator-first Lorecraft system.
 - User confirmation: preserve TTRPG/narrative identity, three-column desktop Adventure, Story-first tabbed mobile Adventure, and project-specific atmosphere.
-- Reference artifacts: current Lorecraft production routes and stories, `spaces/shared/visual-style-guide.md`, and the current UI Foundations primitives, patterns, reference lifecycle, and comparison catalog.
+- Reference artifacts: current Lorecraft production routes and stories, `my-vault/spaces/shared/visual-style-guide.md`, and the current UI Foundations primitives, patterns, reference lifecycle, and comparison catalog.
 
 ### User Flow And Information Architecture
 

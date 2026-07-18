@@ -7,10 +7,10 @@ status: in_review
 ## Resume Here
 
 - Last completed action: reconciled Lorecraft idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage/capture at UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`.
-- Next action: complete the prepared manual desktop/mobile walkthrough; then ask before merging either repository and stop again before closing the Change.
+- Next action: integrate the authorized Lorecraft branch into `develop`, close the Change, and record final branch/folder truth.
 - Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
 - Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
-- Known blockers: user manual visual confirmation remains pending. The invalid vault-level SDD configuration is an external workspace blocker, was not edited, and prevents a fresh SDD validation claim.
+- Known blockers: none for Lorecraft integration or closeout. The invalid vault-level SDD configuration is an external workspace issue, was not edited, and prevents a fresh SDD validation claim.
 
 ## Task Checklist
 
@@ -91,7 +91,7 @@ status: in_review
 - [x] 8.4 Run `apps/frontend/e2e/account-workspace.spec.ts`, `starter-world.spec.ts`, and `adventure-foundation.spec.ts` at the established desktop and mobile projects, retaining overflow and touch-target checks.
 - [x] 8.5 Run repository frontend tests, `lint`, `typecheck`, `build`, `test:storybook`, and `build:storybook` gates using the scripts available on the implementation branch.
 - [x] 8.6 Capture browser screenshots at `1440x900` and `390x844` for representative World and Adventure states and review focus, overflow, hierarchy, and atmosphere; auth disclosure is covered in desktop/mobile E2E.
-- [ ] 8.7 Complete the Manual UI Confirmation steps below and record user feedback using the canonical status vocabulary.
+- [x] 8.7 Complete the Manual UI Confirmation steps below and record user feedback using the canonical status vocabulary.
 - [x] 8.8 Reconcile app identity/style/README claims only where implementation makes current tracked documentation inaccurate; no README claim required revision, and release communication remains user-facing.
 - [x] 8.9 Replace all planned `Not implemented yet.` and `Not verified yet.` entries with truthful code paths and scenario-mapped evidence, leaving explicit gaps for anything unproved.
 - [x] 8.10 Run scoped `sdd validate lorecraft --change 2026-07-17-ui-foundations-alignment --repo spaces/code/lorecraft --workspace /Users/taylor/src/my-life/my-vault` before review handoff.
@@ -102,7 +102,7 @@ status: in_review
 - [x] 9.2 Run `/sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, behavior, accessibility, tests, docs, comparison evidence, and branch readiness.
 - [x] 9.3 Record the review outcome and resolve findings or explicitly accept non-blocking risk.
 - [x] 9.4 Confirm the separate UI Foundations hub registration and comparison capture are complete; do not close with Lorecraft absent from the hub.
-- [ ] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
+- [x] 9.5 Resolve planning/design updates, manual confirmation, release communication, and all stale implementation/verification placeholders.
 - [x] 9.6 Keep machine-readable status aligned with Resume Here, ledgers, review, manual confirmation, branch state, and folder location.
 - [ ] 9.7 Follow the repository's authorized PR/merge policy, then run `sdd change close` only after review, integration, acceptance, and closeout truth are complete.
 
@@ -156,6 +156,7 @@ status: in_review
 
 - 2026-07-17 follow-up review, classified as in-scope defects and verification gaps: expose destructive consequences through the Dialog description contract; assert the resulting accessible description; constrain stable desktop/mobile comparison stories to production-equivalent viewport height; deterministically exercise internal scrolling geometry; add the designed disabled and pending TextField/Textarea previews; refresh exact review SHAs and merge-tree evidence; and complete the separately tracked shared UI Foundations registration and retained capture. No accepted product requirement, Scenario, ownership boundary, or architecture decision changed, so `/sdd-change --replan` was not required.
 - Manual visual confirmation remains pending for the user after deterministic remediation is complete.
+- 2026-07-18: user authorized close and merge after the prepared walkthrough; recorded as `user confirmed`. The final sign-in correction preserves the accepted design while ensuring the primary action label remains white on Burnished Orange.
 
 ## Planning Updates
 
@@ -168,7 +169,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 ## Manual UI Confirmation
 
-- Status: pending user.
+- Status: user confirmed.
 - App URL / route: Lorecraft frontend at `http://localhost:4310`; Storybook at exact `http://127.0.0.1:4312`.
 - Required setup or test data: deterministic account fixtures plus representative empty, populated, failed, and retryable Worlds; ready, pending, failed, settings, reset, and delete Adventure fixtures.
 - Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories and the retained shared-hub matrix at `/private/tmp/ui-foundations-lorecraft/comparison-report/index.html`.
@@ -180,12 +181,12 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Planning blockers: none.
 - Promotion dependency: resolved; `2026-07-17-epic-truth-reconciliation` is integrated and closed.
 - Shared-hub dependency: resolved on isolated UI Foundations branch `misc/register-lorecraft-comparison` at `41259aa96ce551ffde96616a295b74a9c019cf7f`, descended from current lineage `3989806`; the canonical checkout was not modified.
-- Closeout dependency: obtain user manual visual confirmation, explicit merge authorization for each repository, completed integration, and explicit close authorization. The external SDD config still prevents fresh validation.
+- Closeout dependency: Lorecraft merge and close authorization received on 2026-07-18. The external SDD config still prevents fresh validation but does not contradict repository-local implementation or Epic truth.
 - Open product or visual questions: none under the confirmed constraints.
 
 ## Closeout
 
-- Change status: `in_review`; technical remediation and shared-hub evidence are complete, while user manual confirmation and explicit integration/close authorization remain pending.
+- Change status: `in_review`; technical remediation, shared-hub evidence, user confirmation, and Lorecraft integration/close authorization are complete.
 - Epic files updated: yes; LC-001, LC-002, and LC-003 reflect current implementation and evidence.
 - Story labels/references and Requirement/Scenario IDs current: yes; semantic duplicate scenarios were reconciled onto stable existing IDs during promotion.
 - Implemented By maps current: yes; changed-surface reverse traceability reports no unowned source files or missing paths.
@@ -197,7 +198,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Review record: `docs/changes/2026-07-17-ui-foundations-alignment/review.md`.
 - `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
-- Manual UI confirmation status: pending user.
+- Manual UI confirmation status: user confirmed.
 - PR / merge state: implementation committed locally on `change/ui-foundations-alignment`; no push, PR, or merge.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
 - Change moved to `docs/changes/closed/`: no; it remains active until user confirmation, explicit integration authorization, integration, and explicit close authorization are complete.
