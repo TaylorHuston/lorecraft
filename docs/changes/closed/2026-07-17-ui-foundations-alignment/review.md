@@ -4,7 +4,7 @@
 
 ready
 
-The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. User manual visual confirmation and explicit merge authorization remain pending. The known invalid vault-level SDD configuration prevents a fresh SDD validation claim but is external to this Change and was not edited.
+The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. User manual visual confirmation, merge authorization, integration, and closeout are complete. The previously invalid workspace configuration was repaired externally, and fresh scoped SDD validation passes.
 
 ## Gate Scorecard
 
@@ -25,7 +25,7 @@ The Lorecraft application, supporting product truth, Epic evidence, and shared c
 | Documentation | Pass | Changelog and affected Epic evidence are current and user-facing. |
 | Idea repository / current-state truth | Pass | `spaces/ideas/lorecraft/visual-identity.md` now records the implemented private Adventure foundation while retaining the creator-first World bible as the primary baseline. |
 | Release communication | Pass | `CHANGELOG.md` contains the user-facing control/accessibility change only. |
-| SDD workspace validation | External blocker | Vault config rejects `repositories.roots.archived: ../spaces/archived`, so no fresh SDD validation is claimed. |
+| SDD workspace validation | Pass | Fresh closed-Change validation resolves all three affected Epics with 0 errors and 0 warnings after the external workspace repair. |
 | Branch conflict check | Pass | Exact reviewed source merges cleanly; source is twelve commits ahead of and zero commits behind `develop`. |
 | PRD alignment | Pass | Creator-first World work and frozen non-canonical Adventure boundaries are unchanged. |
 
@@ -33,7 +33,7 @@ The Lorecraft application, supporting product truth, Epic evidence, and shared c
 
 ### BLOCKING
 
-None within Lorecraft or the shared comparison branch. The invalid vault-level SDD configuration remains an external workspace blocker and was explicitly excluded from remediation.
+None within Lorecraft or the shared comparison branch. The earlier external workspace blocker has been repaired outside this Change.
 
 ### REQUIRED
 
@@ -96,7 +96,7 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 - Epic ownership reconciled: LC-001 account presentation, LC-002 World presentation, LC-003 Adventure presentation.
 - Support/generated/framework classifications: package manifests and `CHANGELOG.md` are support files; no generated files were committed.
 - Stranded refactor surfaces checked: retired Adventure-local dialog imports and files have no remaining references.
-- Explicit gaps or tracked cleanup: user manual visual confirmation and explicit integration authorization remain. Vault-level SDD config repair is tracked externally and prevents fresh SDD validation only.
+- Explicit gaps or tracked cleanup: none for this Change; user confirmation, integration authorization, and workspace validation are complete.
 
 ## Discovery Wave
 
@@ -117,7 +117,7 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 
 - Root causes addressed: assertion names exceeded exercised behavior; comparison fixtures lacked production-height constraints and actual overflow; designed field states were omitted; the destructive consequence bypassed the Dialog description contract; and app-local stories were incorrectly treated as sufficient shared-hub evidence.
 - Safe-fix batches: focus-trap traversal and lifecycle evidence at `41699f2`; accessible description, field previews, production-height scrolling, and exact Storybook host at `90f84b5`; final app review remediation at `3797c8b` and `4e90773`; and shared-hub lineage/capture at UI Foundations `41259aa`.
-- Deferred or unsafe findings: vault-level SDD config belongs to separate workspace migration work and was not edited. Fresh SDD validation is not claimed.
+- Deferred or unsafe findings: none for this remediation; the workspace configuration repair occurred externally and fresh scoped validation passes.
 - Affected verification union: focused Adventure routes, full frontend and Storybook suites, lint, typecheck, static Storybook build, guarded Playwright E2E, reverse traceability, diff check, merge tree, and scoped SDD validation attempt.
 - Regression-focused rereview: completed against the post-remediation diff.
 - New regressions introduced by remediation: none; frontend increased to 115 passing tests and E2E remained 7 passing journeys.
@@ -140,3 +140,4 @@ None within Lorecraft or the shared comparison branch. The invalid vault-level S
 - 2026-07-17: Reviewed `b931afb5ae2fa6b37bb17a7bff9e351bc3a602b3`, remediated Adventure pending-state and dialog-style findings at `3797c8b244a38c602b1344184eec154fc0adaff3`, and reverified frontend, Storybook, static, and E2E gates. Verdict remains `changes-requested` because vault SDD configuration and the external visual-identity note are not current; manual confirmation remains pending.
 - 2026-07-17: Reconciled idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage at `41259aa96ce551ffde96616a295b74a9c019cf7f`. Full app, security, shared-hub, capture, traceability, and merge-tree gates pass; technical verdict is `ready`, manual confirmation remains pending, and no fresh SDD validation is claimed.
 - 2026-07-18: User confirmed the prepared walkthrough and authorized Lorecraft close and merge. The final sign-in contrast correction passed the focused auth suite, frontend typecheck, and frontend lint; classified as an existing-contract presentation fix with no Requirement, Scenario, ownership, or architecture change.
+- 2026-07-18: The production release gate found that the sign-in-only white label override reduced contrast against Burnished Orange to 2.61:1. Removed the exception so sign-in again uses the shared primary button's dark `--action-foreground`; this is a defect fix to the accepted accessible-control contract, with no Requirement, Scenario, ownership, or architecture change.
