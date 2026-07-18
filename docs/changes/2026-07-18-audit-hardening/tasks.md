@@ -206,7 +206,8 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Local UI status: user confirmed 2026-07-18
+- Private production status: pending user
 - App URL / route: `http://localhost:4310` during implementation and the private production HTTPS origin resolved during deployment; sign-in, a playable World, `/worlds/:slug/adventures/new`, and the resulting `/adventures/:id`.
 - Required setup or test data: running frontend/API/worker, authenticated account, playable Stormbound Chapel, deterministic or configured provider.
 - Steps for the user:
@@ -218,6 +219,7 @@ status: in_review
   6. Confirm the production app remains available when the developer laptop runs no Lorecraft process.
 - Expected result: disclosure is concise and readable at desktop/mobile widths; route context is clear; asynchronous completion is announced but non-disruptive; private HTTPS/session behavior is correct; and the production stack is independent of the laptop.
 - Feedback that would change artifacts: unclear provider wording is a requirement refinement; unexpected focus movement or silent completion is a defect; a requested consent choice/provider selector is scope expansion.
+- Confirmation: Taylor approved the local Adventure UI after creating an Adventure through the configured provider, observing the pending state recover to ready, and reviewing the generated opening with Player and Scene context. Private HTTPS, session-cookie, host-independence, and recovery checks remain pending deployment.
 
 ## Blockers / Open Questions
 
@@ -239,7 +241,7 @@ status: in_review
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
-- Manual UI confirmation status: pending user for new UI behavior and private production
+- Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
 - PR / merge state: none
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
 - Change moved to `docs/changes/closed/`: no

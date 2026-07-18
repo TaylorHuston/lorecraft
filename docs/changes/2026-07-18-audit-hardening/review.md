@@ -4,28 +4,28 @@
 
 ready
 
-The consolidated implementation findings are remediated, regression checks pass, and commit `bb59d36dfc6e92ad13dd649c9c36d993a57da369` is the immutable review watermark. Manual UI and private-production acceptance remain `pending user`, so PR, merge, deployment, and closeout are not yet authorized or acceptance-ready.
+The consolidated implementation findings are remediated, regression checks pass, and commit `bb59d36dfc6e92ad13dd649c9c36d993a57da369` is the immutable review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
 
 ## Gate Scorecard
 
-| Gate | Result | Notes |
-|---|---|---|
-| Change artifacts | pass | Proposal, design, task ledger, and deployment expansion agree after remediation. |
-| Change status | pass | Active folder is `in_review`. |
-| Epic truth | pass | LC-001/002/003 retain honest live-production gaps; LC-003 disposable-Neon evidence and deployment support maps are current. |
-| Requirements and Scenarios | pass | No duplicate or missing Story/Requirement/Scenario references. |
-| Story reference traceability | pass | All referenced implementation and verification files exist. |
-| Reverse traceability | pass | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure. |
-| Tests and verification | pass with external gaps | Local, disposable-Neon, and deterministic E2E evidence passes; real Docker/GHCR/host/restore proof remains pending. |
-| Manual UI confirmation | pending user | Provider notice, route focus/title, completion announcement, and private-production walkthrough remain pending. |
-| Code review | pass after remediation | Release recovery, production entrypoints, keyless provider configuration, and main-only publication corrected. |
-| Visual / UX consistency | pass | Focused UI tests pass; no visual redesign was introduced. |
-| Security review | pass | Metadata-only evidence, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved. |
-| Documentation | pass | README, ADRs, Epics, and Change ledger describe current local versus live-production truth. |
-| Idea repository / current-state truth | pass | Official repository remains active, MVP archived, and no hosted deployment is claimed. |
-| Release communication | pending | Required at release handoff; no project changelog is established. |
-| Branch and merge readiness | technically ready | Committed source merges cleanly to `develop`; manual acceptance and explicit integration authorization remain pending. |
-| PRD alignment | pass | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved. |
+| Gate                                  | Result                                        | Notes                                                                                                                                                 |
+| ------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Change artifacts                      | pass                                          | Proposal, design, task ledger, and deployment expansion agree after remediation.                                                                      |
+| Change status                         | pass                                          | Active folder is `in_review`.                                                                                                                         |
+| Epic truth                            | pass                                          | LC-001/002/003 retain honest live-production gaps; LC-003 disposable-Neon evidence and deployment support maps are current.                           |
+| Requirements and Scenarios            | pass                                          | No duplicate or missing Story/Requirement/Scenario references.                                                                                        |
+| Story reference traceability          | pass                                          | All referenced implementation and verification files exist.                                                                                           |
+| Reverse traceability                  | pass                                          | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure.                             |
+| Tests and verification                | pass with external gaps                       | Local, disposable-Neon, and deterministic E2E evidence passes; real Docker/GHCR/host/restore proof remains pending.                                   |
+| Manual UI confirmation                | local user confirmed; production pending user | Taylor approved the provider-backed pending-to-ready Adventure UI and generated opening; private HTTPS/session/host/recovery checks await deployment. |
+| Code review                           | pass after remediation                        | Release recovery, production entrypoints, keyless provider configuration, and main-only publication corrected.                                        |
+| Visual / UX consistency               | pass                                          | Focused UI tests pass; no visual redesign was introduced.                                                                                             |
+| Security review                       | pass                                          | Metadata-only evidence, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved.                              |
+| Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
+| Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and no hosted deployment is claimed.                                                                |
+| Release communication                 | pending                                       | Required at release handoff; no project changelog is established.                                                                                     |
+| Branch and merge readiness            | technically ready                             | Committed source merges cleanly to `develop`; manual acceptance and explicit integration authorization remain pending.                                |
+| PRD alignment                         | pass                                          | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved.                                           |
 
 ## Findings
 
@@ -48,17 +48,17 @@ The consolidated implementation findings are remediated, regression checks pass,
 
 ## Verification Evidence
 
-| Command / Scenario | Evidence Type | Requirement / Scenario | Result | What It Proves |
-|---|---|---|---|---|
-| `npm run test:deployment` | focused automated test | LC-003/S1 R3-S9..R3-S10 support | 5 passed | Immutable image derivation, release order, explicit recovery, and failed-health restoration. |
-| `npm run test:containers` | focused automated test | LC-001 production support; LC-003/S1 R3-S9 | 6 passed | Loopback gateway, same-origin proxy, health boundaries, production commands, migration isolation, and log bounds. |
-| `npm run test:images` | focused automated test | production image provenance | 1 passed | PR builds and immutable publication are restricted to `main`. |
-| `node --test apps/backend/scripts/database-safety.test.mjs` | focused automated test | database safety boundary | 20 passed | Disposable and production URL identity, pooled/direct, acknowledgement, and environment guards. |
-| `npm run lint`, `npm run typecheck`, `npm run build` | broad supporting gate | changed application surfaces | passed | Both workspaces compile, lint, and produce production builds; `build/ace.js` exists. |
-| Full backend against disposable Neon | production-path automated test | LC-001/002/003 database behavior | 112 passed | Migration, auth, catalog, Adventure, retry, cancellation, and persistence behavior. |
-| Desktop/mobile Playwright against disposable Neon | deterministic E2E | LC-001/002/003 journeys | 7 passed | Signup/workspace, starter World, and full Adventure lifecycle. |
-| Focused frontend review rerun | focused automated test | route/disclosure/completion behavior | 16 passed | Route titles/focus, notice, UUID fallback, and non-stealing announcement. |
-| `sdd validate ... --json` | structural gate | active Change and affected Epics | passed, 0 errors/warnings | Artifact structure and declared references remain valid. |
+| Command / Scenario                                          | Evidence Type                  | Requirement / Scenario                     | Result                    | What It Proves                                                                                                    |
+| ----------------------------------------------------------- | ------------------------------ | ------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `npm run test:deployment`                                   | focused automated test         | LC-003/S1 R3-S9..R3-S10 support            | 5 passed                  | Immutable image derivation, release order, explicit recovery, and failed-health restoration.                      |
+| `npm run test:containers`                                   | focused automated test         | LC-001 production support; LC-003/S1 R3-S9 | 6 passed                  | Loopback gateway, same-origin proxy, health boundaries, production commands, migration isolation, and log bounds. |
+| `npm run test:images`                                       | focused automated test         | production image provenance                | 1 passed                  | PR builds and immutable publication are restricted to `main`.                                                     |
+| `node --test apps/backend/scripts/database-safety.test.mjs` | focused automated test         | database safety boundary                   | 20 passed                 | Disposable and production URL identity, pooled/direct, acknowledgement, and environment guards.                   |
+| `npm run lint`, `npm run typecheck`, `npm run build`        | broad supporting gate          | changed application surfaces               | passed                    | Both workspaces compile, lint, and produce production builds; `build/ace.js` exists.                              |
+| Full backend against disposable Neon                        | production-path automated test | LC-001/002/003 database behavior           | 112 passed                | Migration, auth, catalog, Adventure, retry, cancellation, and persistence behavior.                               |
+| Desktop/mobile Playwright against disposable Neon           | deterministic E2E              | LC-001/002/003 journeys                    | 7 passed                  | Signup/workspace, starter World, and full Adventure lifecycle.                                                    |
+| Focused frontend review rerun                               | focused automated test         | route/disclosure/completion behavior       | 16 passed                 | Route titles/focus, notice, UUID fallback, and non-stealing announcement.                                         |
+| `sdd validate ... --json`                                   | structural gate                | active Change and affected Epics           | passed, 0 errors/warnings | Artifact structure and declared references remain valid.                                                          |
 
 ## Review Bundle
 
@@ -85,16 +85,16 @@ The consolidated implementation findings are remediated, regression checks pass,
 
 ## Discovery Wave
 
-| Pass | Reviewer | Result | Notes |
-|---|---|---|---|
-| Artifact truth | delegated fresh-context review | findings remediated | Stale task closeout and LC-003 DB gaps corrected. |
-| Reverse traceability | delegated review plus packaged audit | pass after remediation | Deployment/support paths classified and mapped. |
-| Code diff | delegated code review plus orchestrator | findings remediated | Production entrypoint issue was additionally found from build output. |
-| Verification coverage | delegated verification review | pass with external gaps | Static deployment proof is not presented as live deployment proof. |
-| Security | delegated security review | pass after remediation | Main provenance and recovery boundaries corrected. |
-| UI / visual identity | delegated UI review | pass, pending manual | Focused UI tests passed. |
-| Docs / Idea truth / release communication / PRD | delegated artifact and docs reviews | pass with release pending | Idea lifecycle and PRD align. |
-| Integration readiness | orchestrator | technically ready | Immutable commit and clean conflict check recorded; manual acceptance and authorization remain pending. |
+| Pass                                            | Reviewer                                | Result                    | Notes                                                                                                   |
+| ----------------------------------------------- | --------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Artifact truth                                  | delegated fresh-context review          | findings remediated       | Stale task closeout and LC-003 DB gaps corrected.                                                       |
+| Reverse traceability                            | delegated review plus packaged audit    | pass after remediation    | Deployment/support paths classified and mapped.                                                         |
+| Code diff                                       | delegated code review plus orchestrator | findings remediated       | Production entrypoint issue was additionally found from build output.                                   |
+| Verification coverage                           | delegated verification review           | pass with external gaps   | Static deployment proof is not presented as live deployment proof.                                      |
+| Security                                        | delegated security review               | pass after remediation    | Main provenance and recovery boundaries corrected.                                                      |
+| UI / visual identity                            | delegated UI review                     | pass, pending manual      | Focused UI tests passed.                                                                                |
+| Docs / Idea truth / release communication / PRD | delegated artifact and docs reviews     | pass with release pending | Idea lifecycle and PRD align.                                                                           |
+| Integration readiness                           | orchestrator                            | technically ready         | Immutable commit and clean conflict check recorded; manual acceptance and authorization remain pending. |
 
 ## Consolidated Remediation
 
