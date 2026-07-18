@@ -52,6 +52,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/cors/cors_provider'),
     () => import('@adonisjs/auth/auth_provider'),
+    () => import('@adonisjs/limiter/limiter_provider'),
     () => import('#providers/api_provider'),
   ],
 
@@ -84,6 +85,11 @@ export default defineConfig({
         files: ['tests/unit/**/*.spec.{ts,js}'],
         name: 'unit',
         timeout: 2000,
+      },
+      {
+        files: ['tests/database/**/*.spec.{ts,js}'],
+        name: 'database',
+        timeout: 30000,
       },
       {
         files: ['tests/functional/**/*.spec.{ts,js}'],

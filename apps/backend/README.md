@@ -1,6 +1,6 @@
 # Lorecraft Backend
 
-The Lorecraft backend is an AdonisJS API responsible for authentication, canonical game state, application workflows, AI orchestration, and persistence.
+The Lorecraft backend is the authoritative AdonisJS API for account access, application workflows, and persistence. The current product is a creator-first World bible; World canon and later AI-assisted workflows will be introduced only through tracked product changes.
 
 Run backend-only commands from this directory or through the root npm workspace:
 
@@ -12,4 +12,26 @@ npm run typecheck
 npm run build
 ```
 
-The scaffold currently includes API-token and session authentication, VineJS validation, Lucid ORM, Japa testing, and Tuyau type generation. Product endpoints have not been implemented yet.
+Normal root or backend-workspace development supervises this API and the separate Adventure-opening worker together:
+
+```bash
+npm run dev
+```
+
+For intentional process isolation, run these in separate terminals:
+
+```bash
+npm run dev:api
+npm run dev:worker
+```
+
+The worker requires `LLM_BASE_URL` and `LLM_MODEL`; `LLM_API_KEY` is optional for local OpenAI-compatible providers. Production deployments run the built command as a distinct monitored process:
+
+```bash
+cd build
+node bin/console.js adventures:openings:work
+```
+
+The checked-in local development configuration reserves `http://localhost:4311` for the API and allows credentialed browser requests from the Lorecraft web client at `http://localhost:4310`.
+
+The backend currently implements account creation, session sign-in and sign-out, current-account restoration, and protected workspace access. It uses VineJS validation, Lucid with PostgreSQL, database-backed browser sessions, Japa integration tests, and Tuyau type generation. Opaque API-token capability remains reserved for future non-browser clients.

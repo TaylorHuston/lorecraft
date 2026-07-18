@@ -21,7 +21,22 @@ export default await Env.create(new URL('../', import.meta.url), {
   // App
   APP_KEY: Env.schema.secret(),
   APP_URL: Env.schema.string({ format: 'url', tld: false }),
+  CORS_ORIGIN: Env.schema.string({ format: 'url', tld: false }),
+
+  // Database
+  DATABASE_URL: Env.schema.string(),
+  STARTER_WORLD_AUTHOR_EMAIL: Env.schema.string.optional(),
+
+  // Story generation worker
+  LLM_BASE_URL: Env.schema.string.optional(),
+  LLM_API_KEY: Env.schema.string.optional(),
+  LLM_MODEL: Env.schema.string.optional(),
+  LLM_TIMEOUT_MS: Env.schema.number.optional(),
+  LLM_MAX_TOKENS: Env.schema.number.optional(),
+  LLM_TEMPERATURE: Env.schema.number.optional(),
+  LLM_REASONING_EFFORT: Env.schema.enum.optional(['none', 'low', 'medium', 'high'] as const),
+  ADVENTURE_WORKER_POLL_INTERVAL_MS: Env.schema.number.optional(),
 
   // Session
-  SESSION_DRIVER: Env.schema.enum(['cookie', 'memory', 'database'] as const),
+  SESSION_DRIVER: Env.schema.enum(['memory', 'database'] as const),
 })

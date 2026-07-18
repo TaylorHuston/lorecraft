@@ -1,0 +1,382 @@
+.shell {
+  min-width: 0;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--background);
+}
+
+.header {
+  display: grid;
+  min-height: 4rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 clamp(var(--space-4), 4vw, var(--space-8));
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.8125rem;
+}
+
+.headerIdentity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.brand {
+  flex-shrink: 0;
+  color: var(--identity);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.separator {
+  width: 1px;
+  height: 1.25rem;
+  flex-shrink: 0;
+  background: var(--border-strong);
+}
+
+.readOnlyStatus {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.navigationLink {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.navigationLink:hover {
+  background: var(--surface-interactive);
+}
+
+.content {
+  width: min(100%, 72rem);
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(var(--space-8), 7vw, 5rem) clamp(var(--space-4), 5vw, var(--space-10));
+}
+
+.worldIdentity {
+  max-width: 52rem;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--identity);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.content h1,
+.state h1 {
+  overflow-wrap: anywhere;
+}
+
+.content h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  line-height: 1.1;
+}
+
+.lede {
+  max-width: 50rem;
+  margin: var(--space-4) 0 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.content section {
+  min-width: 0;
+  margin-top: var(--space-10);
+}
+
+.content h2 {
+  margin: 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.sectionHeading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionHeading h2 {
+  border-bottom: 0;
+}
+
+.newAdventure {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  padding: 0 var(--space-3);
+  color: var(--action-hover);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.adventureList {
+  display: grid;
+}
+
+.adventureRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.adventureActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.resumeAdventure {
+  display: inline-flex;
+  min-width: var(--control-touch);
+  min-height: var(--control-touch);
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.resumeAdventure {
+  border: 1px solid var(--control-boundary);
+  color: var(--action-hover);
+}
+
+.resumeAdventure:hover {
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+}
+
+.deleteAdventure {
+  font-size: 0.75rem;
+}
+
+.adventureIdentity {
+  display: flex;
+  min-width: 0;
+  min-height: var(--control-touch);
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+}
+
+.adventureIdentity strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.adventureIdentity > span {
+  flex: 0 0 auto;
+  color: var(--action-hover);
+  font-size: 0.75rem;
+}
+
+.adventureMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.playabilityNotice {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--info);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.list {
+  display: grid;
+  min-width: 0;
+}
+
+.entry {
+  min-width: 0;
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.entry h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.entry p,
+.entry dd {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.entry p {
+  margin: var(--space-3) 0 0;
+}
+
+.characterHeading {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.characterHeading span {
+  min-width: 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.entry dl {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-6);
+  margin: var(--space-5) 0 0;
+}
+
+.entry dt {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.entry dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.emptyCollection {
+  margin: 0;
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.state {
+  width: min(100% - 2rem, 36rem);
+  margin: clamp(var(--space-8), 12vh, 7rem) auto 0;
+}
+
+.state h1 {
+  margin: var(--space-2) 0;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.state p:not(.eyebrow) {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.stateActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 40rem) {
+  .header {
+    min-height: 4.75rem;
+    align-items: start;
+    padding-block: var(--space-3);
+  }
+
+  .headerIdentity {
+    gap: var(--space-3);
+  }
+
+  .characterHeading {
+    display: block;
+  }
+
+  .characterHeading span {
+    display: block;
+    margin-top: var(--space-2);
+    text-align: left;
+  }
+
+  .entry dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .entry dd {
+    margin-bottom: var(--space-3);
+  }
+
+  .adventureRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+
+  .adventureIdentity {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .adventureMeta {
+    justify-content: flex-start;
+  }
+
+  .adventureActions {
+    margin-top: var(--space-2);
+  }
+}

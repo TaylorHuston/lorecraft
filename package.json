@@ -15,9 +15,13 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "test:e2e": "playwright test --config apps/frontend/playwright.config.ts",
+    "test:storybook": "npm run test:storybook --workspace @lorecraft/frontend",
     "lint": "turbo lint",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "storybook": "npm run storybook --workspace @lorecraft/frontend",
+    "build:storybook": "npm run build-storybook --workspace @lorecraft/frontend"
   },
   "devDependencies": {
     "@adonisjs/prettier-config": "^1.5.0",

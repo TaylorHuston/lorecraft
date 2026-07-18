@@ -1,17 +1,32 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "APP_KEY",
+    "APP_URL",
+    "CORS_ORIGIN",
+    "DATABASE_URL",
+    "TEST_DATABASE_URL",
+    "ALLOW_TEST_DATABASE_WRITES",
+    "ALLOW_E2E_DATABASE_WRITES",
+    "API_SERVER_URL",
+    "HOST",
+    "PORT",
+    "LOG_LEVEL",
+    "SESSION_DRIVER",
+    "LLM_BASE_URL",
+    "LLM_API_KEY",
+    "LLM_MODEL",
+    "LLM_TIMEOUT_MS",
+    "LLM_MAX_TOKENS",
+    "LLM_TEMPERATURE",
+    "ADVENTURE_WORKER_POLL_INTERVAL_MS"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["build/**", ".adonisjs/**"],
-      "env": [
-        "NODE_ENV",
-        "APP_KEY",
-        "HOST",
-        "PORT",
-        "LOG_LEVEL"
-      ]
+      "outputs": ["build/**", "dist/**", ".adonisjs/**"]
     },
     "dev": {
       "cache": false,

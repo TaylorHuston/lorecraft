@@ -1,0 +1,136 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --background: #09090b;
+  --surface: #18181b;
+  --surface-muted: #18181b;
+  --surface-raised: #27272a;
+  --surface-interactive: #27272a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --control-boundary: #71717a;
+  --text-primary: #f4f4f5;
+  --text-secondary: #d4d4d8;
+  --text-muted: #a1a1aa;
+  --action: #e58a3a;
+  --action-hover: #f2a15a;
+  --action-foreground: #18130a;
+  --identity: #e58a3a;
+  --identity-hover: #f2a15a;
+  --identity-foreground: #18130a;
+  --primary: var(--action);
+  --primary-hover: var(--action-hover);
+  --primary-foreground: var(--action-foreground);
+  --accent: var(--identity);
+  --accent-foreground: var(--identity-foreground);
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --danger-muted: #321c1d;
+  --info: #3f6f99;
+  --focus-ring: var(--action);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-row: 2px;
+  --radius-control: 4px;
+  --radius-panel: 6px;
+  --radius-sm: var(--radius-row);
+  --radius: var(--radius-control);
+  --control-dense: 28px;
+  --control-toolbar: 32px;
+  --control-standard: 36px;
+  --control-touch: 44px;
+  --motion-fast: 150ms;
+  --motion-standard: 200ms;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+html {
+  min-width: 20rem;
+  min-height: 100%;
+  background: var(--background);
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:not(:disabled),
+a {
+  cursor: pointer;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--action-hover);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--action);
+  color: var(--action-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

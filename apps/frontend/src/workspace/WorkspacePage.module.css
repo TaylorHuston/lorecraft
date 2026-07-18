@@ -1,0 +1,387 @@
+.shell {
+  min-width: 0;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--background);
+}
+
+.header {
+  display: grid;
+  min-height: 4rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 clamp(var(--space-4), 4vw, var(--space-8));
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.brandGroup {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto 1px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.brand {
+  color: var(--identity);
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.separator {
+  width: 1px;
+  height: 1.25rem;
+  background: var(--border-strong);
+}
+
+.account {
+  min-width: 0;
+  max-width: 24rem;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signOut {
+  white-space: nowrap;
+}
+
+.content {
+  width: min(100%, 72rem);
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(var(--space-8), 7vw, 5rem) clamp(var(--space-4), 5vw, var(--space-10));
+}
+
+.headingRow {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.eyebrow,
+.emptyLabel {
+  margin: 0 0 var(--space-2);
+  color: var(--identity);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.loading {
+  min-height: 8rem;
+  margin: var(--space-8) 0 0;
+  color: var(--text-secondary);
+}
+
+.catalogError {
+  max-width: 36rem;
+  margin-top: var(--space-8);
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--danger);
+}
+
+.catalogError h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.catalogError p {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.retryWorlds {
+  margin-top: var(--space-4);
+}
+
+.catalog {
+  padding-top: var(--space-8);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.worldList {
+  min-width: 0;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+
+.worldRow {
+  min-width: 0;
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.worldRow article {
+  min-width: 0;
+}
+
+.worldHeading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.worldName {
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.worldLink {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  color: var(--action-hover);
+  text-decoration: none;
+}
+
+.worldLink:hover {
+  color: var(--text-primary);
+}
+
+.worldFlags {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+}
+
+.worldFlags span {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-row);
+}
+
+.worldDescription {
+  max-width: 48rem;
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.worldActions {
+  display: flex;
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.newAdventure {
+  display: inline-flex;
+  min-height: var(--control-touch);
+  align-items: center;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  color: var(--action-hover);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.newAdventure:hover {
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+}
+
+.unavailableWorld,
+.noAdventures {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.adventureList {
+  display: grid;
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.adventureRow {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.adventureIdentity {
+  display: flex;
+  min-width: 0;
+  min-height: var(--control-touch);
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-primary);
+}
+
+.adventureIdentity strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.adventureIdentity > span {
+  flex: 0 0 auto;
+  color: var(--action-hover);
+  font-size: 0.75rem;
+}
+
+.adventureMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-4);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.adventureActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.resumeAdventure {
+  display: inline-flex;
+  min-width: var(--control-touch);
+  min-height: var(--control-touch);
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.resumeAdventure {
+  border: 1px solid var(--control-boundary);
+  color: var(--action-hover);
+}
+
+.resumeAdventure:hover {
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+}
+
+.deleteAdventure {
+  font-size: 0.75rem;
+}
+
+.noAdventures {
+  margin: var(--space-4) 0 0;
+}
+
+.emptyState {
+  max-width: 32rem;
+  padding: clamp(var(--space-8), 8vw, 5rem) 0;
+}
+
+.emptyLabel {
+  margin-bottom: var(--space-3);
+  color: var(--action);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.3;
+}
+
+.emptyCopy {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.error {
+  max-width: 36rem;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-3);
+  border-left: 2px solid var(--danger);
+  background: var(--danger-muted);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 35rem) {
+  .header {
+    min-height: 4.75rem;
+    align-items: start;
+    padding-block: var(--space-3);
+  }
+
+  .brandGroup {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .account {
+    max-width: 100%;
+  }
+
+  .worldHeading {
+    display: block;
+  }
+
+  .worldFlags {
+    justify-content: flex-start;
+    margin-top: var(--space-3);
+  }
+
+  .adventureRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .adventureMeta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+
+  .adventureActions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}

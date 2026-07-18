@@ -2,6 +2,8 @@ import env from '#start/env'
 import app from '@adonisjs/core/services/app'
 import { defineConfig, stores } from '@adonisjs/session'
 
+export const sessionCookieName = 'adonis-session'
+
 const sessionConfig = defineConfig({
   /**
    * Enable or disable session support globally.
@@ -11,7 +13,7 @@ const sessionConfig = defineConfig({
   /**
    * Cookie name storing the session identifier.
    */
-  cookieName: 'adonis-session',
+  cookieName: sessionCookieName,
 
   /**
    * When set to true, the session id cookie will be deleted
@@ -63,11 +65,6 @@ const sessionConfig = defineConfig({
    * list of available stores and their config.
    */
   stores: {
-    /**
-     * Store session data inside encrypted cookies.
-     */
-    cookie: stores.cookie(),
-
     /**
      * Store session data inside the configured database.
      */

@@ -1,0 +1,7 @@
+.viewport {
+  display: grid;
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+}

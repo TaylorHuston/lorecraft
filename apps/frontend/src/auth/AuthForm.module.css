@@ -1,0 +1,19 @@
+.form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.formError {
+  overflow-wrap: anywhere;
+}
+
+.formError {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-control);
+  background: var(--danger-muted);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}

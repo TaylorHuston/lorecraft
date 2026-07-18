@@ -1,10 +1,26 @@
 # Lorecraft Repository Guide
 
-Lorecraft is the production-oriented successor to the `lorecraft-mvp` prototype. It is a creator-first, API-oriented application for maintaining authoritative, time-aware fictional Worlds. The initial product is a private world bible for individual creators; AI assistance, publishing, collaboration, and playable Adventures remain later capabilities.
+## Purpose
 
+Production successor to `lorecraft-mvp`: a creator-first, API-oriented application for maintaining authoritative, time-aware fictional Worlds. The current product is a private world bible for individual creators.
 
+## Operating Order
 
-When private workspace planning context is available, resolve it through the workspace's idea-to-repository metadata. Do not copy private PRDs, planning notes, or vault paths into this public repository.
+1. Inspect the current branch, worktree status, and relevant diff. Preserve unrelated changes.
+2. Read `README.md` and the root `package.json` scripts.
+3. When this repo is inside an initialized SDD workspace, run `sdd context . --json`; read `<workspaceRoot>/.sdd/story-driven-development.md` and the resolved private PRD when product scope matters. Never copy private planning paths or content into this public repository.
+4. Before changing behavior, read the matching `docs/changes/<change>/` artifacts and affected `docs/epics/**/epic.md` files. Epic/Story truth must remain aligned with implementation.
+5. Read relevant accepted ADRs and current public docs before changing architecture, contracts, persistence, auth, deployment, or UI conventions.
+
+Stop before editing when product scope, canon authority, Epic ownership, repository context, branch policy, or a destructive/external mutation is ambiguous.
+
+## Git And Mutation Policy
+
+- `main` is production; `develop` is integration.
+- Branch product or architecture work from `develop` as `change/<short-slug>`, defects as `fix/<short-slug>`, and maintenance as `misc/<short-slug>`.
+- Planning-only edits may land on `develop`; documentation accompanying implementation travels with its implementation branch. Do not commit application code directly to `main`.
+- Local commits require explicit user authorization or an invoked workflow that explicitly authorizes policy-compliant commits. Never stage unrelated files.
+- Push, merge, deploy, rebase, amend, tag, publish, branch deletion, production migration, provider mutation, and other remote or destructive operations require explicit user authorization.
 
 ## Product Boundaries
 
@@ -15,7 +31,7 @@ When private workspace planning context is available, resolve it through the wor
 - The product must remain medium-agnostic. Avoid assumptions that every World exists for a novel, game, tabletop campaign, or any other single format.
 - Start with intelligent defaults for common worldbuilding concepts and add structure as proven needs emerge. Preserve a path for creator-defined concepts without prematurely building a universal schema system.
 - Canonical works may contribute creator-approved changes to a World and should eventually support source provenance.
-- Playable Adventures are an eventual core capability, but they are non-canonical branches derived from a World. Adventure state must not mutate source canon by default.
+- Playable Adventures are a core capability, but they are non-canonical branches derived from frozen World canon. Adventure state must not mutate source canon by default, and creator-first World-bible work remains the primary product priority.
 - The world bible must provide value without an LLM. Keep AI providers behind replaceable adapters and treat their output as untrusted external input.
 
 ## Initial Scope Guardrails
@@ -26,52 +42,57 @@ The first application capabilities should serve an individual creator maintainin
 - public publishing or reader-facing wiki features
 - multi-user collaboration and canon-approval workflows
 - automated source ingestion or LLM-assisted canon mutation
-- playable Adventures or Game Master behavior
+- interactive Adventure turns, Game Master state mutation, or history revision beyond the implemented private opening/resume foundation
 - combat, inventory, character stats, rulesets, multiplayer, or marketplace mechanics
 
 These are deferred capabilities, not necessarily permanent product non-goals.
 
-## Repository Boundaries
+## Repository Map And Engineering Boundaries
 
 - `apps/backend/` is the AdonisJS API and authoritative application backend.
-- `apps/frontend/` is reserved for the creator-facing web client; its framework has not been selected.
+- `apps/frontend/` is the Vite, React, and TypeScript creator-facing web client.
 - `docs/` owns public architecture guidance and canonical SDD artifacts for implemented behavior.
 - Future reusable libraries belong under `packages/` only when a concrete shared boundary exists.
 - Keep domain and application behavior independent of HTTP controllers, UI frameworks, persistence models, and AI provider SDKs.
 - Treat web, mobile, administrative, CLI, job, and future game surfaces as adapters to shared application behavior.
 - Treat generated `.adonisjs/` output, local SQLite files, dependencies, build output, logs, and environment files as local artifacts.
-
-## SDD And Documentation
-
-- Use `docs/epics/` for durable implemented capability truth and behavior-to-code evidence.
-- Use `docs/changes/` for active SDD changes and `docs/changes/closed/` after closeout.
-- Use `docs/adrs/` for significant architectural decisions.
+- Follow OpenAPI for HTTP APIs whenever practical and keep routes, validators, auth requirements, errors, examples, consumers, and generated clients synchronized. Document an intentional typed-contract alternative when OpenAPI does not fit.
+- Keep secrets, credentials, provider payloads, private World content, and environment values out of logs, fixtures, Markdown artifacts, commits, and client bundles.
+- Use `docs/adrs/` for durable architecture decisions.
 - Keep the public README and supporting docs aligned with accepted product direction without copying private planning material.
 - Do not describe proposed or scaffold-only behavior as implemented.
 
-## Branch Policy
-
-- `main` is production.
-- `develop` is integration.
-- Code changes use `change/`, `fix/`, or `misc/` branches from `develop` once the integration branch exists.
-- Planning and documentation-only changes may happen on `develop`, or on `main` when Taylor explicitly authorizes it.
-- Do not commit application code directly to `main` after initial repository setup.
-
 ## Commands
 
-- `npm run dev` starts workspace development tasks.
-- `npm run lint` runs workspace linting.
-- `npm run test` runs workspace tests.
-- `npm run typecheck` runs workspace type checks.
-- `npm run build` builds all applications.
+```bash
+npm install
+npm run dev
+npm run lint
+npm run test
+npm run typecheck
+npm run build
+npm run test:e2e
+npm run test:storybook
+```
 
 Use the root npm workspace and Turborepo commands. Do not run repository-wide Git operations from the surrounding vault repository.
 
-## Verification
+## Local Port Reservations
+
+- Web client: `4310`
+- API server: `4311`
+- Storybook: `4312`
+- Playwright web server: `4313`
+- Playwright API server: `4314`
+
+Use the checked-in Vite, Storybook, Playwright, and environment defaults. Do not silently move Lorecraft to another port when a reservation is unavailable; stop the conflicting process or report the conflict.
+
+## Completion Gate
 
 - Apply BDD/TDD to durable domain and application behavior.
 - Prefer fast tests of product rules without HTTP, database, UI, or provider dependencies.
 - Add boundary and integration tests for persistence, API contracts, authorization, and external adapters where those concerns become real.
-- Add focused end-to-end coverage for critical creator workflows once a frontend exists.
+- Add focused E2E and Storybook coverage for critical creator workflows and shared UI states.
 - Run the smallest relevant lint, test, typecheck, build, and manual checks before declaring work complete.
-- Report honestly when a command succeeds without executing meaningful tests; the scaffold currently has no test cases.
+- Update affected Epic `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps`; record chronological command results in the active `tasks.md`.
+- Report honestly when a command succeeds without executing meaningful tests; verification must identify which backend, frontend, or browser behavior actually ran.
