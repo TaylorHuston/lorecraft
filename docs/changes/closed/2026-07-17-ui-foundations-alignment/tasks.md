@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: reconciled Lorecraft idea truth at vault `85c451a7c`, LC-002 evidence at app `4e9077383792f2ade3e8eca80103684f978e8bb8`, and shared comparison lineage/capture at UI Foundations `41259aa96ce551ffde96616a295b74a9c019cf7f`.
-- Next action: none; Lorecraft integration and Change closeout are complete.
-- Active branch/ref: `change/ui-foundations-alignment` from `develop` at `9af0728`.
-- Expected dirty files: this Change folder and the three affected Epic files during reconciliation; frontend component, feature, test, and Storybook files during implementation.
+- Last completed action: fixed the release-gate sign-in contrast regression and reconciled current validation/manual-confirmation truth in `c1dfc3f`.
+- Next action: run independent `/sdd-review` for the post-close defect fix, then resume `/sdd-release`.
+- Active branch/ref: `fix/sign-in-button-contrast` from `develop` at `8060a80`.
+- Expected dirty files: none after the ledger follow-up commit.
 - Known blockers: none for Lorecraft integration or closeout. The previously invalid workspace configuration was repaired externally; fresh scoped validation passes.
 
 ## Task Checklist
@@ -119,7 +119,7 @@ status: in_review
 | 2026-07-17 | Shared comparison registration | Registered Lorecraft and the retained 49th Floor source in the shared UI Foundations Storybook and capture matrix from an isolated worktree. | UI Foundations `db250f3` |
 | 2026-07-17 | Independent review remediation | Exposed Adventure creation field pending state, kept unavailable-Adventure retry contextual and duplicate-safe, and removed the dialog shadow that conflicted with Lorecraft visual guidance. | `3797c8b` |
 | 2026-07-17 | Final cross-repository reconciliation | Updated LC-002 comparison truth, aligned private visual identity with the implemented Adventure foundation, and rebased Lorecraft registration onto the current 49th Floor comparison lineage. | App `4e90773`; vault `85c451a7c`; UI Foundations `41259aa` |
-| 2026-07-18 | Release-gate sign-in contrast remediation | Removed the sign-in-only white label exception so the primary action again uses the shared accessible Burnished Orange/dark-foreground pairing. | commit pending |
+| 2026-07-18 | Release-gate sign-in contrast remediation | Removed the sign-in-only white label exception so the primary action again uses the shared accessible Burnished Orange/dark-foreground pairing. | `c1dfc3f` |
 
 ## Verification Ledger
 
