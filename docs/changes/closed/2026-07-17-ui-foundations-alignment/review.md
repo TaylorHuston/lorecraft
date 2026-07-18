@@ -17,7 +17,7 @@ The Lorecraft application, supporting product truth, Epic evidence, and shared c
 | Story reference traceability | Pass | Existing Story ownership remains stable across the three affected Epics. |
 | Reverse traceability | Pass | 57 changed candidates; 0 missing references, unowned source files, or unowned tests. |
 | Tests and verification | Pass | Backend 102, frontend 115, Storybook 78, build, lint, typecheck, and desktop/mobile E2E 7 gates pass. |
-| Manual UI confirmation | Pending user | The broader walkthrough was confirmed; the focused dark-label-on-Burnished-Orange correction awaits visual confirmation. |
+| Manual UI confirmation | Pass | User confirmed the broader walkthrough and the focused dark-label-on-Burnished-Orange correction on 2026-07-18. |
 | Code review | Pass | Focused rereview at `02ed717` found no correctness, maintainability, security, or scope findings in the post-close defect diff. |
 | Visual / UX consistency | Pass | The sign-in-only white override is removed; all 78 Storybook interaction/accessibility checks pass with the shared accessible primary-button pairing. |
 | Shared UI Foundations comparison | Pass | Lorecraft is registered at UI Foundations commit `41259aa` on lineage `3989806` and appears in all five cells of the retained 20-image comparison matrix. |
@@ -142,3 +142,4 @@ None within Lorecraft or the shared comparison branch. The earlier external work
 - 2026-07-18: User confirmed the prepared walkthrough and authorized Lorecraft close and merge. The final sign-in contrast correction passed the focused auth suite, frontend typecheck, and frontend lint; classified as an existing-contract presentation fix with no Requirement, Scenario, ownership, or architecture change.
 - 2026-07-18: The production release gate found that the sign-in-only white label override reduced contrast against Burnished Orange to 2.61:1. Removed the exception so sign-in again uses the shared primary button's dark `--action-foreground`; this is a defect fix to the accepted accessible-control contract, with no Requirement, Scenario, ownership, or architecture change.
 - 2026-07-18: Focused independent rereview covered `fix/sign-in-button-contrast` at `02ed717af3e512fffd4cc64c2502b1192a6f5897` against `develop` at `8060a8095a3be73e427fcc14290b720cd9ea5ba9`. Code, LC-001 ownership, Storybook accessibility, auth regression, static gates, scoped SDD validation, Idea-side truth, release communication, security, and conflict checks pass; verdict remains `ready`, with focused manual confirmation pending user.
+- 2026-07-18: User confirmed the focused dark-label-on-Burnished-Orange correction and authorized local merge into `develop`.

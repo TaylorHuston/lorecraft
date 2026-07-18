@@ -7,7 +7,7 @@ status: in_review
 ## Resume Here
 
 - Last completed action: independent focused rereview passed for post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897` against `develop`; review reconciliation was committed at `d00ab22`.
-- Next action: confirm the sign-in button's dark label on Burnished Orange, then resume `/sdd-release`.
+- Next action: merge the confirmed post-close contrast fix into `develop`, then resume `/sdd-release`.
 - Active branch/ref: `fix/sign-in-button-contrast` from `develop` at `8060a80`.
 - Expected dirty files: none after the ledger follow-up commit.
 - Known blockers: none for Lorecraft integration or closeout. The previously invalid workspace configuration was repaired externally; fresh scoped validation passes.
@@ -174,7 +174,7 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 
 ## Manual UI Confirmation
 
-- Status: pending user for the focused post-close sign-in label correction; the broader UI walkthrough remains user confirmed.
+- Status: user confirmed, including the focused post-close dark-label-on-Burnished-Orange correction.
 - App URL / route: Lorecraft frontend at `http://localhost:4310`; Storybook at exact `http://127.0.0.1:4312`.
 - Required setup or test data: deterministic account fixtures plus representative empty, populated, failed, and retryable Worlds; ready, pending, failed, settings, reset, and delete Adventure fixtures.
 - Steps for the user: inspect sign-up and sign-in password controls; traverse World catalog/detail states; inspect Adventure desktop and mobile layouts; operate tabs and dialogs with keyboard only; inspect the five app-owned `Comparison/Workbench` stories and the retained shared-hub matrix at `/private/tmp/ui-foundations-lorecraft/comparison-report/index.html`.
@@ -199,11 +199,11 @@ No design-revision entries. Use `/sdd-design --revise` for in-scope experience r
 - Superseded earlier Epic truth reconciled: yes; the prerequisite Epic truth Change is integrated and this Change preserved its stable IDs.
 - ADR status: not applicable unless runtime sharing or a new cross-client contract is proposed.
 - Release communication current: yes; `CHANGELOG.md` contains only user-facing control and interaction changes.
-- `sdd-review` verdict: technical `ready` at post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897`; focused manual confirmation is pending user. Fresh scoped validation passes.
+- `sdd-review` verdict: technical `ready` at post-close defect head `02ed717af3e512fffd4cc64c2502b1192a6f5897`; focused manual confirmation is `user confirmed`. Fresh scoped validation passes.
 - Review record: `docs/changes/closed/2026-07-17-ui-foundations-alignment/review.md`.
 - `review.md` findings resolved: yes for all Lorecraft and shared-comparison findings; the external vault configuration is recorded but outside this remediation scope.
 - Planning updates resolved: yes; post-promotion duplicate-Scenario reconciliation is recorded.
-- Manual UI confirmation status: pending user for the focused post-close sign-in label correction; the broader walkthrough remains user confirmed.
+- Manual UI confirmation status: user confirmed, including the focused post-close sign-in label correction.
 - PR / merge state: locally merged `change/ui-foundations-alignment` into `develop` with merge commit `b256714`; no PR or push was required or performed.
 - Deferred scope accepted: recorded in proposal and design; reconfirm if implementation expands it.
 - Change moved to `docs/changes/closed/`: yes; closed on 2026-07-18 after user confirmation and explicit integration/close authorization.
