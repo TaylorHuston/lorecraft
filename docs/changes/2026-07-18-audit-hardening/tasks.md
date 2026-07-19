@@ -6,8 +6,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: all thirteen automated-review findings on production PR #2 were remediated through `3ed9bf8`, independently rereviewed, and reconciled into LC-001/LC-003; local UI remains user confirmed and private production acceptance remains pending.
-- Next action: push the reconciled PR head, resolve the six handled review threads, and wait for hosted CI and Greptile before assessing merge authorization.
+- Last completed action: PR #2 is remotely clean and Taylor approved merging with private-production verification recorded as an `accepted gap` for the merge gate; production acceptance itself remains pending deployment.
+- Next action: merge PR #2 into `main` without deleting `develop`, then publish immutable `main` images and continue the private deployment walkthrough.
 - Active branch/ref: `develop`; reviewed semantic PR head `3ed9bf8`, with the review-record reconciliation following it.
 - Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
 - Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
@@ -259,6 +259,6 @@ status: in_review
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
 - Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
-- PR / merge state: non-production changes locally merged into `develop`; production release PR #2 is open from `develop` to `main` and is not authorized to merge
+- PR / merge state: production release PR #2 is remotely clean from `develop` to `main`; Taylor authorized merge with private-production verification accepted as a post-merge deployment gate
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
 - Change moved to `docs/changes/closed/`: no

@@ -24,7 +24,7 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 | Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
 | Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and no hosted deployment is claimed.                                                                |
 | Release communication                 | pass                                          | Public-safe `[Unreleased]` notes are committed in `CHANGELOG.md`.                                                                                      |
-| Branch and merge readiness            | technically ready, remote gate pending        | `develop` merges cleanly to `main`; PR #2 checks/review must refresh on the reconciled head, and private-production acceptance remains pending.        |
+| Branch and merge readiness            | ready; merge authorized                       | PR #2 is remotely clean and Taylor accepted private-production verification as a post-merge deployment gate; production acceptance remains pending.  |
 | PRD alignment                         | pass                                          | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved.                                           |
 
 ## Findings
@@ -77,7 +77,7 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - Diff stat in PR-remediation regression scope: 312 insertions, 68 deletions
 - Conflict check: `git merge-tree --write-tree origin/main 3ed9bf8` passed and produced tree `2e9fff8837aa0c64095c3d7ad856d278c326c70e`
 - Dirty state: only private-local `.neon` remains untracked
-- Branch policy: production release PR `develop` to `main` is correct; merge remains unauthorized
+- Branch policy: production release PR `develop` to `main` is correct; Taylor authorized merge without branch deletion
 - Reverse-traceability command/result: packaged orphan audits with `--changed-from df92d33` for LC-001 and LC-003; the combined changed source/tests are owned. The stripped-leading-dot `.github/workflows/images.yml` report remains a classified parser false positive.
 
 ## Reverse Traceability
@@ -99,7 +99,7 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 | Security                                        | delegated security review               | pass after remediation    | Main provenance and recovery boundaries corrected.                                                      |
 | UI / visual identity                            | delegated UI review                     | pass, pending manual      | Focused UI tests passed.                                                                                |
 | Docs / Idea truth / release communication / PRD | delegated artifact and docs reviews     | pass with release pending | Idea lifecycle and PRD align.                                                                           |
-| Integration readiness                           | orchestrator                            | technically ready         | Immutable commit and clean conflict check recorded; manual acceptance and authorization remain pending. |
+| Integration readiness                           | orchestrator                            | ready                     | Immutable commit, clean remote gate, explicit merge authorization, and accepted post-merge production-verification gap are recorded. |
 
 ## Consolidated Remediation
 
@@ -118,7 +118,7 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - Conflict check: passed
 - Commit state: reviewed semantic source committed at `3ed9bf8`; this review/task reconciliation is documentation-only
 - PR status: #2 open; reconciled head not yet pushed
-- Merge status: not authorized; remote checks/review and required acceptance policy remain gates
+- Merge status: authorized; private-production verification is an accepted post-merge gate and remains required before deployment closeout
 
 ## Review Log
 
@@ -131,3 +131,4 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - 2026-07-18: PR #2 automated review produced six accepted findings. Semantic remediation commit `11509c2` passed focused deployment/container/backend/frontend checks, all 120 frontend tests, lint, typecheck, build, generated-contract cleanliness, conflict checking, scoped validation, reverse traceability, and three independent regression passes. Verdict remains `ready`; the remote gate and private-production acceptance remain pending.
 - 2026-07-18: Greptile added three accepted release-path findings. Commits `631fef2` and `5b6f6ae` now recover from start-command failure, reject malformed or mutable recovery state, and parse provider retry guidance once. Eight deployment tests, thirteen provider tests, lint, typecheck, scoped validation, and two independent regression passes are clean; verdict remains `ready` with remote and production-acceptance gates pending.
 - 2026-07-18: The Codex connector added four accepted findings. Commit `3ed9bf8` restores the current image after failed rollback health, bounds each release health request, separates container liveness from release readiness, and puts the Story `h1` first in desktop document order while preserving the accepted grid. Ten deployment, six container, 120 frontend, and 78 Storybook tests plus lint/typecheck and two independent regression passes are clean.
+- 2026-07-18: All hosted checks and reviews passed at reconciled head `a894656`. Taylor approved merge and explicitly accepted private-production verification as a post-merge deployment gate; no production acceptance is claimed yet.
