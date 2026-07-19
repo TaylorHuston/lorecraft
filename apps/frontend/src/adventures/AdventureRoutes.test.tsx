@@ -75,6 +75,9 @@ describe('Adventure routes', () => {
     expect(screen.getByLabelText('Player name (required)')).toBeRequired()
     expect(screen.getByLabelText('Physical description (optional)')).not.toBeRequired()
     expect(screen.getByLabelText('Backstory (optional)')).not.toBeRequired()
+    expect(
+      screen.getByText(/player details and this frozen World context.*configured AI provider/i)
+    ).toBeVisible()
     expect(screen.getByRole('link', { name: 'Cancel' })).toHaveAttribute(
       'href',
       '/worlds/stormbound-chapel'
@@ -211,7 +214,11 @@ describe('Adventure routes', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Preparing your opening')
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
+    const playerRegion = screen.getByRole('region', { name: 'Player' })
+    playerRegion.focus()
     expect(await screen.findByText('The chapel doors open against the storm.')).toBeVisible()
+    expect(screen.getByRole('status')).toHaveTextContent('Your Adventure opening is ready.')
+    expect(playerRegion).toHaveFocus()
     await waitFor(() => expect(getAdventure).toHaveBeenCalledTimes(2))
   })
 

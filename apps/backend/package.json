@@ -16,6 +16,7 @@
     "dev:worker": "node ace adventures:openings:work",
     "worker:adventure-openings": "node ace adventures:openings:work",
     "migrate": "node ace migration:run",
+    "migrate:production": "node scripts/run-production-migrations.mjs",
     "migrate:ci": "node scripts/run-migrations.mjs test",
     "migrate:e2e": "node scripts/run-migrations.mjs e2e",
     "seed:starter-world": "node ace db:seed --files database/seeders/stormbound_chapel_seeder.ts",

@@ -126,7 +126,7 @@ export function WorldDetailPage({
         <section className={styles.state}>
           <div role="alert">
             <p className={styles.eyebrow}>{missing ? 'Not found' : 'Connection error'}</p>
-            <h1>{missing ? 'World not found' : 'World unavailable'}</h1>
+            <h1 data-route-heading>{missing ? 'World not found' : 'World unavailable'}</h1>
             <p>
               {missing
                 ? 'This World does not exist or is not available to this account.'
@@ -171,7 +171,7 @@ export function WorldDetailPage({
       <article className={styles.content} aria-labelledby="world-title">
         <header className={styles.worldIdentity}>
           <p className={styles.eyebrow}>{worldData.visibility} World</p>
-          <h1 id="world-title">{worldData.name}</h1>
+          <h1 data-route-heading id="world-title">{worldData.name}</h1>
           <p className={styles.lede}>{worldData.description}</p>
         </header>
         <section aria-labelledby="adventures-title">

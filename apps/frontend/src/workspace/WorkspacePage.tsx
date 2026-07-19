@@ -130,7 +130,7 @@ export function WorkspacePage({
       <div className={styles.content}>
         <div className={styles.headingRow}>
           <p className={styles.eyebrow}>World library</p>
-          <h1 className={styles.title}>Worlds</h1>
+          <h1 className={styles.title} data-route-heading>Worlds</h1>
         </div>
         {signOut.isError ? (
           <p className={styles.error} role="alert">

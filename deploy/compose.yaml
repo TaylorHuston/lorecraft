@@ -1,0 +1,103 @@
+name: lorecraft
+
+x-runtime-environment: &runtime-environment
+  NODE_ENV: production
+  HOST: 0.0.0.0
+  PORT: 4311
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  APP_KEY: ${APP_KEY:?Set APP_KEY}
+  APP_URL: ${APP_URL:?Set APP_URL}
+  CORS_ORIGIN: ${CORS_ORIGIN:?Set CORS_ORIGIN}
+  SESSION_DRIVER: database
+  DATABASE_URL: ${DATABASE_URL:?Set pooled DATABASE_URL}
+  STARTER_WORLD_AUTHOR_EMAIL: ${STARTER_WORLD_AUTHOR_EMAIL:-}
+  LLM_BASE_URL: ${LLM_BASE_URL:?Set LLM_BASE_URL}
+  LLM_API_KEY: ${LLM_API_KEY:-}
+  LLM_MODEL: ${LLM_MODEL:?Set LLM_MODEL}
+  LLM_TIMEOUT_MS: ${LLM_TIMEOUT_MS:-120000}
+  LLM_MAX_TOKENS: ${LLM_MAX_TOKENS:-500}
+  LLM_TEMPERATURE: ${LLM_TEMPERATURE:-0.8}
+  LLM_REASONING_EFFORT: ${LLM_REASONING_EFFORT:-none}
+
+x-runtime: &runtime
+  image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to an immutable reviewed image}
+  environment:
+    <<: *runtime-environment
+  restart: unless-stopped
+  init: true
+  read_only: true
+  tmpfs:
+    - /tmp
+  logging:
+    driver: json-file
+    options:
+      max-size: '10m'
+      max-file: '3'
+  networks:
+    - application
+    - egress
+
+services:
+  gateway:
+    image: ${FRONTEND_IMAGE:?Set FRONTEND_IMAGE to an immutable reviewed image}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    ports:
+      - '127.0.0.1:${GATEWAY_PORT:-8080}:8080'
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--spider', 'http://127.0.0.1:8080/healthz']
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    networks:
+      - application
+  api:
+    <<: *runtime
+    command: ['node', 'bin/server.js']
+    expose:
+      - '4311'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4311/api/health/live').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    <<: *runtime
+    command: ['node', 'ace.js', 'adventures:openings:work']
+    environment:
+      <<: *runtime-environment
+      ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000
+
+  migrate:
+    <<: *runtime
+    profiles: ['operations']
+    restart: 'no'
+    command: ['node', 'scripts/run-production-migrations.mjs']
+    environment:
+      <<: *runtime-environment
+      MIGRATION_DATABASE_URL: ${MIGRATION_DATABASE_URL:-}
+      ALLOW_PRODUCTION_DATABASE_MIGRATION: '1'
+
+networks:
+  application:
+    internal: true
+  egress: {}

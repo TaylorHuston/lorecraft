@@ -8,7 +8,7 @@ Production successor to `lorecraft-mvp`: a creator-first, API-oriented applicati
 
 1. Inspect the current branch, worktree status, and relevant diff. Preserve unrelated changes.
 2. Read `README.md` and the root `package.json` scripts.
-3. When this repo is inside an initialized SDD workspace, run `sdd context . --json`; read `<workspaceRoot>/.sdd/story-driven-development.md` and the resolved private PRD when product scope matters. Never copy private planning paths or content into this public repository.
+3. When this repo is inside an initialized SDD workspace, run `sdd context . --json`; read the returned `workflowPath` and the resolved private PRD when product scope matters. Never copy private planning paths or content into this public repository.
 4. Before changing behavior, read the matching `docs/changes/<change>/` artifacts and affected `docs/epics/**/epic.md` files. Epic/Story truth must remain aligned with implementation.
 5. Read relevant accepted ADRs and current public docs before changing architecture, contracts, persistence, auth, deployment, or UI conventions.
 

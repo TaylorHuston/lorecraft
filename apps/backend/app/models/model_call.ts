@@ -20,10 +20,10 @@ export default class ModelCall extends BaseModel {
   declare operation: string
 
   @column()
-  declare redactedRequest: Record<string, unknown>
+  declare requestMetadata: Record<string, unknown>
 
   @column()
-  declare rawResponse: string | null
+  declare responseMetadata: Record<string, unknown>
 
   @column()
   declare provider: string

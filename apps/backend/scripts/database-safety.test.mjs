@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { assertDisposableDatabase, databaseChildEnvironment } from './database-safety.mjs'
+import {
+  assertDirectMigrationDatabase,
+  assertDisposableDatabase,
+  databaseChildEnvironment,
+} from './database-safety.mjs'
 
 test('rejects acknowledged database writes in a production runtime', () => {
   assert.throws(
@@ -293,5 +297,92 @@ test('treats pooled and direct Neon hostnames as the same database target', () =
         targetName: 'TEST_DATABASE_URL',
       }),
     /must differ from DATABASE_URL/
+  )
+})
+
+test('accepts a direct migration URL matching a pooled runtime Neon target', () => {
+  assert.doesNotThrow(() =>
+    assertDirectMigrationDatabase({
+      acknowledgement: '1',
+      applicationDatabaseUrl:
+        'postgresql://user:secret@ep-example-pooler.us-east-2.aws.neon.tech/lorecraft',
+      migrationDatabaseUrl:
+        'postgresql://user:secret@ep-example.us-east-2.aws.neon.tech/lorecraft',
+      nodeEnvironment: 'production',
+    })
+  )
+})
+
+test('rejects pooled and mismatched production migration URLs', () => {
+  const applicationDatabaseUrl =
+    'postgresql://user:secret@ep-production-pooler.us-east-2.aws.neon.tech/lorecraft'
+
+  assert.throws(
+    () =>
+      assertDirectMigrationDatabase({
+        acknowledgement: '1',
+        applicationDatabaseUrl,
+        migrationDatabaseUrl: applicationDatabaseUrl,
+        nodeEnvironment: 'production',
+      }),
+    /MIGRATION_DATABASE_URL must use a direct connection/
+  )
+  assert.throws(
+    () =>
+      assertDirectMigrationDatabase({
+        acknowledgement: '1',
+        applicationDatabaseUrl,
+        migrationDatabaseUrl:
+          'postgresql://user:secret@ep-development.us-east-2.aws.neon.tech/lorecraft',
+        nodeEnvironment: 'production',
+      }),
+    /must identify the same database target as DATABASE_URL/
+  )
+})
+
+test('rejects a direct Neon runtime URL while remaining portable to other PostgreSQL hosts', () => {
+  assert.throws(
+    () =>
+      assertDirectMigrationDatabase({
+        acknowledgement: '1',
+        applicationDatabaseUrl:
+          'postgresql://user:secret@ep-example.us-east-2.aws.neon.tech/lorecraft',
+        migrationDatabaseUrl:
+          'postgresql://user:secret@ep-example.us-east-2.aws.neon.tech/lorecraft',
+        nodeEnvironment: 'production',
+      }),
+    /DATABASE_URL must use the pooled Neon endpoint/
+  )
+
+  assert.doesNotThrow(() =>
+    assertDirectMigrationDatabase({
+      acknowledgement: '1',
+      applicationDatabaseUrl: 'postgresql://user:secret@db.internal/lorecraft',
+      migrationDatabaseUrl: 'postgresql://user:secret@db.internal/lorecraft',
+      nodeEnvironment: 'production',
+    })
+  )
+})
+
+test('requires production mode and explicit acknowledgement for production migrations', () => {
+  const input = {
+    applicationDatabaseUrl:
+      'postgresql://user:secret@ep-example-pooler.us-east-2.aws.neon.tech/lorecraft',
+    migrationDatabaseUrl:
+      'postgresql://user:secret@ep-example.us-east-2.aws.neon.tech/lorecraft',
+  }
+
+  assert.throws(
+    () => assertDirectMigrationDatabase({ ...input, nodeEnvironment: 'production' }),
+    /ALLOW_PRODUCTION_DATABASE_MIGRATION=1/
+  )
+  assert.throws(
+    () =>
+      assertDirectMigrationDatabase({
+        ...input,
+        acknowledgement: '1',
+        nodeEnvironment: 'development',
+      }),
+    /requires NODE_ENV=production/
   )
 })

@@ -27,14 +27,8 @@ function successfulResult(
     provider: 'test-provider',
     model: 'test-model',
     settings: { temperature: 0.4, maxTokens: 800 },
-    redactedRequest: {
-      method: 'POST',
-      url: 'https://story.example.test/v1/chat/completions',
-      headers: { 'content-type': 'application/json' },
-      body: { messages: ['redacted fixture'] },
-      timeoutMs: 1_000,
-    },
-    rawResponse: JSON.stringify({ narration }),
+    request: { byteCount: 100, timeoutMs: 1_000 },
+    response: { byteCount: narration.length, statusCode: 200 },
   }
 }
 
@@ -44,14 +38,11 @@ function generationError(code: 'timeout' | 'provider_failure') {
     provider: result.provider,
     model: result.model,
     settings: result.settings,
-    redactedRequest: {
-      ...result.redactedRequest,
-      headers: {
-        ...result.redactedRequest.headers,
-        authorization: 'Bearer credential-that-must-not-persist',
-      },
+    request: result.request,
+    response: {
+      byteCount: code === 'provider_failure' ? 20 : 0,
+      statusCode: code === 'provider_failure' ? 503 : null,
     },
-    rawResponse: code === 'provider_failure' ? 'provider unavailable' : null,
   })
 }
 
@@ -77,6 +68,40 @@ class DelayedGenerator implements StoryGenerator {
     this.calls.push(input)
     await new Promise((resolve) => setTimeout(resolve, this.delayMs))
     return successfulResult()
+  }
+}
+
+class CancellableGenerator implements StoryGenerator {
+  async generateOpening(
+    _input: OpeningStoryInput,
+    signal?: AbortSignal
+  ): Promise<StoryGenerationResult> {
+    if (signal?.aborted) {
+      throw new StoryGenerationError('cancelled', 'cancelled', {
+        provider: 'test-provider',
+        model: 'test-model',
+        settings: { temperature: 0.4, maxTokens: 800 },
+        request: { byteCount: 100, timeoutMs: 1_000 },
+        response: { byteCount: 0, statusCode: null },
+      })
+    }
+
+    return new Promise((_resolve, reject) => {
+      signal?.addEventListener(
+        'abort',
+        () =>
+          reject(
+            new StoryGenerationError('cancelled', 'cancelled', {
+              provider: 'test-provider',
+              model: 'test-model',
+              settings: { temperature: 0.4, maxTokens: 800 },
+              request: { byteCount: 100, timeoutMs: 1_000 },
+              response: { byteCount: 0, statusCode: null },
+            })
+          ),
+        { once: true }
+      )
+    })
   }
 }
 
@@ -360,7 +385,7 @@ test.group('AdventureOpeningWorker', (group) => {
     })
   })
 
-  test('LC-003/S1/R3-S3 + R3-S4: invalid generation retries once then fails without prose', async ({
+  test('LC-003/S1/R3-S3 + R3-S4: transient generation retries then terminal invalid prose fails', async ({
     assert,
   }) => {
     const fixture = await createOpeningFixture('3')
@@ -373,6 +398,7 @@ test.group('AdventureOpeningWorker', (group) => {
       generator,
       workerId: 'failure-worker',
       now: () => new Date(now),
+      retryDelayMs: 0,
       logger: {
         info(event, fields) {
           logRecords.push({ event, fields })
@@ -545,5 +571,28 @@ test.group('AdventureOpeningWorker', (group) => {
       { status: 'failed', failure_code: 'stale_adventure' }
     )
     assert.deepEqual(await worker.runOnce(), { status: 'idle' })
+  })
+
+  test('LC-003/S1/R3: shutdown reschedules without consuming a provider attempt', async ({
+    assert,
+  }) => {
+    const fixture = await createOpeningFixture('8')
+    const shutdown = new AbortController()
+    const worker = new AdventureOpeningWorker({
+      generator: new CancellableGenerator(),
+      workerId: 'shutdown-worker',
+      now: () => new Date(now),
+    })
+
+    const running = worker.runOnce(shutdown.signal)
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    shutdown.abort()
+
+    assert.deepInclude(await running, { status: 'retry_scheduled', attempt: 1 })
+    assert.deepInclude(
+      await db.from('adventure_jobs').where('adventure_id', fixture.adventureId).firstOrFail(),
+      { status: 'pending', attempt_count: 0, lease_owner: null, failure_code: null }
+    )
+    assert.lengthOf(await db.from('model_calls').where('adventure_id', fixture.adventureId), 0)
   })
 })

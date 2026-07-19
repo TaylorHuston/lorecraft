@@ -1,0 +1,16 @@
+.git
+.github
+.llm
+.neon
+**/.env
+**/.env.*
+!**/.env.example
+!deploy/.env.production.example
+**/node_modules
+**/build
+**/dist
+**/coverage
+**/test-results
+**/playwright-report
+storybook-static
+
