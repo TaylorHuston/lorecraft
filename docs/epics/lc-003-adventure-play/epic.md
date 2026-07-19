@@ -64,7 +64,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | Story | Implementation | Verification | Capability                             | Last Verified | Notes                                                                                                                                                   |
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | S1    | implemented    | verified     | Start and resume a private Adventure.  | 2026-07-18    | Opening, privacy, recovery, lifecycle, and responsive workbench foundation.                                                                             |
-| S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-19    | Act, Pass, Guide, durable lifecycle, bounded consequences, and responsive turn workbench; browser recovery/concurrency, live-provider, and manual confirmation gaps remain explicit. |
+| S2    | implemented    | verified     | Resolve a structured Game Master turn. | 2026-07-19    | Act, Pass, Guide, durable lifecycle, bounded consequences, and responsive turn workbench are verified; live-provider and owner manual confirmation remain explicit acceptance work. |
 
 ## Stories
 
@@ -327,7 +327,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 ### Story S2: Resolve A Structured Game Master Turn
 
 Implementation: implemented
-Verification: partial
+Verification: verified
 Created: 2026-07-19
 Modified: 2026-07-19
 Last verified: 2026-07-19

@@ -2,97 +2,73 @@
 
 ## Verdict
 
-changes-requested
+ready
+
+The implementation and its deterministic evidence are ready for integration review. A live-provider and owner manual walkthrough remains required before merge or Change closeout; that is acceptance evidence, not an unresolved code-review finding.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
-| Change artifacts | findings | Review record and status reconciled; private-context and evidence findings remain. |
-| Change status | pass | Transitioned from `in_review` to `in_progress` after review findings. |
-| Epic truth | findings | S2 reset-after-turn verification was overstated; corrected to an explicit gap. |
-| Requirements and Scenarios | findings | S2/R4-S6 lacks direct automated proof; browser recovery/concurrency and live-provider evidence also remain open. |
-| Story reference traceability | pass | LC-003/S1 and S2 labels are unique; S2 has stable primary anchors. |
-| Reverse traceability | pass | 71 change candidates; no missing implementation or verification references; the only unowned source file is generated Tuyau registry output. |
-| Tests and verification | findings | Frontend suite, Storybook, lint, typecheck, and build pass; backend and E2E require a newly configured disposable target and were not rerun. |
-| Manual UI confirmation | pass | Current walkthrough is `pending user`; confirmation remains required before merge/closeout, not a code-review defect. |
-| Code review | findings | Narration publication lacks an enforceable private-context disclosure boundary. |
-| Visual / UX consistency | pass | Story-first responsive composition, controls, and component states match the recorded direction; remaining browser/manual cases are explicit. |
-| Security review | findings | Private frozen canon and mutable NPC state can be reflected into player-visible narration. |
-| Documentation | findings | Source artifacts corrected; Idea-side current-state documents still describe interactive turns as deferred. |
-| Idea repository / current-state truth | findings | Private planning README, folder note, PRD, and visual identity need a mechanical current-state update. |
-| Release communication | pass | README and CHANGELOG accurately describe implemented turn behavior without private detail. |
-| Branch and merge readiness | blocked | `change/interactive-adventure-turns` cleanly merges into `develop`, but required findings remain. |
-| PRD alignment | findings | Product direction remains aligned; its current implementation statement is stale. |
+| Change artifacts and status | pass | The Change is `in_review`; tasks, Epic evidence, and this record agree. |
+| Requirements and scenarios | pass | Automated evidence now covers the former reset, recovery, concurrency, and disclosure gaps. |
+| Story and reverse traceability | pass | Orphan audit reports zero missing implementation or verification references; generated Tuyau registry output is the only expected ownership exclusion. |
+| Code and security | pass | Narrator context excludes private Character knowledge and mutable state. A direct reflection of private Guide text is rejected before extraction, metadata recording, or publication. |
+| Database and API verification | pass | Guarded disposable-Neon suite covers reset of all Adventure-owned state, non-publication on reflected Guide text, and owner retry/discard. |
+| Browser verification | pass | Deterministic Playwright covers reload while resolving, same-owner concurrent submission, failure/retry/discard, state stability, owner isolation, reset, and desktop/mobile context. |
+| Supporting gates | pass | Lint, typecheck, build, generated-contract check, frontend suite, and Storybook pass. |
+| Documentation and private Idea truth | pass | Current product documentation is aligned; private Idea updates are committed separately as `489e8082`. |
+| Manual and live-provider acceptance | pending user | Required before merge/closeout. No provider payload, raw Guide, or prompt is to be retained. |
+| Branch and merge readiness | pending acceptance | The source commit merges cleanly into `develop`; no merge, push, or PR action is authorized in this review. |
 
 ## Findings
 
-### BLOCKING
+### Resolved
 
-- [ ] `apps/backend/app/services/story_generation/turn_prompt.ts:43-48,74-83,97` and `apps/backend/app/services/adventure_turn_production_completion_port.ts:191-196,291-298` — narration receives private Character knowledge and hidden mutable NPC state, then persists and exposes untrusted provider prose without an enforceable non-disclosure check. A provider can reflect that data into player-visible story content, contradicting the private-canon boundary. Recommendation: define and test a server-side publication boundary that rejects or safely removes private-context disclosure; prompt wording alone is not sufficient.
+- [x] Private Character knowledge and mutable NPC state no longer enter the narrator prompt. The publication boundary rejects a direct reflection of the private Guide before it can reach extraction, `model_calls`, Story, or revisions.
+- [x] Reset after a completed turn now proves player state, every Adventure-owned NPC state, and completed-turn lineage are rebuilt from the frozen source.
+- [x] Owner retry/discard is covered through the HTTP contract. Browser coverage proves failure recovery, pending reload, and same-owner concurrent-tab behavior while preserving Player/Scene state on desktop and mobile.
+- [x] LC-003 evidence and the private Lorecraft Idea documents no longer describe interactive turns as deferred.
 
-### REQUIRED
+### Acceptance Evidence Pending
 
-- [ ] `docs/epics/lc-003-adventure-play/epic.md:S2/R4-S6` — reset-after-interactive-play has no direct proof that completed NPC state is reset to frozen source state. Its former evidence claim was corrected. Recommendation: seed a completed state mutation, reset, and assert player/NPC state and active lineage are rebuilt.
-- [ ] `docs/epics/lc-003-adventure-play/epic.md:Verification Gaps` — dedicated browser failure/retry/discard and concurrent-tab choreography remain unimplemented, and live-provider Act/Guide evidence remains pending. Recommendation: add the deterministic browser journey; run the live-provider playtest only with explicit provider-use authorization and record bounded visible evidence.
-- [ ] `/Users/taylor/src/my-life/my-vault/spaces/ideas/lorecraft/{README.md,lorecraft.md,prd.md,visual-identity.md}` — current Idea-side docs state interactive turns are deferred/future despite this change implementing them. Recommendation: update them together to describe Act/Pass/private Guide as the current non-canonical Adventure capability and keep the broader deferred scope explicit.
-
-### SUGGESTION
-
-- [ ] `apps/backend/README.md` — add a short pointer to the root disposable-database test setup so a clean review checkout makes the backend test prerequisite easier to discover.
+- [ ] Run one live-provider Act and private Guide walkthrough, recording only visible behavior and bounded metadata.
+- [ ] Obtain owner confirmation of ready, pending, completed, and failed recovery states on desktop and mobile.
 
 ## Verification Evidence
 
-| Command / Scenario | Evidence Type | Requirement / Scenario | Result | What It Proves |
-|---|---|---|---|---|
-| `sdd validate lorecraft --change 2026-07-18-interactive-adventure-turns --repo /Users/taylor/src/my-life/spaces/lorecraft --workspace /Users/taylor --json` | structural SDD gate | LC-003/S2 | pass; 0 errors, 2 intentional scope warnings | Change/Epic structure and documented one-path story scope. |
-| `python3 .../sdd_orphan_audit.py ... --changed-from develop --epic lc-003-adventure-play` | reverse traceability | LC-003/S2 | pass | No missing Epic refs or unowned behavior tests. |
-| `npm run test --workspace @lorecraft/frontend` | focused automated | LC-003/S2/R5 | pass; 127 tests | Composer, client, lifecycle, and accessibility component coverage. |
-| `npm run lint`, `npm run typecheck`, `npm run build`, `npm run test:storybook` | broad supporting gates | LC-003/S2 | pass | Static checks, production builds, and 81 Storybook tests. |
-| `npm run test` | backend/database gate | LC-003/S2 | blocked safely | Database-safety sub-suite passed (20 tests); the backend suite correctly refused to run without `ALLOW_TEST_DATABASE_WRITES=1` and a disposable `TEST_DATABASE_URL`. |
-| Recorded guarded disposable-Neon backend suite and deterministic Playwright journey | focused database and deterministic E2E | LC-003/S2 | historical passing evidence | Migration, lifecycle, Act/Guide/Pass, reload/reset, owner isolation, and desktop/mobile happy path; explicit gaps above remain. |
+| Command / Scenario | Result | What It Proves |
+|---|---|---|
+| Guarded disposable-Neon backend suite | pass | Reflected short Guide text does not publish narration or leave extractor/model-call evidence; reset rebuilds player/NPC state and removes completed lineage; retry/discard authorization works. |
+| `npm run test --workspace @lorecraft/frontend` | pass; 127 tests | Client lifecycle, accessibility, typed API, and workbench coverage. |
+| Deterministic Playwright Adventure journey | pass; 3 projects | Act, Guide, Pass, reload, concurrent tabs, retry/discard, reset, owner isolation, and desktop/mobile context. |
+| `npm run lint`, `npm run typecheck`, `npm run build` | pass | Repository static correctness and production bundles. |
+| `npm run verify:contracts` | pass | Generated client contract stays synchronized. |
+| `npm run test:storybook` | pass; 81 tests | Documented component and responsive states. |
+| `sdd validate ... --json` | pass; 0 errors, 2 scope warnings | Change/Epic structure is valid; warnings record the intentional single primary user path. |
+| `sdd_orphan_audit.py ... --changed-from develop --epic lc-003-adventure-play` | pass | No missing owned implementation or verification references. |
 
 ## Review Bundle
 
 - Source branch/ref: `change/interactive-adventure-turns`
-- Reviewed source commit: `a6a911fee195fee2bece160273c91700be94dcd2`
+- Reviewed implementation commit: `ff1d2ecd669b4d006eba4c743c025fb1fccbad5c`
 - Target branch/ref: `develop`
 - Merge base: `d389ccd6d7b93e4fa6b11fb82cd9eec1efbd0e79`
-- Source-only commits: `a6a911f feat: add interactive adventure turns`
-- Target-only commits: none
-- Diff stat: 70 files, 6,368 insertions, 181 deletions before review-artifact corrections
-- Conflict check: clean (`git merge-tree --write-tree develop HEAD` -> `f09860b05e99370390a19386e7aeab2c23a33d8f`)
-- Dirty state at review start: only unrelated untracked `.neon`
+- Source-only commits reviewed: `a6a911f`, `33870e4`, `ff1d2ec`
+- Conflict check: clean (`git merge-tree --write-tree develop HEAD` -> `36cf4d5bda2a7349a358a71a5c856dd69e04d19b`)
+- Dirty state: unrelated untracked `.neon` remains untouched.
+- Private supporting documentation: vault commit `489e8082` updates only the Lorecraft Idea files; unrelated `49th-floor` dirt remains untouched.
 - Branch policy: correct `change/*` source targeting non-production `develop`; no PR, merge, push, deployment, or closeout was authorized.
 
-## Discovery Wave
+## Manual UI Confirmation
 
-| Pass | Reviewer | Result | Notes |
-|---|---|---|---|
-| Artifact truth, docs, Idea truth | independent artifact reviewer | findings | Stale ADR/status/evidence claims and Idea-side deferred wording. |
-| Code, security, risk | independent code reviewer | blocking | Private prompt context can reach visible narration. |
-| Reverse traceability | main review | pass | Generated registry is the expected single ownership exclusion. |
-| UI / verification | main review | findings | Component and happy-path E2E evidence are sound; required failure/concurrency/live gaps remain explicit. |
-| Integration readiness | main review | blocked | Merge is technically clean but findings prevent integration. |
-
-## Consolidated Remediation
-
-- Root causes addressed: stale ADR status, Story Index database-gap wording, overstated S2/R4-S6 verification, task-ledger review state, and review record.
-- Safe-fix batch: source artifact corrections only; no application behavior changed.
-- Deferred or unsafe findings: private-context publication boundary, reset-after-turn proof, browser recovery/concurrency, live-provider evidence, and Idea-side current-state docs.
-- Affected verification union: `sdd validate`, reverse traceability, frontend tests, lint, typecheck, build, and Storybook.
-- Regression-focused rereview: artifact changes preserve explicit gaps; no new regression introduced.
-
-## PR / Merge Readiness
-
-- Source branch: `change/interactive-adventure-turns`
-- Reviewed source commit: `a6a911fee195fee2bece160273c91700be94dcd2`
-- Target branch: `develop`
-- Conflict check: clean
-- Commit state: review artifact corrections pending a local review commit; `.neon` remains untouched
-- PR status: not started
-- Merge status: blocked by findings
+- Status: pending user
+- Route: development `/adventures/<owned-ready-adventure-id>`
+- Setup: signed-in owner, seeded Stormbound Chapel, ready Adventure, and a live provider.
+- Steps: submit an Act and a private Guide; observe pending/completion; reload while resolving; exercise a failed turn's retry/discard state; confirm Player/Scene updates and responsive layout on desktop and mobile.
+- Expected result: successful turns append one chronological narration and accepted bounded state only; failures leave prior Story and context intact; private Guide text is never shown verbatim; controls remain clear and usable.
 
 ## Review Log
 
-- 2026-07-19: Independent local review completed; changes requested.
+- 2026-07-19: Initial independent review returned `changes-requested` for private-context publication, reset, recovery/concurrency, and documentation gaps.
+- 2026-07-19: Remediation rerun resolved each deterministic finding. Final verdict is `ready`, pending the recorded live-provider and owner manual acceptance walkthrough.
