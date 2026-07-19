@@ -10,6 +10,7 @@ import {
   executeDeployment,
   failureRecoveryPlan,
   parseEnvironment,
+  readReleaseState,
   validateDeploymentInput,
 } from './release-command.mjs'
 
@@ -30,6 +31,18 @@ test('parses whitespace and quoted production environment values', async () => {
       IMAGE_REPOSITORY: 'ghcr.io/example/lorecraft',
       APP_URL: 'https://lorecraft.test',
     })
+  } finally {
+    await rm(directory, { recursive: true })
+  }
+})
+
+test('distinguishes a missing release state from a corrupt state file', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'lorecraft-release-state-'))
+  const path = join(directory, '.release-state.json')
+  try {
+    assert.deepEqual(readReleaseState(path), {})
+    await writeFile(path, '{not valid json')
+    assert.throws(() => readReleaseState(path), /Release state file .* is invalid/)
   } finally {
     await rm(directory, { recursive: true })
   }
@@ -137,4 +150,43 @@ test('a failed new-stack health check restores and verifies the current SHA', as
   ])
   assert.equal(environments.at(-1).BACKEND_IMAGE, `ghcr.io/example/lorecraft-backend:${sha}`)
   assert.equal(healthChecks, 2)
+})
+
+test('a failed new-stack start restores and verifies the current SHA', async () => {
+  const labels = []
+  const environments = []
+  let healthChecks = 0
+
+  await assert.rejects(
+    executeDeployment({
+      action: 'deploy',
+      commandEnvironment: {
+        BACKEND_IMAGE: 'ghcr.io/example/lorecraft-backend:new',
+        FRONTEND_IMAGE: 'ghcr.io/example/lorecraft-frontend:new',
+      },
+      composeFile: 'deploy/compose.yaml',
+      currentSha: sha,
+      executeCommand: (_command, args, environment) => {
+        environments.push(environment)
+        if (args.includes('up') && environment.BACKEND_IMAGE.endsWith(':new')) {
+          throw new Error('new stack failed to start')
+        }
+      },
+      healthCheck: async () => {
+        healthChecks += 1
+      },
+      imageRepository: 'ghcr.io/example/lorecraft',
+      onStep: (label) => labels.push(label),
+    }),
+    /new stack failed to start/
+  )
+
+  assert.deepEqual(labels.slice(-4), [
+    'pull-previous-images',
+    'stop-failed-writers',
+    'restore-previous-stack',
+    'verify-restored-health',
+  ])
+  assert.equal(environments.at(-1).BACKEND_IMAGE, `ghcr.io/example/lorecraft-backend:${sha}`)
+  assert.equal(healthChecks, 1)
 })

@@ -92,6 +92,15 @@ export function parseEnvironment(path) {
   return values
 }
 
+export function readReleaseState(path) {
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'))
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') return {}
+    throw new Error(`Release state file ${path} is invalid.`, { cause: error })
+  }
+}
+
 function argumentsFrom(argv) {
   const [action, ...rest] = argv
   if (!['deploy', 'rollback'].includes(action))
@@ -141,8 +150,8 @@ export async function executeDeployment({
   let startedNewStack = false
   try {
     for (const step of plan) {
-      await runStep(step, commandEnvironment, port, executeCommand, healthCheck, onStep)
       if (action === 'deploy' && step.label === 'start-stack') startedNewStack = true
+      await runStep(step, commandEnvironment, port, executeCommand, healthCheck, onStep)
     }
   } catch (error) {
     if (!startedNewStack) throw error
@@ -167,10 +176,7 @@ async function main() {
   const environmentFile = resolve(options['env-file'] ?? 'deploy/.env.production')
   const stateFile = resolve(options['state-file'] ?? 'deploy/.release-state.json')
   const values = parseEnvironment(environmentFile)
-  let state = {}
-  try {
-    state = JSON.parse(readFileSync(stateFile, 'utf8'))
-  } catch {}
+  const state = readReleaseState(stateFile)
   const sha = options.action === 'rollback' ? state.previousSha : options.sha
   const recoveryRef = options.action === 'deploy' ? options['recovery-ref'] : state.recoveryRef
 

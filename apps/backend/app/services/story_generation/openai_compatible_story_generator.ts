@@ -268,14 +268,13 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator {
       signal?.removeEventListener('abort', cancel)
     }
 
+    const retryAfterMs = parseRetryAfter(response.headers.get('retry-after'))
     const evidence: StoryGenerationEvidence = {
       ...pendingEvidence,
       response: {
         byteCount: Buffer.byteLength(rawResponse, 'utf8'),
         statusCode: response.status,
-        ...(parseRetryAfter(response.headers.get('retry-after')) === undefined
-          ? {}
-          : { retryAfterMs: parseRetryAfter(response.headers.get('retry-after')) }),
+        ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
       },
     }
 
