@@ -93,12 +93,27 @@ export function parseEnvironment(path) {
 }
 
 export function readReleaseState(path) {
+  let state
   try {
-    return JSON.parse(readFileSync(path, 'utf8'))
+    state = JSON.parse(readFileSync(path, 'utf8'))
   } catch (error) {
     if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') return {}
     throw new Error(`Release state file ${path} is invalid.`, { cause: error })
   }
+
+  const validSha = (value) =>
+    value === undefined || value === null || (typeof value === 'string' && commitSha.test(value))
+  if (
+    !state ||
+    typeof state !== 'object' ||
+    Array.isArray(state) ||
+    !validSha(state.currentSha) ||
+    !validSha(state.previousSha) ||
+    (state.recoveryRef !== undefined && typeof state.recoveryRef !== 'string')
+  ) {
+    throw new Error(`Release state file ${path} is invalid.`)
+  }
+  return state
 }
 
 function argumentsFrom(argv) {

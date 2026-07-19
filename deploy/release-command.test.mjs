@@ -43,6 +43,10 @@ test('distinguishes a missing release state from a corrupt state file', async ()
     assert.deepEqual(readReleaseState(path), {})
     await writeFile(path, '{not valid json')
     assert.throws(() => readReleaseState(path), /Release state file .* is invalid/)
+    for (const invalidState of [null, [], { currentSha: 'main' }, { recoveryRef: 42 }]) {
+      await writeFile(path, JSON.stringify(invalidState))
+      assert.throws(() => readReleaseState(path), /Release state file .* is invalid/)
+    }
   } finally {
     await rm(directory, { recursive: true })
   }
