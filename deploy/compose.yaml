@@ -62,6 +62,7 @@ services:
         max-file: '3'
     networks:
       - application
+      - ingress
   api:
     <<: *runtime
     command: ['node', 'bin/server.js']
@@ -100,4 +101,5 @@ services:
 networks:
   application:
     internal: true
+  ingress: {}
   egress: {}
