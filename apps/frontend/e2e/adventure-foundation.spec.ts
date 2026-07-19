@@ -25,6 +25,20 @@ async function deleteAdventureIfPresent(page: Page, playerName: string) {
   await expect(deleteButton).toHaveCount(0)
 }
 
+async function expectVestryContext(page: Page, testInfo: { project: { name: string } }) {
+  if (testInfo.project.name.includes('mobile')) {
+    await page.getByRole('tab', { name: 'Player' }).click()
+    await expect(page.getByRole('tabpanel', { name: 'Player' })).toContainText('Vestry')
+    await page.getByRole('tab', { name: 'Scene' }).click()
+    await expect(page.getByRole('tabpanel', { name: 'Scene' })).toContainText('Vestry')
+    await page.getByRole('tab', { name: 'Story' }).click()
+    return
+  }
+
+  await expect(page.getByRole('region', { name: 'Player' })).toContainText('Vestry')
+  await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Vestry')
+}
+
 test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure', async ({
   browser,
   page,
@@ -133,6 +147,42 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     const passDialog = page.getByRole('dialog', { name: 'Pass this moment?' })
     await passDialog.getByRole('button', { name: 'Pass' }).click()
     await expect(page.getByText(passTurn)).toBeVisible({ timeout: 15_000 })
+
+    const concurrentPage = await page.context().newPage()
+    await concurrentPage.goto(adventureUrl)
+    await expect(concurrentPage.getByLabel('What do you do?')).toBeVisible()
+    await concurrentPage.getByLabel('What do you do?').fill('I wait for the next bell toll.')
+    await page.getByLabel('What do you do?').fill('E2E_SLOW_TURN: I wait for the next bell toll.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByText('Resolving your turn')).toBeVisible()
+    await concurrentPage.getByRole('button', { name: 'Continue' }).click()
+    await expect(concurrentPage.getByRole('alert')).toContainText('resolving turn')
+    await page.reload()
+    await expect(page.getByText('Resolving your turn')).toBeVisible()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2, { timeout: 15_000 })
+    await concurrentPage.close()
+
+    await page.getByLabel('What do you do?').fill('E2E_FAIL_TWICE: ask Mira about the ledger.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByRole('heading', { name: 'Your last turn did not change the story' })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2)
+    await expectVestryContext(page, testInfo)
+    await page.getByRole('button', { name: 'Retry turn' }).click()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3, { timeout: 15_000 })
+
+    await page.getByLabel('What do you do?').fill('E2E_FAIL_ALWAYS: ask Mira about the ledger.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByRole('heading', { name: 'Your last turn did not change the story' })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expectVestryContext(page, testInfo)
+    await page.getByRole('button', { name: 'Discard' }).click()
+    await expect(page.getByLabel('What do you do?')).toBeVisible()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expectVestryContext(page, testInfo)
 
     await page.getByRole('button', { name: 'Adventure settings' }).click()
     const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })

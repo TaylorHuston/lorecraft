@@ -1,16 +1,16 @@
 ---
-status: in_progress
+status: in_review
 ---
 
 # Tasks: Interactive Adventure Turns
 
 ## Resume Here
 
-- Last completed action: independent `sdd-review` discovery completed against `a6a911f`; an untrusted narration response can disclose private prompt context
-- Next action: return to `sdd-apply` to enforce private-context non-disclosure before narration publication, add direct reset-after-turn proof, complete dedicated browser recovery/concurrency coverage, and reconcile Idea-side current-state notes
+- Last completed action: review remediation and focused reruns completed; final independent review is next
+- Next action: complete the final review record and await the live-provider/manual acceptance walkthrough before any merge or closeout
 - Active branch/ref: `change/interactive-adventure-turns` from `d389ccd` (`develop` at branch creation)
 - Expected dirty files: review artifacts and scoped remediation only; `.neon` remains unrelated and untracked
-- Known review findings: private canon/NPC state can reach persisted narration; direct reset-after-turn proof, deterministic browser failure/recovery and concurrent-tab choreography, live-provider Act/Guide behavior, and owner manual desktop/mobile confirmation remain pending.
+- Known review findings: direct private-context disclosure, reset-after-turn proof, browser recovery/concurrency, HTTP recovery, and Idea-side current-state drift are resolved. Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence, not automated review gaps.
 
 ## Task Checklist
 
@@ -53,7 +53,7 @@ status: in_progress
 - [x] 5.1 Run focused migration/database invariants against disposable Neon, including up/down/up and data-bearing downgrade refusal where required.
 - [x] 5.2 Run backend unit/functional coverage for R1-R4, security, metadata minimization, cancellation, concurrency, and reset/delete.
 - [x] 5.3 Run frontend component/API coverage for R5 and relevant R1/R2 lifecycle states.
-- [ ] 5.4 Run deterministic E2E for Act, Pass, Guide, reload/restart, concurrent tabs, state updates, failure recovery, reset, cross-account isolation, and desktop/mobile layouts.
+- [x] 5.4 Run deterministic E2E for Act, Pass, Guide, reload/restart, concurrent tabs, state updates, failure recovery, reset, cross-account isolation, and desktop/mobile layouts.
 - [x] 5.5 Run broad repository gates: lint, typecheck, tests, contracts, builds, Storybook, and worker/container/deployment checks affected by the change.
 - [ ] 5.6 Run live-provider Act and Guide playtests while recording only visible behavior and bounded metadata.
 - [ ] 5.7 Obtain user manual UI confirmation for ready/pending/completed/failed desktop and mobile flows.
@@ -63,8 +63,8 @@ status: in_progress
 ### 6. Review, Release, And Closeout
 
 - [x] 6.1 Run `sdd-review` as the independent local gate for behavior, security, data lineage, provider privacy, docs, ADRs, and branch readiness.
-- [ ] 6.2 Address findings or record explicitly accepted non-blocking risks; keep status `in_review` during closeout.
-- [ ] 6.3 Confirm release communication, Epic truth, ADR status, generated contracts, and manual confirmation agree with implementation reality.
+- [x] 6.2 Address findings or record explicitly accepted non-blocking risks; keep status `in_review` during closeout.
+- [x] 6.3 Confirm release communication, Epic truth, ADR status, generated contracts, and manual confirmation agree with implementation reality.
 - [ ] 6.4 Merge according to the repository's develop-integration policy only after review and explicit user authorization.
 - [ ] 6.5 Use `sdd-release` for an explicitly authorized main/deployment handoff; run production migration and authenticated Tailscale acceptance only in that workflow.
 - [ ] 6.6 Close the Change only after review, merge, acceptance, deferred-scope confirmation, and status reconciliation are complete.
@@ -76,6 +76,7 @@ status: in_progress
 | 2026-07-18 | Planning                | `sdd-change --plan`; `sdd-adr`                         | private Change plan; proposed revision-linked mutation ADR                                                                                                          | Act/Pass/Guide phase planned; implementation not started                                                                    | `develop` planning state                              |
 | 2026-07-19 | Promotion and Discovery | `sdd-apply`; backend, frontend, and artifact discovery | promoted Change, current `LC-003`, existing opening worker/query/UI seams                                                                                           | Change promoted; no scope blocker; legacy Epic normalization and lineage-aware detail projection are required before review | `change/interactive-adventure-turns` (`d389ccd` base) |
 | 2026-07-19 | S2 implementation       | `sdd-apply`; backend/frontend implementation slices    | durable turns/jobs, turn worker, separate narrator/extractor, allowlisted mutation state, owner recovery, workbench, deployment supervision, generated Tuyau routes | Implemented; guarded disposable-Neon database and deterministic E2E verification completed; review-recorded manual/live gaps remain | `a6a911f`                                           |
+| 2026-07-19 | Review remediation | `sdd-apply`; independent rerun | narrator publication boundary, reset lineage proof, HTTP and browser recovery/concurrency tests, LC-003 truth, and Idea-side current-state notes | Direct Guide reflection is rejected before publication; deterministic recovery/reset evidence and current-state documentation are reconciled; live-provider/manual acceptance remains pending | commit pending |
 
 ## Verification Ledger
 
@@ -95,6 +96,8 @@ status: in_progress
 | 2026-07-19 | independent `sdd-review` artifact rerun                                                                                                                     | structural/reverse trace   | Post-review artifact validity, current code ownership, and generated-contract synchronization                                                        | passed; 0 errors; two intentional large-story-scope warnings; 0 missing refs; contract check passed |
 | 2026-07-19 | frontend full suite, lint, typecheck, build, and Storybook                                                                                                  | executable/static gate     | Current frontend behavior, static correctness, production bundles, and documented component states                                                   | passed; 127 frontend tests and 81 Storybook tests |
 | 2026-07-19 | root `npm run test` without disposable test environment                                                                                                     | guard verification         | Backend test safety fails closed when a write acknowledgement or isolated target is absent                                                           | safety suite passed (20 tests); backend functional/database suite intentionally not run |
+| 2026-07-19 | guarded disposable-Neon backend rerun | executable database tests | Direct reflected Guide text produces no published narration, Story entry, revision, extractor request, or model-call evidence; reset rebuilds all player/NPC state and lineage; owner retry/discard contract works | passed |
+| 2026-07-19 | deterministic Playwright rerun | executable E2E | Pending reload and same-owner concurrent submission preserve one active turn; failed turns retry and discard while Player/Scene state remains stable on desktop and mobile | passed (3 projects) |
 
 ## Manual Feedback
 
@@ -125,21 +128,21 @@ status: in_progress
 
 ## Blockers / Open Questions
 
-- A dedicated browser journey for failure/retry/discard and concurrent-tab choreography, live-provider Act/Guide behavior, and owner manual desktop/mobile confirmation remain pending review evidence. No raw prompt, Guide, or provider body will be retained.
+- Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence. No raw prompt, Guide, or provider body will be retained.
 
 ## Closeout
 
-- Change status: in progress on `change/interactive-adventure-turns`; independent review found a private-context disclosure blocker and explicit verification/documentation gaps
+- Change status: review-ready on `change/interactive-adventure-turns`; deterministic remediation is complete and acceptance remains pending
 - Epic files updated: `LC-003` uses `sdd-epic-v2`; S2 maps current implementation and explicit verification gaps
 - Story labels/references and Requirement/Scenario IDs current: `LC-003/S2` R1-R5
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: partial; dedicated browser recovery, manual, and live-provider gaps are explicit
+- Scenario-mapped Verified By maps current: yes; live-provider/manual acceptance remains explicit
 - Superseded earlier Epic truth reconciled: yes
 - ADR status: revision-linked Adventure state mutations is Accepted after transaction/recovery evidence; related accepted ADR links are reconciled
 - Release communication current: README and CHANGELOG updated; release not started
-- `sdd-review` verdict: changes requested
+- `sdd-review` verdict: ready pending the recorded live-provider/manual acceptance walkthrough
 - Review record: `docs/changes/2026-07-18-interactive-adventure-turns/review.md`
-- `review.md` findings resolved: artifact-only truth corrections applied; private-context disclosure and verification/documentation findings remain
+- `review.md` findings resolved: private-context publication boundary, reset lifecycle, HTTP/browser recovery, and Idea-side documentation are reconciled; provider/manual acceptance remains pending
 - Planning updates resolved: yes
 - Manual UI confirmation status: pending user after implementation
 - PR / merge state: not started

@@ -212,4 +212,57 @@ test.group('Adventure turn API', (group) => {
       .json({ requestId: 'ffffffff-ffff-4fff-8fff-ffffffffffff', trigger: 'pass' })
     anonymous.assertStatus(401)
   })
+
+  test('LC-003/S2/R2-S5: owners retry and discard failed turns through the HTTP contract', async ({
+    client,
+    assert,
+  }) => {
+    const ownerEmail = 'turn-api-recovery-owner@example.com'
+    const browser = await createAuthenticatedBrowser(client, ownerEmail)
+    const owner = await User.findByOrFail('email', ownerEmail)
+    const adventureId = await createReadyAdventure(owner.id, 'recovery')
+    const submitted = await withBrowserSession(
+      client.post(`/api/v1/adventures/${adventureId}/turns`),
+      browser,
+      { csrf: true }
+    ).json({
+      requestId: '12121212-1212-4121-8121-121212121212',
+      trigger: 'act',
+      input: 'I wait for the bell.',
+    })
+    submitted.assertCreated()
+    const turnId = (submitted.body() as { data: { id: string } }).data.id
+    await db.from('adventure_turns').where('id', turnId).update({ status: 'failed' })
+    await db.from('adventure_jobs').where('turn_id', turnId).update({ status: 'failed' })
+
+    const retry = await withBrowserSession(
+      client.post(`/api/v1/adventures/${adventureId}/turns/${turnId}/retry`),
+      browser,
+      { csrf: true }
+    )
+    retry.assertOk()
+    retry.assertBodyContains({ data: { id: turnId, status: 'pending' } })
+
+    const otherBrowser = await createAuthenticatedBrowser(
+      client,
+      'turn-api-recovery-other@example.com'
+    )
+    const crossOwner = await withBrowserSession(
+      client.delete(`/api/v1/adventures/${adventureId}/turns/${turnId}`),
+      otherBrowser,
+      { csrf: true }
+    )
+    crossOwner.assertNotFound()
+
+    await db.from('adventure_turns').where('id', turnId).update({ status: 'failed' })
+    await db.from('adventure_jobs').where('turn_id', turnId).update({ status: 'failed' })
+    const discard = await withBrowserSession(
+      client.delete(`/api/v1/adventures/${adventureId}/turns/${turnId}`),
+      browser,
+      { csrf: true }
+    )
+    discard.assertNoContent()
+    assert.isNull(await db.from('adventure_turns').where('id', turnId).first())
+    assert.lengthOf(await db.from('adventure_jobs').where('turn_id', turnId), 0)
+  })
 })

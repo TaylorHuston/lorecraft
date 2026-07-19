@@ -1,4 +1,5 @@
 import AdventureTurnLifecycleService from '#services/adventure_turn_lifecycle_service'
+import Character from '#models/character'
 import AdventureTurnWorker, {
   type AdventureTurnCompletion,
   type AdventureTurnCompletionPort,
@@ -48,6 +49,18 @@ async function createReadyAdventure(suffix: string) {
     description: 'A narrow stair drops into the crypt beneath the altar.',
     sortOrder: 1,
   })
+  await Character.create({
+    worldId: world.id,
+    locationId: location.id,
+    key: 'mira',
+    name: 'Mira',
+    physicalDescription: 'A rain-dark local with watchful eyes.',
+    background: 'Mira has lived beside the chapel all her life.',
+    personality: 'Cautious and observant.',
+    voice: 'Quiet and deliberate.',
+    privateKnowledge: 'The bell has no rope.',
+    sortOrder: 0,
+  })
   await StartingPoint.create({
     worldId: world.id,
     locationId: location.id,
@@ -86,13 +99,19 @@ async function createReadyAdventure(suffix: string) {
   return { owner, adventureId: created.adventureId, openingRevisionId: opening.id }
 }
 
-async function submitTurn(ownerId: number, adventureId: string, requestId = crypto.randomUUID()) {
+async function submitTurn(
+  ownerId: number,
+  adventureId: string,
+  requestId = crypto.randomUUID(),
+  trigger: 'act' | 'guide' = 'act',
+  input = 'I ask Mira why the bell rang.'
+) {
   return new AdventureTurnSubmissionService().submit({
     ownerId,
     adventureId,
     requestId,
-    trigger: 'act',
-    input: 'I ask Mira why the bell rang.',
+    trigger,
+    input,
   })
 }
 
@@ -253,6 +272,70 @@ test.group('AdventureTurnWorker', (group) => {
       ['turn_narration_generation', 'turn_state_extraction']
     )
     assert.notInclude(JSON.stringify(calls), 'Mira beckons')
+  })
+
+  test('LC-003/S2/R1-S3 + R3-S4: rejects even short reflected Guide text before narration publication', async ({
+    assert,
+  }) => {
+    const fixture = await createReadyAdventure('private-narration')
+    const turn = await submitTurn(
+      fixture.owner.id,
+      fixture.adventureId,
+      crypto.randomUUID(),
+      'guide',
+      'OK'
+    )
+    let extractorCalled = false
+    const generator: TurnStoryGenerator = {
+      async generateTurn(input) {
+        assert.equal(input.context.trigger, 'guide')
+        assert.equal(input.context.input, 'OK')
+        return {
+          narration: 'OK.',
+          provider: 'test-provider',
+          model: 'test-model',
+          settings: { temperature: 0, maxTokens: 10 },
+          request: { byteCount: 10, timeoutMs: 1 },
+          response: { byteCount: 10, statusCode: 200 },
+        }
+      },
+    }
+    const extractor: AdventureStateExtractor = {
+      async extract() {
+        extractorCalled = true
+        throw new Error('The extractor must not receive rejected narration.')
+      },
+    }
+    const worker = new AdventureTurnWorker({
+      completion: new AdventureTurnProductionCompletionPort({
+        storyGenerator: generator,
+        stateExtractor: extractor,
+      }),
+      workerId: 'turn-worker-private-narration',
+      now: () => new Date(now),
+    })
+
+    assert.deepInclude(await worker.runOnce(), { status: 'retry_scheduled', turnId: turn.id })
+    assert.deepInclude(await worker.runOnce(), { status: 'failed', turnId: turn.id, attempt: 2 })
+    assert.isFalse(extractorCalled)
+    assert.deepInclude(await db.from('adventure_turns').where('id', turn.id).firstOrFail(), {
+      status: 'failed',
+      result_revision_id: null,
+    })
+    assert.lengthOf(
+      await db.from('adventure_story_entries').where('adventure_id', fixture.adventureId),
+      0
+    )
+    assert.lengthOf(
+      await db.from('adventure_revisions').where('adventure_id', fixture.adventureId),
+      1
+    )
+    const calls = await db
+      .from('model_calls')
+      .where('adventure_id', fixture.adventureId)
+      .where('operation', 'turn_narration_generation')
+    assert.lengthOf(calls, 2)
+    assert.notInclude(JSON.stringify(calls), 'OK')
   })
 
   test('LC-003/S2/R2-S2 + R2-S5: an expired claim is reclaimed, terminal failure is retryable by the owner, and discard removes only uncommitted work', async ({

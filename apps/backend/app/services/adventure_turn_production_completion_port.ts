@@ -10,6 +10,7 @@ import {
   type AdventureTurnContext,
   type AdventureTurnState,
 } from '#services/story_generation/adventure_turn_context'
+import { assertNarrationSafeForPublication } from '#services/story_generation/turn_prompt'
 import type { TurnStoryGenerator } from '#services/story_generation/turn_story_generator'
 import { StoryGenerationError } from '#services/story_generation/story_generator'
 import type {
@@ -156,6 +157,7 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
         { platformInstructions: this.#platformInstructions, context: current.context },
         signal
       )
+      assertNarrationSafeForPublication(narration.narration, current.context)
       await this.#recordModelCall(
         claim,
         'turn_narration_generation',

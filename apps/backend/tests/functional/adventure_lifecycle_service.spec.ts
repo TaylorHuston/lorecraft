@@ -1,5 +1,6 @@
 import AdventureCreationService from '#services/adventure_creation_service'
 import AdventureLifecycleService from '#services/adventure_lifecycle_service'
+import Character from '#models/character'
 import Location from '#models/location'
 import StartingPoint from '#models/starting_point'
 import User from '#models/user'
@@ -68,6 +69,18 @@ async function createWorld({
     description: 'Lanterns shiver above the empty market.',
     sortOrder: 1,
   })
+  const character = await Character.create({
+    worldId: world.id,
+    locationId: chapel.id,
+    key: 'mira',
+    name: 'Mira',
+    physicalDescription: 'A local woman in practical rain-dark clothes.',
+    background: 'Mira has watched the chapel through many storms.',
+    personality: 'Cautious and observant.',
+    voice: 'Quiet and measured.',
+    privateKnowledge: 'The bell has no rope.',
+    sortOrder: 0,
+  })
   const startingPoint = await StartingPoint.create({
     worldId: world.id,
     locationId: chapel.id,
@@ -79,7 +92,7 @@ async function createWorld({
   })
   const version = await publishWorldVersion(world.id)
 
-  return { world, chapel, market, startingPoint, version }
+  return { world, chapel, market, character, startingPoint, version }
 }
 
 async function createAdventure(ownerId: number, worldSlug: string, requestId: string) {
@@ -157,7 +170,7 @@ async function makeAdventureReady(adventureId: string) {
 test.group('AdventureLifecycleService', (group) => {
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
-  test('LC-003/S1/R4-S2: reset restores the same frozen start and replaces prior generation work', async ({
+  test('LC-003/S1/R4-S2 + S2/R4-S6: reset restores frozen player and NPC state and removes completed-turn lineage', async ({
     assert,
   }) => {
     const owner = await createUser('lifecycle-reset-owner@example.com')
@@ -168,6 +181,89 @@ test.group('AdventureLifecycleService', (group) => {
       '11111111-1111-4111-8111-111111111111'
     )
     await makeAdventureReady(created.adventureId)
+
+    const opening = await db
+      .from('adventure_revisions')
+      .where('adventure_id', created.adventureId)
+      .where('kind', 'opening')
+      .firstOrFail()
+    const completedAt = new Date()
+    const [turnRevision] = await db
+      .table('adventure_revisions')
+      .insert({
+        adventure_id: created.adventureId,
+        sequence: 1,
+        kind: 'turn',
+        parent_revision_id: opening.id,
+        created_at: completedAt,
+      })
+      .returning(['id'])
+    const [turn] = await db
+      .table('adventure_turns')
+      .insert({
+        adventure_id: created.adventureId,
+        request_id: '99999999-9999-4999-8999-999999999999',
+        trigger: 'act',
+        input: 'I ask Mira what she remembers.',
+        status: 'succeeded',
+        source_revision_id: opening.id,
+        result_revision_id: turnRevision.id,
+        created_at: completedAt,
+        updated_at: completedAt,
+      })
+      .returning(['id'])
+    await db.table('adventure_jobs').insert({
+      adventure_id: created.adventureId,
+      turn_id: turn.id,
+      generation: 1,
+      type: 'turn',
+      status: 'succeeded',
+      attempt_count: 1,
+      available_at: completedAt,
+      lease_owner: null,
+      lease_expires_at: null,
+      failure_code: null,
+      failure_message: null,
+      created_at: completedAt,
+      updated_at: completedAt,
+    })
+    await db.table('adventure_story_entries').insert({
+      adventure_id: created.adventureId,
+      revision_id: turnRevision.id,
+      sequence: 0,
+      kind: 'narration',
+      content: 'Mira leads you into the market square.',
+      created_at: completedAt,
+    })
+    await db.table('adventure_revision_mutations').insert({
+      adventure_id: created.adventureId,
+      revision_id: turnRevision.id,
+      sequence: 0,
+      accepted: true,
+      actor_type: 'character',
+      actor_key: source.character.key,
+      field: 'memory',
+      previous_value: '',
+      resulting_value: 'Mira heard the bell answer from below.',
+      rejection_code: null,
+      created_at: completedAt,
+    })
+    await db
+      .from('adventure_character_states')
+      .where('adventure_id', created.adventureId)
+      .where('character_key', source.character.key)
+      .update({
+        current_location_key: source.market.key,
+        mood: 'afraid',
+        status: 'keeping the secret',
+        memory: 'Mira heard the bell answer from below.',
+        updated_at: completedAt,
+      })
+    await db.from('adventures').where('id', created.adventureId).update({
+      head_revision_id: turnRevision.id,
+      turn_count: 1,
+      updated_at: completedAt,
+    })
 
     source.startingPoint.locationId = source.market.id
     source.startingPoint.openingPremise = 'The market clock strikes thirteen.'
@@ -182,6 +278,9 @@ test.group('AdventureLifecycleService', (group) => {
       .where('adventure_id', created.adventureId)
       .firstOrFail()
     const jobs = await db.from('adventure_jobs').where('adventure_id', created.adventureId)
+    const characterStates = await db
+      .from('adventure_character_states')
+      .where('adventure_id', created.adventureId)
 
     assert.deepEqual(result, {
       adventureId: created.adventureId,
@@ -227,6 +326,19 @@ test.group('AdventureLifecycleService', (group) => {
       await db.from('adventure_story_entries').where('adventure_id', created.adventureId),
       0
     )
+    assert.lengthOf(await db.from('adventure_turns').where('adventure_id', created.adventureId), 0)
+    assert.lengthOf(
+      await db.from('adventure_revision_mutations').where('adventure_id', created.adventureId),
+      0
+    )
+    assert.lengthOf(characterStates, source.version.snapshot.characters.length)
+    assert.deepInclude(characterStates[0], {
+      character_key: source.character.key,
+      current_location_key: source.chapel.key,
+      mood: '',
+      status: '',
+      memory: '',
+    })
     assert.isNotNull(await db.from('worlds').where('id', source.world.id).first())
     const persistedWorld = await db.from('worlds').where('id', source.world.id).firstOrFail()
     assert.equal(persistedWorld.current_version_id, newerVersion.id)

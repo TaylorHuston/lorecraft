@@ -118,6 +118,9 @@ test.group('Adventure turn context', () => {
     assert.notInclude(prompt.user, 'do-not-leak')
     assert.notInclude(prompt.user, 'unknown location')
     assert.notInclude(prompt.user, 'succeeded')
+    assert.notInclude(prompt.user, 'She has seen the missing bell rope.')
+    assert.notInclude(prompt.user, 'Taylor arrived during the storm.')
+    assert.notInclude(prompt.user, 'Wary')
   })
 
   test('includes current Guide once as private current direction but not as normal history', ({
