@@ -1,16 +1,16 @@
 ---
-status: in_review
+status: in_progress
 ---
 
 # Tasks: Interactive Adventure Turns
 
 ## Resume Here
 
-- Last completed action: completed guarded disposable-Neon migration, backend, and deterministic desktop/mobile E2E verification; reconciled the accepted mutation-state ADR
-- Next action: run the independent `sdd-review` gate; live-provider and owner manual confirmation remain review-recorded gaps
+- Last completed action: independent `sdd-review` discovery completed against `a6a911f`; an untrusted narration response can disclose private prompt context
+- Next action: return to `sdd-apply` to enforce private-context non-disclosure before narration publication, add direct reset-after-turn proof, complete dedicated browser recovery/concurrency coverage, and reconcile Idea-side current-state notes
 - Active branch/ref: `change/interactive-adventure-turns` from `d389ccd` (`develop` at branch creation)
-- Expected dirty files: `docs/changes/2026-07-18-interactive-adventure-turns/`, `docs/epics/lc-003-adventure-play/epic.md`, proposed revision-mutation ADR, and scoped application/test/docs files; `.neon` remains unrelated and untracked
-- Known review gaps: deterministic browser failure/recovery and concurrent-tab choreography, live-provider Act/Guide behavior, and owner manual desktop/mobile confirmation remain pending. Database-backed verification is complete.
+- Expected dirty files: review artifacts and scoped remediation only; `.neon` remains unrelated and untracked
+- Known review findings: private canon/NPC state can reach persisted narration; direct reset-after-turn proof, deterministic browser failure/recovery and concurrent-tab choreography, live-provider Act/Guide behavior, and owner manual desktop/mobile confirmation remain pending.
 
 ## Task Checklist
 
@@ -62,7 +62,7 @@ status: in_review
 
 ### 6. Review, Release, And Closeout
 
-- [ ] 6.1 Run `sdd-review` as the independent local gate for behavior, security, data lineage, provider privacy, docs, ADRs, and branch readiness.
+- [x] 6.1 Run `sdd-review` as the independent local gate for behavior, security, data lineage, provider privacy, docs, ADRs, and branch readiness.
 - [ ] 6.2 Address findings or record explicitly accepted non-blocking risks; keep status `in_review` during closeout.
 - [ ] 6.3 Confirm release communication, Epic truth, ADR status, generated contracts, and manual confirmation agree with implementation reality.
 - [ ] 6.4 Merge according to the repository's develop-integration policy only after review and explicit user authorization.
@@ -75,7 +75,7 @@ status: in_review
 | ---------- | ----------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | 2026-07-18 | Planning                | `sdd-change --plan`; `sdd-adr`                         | private Change plan; proposed revision-linked mutation ADR                                                                                                          | Act/Pass/Guide phase planned; implementation not started                                                                    | `develop` planning state                              |
 | 2026-07-19 | Promotion and Discovery | `sdd-apply`; backend, frontend, and artifact discovery | promoted Change, current `LC-003`, existing opening worker/query/UI seams                                                                                           | Change promoted; no scope blocker; legacy Epic normalization and lineage-aware detail projection are required before review | `change/interactive-adventure-turns` (`d389ccd` base) |
-| 2026-07-19 | S2 implementation       | `sdd-apply`; backend/frontend implementation slices    | durable turns/jobs, turn worker, separate narrator/extractor, allowlisted mutation state, owner recovery, workbench, deployment supervision, generated Tuyau routes | Implemented; guarded disposable-Neon database and deterministic E2E verification completed; review-recorded manual/live gaps remain | uncommitted working tree                              |
+| 2026-07-19 | S2 implementation       | `sdd-apply`; backend/frontend implementation slices    | durable turns/jobs, turn worker, separate narrator/extractor, allowlisted mutation state, owner recovery, workbench, deployment supervision, generated Tuyau routes | Implemented; guarded disposable-Neon database and deterministic E2E verification completed; review-recorded manual/live gaps remain | `a6a911f`                                           |
 
 ## Verification Ledger
 
@@ -92,6 +92,9 @@ status: in_review
 | 2026-07-19 | guarded disposable-Neon backend suite                                                                                                                        | executable database tests  | migrations, constraints, API authorization/idempotency, worker lifecycle, state isolation/reset/delete, and transactional mutation provenance | passed |
 | 2026-07-19 | deterministic Playwright Adventure journey                                                                                                                   | executable E2E             | Act, private Guide, confirmed Pass, post-commit Player/Scene update, reload/reset, owner isolation, and desktop/mobile presentation            | passed (3 tests) |
 | 2026-07-19 | scoped SDD validation and LC-003 reverse audit                                                                                                              | structural/reverse trace   | Change and Epic are structurally valid and behavior-bearing implementation/tests have current ownership and verification mappings               | passed; 0 errors; two intentional large-story-scope warnings |
+| 2026-07-19 | independent `sdd-review` artifact rerun                                                                                                                     | structural/reverse trace   | Post-review artifact validity, current code ownership, and generated-contract synchronization                                                        | passed; 0 errors; two intentional large-story-scope warnings; 0 missing refs; contract check passed |
+| 2026-07-19 | frontend full suite, lint, typecheck, build, and Storybook                                                                                                  | executable/static gate     | Current frontend behavior, static correctness, production bundles, and documented component states                                                   | passed; 127 frontend tests and 81 Storybook tests |
+| 2026-07-19 | root `npm run test` without disposable test environment                                                                                                     | guard verification         | Backend test safety fails closed when a write acknowledgement or isolated target is absent                                                           | safety suite passed (20 tests); backend functional/database suite intentionally not run |
 
 ## Manual Feedback
 
@@ -126,7 +129,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: in progress on `change/interactive-adventure-turns`; implementation and guarded database evidence complete, pending final static gates and transition to independent review
+- Change status: in progress on `change/interactive-adventure-turns`; independent review found a private-context disclosure blocker and explicit verification/documentation gaps
 - Epic files updated: `LC-003` uses `sdd-epic-v2`; S2 maps current implementation and explicit verification gaps
 - Story labels/references and Requirement/Scenario IDs current: `LC-003/S2` R1-R5
 - Implemented By maps current: yes
@@ -134,9 +137,9 @@ status: in_review
 - Superseded earlier Epic truth reconciled: yes
 - ADR status: revision-linked Adventure state mutations is Accepted after transaction/recovery evidence; related accepted ADR links are reconciled
 - Release communication current: README and CHANGELOG updated; release not started
-- `sdd-review` verdict: not run
-- Review record: none
-- `review.md` findings resolved: not applicable
+- `sdd-review` verdict: changes requested
+- Review record: `docs/changes/2026-07-18-interactive-adventure-turns/review.md`
+- `review.md` findings resolved: artifact-only truth corrections applied; private-context disclosure and verification/documentation findings remain
 - Planning updates resolved: yes
 - Manual UI confirmation status: pending user after implementation
 - PR / merge state: not started
