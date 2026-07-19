@@ -4,7 +4,7 @@
 
 ready
 
-The consolidated implementation findings, release-gate heading defect, and thirteen production-PR review findings are remediated. Independent code/security, artifact/traceability, and verification/UI regression passes are clean, and commit `3ed9bf8fc0750afeab654b13e0c0f4e4c92d16d1` is the refreshed immutable semantic review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
+The consolidated implementation findings, release-gate heading defect, production-PR review findings, and live gateway-ingress defect are remediated. Independent code/security, artifact/traceability, hosted CI, and live production checks are clean. Local and private-production acceptance are `user confirmed`; immutable `main` SHA `6ee0d7589cb40c19ea680f1df8f04ea973d40492` is deployed and rollback-proven. The isolated restored target passed data/session and current-image readiness checks; a fresh credential submission against a separately exposed restored UI is the sole accepted verification gap.
 
 ## Gate Scorecard
 
@@ -16,15 +16,15 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 | Requirements and Scenarios            | pass                                          | No duplicate or missing Story/Requirement/Scenario references.                                                                                        |
 | Story reference traceability          | pass                                          | All referenced implementation and verification files exist.                                                                                           |
 | Reverse traceability                  | pass                                          | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure.                             |
-| Tests and verification                | pass with external gaps                       | Ten deployment, six container, all 120 frontend, 78 Storybook, build, lint, typecheck, contracts, and scoped validation pass; prior disposable-Neon/E2E evidence remains current; real Docker/host/restore proof remains pending. |
-| Manual UI confirmation                | local user confirmed; production pending user | Taylor approved the provider-backed pending-to-ready Adventure UI and generated opening; private HTTPS/session/host/recovery checks await deployment. |
+| Tests and verification                | pass with one accepted restore gap             | Automated gates, hosted CI, real Docker/host/Tailscale/provider checks, application rollback, and isolated restored-target readiness/data proof pass; fresh credentials were not submitted to a separately exposed restored UI. |
+| Manual UI confirmation                | local and production user confirmed            | Taylor approved HTTPS signup/sign-in, starter World access, secure/HTTP-only session cookie, and one real provider-backed Adventure opening after host restart. |
 | Code review                           | pass after remediation                        | Release env/state handling, deploy/rollback recovery and bounded probes, liveness/readiness separation, retry guidance/bounds, trusted HTTPS forwarding, and route/heading focus semantics are corrected and independently rereviewed. |
 | Visual / UX consistency               | pass                                          | Pending/failure headings now follow the Story `h1`; focused and Storybook accessibility tests pass, with no visual redesign.                           |
 | Security review                       | pass                                          | Metadata-only evidence, trusted private-HTTPS forwarding, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved. |
 | Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
-| Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and no hosted deployment is claimed.                                                                |
+| Idea repository / current-state truth | pass                                          | Official repository remains active, MVP archived, and the private Homelab deployment is recorded outside the public repository.                       |
 | Release communication                 | pass                                          | Public-safe `[Unreleased]` notes are committed in `CHANGELOG.md`.                                                                                      |
-| Branch and merge readiness            | ready; merge authorized                       | PR #2 is remotely clean and Taylor accepted private-production verification as a post-merge deployment gate; production acceptance remains pending.  |
+| Branch and merge readiness            | complete                                      | PR #2 and gateway-fix PR #3 merged through `main`; corrected production images published and immutable SHA `6ee0d758` is running.                     |
 | PRD alignment                         | pass                                          | Private-by-default, creator authority, non-canonical Adventures, and replaceable AI boundary are preserved.                                           |
 
 ## Findings
@@ -86,7 +86,7 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - Epic ownership reconciled: focus behavior/test map to LC-001/S3 R3; provider/retry/deployment behavior and tests map to LC-003/S1 R3.
 - Support/generated/framework classifications: CI/image workflows, Tuyau output, database guards, root scripts, Compose contracts, and package/config files are supporting infrastructure.
 - Stranded refactor surfaces checked: worker entrypoint, generated contracts, routes, migration, provider evidence fields, old raw evidence names, and unused Neon driver dependency.
-- Explicit gaps or tracked cleanup: `.neon` is excluded private-local state; live Docker/GHCR/LXC/Tailscale/restore evidence remains tracked in Tasks 13-15.
+- Explicit gaps or tracked cleanup: `.neon` remains excluded private-local state; fresh credential submission against the separately restored UI is accepted because restored auth/session/content rows and current-image readiness were proved without mutating production.
 
 ## Discovery Wave
 
@@ -117,8 +117,8 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - Target branch: `main`
 - Conflict check: passed
 - Commit state: reviewed semantic source committed at `3ed9bf8`; this review/task reconciliation is documentation-only
-- PR status: #2 merged at `8e5698a7c7156a71a7a9c642cc5cf1845b8173f1`
-- Merge status: complete; `develop` retained, with private-production verification still required before deployment closeout
+- PR status: #2 merged at `8e5698a7c7156a71a7a9c642cc5cf1845b8173f1`; gateway-fix PR #3 merged at `6ee0d7589cb40c19ea680f1df8f04ea973d40492`
+- Merge status: complete; `develop` retained and private production accepted
 
 ## Review Log
 
@@ -133,3 +133,5 @@ The consolidated implementation findings, release-gate heading defect, and thirt
 - 2026-07-18: The Codex connector added four accepted findings. Commit `3ed9bf8` restores the current image after failed rollback health, bounds each release health request, separates container liveness from release readiness, and puts the Story `h1` first in desktop document order while preserving the accepted grid. Ten deployment, six container, 120 frontend, and 78 Storybook tests plus lint/typecheck and two independent regression passes are clean.
 - 2026-07-18: All hosted checks and reviews passed at reconciled head `a894656`. Taylor approved merge and explicitly accepted private-production verification as a post-merge deployment gate; no production acceptance is claimed yet.
 - 2026-07-18: Approval reconciliation commit `78c8d5c` passed CI and both PR image builds; PR #2 merged into `main` as `8e5698a7c7156a71a7a9c642cc5cf1845b8173f1`. `develop` was retained. Production image publication, deployment, restore, and acceptance remain pending.
+- 2026-07-18: The first live release exposed Docker's inability to publish the loopback gateway from an internal-only network. PR #3 added a gateway-only ingress network, strengthened order-independent topology assertions after two accepted review comments, passed all hosted checks, and merged as `6ee0d7589cb40c19ea680f1df8f04ea973d40492`.
+- 2026-07-18: Private production acceptance passed: normal HTTPS signup/sign-in, exactly one seeded `Stormbound Chapel`, secure/HTTP-only cookie confirmation, one real ready Adventure/opening, LXC and worker restart, no laptop listener, private-only ingress, deterministic image rollback, and isolated restored-target data/session/readiness checks. Taylor requested closeout with fresh restored-UI credential submission recorded as an accepted gap.

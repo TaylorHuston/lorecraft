@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: the first private-host deployment proved immutable images, migrations, API/worker startup, private provider reachability, and Tailscale HTTPS, but live Docker rejected the gateway's loopback publication while it was attached only to the internal application network.
-- Next action: add and verify a dedicated non-internal ingress network used only by the gateway, promote the corrected immutable build through `main`, and repeat the production release and acceptance walkthrough.
-- Active branch/ref: `fix/gateway-ingress-network` from `develop`; production merge baseline `8e5698a`.
-- Expected dirty files: `deploy/compose.yaml`, its focused container contract test, and this active Change ledger. Private host inventory and secrets remain outside the repository.
-- Known blockers: disposable validation, clean production migration, GHCR publication, LXC provisioning, Tailscale Serve, private HTTPS, and provider reachability are complete. A live-discovered gateway-network defect must be corrected before the release command can record a successful deployment; production account bootstrap, restore drill, restart/rollback proof, and final acceptance remain. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
+- Last completed action: private production acceptance passed on immutable `main` SHA `6ee0d758`; the normal HTTPS account, starter World, real provider-backed Adventure, host restart, application rollback, private listeners, secure cookie, and isolated restored-database readiness/data checks are complete.
+- Next action: reconcile final Epic/review evidence, record the restored-credential submission as an accepted closeout gap, close this Change, and commit the closeout on `develop`.
+- Active branch/ref: `develop`; production merge `6ee0d7589cb40c19ea680f1df8f04ea973d40492`.
+- Expected dirty files: this Change, affected Epic evidence, and the private Homelab inventory. Private host secrets and `.neon` remain excluded.
+- Known blockers: none. A fresh credential submission against a separately exposed restored UI was not performed; the user accepted closeout after the restored target preserved the account/session/World/Adventure data and the current production image returned database readiness against it.
 
 ## Task Checklist
 
@@ -89,8 +89,8 @@ status: in_review
 - [x] 10.2 Add explicit pooled runtime and direct migration connection configuration, validation, examples, and fail-closed commands without weakening existing database safety guards.
 - [x] 10.3 Provision an isolated disposable Neon validation target after explicit provider authorization; run migration up/down/up, backend functional/database suites, and desktop/mobile E2E against it.
 - [x] 10.4 Create the clean production target after explicit provider authorization, apply migrations through the direct connection, and prove no development accounts, Adventures, or model evidence were copied.
-- [ ] 10.5 Create the production account through the normal HTTPS flow, run the existing idempotent starter seed for that creator, and prove exactly one `Stormbound Chapel` World exists.
-- [ ] 10.6 Establish the pre-migration recovery-point command and complete an isolated restore drill using the same application images; verify sign-in and starter-World access without mutating production.
+- [x] 10.5 Create the production account through the normal HTTPS flow, run the existing idempotent starter seed for that creator, and prove exactly one `Stormbound Chapel` World exists.
+- [x] 10.6 Establish the pre-migration recovery-point command and complete an isolated restore drill using the same application images; restored account/session/World/Adventure rows and readiness passed without mutating production, with fresh credential submission recorded as an accepted gap.
 
 ### 11. Portable Images And Private Runtime
 
@@ -109,30 +109,30 @@ status: in_review
 
 ### 13. Dedicated Private Production Host
 
-- [ ] 13.1 After explicit infrastructure authorization, provision one unprivileged Ubuntu 24.04 LXC with 4 vCPU, 4 GB RAM, 1 GB swap, 32 GB disk, Docker nesting, Tailscale device access, automatic host start, and no repository-hosted private identifiers.
-- [ ] 13.2 Install Docker/Compose and Tailscale at the host layer; store production configuration in a root-owned `0600` environment file and authenticate GHCR with least-scope pull access when required.
-- [ ] 13.3 Configure Tailscale Serve for the private HTTPS origin forwarding only to the loopback gateway; prove no application listener is reachable through LAN or public interfaces.
-- [ ] 13.4 After merge/release authorization, deploy the selected immutable `main` image SHA and record the running version in the private operator inventory.
-- [ ] 13.5 Verify registration, sign-in/out, session restoration, CSRF, secure/HTTP-only cookies, starter World, real Adventure generation through the configured private provider, worker restart behavior, and availability with no Lorecraft process running on the developer laptop.
-- [ ] 13.6 Record minimal operational commands for status, logs, restart, update, rollback, database recovery, and secret rotation; keep private values outside public artifacts.
+- [x] 13.1 After explicit infrastructure authorization, provision one unprivileged Ubuntu 24.04 LXC with 4 vCPU, 4 GB RAM, 1 GB swap, 32 GB disk, Docker nesting, Tailscale device access, automatic host start, and no repository-hosted private identifiers.
+- [x] 13.2 Install Docker/Compose and Tailscale at the host layer; store production configuration in a root-owned `0600` environment file and authenticate GHCR with least-scope pull access when required.
+- [x] 13.3 Configure Tailscale Serve for the private HTTPS origin forwarding only to the loopback gateway; prove no application listener is reachable through LAN or public interfaces.
+- [x] 13.4 After merge/release authorization, deploy the selected immutable `main` image SHA and record the running version in the private operator inventory.
+- [x] 13.5 Verify registration, sign-in/out, session restoration, CSRF, secure/HTTP-only cookies, starter World, real Adventure generation through the configured private provider, worker restart behavior, and availability with no Lorecraft process running on the developer laptop.
+- [x] 13.6 Record minimal operational commands for status, logs, restart, update, rollback, database recovery, and secret rotation; keep private values outside public artifacts.
 
 ### 14. Verification And Reconciliation
 
 - [x] 14.1 Run focused backend unit/functional/database, frontend route/workbench/config, container contract, health, deployment-command, and CI image tests for every Scenario.
-- [ ] 14.2 Run lint, typecheck, production image builds, full tests, Storybook build/browser tests, and deterministic desktop/mobile E2E with guarded disposable databases.
-- [ ] 14.3 Inspect images, logs, disposable/production rows, and network listeners to prove secrets and sensitive prompt/model bodies are absent and application ports are private.
+- [x] 14.2 Run lint, typecheck, production image builds, full tests, Storybook build/browser tests, and deterministic desktop/mobile E2E with guarded disposable databases.
+- [x] 14.3 Inspect images, logs, disposable/production rows, and network listeners to prove secrets and sensitive prompt/model bodies are absent and application ports are private.
 - [x] 14.4 Run `sdd-orphan-audit` in changed-surface JSON mode from the `develop` merge base and one pass per affected Epic; classify every candidate.
-- [ ] 14.5 Reconcile Epic `Implemented By`, scenario-mapped `Verified By`, `Verification Gaps`, dates, supporting docs, ADR status, public release communication, and private operator inventory.
+- [x] 14.5 Reconcile Epic `Implemented By`, scenario-mapped `Verified By`, `Verification Gaps`, dates, supporting docs, ADR status, public release communication, and private operator inventory.
 - [x] 14.6 Run scoped `sdd validate lorecraft --change 2026-07-18-audit-hardening --repo /Users/taylor/src/my-life/spaces/lorecraft --workspace /Users/taylor --json`.
 
 ### 15. Review, Release, And Closeout
 
 - [x] 15.1 Run the complete `/sdd-apply` implementation self-check and remediate safe in-scope findings as one batch.
 - [x] 15.2 Run `/sdd-review` as the independent local PR gate and resolve findings before any production promotion.
-- [ ] 15.3 Record manual UI and private deployment confirmation as `pending user`, `user confirmed`, or `accepted gap` after the walkthrough.
+- [x] 15.3 Record manual UI and private deployment confirmation as `pending user`, `user confirmed`, or `accepted gap` after the walkthrough.
 - [x] 15.4 Add only user-facing privacy, recovery, accessibility, and availability changes to the project-defined release communication; omit private topology and SDD bookkeeping.
-- [ ] 15.5 Use the project release workflow to promote reviewed code through `main`; obtain fresh explicit authorization for image publication, Neon production mutation, host provisioning, migration, and deployment.
-- [ ] 15.6 Keep `status: in_review` until the authorized production deployment, recovery drill, manual confirmation, PR/merge, and closeout work are complete; do not write a `closed` status.
+- [x] 15.5 Use the project release workflow to promote reviewed code through `main`; obtain fresh explicit authorization for image publication, Neon production mutation, host provisioning, migration, and deployment.
+- [x] 15.6 Keep `status: in_review` until the authorized production deployment, recovery drill, manual confirmation, PR/merge, and closeout work are complete; do not write a `closed` status.
 
 ## Implementation Ledger
 
@@ -157,6 +157,7 @@ status: in_review
 | 2026-07-18 | Production PR Greptile remediation          | main orchestrator; PR #2 Greptile review                           | release startup recovery/state diagnostics and provider retry guidance                                               | Restored the previous stack when new-stack startup itself fails, rejected syntactically or semantically corrupt recovery state, and parsed provider retry guidance once per response                                                   | `631fef2`, `5b6f6ae` |
 | 2026-07-18 | Production PR connector remediation         | main orchestrator; PR #2 Codex connector review                    | rollback recovery, health probes, Compose liveness, desktop heading order                                             | Restored the current stack after failed rollback health, bounded each release probe, removed continuous DB readiness traffic from container health, and placed the Story `h1` first in document order without changing the grid | `3ed9bf8`      |
 | 2026-07-18 | Live gateway ingress remediation            | main orchestrator; `sdd-apply` manual-feedback loop and PR #3 review | `deploy/compose.yaml`, container contract, active Change ledger                                                      | Added a gateway-only non-internal ingress network after live Docker proved loopback publication is omitted for an internal-only container; PR review strengthened order-independent proof that no other service joins ingress | `93f8521`, pending review fix |
+| 2026-07-18 | Private production deployment and acceptance | main orchestrator; `sdd-release` and user walkthrough               | Proxmox CT 102, GHCR, Tailscale Serve, Neon production/recovery targets, private operator inventory                  | Deployed immutable `main` SHA `6ee0d758`, seeded the sole starter World, verified real opening generation, restart/recovery, private listeners, rollback, and restored-target readiness/data | provider/host state |
 
 ## Verification Ledger
 
@@ -197,6 +198,9 @@ status: in_review
 | 2026-07-18 | Changed-surface orphan inventory from `develop`, scoped to LC-003                                                                                 | reverse traceability                         | Both changed source files and the focused test remain owned by LC-003; no changed source/test traceability gaps. The reported `github/workflows/images.yml` missing reference is a parser false positive for the existing correct `.github/workflows/images.yml` path.                                                                 | passed/classified; `.neon` remains excluded private-local state                                            |
 | 2026-07-18 | Release gate: lint, typecheck, build, contracts, Storybook build/browser, deployment contracts, disposable migrations/tests, and desktop/mobile E2E | production release verification | Reviewed `develop` candidate compiles, generated contracts are clean, guarded database behavior passes from a fresh schema, and browser journeys cover desktop/mobile production boundaries | passed; backend 112, frontend 119, Storybook 78, E2E 7, container 6, image 1, deployment 5 |
 | 2026-07-18 | Gateway ingress container contract RED/GREEN and live Docker recreation                                                                          | focused automated plus live-host verification | The gateway has an explicit non-internal path for Docker's loopback publication while API/worker stay unpublished; same-origin gateway and DB readiness remain healthy over private HTTPS | RED: focused contract failed; GREEN: 6/6 container tests, loopback gateway `200`, readiness `200`, private HTTPS `200` |
+| 2026-07-18 | Private production account, World, Adventure, and session walkthrough                                                                             | manual acceptance plus persisted-state inspection | Normal HTTPS signup/sign-in, CSRF-backed Adventure creation, `Secure`/HTTP-only cookie, exactly one starter World, one ready Adventure, one story entry, and session restoration | user confirmed; production counts inspected |
+| 2026-07-18 | LXC reboot, worker restart, release rollback, listener inspection, and laptop-independence checks                                                  | live operational verification               | Automatic host/container/Tailscale recovery, five-second worker supervision, deterministic application rollback, loopback-only gateway, tailnet-only HTTPS, and no laptop Lorecraft listener | passed on immutable `main` SHA `6ee0d758` |
+| 2026-07-18 | Isolated Neon recovery branch reset from production parent plus current-image readiness                                                           | database recovery verification              | Recovery target preserved one account/session/World/Adventure/story entry and the reviewed backend image returned database readiness without redirecting or mutating production | passed; fresh restored-UI credential submission accepted as a gap |
 
 ## Manual Feedback
 
@@ -226,7 +230,7 @@ status: in_review
 ## Manual UI Confirmation
 
 - Local UI status: user confirmed 2026-07-18
-- Private production status: pending user
+- Private production status: user confirmed 2026-07-18
 - App URL / route: `http://localhost:4310` during implementation and the private production HTTPS origin resolved during deployment; sign-in, a playable World, `/worlds/:slug/adventures/new`, and the resulting `/adventures/:id`.
 - Required setup or test data: running frontend/API/worker, authenticated account, playable Stormbound Chapel, deterministic or configured provider.
 - Steps for the user:
@@ -238,30 +242,29 @@ status: in_review
   6. Confirm the production app remains available when the developer laptop runs no Lorecraft process.
 - Expected result: disclosure is concise and readable at desktop/mobile widths; route context is clear; asynchronous completion is announced but non-disruptive; private HTTPS/session behavior is correct; and the production stack is independent of the laptop.
 - Feedback that would change artifacts: unclear provider wording is a requirement refinement; unexpected focus movement or silent completion is a defect; a requested consent choice/provider selector is scope expansion.
-- Confirmation: Taylor approved the local Adventure UI after creating an Adventure through the configured provider, observing the pending state recover to ready, and reviewing the generated opening with Player and Scene context. Private HTTPS, session-cookie, host-independence, and recovery checks remain pending deployment.
+- Confirmation: Taylor approved the local Adventure UI and the private production deployment after normal HTTPS signup/sign-in, exactly one seeded starter World, secure/HTTP-only session-cookie inspection, a real provider-backed Adventure opening, host restart/session restoration, private-listener inspection, and application rollback. The isolated restored target preserved one account, session, World, Adventure, and story entry and returned readiness `200` from the current image; fresh credential submission against a separate restored UI is an accepted closeout gap.
 - Heading remediation confirmation: no repeat manual walkthrough is required because the visible copy and styling are unchanged; level-specific DOM assertions and the desktop/mobile Storybook accessibility gate directly verify the semantic correction.
 
 ## Blockers / Open Questions
 
-- No unresolved planning decision.
-- Neon validation/production migration, GHCR publication, private-host provisioning, Tailscale node/Serve mutation, and deployment require explicit execution-time authorization. Branch creation is complete.
-- Applying legacy-evidence cleanup to any existing shared development data remains separately destructive; the new clean production target contains no legacy evidence to purge.
+- No unresolved blocker or planning decision.
+- Applying legacy-evidence cleanup to any existing shared development data remains separately destructive and out of scope; the clean production target contained no legacy evidence to purge.
 
 ## Closeout
 
-- Change status: `in_review`; local review and release gate pass, while production PR, deployment, restore, and private-production acceptance remain pending
-- Epic files updated: LC-001/002/003 Requirements, Scenarios, implementation maps, evidence, and honest production gaps are current
+- Change status: `in_review`; all implementation, review, release, production acceptance, and authorized closeout gates pass
+- Epic files updated: LC-001/002/003 Requirements, Scenarios, implementation maps, evidence, and accepted restored-credential gap are current
 - Story labels/references and Requirement/Scenario IDs current: yes; no duplicate or missing references found
 - Implemented By maps current: yes; deployment/runtime support is mapped to LC-001/LC-003 and database environment behavior to the accepted PostgreSQL ADR
-- Scenario-mapped Verified By maps current: local and disposable-Neon evidence current; live private-production and restore evidence remains a gap
-- Superseded earlier Epic truth reconciled: yes for audit/database work; production-only gaps remain explicit
+- Scenario-mapped Verified By maps current: local, disposable-Neon, hosted CI, private-production, and isolated restored-target evidence are current
+- Superseded earlier Epic truth reconciled: yes
 - ADR status: accepted provider-neutral, Neon, browser-session, durable-worker, and portable-container decisions are consistent
 - Release communication current: committed in `CHANGELOG.md` under `[Unreleased]` at `d64d5b0`
-- `sdd-review` verdict: ready at refreshed semantic source watermark `3ed9bf8fc0750afeab654b13e0c0f4e4c92d16d1`; private-production acceptance remains pending
+- `sdd-review` verdict: ready; subsequent gateway-ingress fix passed PR #3 review, hosted CI, live Docker verification, deployment, and user acceptance
 - Review record: `docs/changes/2026-07-18-audit-hardening/review.md`
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
-- Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
-- PR / merge state: production release PR #2 merged `develop` into `main` at `8e5698a7c7156a71a7a9c642cc5cf1845b8173f1`; `develop` remains active
+- Manual UI confirmation status: local and private production user confirmed 2026-07-18; fresh restored-UI credential submission accepted as a gap
+- PR / merge state: production PR #2 merged at `8e5698a`; gateway-fix PR #3 merged at deployed `6ee0d758`; `develop` remains active
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: pending authorized `sdd change close`

@@ -198,7 +198,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 #### Verification Gaps
 
-- `S1/R2-S2` is not implemented or verified yet. It requires the private HTTPS deployment, same-origin production proxy, browser cookie inspection, normal signup flow, and listener inspection.
+- `S1/R2-S2` passed in private production on 2026-07-18 through normal HTTPS signup, same-origin API traffic, browser confirmation of `Secure` and HTTP-only session attributes, and listener inspection proving tailnet-only HTTPS plus a loopback-only gateway.
 
 #### Story Notes
 
@@ -344,7 +344,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 #### Verification Gaps
 
-- `S2/R2-S4` and `S2/R4-S4` are not implemented or verified yet. They require an isolated database restore, deployed same-origin sign-in/session restoration, CSRF checks, and production HTTPS cookie/storage inspection.
+- `S2/R2-S4` and `S2/R4-S4` have private-production sign-in/session/CSRF and HTTPS cookie proof plus isolated restored account/session rows and current-image readiness. Fresh credential submission against a separately exposed restored UI is an accepted closeout gap.
 
 #### Story Notes
 
@@ -466,7 +466,7 @@ The system SHALL identify each account or workspace destination through its docu
 
 #### Verification Gaps
 
-- `S3/R1-S5` is not implemented or verified yet. It requires deployed gateway/API routing plus private-overlay, LAN, and public listener checks.
+- `S3/R1-S5` passed on 2026-07-18: Tailscale Serve exposed private HTTPS, Docker published only the gateway on host loopback, API/worker remained unpublished, and LAN listener probes failed as intended.
 
 #### Story Notes
 
@@ -498,8 +498,8 @@ The system SHALL identify each account or workspace destination through its docu
 
 ### Cross-Story Verification Gaps
 
-- Dedicated Lorecraft production, development, and disposable validation targets are not provisioned or verified yet; current database-backed evidence uses fresh isolated schemas on the available Neon service.
-- Private HTTPS signup/sign-in, `Secure` cookie behavior, same-origin production `/api`, isolated-restore sign-in, and private-only reachability remain unimplemented and unverified deployment obligations.
+- Dedicated Lorecraft production, development, disposable validation, and isolated recovery targets are provisioned and verified.
+- Private HTTPS signup/sign-in, `Secure` and HTTP-only cookie behavior, same-origin production `/api`, and private-only reachability passed. Isolated restore preserved account/session/content state and current-image readiness; only fresh credential submission against a separately exposed restored UI remains an accepted gap.
 
 ## Open Decisions
 

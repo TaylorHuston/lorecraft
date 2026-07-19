@@ -182,7 +182,7 @@ The system SHALL identify the World catalog destination through its document tit
 #### Verification Gaps
 
 - The previously accepted catalog presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
-- `S1/R1-S5` is not implemented or verified yet. It requires the clean production database, normal production account creation, idempotent starter seed, deployed catalog inspection, and negative inspection for copied development data.
+- `S1/R1-S5` passed in private production on 2026-07-18: the clean migrated target received one normal HTTPS-created account and one idempotently seeded `Stormbound Chapel` World, with no copied development accounts or Adventures.
 
 #### Story Notes
 
@@ -301,7 +301,7 @@ The system SHALL identify an accessible World detail destination through its doc
 #### Verification Gaps
 
 - The previously accepted World-detail presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
-- `S2/R1-S4` is not implemented or verified yet. It requires an isolated Neon restore and deployed browser inspection of the restored starter World and its structured canon.
+- `S2/R1-S4` has isolated restored-target data and current-image readiness proof. The restored target contained exactly one World plus the production account/session/Adventure/story state; fresh browser credential submission and restored structured-canon inspection are an accepted closeout gap.
 
 #### Story Notes
 
