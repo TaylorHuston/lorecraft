@@ -56,6 +56,8 @@ describe('AdventureWorkbench', () => {
     )
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
+    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Story')
+    expect(screen.getAllByRole('heading')[0]).toHaveProperty('tagName', 'H1')
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /act|pass|guide|send/i })).not.toBeInTheDocument()
     expect(screen.queryByText(/private knowledge|personality|director observation/i)).not.toBeInTheDocument()

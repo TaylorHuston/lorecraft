@@ -130,15 +130,20 @@ function argumentsFrom(argv) {
   return options
 }
 
-async function waitForHealth(port) {
-  const deadline = Date.now() + 60_000
+export async function waitForHealth(
+  port,
+  { deadlineMs = 60_000, fetchImpl = fetch, requestTimeoutMs = 3_000, retryDelayMs = 2_000 } = {}
+) {
+  const deadline = Date.now() + deadlineMs
   const urls = [`http://127.0.0.1:${port}/healthz`, `http://127.0.0.1:${port}/api/health/ready`]
   while (Date.now() < deadline) {
     try {
-      const responses = await Promise.all(urls.map((url) => fetch(url)))
+      const responses = await Promise.all(
+        urls.map((url) => fetchImpl(url, { signal: AbortSignal.timeout(requestTimeoutMs) }))
+      )
       if (responses.every((response) => response.ok)) return
     } catch {}
-    await new Promise((resolveDelay) => setTimeout(resolveDelay, 2_000))
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, retryDelayMs))
   }
   throw new Error('Gateway or API readiness did not become healthy within 60 seconds.')
 }
@@ -162,14 +167,14 @@ export async function executeDeployment({
   port = '8080',
 }) {
   const plan = deploymentPlan({ action, composeFile })
-  let startedNewStack = false
+  let attemptedStackStart = false
   try {
     for (const step of plan) {
-      if (action === 'deploy' && step.label === 'start-stack') startedNewStack = true
+      if (step.label === 'start-stack') attemptedStackStart = true
       await runStep(step, commandEnvironment, port, executeCommand, healthCheck, onStep)
     }
   } catch (error) {
-    if (!startedNewStack) throw error
+    if (!attemptedStackStart) throw error
     const recoveryImages = currentSha ? deploymentImages(imageRepository, currentSha) : null
     const recoveryEnvironment = recoveryImages
       ? {

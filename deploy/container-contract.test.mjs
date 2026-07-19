@@ -34,6 +34,8 @@ test('Compose publishes only the gateway on host loopback', async () => {
   assert.doesNotMatch(compose, /api:[\s\S]*?ports:/)
   assert.match(compose, /ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000/)
   assert.match(compose, /command: \[['"]node['"], ['"]ace\.js['"], ['"]adventures:openings:work['"]\]/)
+  assert.match(compose, /api\/health\/live/)
+  assert.doesNotMatch(compose, /api\/health\/ready/)
   assert.match(compose, /max-size: ['"]10m['"]/)
   assert.match(compose, /max-file: ['"]3['"]/)
 })

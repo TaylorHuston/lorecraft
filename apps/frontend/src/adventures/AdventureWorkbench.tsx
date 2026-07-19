@@ -275,13 +275,13 @@ export function AdventureWorkbench({
 
   return (
     <div className={styles.desktopGrid} data-slot="adventure-workbench">
-      <PlayerRegion adventure={adventure} />
       <StoryRegion
         adventure={adventure}
         onRetry={onRetry}
         retrying={retrying}
         retryError={retryError}
       />
+      <PlayerRegion adventure={adventure} />
       <SceneRegion adventure={adventure} />
     </div>
   )

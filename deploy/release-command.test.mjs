@@ -12,6 +12,7 @@ import {
   parseEnvironment,
   readReleaseState,
   validateDeploymentInput,
+  waitForHealth,
 } from './release-command.mjs'
 
 const sha = '0123456789abcdef0123456789abcdef01234567'
@@ -193,4 +194,58 @@ test('a failed new-stack start restores and verifies the current SHA', async () 
   ])
   assert.equal(environments.at(-1).BACKEND_IMAGE, `ghcr.io/example/lorecraft-backend:${sha}`)
   assert.equal(healthChecks, 1)
+})
+
+test('a failed rollback health check restores and verifies the current SHA', async () => {
+  const labels = []
+  const environments = []
+  let healthChecks = 0
+
+  await assert.rejects(
+    executeDeployment({
+      action: 'rollback',
+      commandEnvironment: {
+        BACKEND_IMAGE: 'ghcr.io/example/lorecraft-backend:previous',
+        FRONTEND_IMAGE: 'ghcr.io/example/lorecraft-frontend:previous',
+      },
+      composeFile: 'deploy/compose.yaml',
+      currentSha: sha,
+      executeCommand: (_command, _args, environment) => environments.push(environment),
+      healthCheck: async () => {
+        healthChecks += 1
+        if (healthChecks === 1) throw new Error('rollback stack unhealthy')
+      },
+      imageRepository: 'ghcr.io/example/lorecraft',
+      onStep: (label) => labels.push(label),
+    }),
+    /rollback stack unhealthy/
+  )
+
+  assert.deepEqual(labels.slice(-4), [
+    'pull-previous-images',
+    'stop-failed-writers',
+    'restore-previous-stack',
+    'verify-restored-health',
+  ])
+  assert.equal(environments.at(-1).BACKEND_IMAGE, `ghcr.io/example/lorecraft-backend:${sha}`)
+  assert.equal(healthChecks, 2)
+})
+
+test('bounds stalled release health probes', async () => {
+  const startedAt = Date.now()
+
+  await assert.rejects(
+    waitForHealth('8080', {
+      deadlineMs: 20,
+      fetchImpl: (_url, { signal }) =>
+        new Promise((_resolve, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+        }),
+      requestTimeoutMs: 5,
+      retryDelayMs: 0,
+    }),
+    /did not become healthy/
+  )
+
+  assert.ok(Date.now() - startedAt < 1_000)
 })
