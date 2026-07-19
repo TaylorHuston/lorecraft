@@ -2,7 +2,7 @@
 
 Lorecraft is a creator-first application for building and maintaining coherent fictional Worlds across novels, games, animation, and other media. It treats each World as an authoritative, time-aware body of canon rather than a loose collection of notes.
 
-The initial product is a private workspace for individual worldbuilders. Its current foundation also supports private, non-canonical Adventure openings, while source-backed AI assistance, continuity analysis, selective publishing, and interactive Adventure turns remain future capabilities.
+The initial product is a private workspace for individual worldbuilders. It supports private, non-canonical Adventures with a generated opening and resolving Act, Pass, and private Guide turns; source-backed AI assistance, continuity analysis, and selective publishing remain future capabilities.
 
 ## Status
 
@@ -15,8 +15,9 @@ Implemented now:
 - Read-only inspection of structured World metadata, Locations, and Characters.
 - Explicit, repeatable installation of the shared `Stormbound Chapel` starter World for local testing.
 - Private Adventures created from a frozen version of an accessible World, with a durable generated opening, resume, retry, reset, and delete flows.
+- Owner-only Act, Pass, and private Guide turns with durable resolution, bounded Adventure-owned state changes, and retry or discard recovery.
 
-World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, and the interactive Adventure turn loop. Combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics are likewise deferred.
+World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, Story utilities, history revision, streaming, combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics.
 
 The [Epics](#documentation) are the canonical source for detailed implemented behavior, scenarios, and verification evidence. This section is only a current summary.
 
@@ -101,9 +102,9 @@ Backend configuration lives in `apps/backend/.env`:
 - `CORS_ORIGIN` must match the frontend origin, normally `http://localhost:4310`.
 - `STARTER_WORLD_AUTHOR_EMAIL` is optional and is used only by the explicit starter-World seed.
 - `LLM_BASE_URL`, `LLM_MODEL`, and the optional `LLM_API_KEY` configure the OpenAI-compatible provider used by the Adventure worker.
-- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, optional `LLM_REASONING_EFFORT`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded opening generation and queue polling. Set reasoning effort to `none` for compatible local models that otherwise spend the narration budget on hidden reasoning.
+- `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, optional `LLM_REASONING_EFFORT`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded Adventure generation and queue polling. Set reasoning effort to `none` for compatible local models that otherwise spend the narration budget on hidden reasoning.
 
-Adventure opening generation sends the submitted player profile and frozen World context to the configured AI provider. Lorecraft retains the accepted opening narration and bounded operational metadata, but not assembled prompts, provider request messages, or raw provider responses.
+Adventure opening and turn generation send the applicable player profile, frozen World context, current Adventure state, and current Act or private Guide input to the configured AI provider. Lorecraft retains accepted narration and bounded operational metadata, but not assembled prompts, provider request messages, raw provider responses, or private Guide text as operational evidence.
 
 Frontend configuration lives in `apps/frontend/.env`:
 
@@ -162,7 +163,7 @@ npm run build
 npm run verify:contracts
 ```
 
-`npm run dev` starts the frontend, API, and opening worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
+`npm run dev` starts the frontend, API, opening worker, and turn worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
 
 `npm run verify:contracts` regenerates the tracked Tuyau client and fails when `apps/backend/.adonisjs/client` differs from the committed contract. CI runs the same scoped cleanliness check immediately after the application build.
 
@@ -173,20 +174,22 @@ npm run dev --workspace @lorecraft/backend
 npm run dev --workspace @lorecraft/frontend
 npm run dev:api --workspace @lorecraft/backend
 npm run dev:worker --workspace @lorecraft/backend
+npm run dev:turn-worker --workspace @lorecraft/backend
 ```
 
-The backend workspace's normal `dev` command supervises both API and worker and stops the sibling process if either exits. Use `dev:api` or `dev:worker` only when intentionally running one backend process in isolation.
+The backend workspace's normal `dev` command supervises the API and both Adventure workers, and stops its sibling processes if any one exits. Use `dev:api` or the specific worker commands only when intentionally running a process in isolation.
 
 The worker is a separately deployable process. From a production backend build, run:
 
 ```bash
 cd apps/backend/build
 node bin/console.js adventures:openings:work
+node bin/console.js adventures:turns:work
 ```
 
-Schema changes to model-call evidence require a coordinated maintenance deployment: stop the API and Adventure worker, apply migrations, deploy the matching API and worker build, and then restart both. Do not run old and new processes concurrently across an evidence-schema migration.
+Schema changes to Adventure work, revisions, or model-call evidence require a coordinated maintenance deployment: stop the API and Adventure workers, apply migrations, deploy the matching API and worker build, and then restart them. Do not run old and new processes concurrently across those schema migrations.
 
-Healthy startup emits `adventure_opening.worker_started`; graceful shutdown emits `adventure_opening.worker_stopped`. Claimed jobs emit correlated lifecycle records containing only Adventure/job/generation/attempt/status/timing identifiers. Missing startup logs, repeated process exits, or processing leases that remain expired indicate an unhealthy worker. Credentials, authorization headers, prompt text, and model prose are excluded from lifecycle logs.
+Healthy startup emits `adventure_opening.worker_started` or `adventure_turn.worker_started`; graceful shutdown emits the corresponding stopped event. Claimed jobs emit correlated lifecycle records containing only Adventure/job/generation/attempt/status/timing identifiers. Missing startup logs, repeated process exits, or processing leases that remain expired indicate an unhealthy worker. Credentials, authorization headers, prompt text, private Guide text, and model prose are excluded from lifecycle logs.
 
 The current account generation-burst limit is enforced per API process. Before horizontal API deployment or paid provider-backed access for an untrusted audience, configure shared atomic ingress or distributed enforcement so restarts and additional instances cannot multiply the budget.
 

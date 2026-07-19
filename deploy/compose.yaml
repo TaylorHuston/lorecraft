@@ -88,6 +88,13 @@ services:
       <<: *runtime-environment
       ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000
 
+  turn-worker:
+    <<: *runtime
+    command: ['node', 'ace.js', 'adventures:turns:work']
+    environment:
+      <<: *runtime-environment
+      ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000
+
   migrate:
     <<: *runtime
     profiles: ['operations']

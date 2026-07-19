@@ -54,6 +54,15 @@ export function renderTestApp({
     retryOpening: async () => {
       throw new Error('Adventure retry was not configured for this test.')
     },
+    submitTurn: async () => {
+      throw new Error('Adventure turn submission was not configured for this test.')
+    },
+    retryTurn: async () => {
+      throw new Error('Adventure turn retry was not configured for this test.')
+    },
+    discardTurn: async () => {
+      throw new Error('Adventure turn discard was not configured for this test.')
+    },
     resetAdventure: async () => {
       throw new Error('Adventure reset was not configured for this test.')
     },

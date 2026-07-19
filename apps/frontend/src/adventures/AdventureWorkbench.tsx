@@ -1,7 +1,13 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
-import type { AdventureDetail } from './adventureApi'
+import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
+import { creationRequestId } from './creationRequestId'
+import type {
+  AdventureDetail,
+  AdventureTurnTrigger,
+  SubmitAdventureTurnInput,
+} from './adventureApi'
 import styles from './AdventureWorkbench.module.css'
 
 export type AdventureView = AdventureDetail
@@ -63,29 +69,211 @@ function PlayerRegion({ adventure }: { adventure: AdventureView }) {
   )
 }
 
+const turnInputLimits: Record<Exclude<AdventureTurnTrigger, 'pass'>, number> = {
+  act: 4_000,
+  guide: 1_200,
+}
+
+function TurnComposer({
+  onSubmit,
+  pending,
+  error,
+}: {
+  onSubmit?: (input: SubmitAdventureTurnInput) => Promise<void>
+  pending: boolean
+  error: string | null
+}) {
+  const [mode, setMode] = useState<Exclude<AdventureTurnTrigger, 'pass'>>('act')
+  const [text, setText] = useState('')
+  const [localError, setLocalError] = useState<string | null>(null)
+  const [passOpen, setPassOpen] = useState(false)
+  const requestIdRef = useRef<string | null>(null)
+  const signatureRef = useRef<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const passRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (error) textareaRef.current?.focus()
+  }, [error])
+
+  function requestFor(trigger: AdventureTurnTrigger, input?: string) {
+    const signature = `${trigger}:${input ?? ''}`
+    if (signatureRef.current !== signature) {
+      signatureRef.current = signature
+      requestIdRef.current = creationRequestId()
+    }
+    return requestIdRef.current!
+  }
+
+  async function submit(trigger: AdventureTurnTrigger) {
+    const input = trigger === 'pass' ? undefined : text.trim()
+    if (trigger !== 'pass' && (!input || input.length > turnInputLimits[trigger])) {
+      setLocalError(
+        input
+          ? `Keep this ${trigger === 'act' ? 'Act' : 'Guide'} to ${turnInputLimits[trigger].toLocaleString()} characters or fewer.`
+          : `Enter a ${trigger === 'act' ? 'player action' : 'private direction'} before continuing.`
+      )
+      textareaRef.current?.focus()
+      return
+    }
+
+    setLocalError(null)
+    try {
+      await onSubmit?.({
+        requestId: requestFor(trigger, input),
+        trigger,
+        ...(input ? { input } : {}),
+      })
+      setText('')
+      requestIdRef.current = null
+      signatureRef.current = null
+      setPassOpen(false)
+    } catch {
+      // The route owns the actionable error message; retain the input and request identity for retry.
+    }
+  }
+
+  function submitForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    void submit(mode)
+  }
+
+  return (
+    <>
+      <form className={styles.turnComposer} aria-busy={pending} onSubmit={submitForm}>
+        <div className={styles.composerModes} role="tablist" aria-label="Turn type">
+          {(['act', 'guide'] as const).map((trigger) => (
+            <Button
+              key={trigger}
+              aria-selected={mode === trigger}
+              onClick={() => {
+                setMode(trigger)
+                setLocalError(null)
+              }}
+              role="tab"
+              size="dense"
+              type="button"
+              variant="ghost"
+            >
+              {trigger === 'act' ? 'Act' : 'Guide'}
+            </Button>
+          ))}
+        </div>
+        <label htmlFor="adventure-turn-input">
+          {mode === 'act' ? 'What do you do?' : 'Private direction for this turn'}
+        </label>
+        <textarea
+          ref={textareaRef}
+          aria-describedby={mode === 'guide' ? 'adventure-guide-help' : undefined}
+          aria-invalid={Boolean(localError || error)}
+          disabled={pending}
+          id="adventure-turn-input"
+          maxLength={turnInputLimits[mode]}
+          onChange={(event) => {
+            setText(event.target.value)
+            setLocalError(null)
+          }}
+          placeholder={
+            mode === 'act' ? 'Describe your action…' : 'Direct the Game Master privately…'
+          }
+          value={text}
+        />
+        {mode === 'guide' ? (
+          <p className={styles.composerHelp} id="adventure-guide-help">
+            This direction guides only this resolution. It is not shown in the story.
+          </p>
+        ) : null}
+        {localError || error ? (
+          <p className={styles.composerError} role="alert">
+            {localError ?? error}
+          </p>
+        ) : null}
+        <div className={styles.composerActions}>
+          <Button pending={pending} pendingLabel="Sending turn…" size="touch" type="submit">
+            Continue
+          </Button>
+          <Button
+            ref={passRef}
+            disabled={pending}
+            onClick={() => setPassOpen(true)}
+            size="touch"
+            type="button"
+            variant="secondary"
+          >
+            Pass
+          </Button>
+        </div>
+      </form>
+      {passOpen ? (
+        <ConfirmDialog
+          confirmLabel="Pass"
+          finalFocusRef={passRef}
+          onCancel={() => setPassOpen(false)}
+          onConfirm={() => void submit('pass')}
+          open={passOpen}
+          pending={pending}
+          pendingLabel="Passing…"
+          title="Pass this moment?"
+        >
+          <p>The Game Master may advance the scene without an action from you.</p>
+        </ConfirmDialog>
+      ) : null}
+    </>
+  )
+}
+
 function StoryRegion({
   adventure,
   onRetry,
   retrying,
   retryError,
+  onSubmitTurn,
+  submittingTurn,
+  submitTurnError,
+  onRetryTurn,
+  retryingTurn,
+  turnRetryError,
+  onDiscardTurn,
+  discardingTurn,
+  turnDiscardError,
 }: {
   adventure: AdventureView
   onRetry?: () => void
   retrying: boolean
   retryError?: string | null
+  onSubmitTurn?: (input: SubmitAdventureTurnInput) => Promise<void>
+  submittingTurn: boolean
+  submitTurnError: string | null
+  onRetryTurn?: (turnId: string) => void
+  retryingTurn: boolean
+  turnRetryError: string | null
+  onDiscardTurn?: (turnId: string) => void
+  discardingTurn: boolean
+  turnDiscardError: string | null
 }) {
   const openingInProgress =
     adventure.status === 'opening_pending' || adventure.status === 'opening_processing'
   const regionRef = useRef<HTMLElement>(null)
   const wasOpening = useRef(openingInProgress)
+  const previousActiveTurnId = useRef(adventure.activeTurn?.id ?? null)
+  const previousTurnCount = useRef(adventure.turnCount)
   const [completionAnnouncement, setCompletionAnnouncement] = useState('')
 
   useEffect(() => {
     if (wasOpening.current && adventure.status === 'ready') {
       setCompletionAnnouncement('Your Adventure opening is ready.')
     }
+    if (
+      previousActiveTurnId.current &&
+      !adventure.activeTurn &&
+      adventure.turnCount > previousTurnCount.current
+    ) {
+      setCompletionAnnouncement('Your turn is ready.')
+    }
     wasOpening.current = openingInProgress
-  }, [adventure.status, openingInProgress])
+    previousActiveTurnId.current = adventure.activeTurn?.id ?? null
+    previousTurnCount.current = adventure.turnCount
+  }, [adventure.activeTurn, adventure.status, adventure.turnCount, openingInProgress])
 
   function retryOpening() {
     onRetry?.()
@@ -101,7 +289,9 @@ function StoryRegion({
     >
       <header className={styles.panelHeading}>
         <p>Chronicle</p>
-        <h1 data-route-heading id="adventure-story-heading">Story</h1>
+        <h1 data-route-heading id="adventure-story-heading">
+          Story
+        </h1>
       </header>
       <div role="status" aria-live="polite" aria-atomic="true">
         {openingInProgress ? (
@@ -136,6 +326,43 @@ function StoryRegion({
             </div>
           </div>
         ) : null}
+        {adventure.status === 'ready' && adventure.activeTurn ? (
+          adventure.activeTurn.status === 'failed' ? (
+            <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
+              <p className={styles.stateEyebrow}>Turn interrupted</p>
+              <h2>Your last turn did not change the story</h2>
+              <p>Retry the same turn or discard it to return to the composer.</p>
+              {turnRetryError || turnDiscardError ? (
+                <p className={styles.retryError}>{turnRetryError ?? turnDiscardError}</p>
+              ) : null}
+              <div className={styles.stateActions}>
+                <Button
+                  onClick={() => onRetryTurn?.(adventure.activeTurn!.id)}
+                  pending={retryingTurn}
+                  pendingLabel="Retrying turn…"
+                  size="touch"
+                >
+                  Retry turn
+                </Button>
+                <Button
+                  onClick={() => onDiscardTurn?.(adventure.activeTurn!.id)}
+                  pending={discardingTurn}
+                  pendingLabel="Discarding turn…"
+                  size="touch"
+                  variant="secondary"
+                >
+                  Discard
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.storyState} role="status" aria-live="polite" aria-atomic="true">
+              <p className={styles.stateEyebrow}>Game Master</p>
+              <h2>Resolving your turn</h2>
+              <p>Your Adventure is safe. You can leave and return while this turn is prepared.</p>
+            </div>
+          )
+        ) : null}
         {adventure.story.map((entry) => (
           <article className={styles.storyEntry} key={entry.id}>
             {entry.content.split(/\n\n+/).map((paragraph, index) => (
@@ -143,6 +370,9 @@ function StoryRegion({
             ))}
           </article>
         ))}
+        {adventure.status === 'ready' && !adventure.activeTurn ? (
+          <TurnComposer onSubmit={onSubmitTurn} pending={submittingTurn} error={submitTurnError} />
+        ) : null}
       </div>
     </section>
   )
@@ -184,12 +414,30 @@ export function AdventureWorkbench({
   onRetry,
   retrying = false,
   retryError = null,
+  onSubmitTurn,
+  submittingTurn = false,
+  submitTurnError = null,
+  onRetryTurn,
+  retryingTurn = false,
+  turnRetryError = null,
+  onDiscardTurn,
+  discardingTurn = false,
+  turnDiscardError = null,
   layout = 'auto',
 }: {
   adventure: AdventureView
   onRetry?: () => void
   retrying?: boolean
   retryError?: string | null
+  onSubmitTurn?: (input: SubmitAdventureTurnInput) => Promise<void>
+  submittingTurn?: boolean
+  submitTurnError?: string | null
+  onRetryTurn?: (turnId: string) => void
+  retryingTurn?: boolean
+  turnRetryError?: string | null
+  onDiscardTurn?: (turnId: string) => void
+  discardingTurn?: boolean
+  turnDiscardError?: string | null
   layout?: 'auto' | 'desktop' | 'mobile'
 }) {
   const [narrowViewport, setNarrowViewport] = useState(
@@ -217,6 +465,15 @@ export function AdventureWorkbench({
         onRetry={onRetry}
         retrying={retrying}
         retryError={retryError}
+        onSubmitTurn={onSubmitTurn}
+        submittingTurn={submittingTurn}
+        submitTurnError={submitTurnError}
+        onRetryTurn={onRetryTurn}
+        retryingTurn={retryingTurn}
+        turnRetryError={turnRetryError}
+        onDiscardTurn={onDiscardTurn}
+        discardingTurn={discardingTurn}
+        turnDiscardError={turnDiscardError}
       />
     )
   }
@@ -280,6 +537,15 @@ export function AdventureWorkbench({
         onRetry={onRetry}
         retrying={retrying}
         retryError={retryError}
+        onSubmitTurn={onSubmitTurn}
+        submittingTurn={submittingTurn}
+        submitTurnError={submitTurnError}
+        onRetryTurn={onRetryTurn}
+        retryingTurn={retryingTurn}
+        turnRetryError={turnRetryError}
+        onDiscardTurn={onDiscardTurn}
+        discardingTurn={discardingTurn}
+        turnDiscardError={turnDiscardError}
       />
       <PlayerRegion adventure={adventure} />
       <SceneRegion adventure={adventure} />

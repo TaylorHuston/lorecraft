@@ -27,6 +27,15 @@ const adventureApi: AdventureApi = {
   retryOpening: async () => {
     throw new Error('Not used in this story.')
   },
+  submitTurn: async () => {
+    throw new Error('Not used in this story.')
+  },
+  retryTurn: async () => {
+    throw new Error('Not used in this story.')
+  },
+  discardTurn: async () => {
+    throw new Error('Not used in this story.')
+  },
   resetAdventure: async () => {
     throw new Error('Not used in this story.')
   },

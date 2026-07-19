@@ -198,6 +198,20 @@ export default class AdventureCreationService {
         created_at: now,
         updated_at: null,
       })
+      if (version.snapshot && (version.snapshot as WorldVersionSnapshot).characters.length > 0) {
+        await trx.table('adventure_character_states').insert(
+          (version.snapshot as WorldVersionSnapshot).characters.map((character) => ({
+            adventure_id: adventure.id,
+            character_key: character.key,
+            current_location_key: character.locationKey,
+            mood: '',
+            status: '',
+            memory: '',
+            created_at: now,
+            updated_at: null,
+          }))
+        )
+      }
       await trx.table('adventure_jobs').insert({
         adventure_id: adventure.id,
         generation: 1,

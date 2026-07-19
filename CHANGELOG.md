@@ -13,6 +13,7 @@ The format is based on Keep a Changelog 1.1.0.
 - Structured World detail for canonical Locations and Characters, including character descriptions, backgrounds, personalities, voices, and locations while withholding private Character knowledge from shared reader/player views.
 - Private Adventures created from a frozen World version, with player identity and visible starting Scene context.
 - Durable Game Master openings that survive reloads and can be resumed, retried after failure, reset, or deleted without changing the source World.
+- Act, Pass, and private Guide turns that resolve asynchronously into new Adventure narration and visible current scene state.
 - Portable private-hosting support with immutable application images, health checks, coordinated migrations, and application rollback safeguards.
 
 ### Changed

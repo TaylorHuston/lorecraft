@@ -3,11 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
 import type { WorldDetail } from '../worlds/worldApi'
-import {
-  AdventureApiError,
-  adventureQueryKeys,
-  type AdventureDetail,
-} from './adventureApi'
+import { AdventureApiError, adventureQueryKeys, type AdventureDetail } from './adventureApi'
 
 const playableWorld: WorldDetail = {
   id: 1,
@@ -56,6 +52,7 @@ const pendingAdventure: AdventureDetail = {
       },
     ],
   },
+  activeTurn: null,
   story: [],
 }
 
@@ -121,10 +118,9 @@ describe('Adventure routes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start Adventure' }))
     expect(screen.getByRole('button', { name: 'Starting Adventure…' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Starting Adventure…' }).closest('form')).toHaveAttribute(
-      'aria-busy',
-      'true'
-    )
+    expect(
+      screen.getByRole('button', { name: 'Starting Adventure…' }).closest('form')
+    ).toHaveAttribute('aria-busy', 'true')
     expect(screen.getByLabelText('Player name (required)')).toHaveAttribute('aria-busy', 'true')
     expect(screen.getByLabelText('Physical description (optional)')).toHaveAttribute(
       'aria-busy',
@@ -220,6 +216,76 @@ describe('Adventure routes', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Your Adventure opening is ready.')
     expect(playerRegion).toHaveFocus()
     await waitFor(() => expect(getAdventure).toHaveBeenCalledTimes(2))
+  })
+
+  it('LC-003/S2/R5-S2 + R5-S3 polls one active turn to its completed narration without stealing focus', async () => {
+    const resolving = {
+      ...pendingAdventure,
+      status: 'ready' as const,
+      activeTurn: { id: 'turn-1', trigger: 'act' as const, status: 'processing' as const },
+      story: [
+        { id: 'opening', kind: 'narration', content: 'The chapel doors open against the storm.' },
+      ],
+    }
+    const completed = {
+      ...resolving,
+      activeTurn: null,
+      turnCount: 1,
+      story: [
+        ...resolving.story,
+        { id: 'turn-1', kind: 'narration', content: 'Mira points toward the vestry door.' },
+      ],
+    }
+    const getAdventure = vi.fn().mockResolvedValueOnce(resolving).mockResolvedValueOnce(completed)
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: { getAdventure },
+      adventurePollIntervalMs: 10,
+    })
+
+    expect(await screen.findByText('Resolving your turn')).toBeVisible()
+    const playerRegion = screen.getByRole('region', { name: 'Player' })
+    playerRegion.focus()
+    expect(await screen.findByText('Mira points toward the vestry door.')).toBeVisible()
+    expect(screen.getByRole('status')).toHaveTextContent('Your turn is ready.')
+    expect(playerRegion).toHaveFocus()
+    await waitFor(() => expect(getAdventure).toHaveBeenCalledTimes(2))
+  })
+
+  it('LC-003/S2/R5-S1 submits an Act through the route API', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue({
+      id: 'turn-1',
+      adventureId: pendingAdventure.id,
+      trigger: 'act',
+      status: 'pending',
+      route: pendingAdventure.route,
+    })
+    const retryTurn = vi.fn().mockResolvedValue({ id: 'turn-1', status: 'pending' })
+    const discardTurn = vi.fn().mockResolvedValue(undefined)
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        submitTurn,
+        retryTurn,
+        discardTurn,
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.type(
+      await screen.findByRole('textbox', { name: 'What do you do?' }),
+      'I ask Mira about the bell.'
+    )
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(submitTurn).toHaveBeenCalledTimes(1))
+    expect(submitTurn.mock.calls[0][0]).toBe(pendingAdventure.id)
+    expect(submitTurn.mock.calls[0][1]).toEqual(
+      expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
+    )
   })
 
   it('LC-003/S1/R3-S3 retries terminal failure and moves focus to the restarted Story status', async () => {
@@ -325,9 +391,8 @@ describe('Adventure routes', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('Preparing your opening')
     expect(screen.queryByText('An opening.')).not.toBeInTheDocument()
     expect(
-      queryClient.getQueryData<AdventureDetail>(
-        adventureQueryKeys.detail(4, pendingAdventure.id)
-      )?.turnCount
+      queryClient.getQueryData<AdventureDetail>(adventureQueryKeys.detail(4, pendingAdventure.id))
+        ?.turnCount
     ).toBe(0)
   })
 
@@ -344,7 +409,7 @@ describe('Adventure routes', () => {
     const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     expect(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })).toBeDisabled()
     expect(
-      within(settingsDialog).getByText('Reset is unavailable while the opening is active.')
+      within(settingsDialog).getByText('Reset is unavailable while Adventure work is active.')
     ).toBeVisible()
   })
 

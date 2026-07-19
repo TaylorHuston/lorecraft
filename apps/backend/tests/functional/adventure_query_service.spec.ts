@@ -260,6 +260,7 @@ test.group('AdventureQueryService', (group) => {
           },
         ],
       },
+      activeTurn: null,
       story: [
         {
           id: storyEntry.id,

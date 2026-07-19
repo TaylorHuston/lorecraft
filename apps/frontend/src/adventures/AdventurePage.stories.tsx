@@ -41,6 +41,7 @@ const readyAdventure: AdventureDetail = {
       },
     ],
   },
+  activeTurn: null,
   story: [
     {
       id: 'opening',
@@ -57,6 +58,15 @@ function apiFor(adventure: AdventureDetail): AdventureApi {
     },
     getAdventure: async () => adventure,
     retryOpening: async () => ({ adventureId: id, status: 'opening_pending', generation: 2 }),
+    submitTurn: async () => ({
+      id: '33333333-3333-4333-8333-333333333333',
+      adventureId: id,
+      trigger: 'act',
+      status: 'pending',
+      route: `/adventures/${id}`,
+    }),
+    retryTurn: async (turnId) => ({ id: turnId, status: 'pending' }),
+    discardTurn: async () => undefined,
     resetAdventure: async () => ({ adventureId: id, status: 'opening_pending', generation: 2 }),
     deleteAdventure: async () => undefined,
   }
@@ -169,6 +179,49 @@ export const OpeningFailedMobile: Story = {
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
+export const ReadyToAct: Story = {
+  render: () => renderAdventure(readyAdventure),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByRole('textbox', { name: 'What do you do?' })).resolves.toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Pass' })).toBeVisible()
+  },
+}
+
+export const TurnPending: Story = {
+  render: () =>
+    renderAdventure({
+      ...readyAdventure,
+      activeTurn: { id: '33333333-3333-4333-8333-333333333333', trigger: 'act', status: 'pending' },
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.findByText('Resolving your turn')).resolves.toBeVisible()
+    expect(canvas.queryByRole('textbox')).not.toBeInTheDocument()
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
+export const TurnFailed: Story = {
+  render: () =>
+    renderAdventure({
+      ...readyAdventure,
+      activeTurn: {
+        id: '33333333-3333-4333-8333-333333333333',
+        trigger: 'guide',
+        status: 'failed',
+      },
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('did not change the story')
+    await expect(within(alert).getByRole('button', { name: 'Retry turn' })).toBeVisible()
+    await expect(within(alert).getByRole('button', { name: 'Discard' })).toBeVisible()
     expectNoHorizontalOverflow(canvasElement)
   },
 }

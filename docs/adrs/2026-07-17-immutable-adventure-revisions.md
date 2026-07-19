@@ -2,8 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-17
-- Related change: `docs/changes/closed/2026-07-16-private-adventure-foundation/`
-- Related Epics / Stories: `LC-003/S1`, especially `R3`; future `resolve-structured-turns` and `revise-adventure-history` candidates
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/2026-07-18-interactive-adventure-turns/`
+- Related Epics / Stories: `LC-003/S1/R3`, `LC-003/S2/R2`, and future history-revision candidates
 
 ## Context
 

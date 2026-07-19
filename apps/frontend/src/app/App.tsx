@@ -34,6 +34,15 @@ const missingAdventureApi: AdventureApi = {
   retryOpening: async () => {
     throw new Error('Adventure API is not configured.')
   },
+  submitTurn: async () => {
+    throw new Error('Adventure API is not configured.')
+  },
+  retryTurn: async () => {
+    throw new Error('Adventure API is not configured.')
+  },
+  discardTurn: async () => {
+    throw new Error('Adventure API is not configured.')
+  },
   resetAdventure: async () => {
     throw new Error('Adventure API is not configured.')
   },

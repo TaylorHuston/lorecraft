@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -38,6 +38,7 @@ const readyAdventure: AdventureView = {
       },
     ],
   },
+  activeTurn: null,
   story: [
     {
       id: 'opening',
@@ -58,9 +59,13 @@ describe('AdventureWorkbench', () => {
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
     expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Story')
     expect(screen.getAllByRole('heading')[0]).toHaveProperty('tagName', 'H1')
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /act|pass|guide|send/i })).not.toBeInTheDocument()
-    expect(screen.queryByText(/private knowledge|personality|director observation/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'What do you do?' })).toBeVisible()
+    expect(screen.getByRole('tab', { name: 'Act' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Guide' })).toHaveAttribute('aria-selected', 'false')
+    expect(screen.getByRole('button', { name: 'Pass' })).toBeVisible()
+    expect(
+      screen.queryByText(/private knowledge|personality|director observation/i)
+    ).not.toBeInTheDocument()
   })
 
   it('renders repeated narration paragraphs without duplicate React keys', () => {
@@ -81,9 +86,7 @@ describe('AdventureWorkbench', () => {
 
   it('LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending', () => {
     render(
-      <AdventureWorkbench
-        adventure={{ ...readyAdventure, status: 'opening_pending', story: [] }}
-      />
+      <AdventureWorkbench adventure={{ ...readyAdventure, status: 'opening_pending', story: [] }} />
     )
 
     expect(screen.getByRole('status')).toHaveTextContent('Preparing your opening')
@@ -150,8 +153,106 @@ describe('AdventureWorkbench', () => {
 
     await user.keyboard('{End}')
     expect(screen.getByRole('tab', { name: 'Scene' })).toHaveFocus()
-    expect(screen.getByRole('tabpanel', { name: 'Scene' })).toHaveTextContent(
-      'Mira the Restless'
+    expect(screen.getByRole('tabpanel', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
+  })
+
+  it('LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'What do you do?' }),
+      'I ask Mira about the bell.'
     )
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(submitTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
+    )
+
+    await user.click(screen.getByRole('tab', { name: 'Guide' }))
+    expect(screen.getByRole('textbox', { name: 'Private direction for this turn' })).toBeVisible()
+    expect(
+      screen.getByText('This direction guides only this resolution. It is not shown in the story.')
+    ).toBeVisible()
+  })
+
+  it('LC-003/S2/R5-S1 confirms Pass before submitting an empty turn', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    await user.click(screen.getByRole('button', { name: 'Pass' }))
+    const dialog = screen.getByRole('dialog', { name: 'Pass this moment?' })
+    expect(dialog).toHaveTextContent('without an action from you')
+    await user.click(within(dialog).getByRole('button', { name: 'Pass' }))
+    expect(submitTurn).toHaveBeenCalledWith(expect.objectContaining({ trigger: 'pass' }))
+    expect(submitTurn.mock.calls[0][0]).not.toHaveProperty('input')
+  })
+
+  it('LC-003/S2/R5-S2..R5-S4 preserves story during progress and offers failed-turn recovery', async () => {
+    const user = userEvent.setup()
+    const retryTurn = vi.fn()
+    const discardTurn = vi.fn()
+    const { rerender } = render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'pending' },
+        }}
+      />
+    )
+    expect(
+      screen
+        .getAllByRole('status')
+        .find((status) => status.textContent?.includes('Resolving your turn'))
+    ).toBeTruthy()
+    expect(screen.getByText('The chapel doors open against the storm.')).toBeVisible()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+
+    rerender(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'failed' },
+        }}
+        onRetryTurn={retryTurn}
+        onDiscardTurn={discardTurn}
+      />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('did not change the story')
+    await user.click(screen.getByRole('button', { name: 'Retry turn' }))
+    await user.click(screen.getByRole('button', { name: 'Discard' }))
+    expect(retryTurn).toHaveBeenCalledWith('turn-1')
+    expect(discardTurn).toHaveBeenCalledWith('turn-1')
+  })
+
+  it('LC-003/S2/R5-S3 announces one completed turn without stealing focus', () => {
+    const { rerender } = render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'processing' },
+        }}
+      />
+    )
+    const player = screen.getByRole('region', { name: 'Player' })
+    player.focus()
+    rerender(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          turnCount: 1,
+          activeTurn: null,
+          story: [
+            ...readyAdventure.story,
+            { id: 'turn-1', kind: 'narration', content: 'Mira answers quietly.' },
+          ],
+        }}
+      />
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('Your turn is ready.')
+    expect(player).toHaveFocus()
+    expect(screen.getByText('Mira answers quietly.')).toBeVisible()
   })
 })

@@ -63,6 +63,7 @@ const adventure: AdventureDetail = {
       },
     ],
   },
+  activeTurn: null,
   story: [
     {
       id: 'opening',
@@ -114,6 +115,15 @@ const adventureApi: AdventureApi = {
     throw new RuntimeError('Not used in this story.')
   },
   retryOpening: async () => {
+    throw new RuntimeError('Not used in this story.')
+  },
+  submitTurn: async () => {
+    throw new RuntimeError('Not used in this story.')
+  },
+  retryTurn: async () => {
+    throw new RuntimeError('Not used in this story.')
+  },
+  discardTurn: async () => {
     throw new RuntimeError('Not used in this story.')
   },
   resetAdventure: async () => {
@@ -171,7 +181,9 @@ export const Desktop: Story = {
     const story = canvas.getByRole('region', { name: 'Story' })
     const player = canvas.getByRole('region', { name: 'Player' })
     const scene = canvas.getByRole('region', { name: 'Scene' })
-    const storyScrollRegion = viewport.querySelector<HTMLElement>('[data-slot="story-scroll-region"]')
+    const storyScrollRegion = viewport.querySelector<HTMLElement>(
+      '[data-slot="story-scroll-region"]'
+    )
 
     await expect(story).toBeVisible()
     await expect(player).toBeVisible()
@@ -193,7 +205,9 @@ export const Mobile: Story = {
     const canvas = within(canvasElement)
     const viewport = canvas.getByTestId('comparison-viewport')
     const workbench = viewport.querySelector<HTMLElement>('[data-slot="adventure-workbench"]')
-    const storyScrollRegion = viewport.querySelector<HTMLElement>('[data-slot="story-scroll-region"]')
+    const storyScrollRegion = viewport.querySelector<HTMLElement>(
+      '[data-slot="story-scroll-region"]'
+    )
 
     await expect(canvas.getByRole('tab', { name: 'Story' })).toHaveAttribute(
       'aria-selected',

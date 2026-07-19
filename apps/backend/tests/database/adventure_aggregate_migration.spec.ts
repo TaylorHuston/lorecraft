@@ -6,6 +6,7 @@ import EnforceCharacterLocationWorldIntegrity from '../../database/migrations/17
 import AddWorldSeedIdentity from '../../database/migrations/1784146800000_add_world_seed_identity.js'
 import AddFrozenWorldSourceFoundation from '../../database/migrations/1784233200000_add_frozen_world_source_foundation.js'
 import CreateAdventureAggregate from '../../database/migrations/1784236800000_create_adventure_aggregate.js'
+import AddDurableAdventureTurns from '../../database/migrations/1784409600000_add_durable_adventure_turns.js'
 import {
   rollbackMigration,
   runMigration,
@@ -13,6 +14,7 @@ import {
 } from '../helpers/migration_database.js'
 
 const migrationName = '1784236800000_create_adventure_aggregate'
+const durableTurnsMigrationName = '1784409600000_add_durable_adventure_turns'
 const createdAt = new Date('2026-01-01T00:00:00.000Z')
 
 async function createAdventureSourceFixture(client: QueryClientContract) {
@@ -589,6 +591,105 @@ test.group('Adventure aggregate database migration', () => {
       assert.isNotNull(await client.from('worlds').where('id', fixture.firstWorldId).first())
       assert.isNotNull(
         await client.from('world_versions').where('id', fixture.firstVersionId).first()
+      )
+    })
+  })
+
+  test('LC-003/S2/R1-S1..R1-S5: durable turns are Adventure-owned, idempotent, and serialized', async ({
+    assert,
+  }) => {
+    await withIsolatedMigrationDatabase(async (client) => {
+      const fixture = await createAdventureSourceFixture(client)
+      await runMigration(client, CreateAdventureAggregate, migrationName)
+      await runMigration(client, AddDurableAdventureTurns, durableTurnsMigrationName)
+
+      const [adventure] = await client
+        .table('adventures')
+        .insert(adventureRecord(fixture, { status: 'ready' }))
+        .returning(['id'])
+      const [opening] = await client
+        .table('adventure_revisions')
+        .insert({
+          adventure_id: adventure.id,
+          sequence: 0,
+          kind: 'opening',
+          parent_revision_id: null,
+          created_at: createdAt,
+        })
+        .returning(['id'])
+      await client
+        .from('adventures')
+        .where('id', adventure.id)
+        .update({ head_revision_id: opening.id })
+
+      const pendingTurn = {
+        adventure_id: adventure.id,
+        request_id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        trigger: 'act',
+        input: 'I ask why the bell rang.',
+        status: 'pending',
+        source_revision_id: opening.id,
+        result_revision_id: null,
+        created_at: createdAt,
+      }
+      const [turn] = await client.table('adventure_turns').insert(pendingTurn).returning(['id'])
+
+      await assert.rejects(
+        () => client.table('adventure_turns').insert(pendingTurn),
+        /adventure_turns_adventure_id_request_id_unique/
+      )
+      await assert.rejects(
+        () =>
+          client.table('adventure_turns').insert({
+            ...pendingTurn,
+            request_id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          }),
+        /adventure_turns_one_active_per_adventure/
+      )
+      await assert.rejects(
+        () =>
+          client.table('adventure_turns').insert({
+            ...pendingTurn,
+            adventure_id: '11111111-1111-4111-8111-111111111111',
+          }),
+        /violates foreign key constraint/
+      )
+      await assert.rejects(
+        () =>
+          client.table('adventure_jobs').insert({
+            adventure_id: adventure.id,
+            turn_id: null,
+            generation: 1,
+            type: 'turn',
+            status: 'pending',
+            attempt_count: 0,
+            available_at: createdAt,
+            lease_owner: null,
+            lease_expires_at: null,
+            failure_code: null,
+            failure_message: null,
+            created_at: createdAt,
+          }),
+        /adventure_jobs_turn_shape_check/
+      )
+      await client.table('adventure_jobs').insert({
+        adventure_id: adventure.id,
+        turn_id: turn.id,
+        generation: 1,
+        type: 'turn',
+        status: 'pending',
+        attempt_count: 0,
+        available_at: createdAt,
+        lease_owner: null,
+        lease_expires_at: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: createdAt,
+      })
+
+      await assert.rejects(
+        () => rollbackMigration(client, AddDurableAdventureTurns, durableTurnsMigrationName),
+        /Cannot remove durable Adventure turns while they contain data/
       )
     })
   })
