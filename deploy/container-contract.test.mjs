@@ -29,8 +29,17 @@ test('gateway serves SPA routes, proxies same-origin API, and exposes health', a
 
 test('Compose publishes only the gateway on host loopback', async () => {
   const compose = await read('deploy/compose.yaml')
+  const gateway = compose.match(/^  gateway:\n(?<block>(?: {4,}.*\n|\s*\n)*)/m)?.groups?.block
+  const networks = compose.match(/^networks:\n(?<block>(?: {2,}.*\n|\s*\n)*)$/m)?.groups?.block
 
+  assert.ok(gateway)
+  assert.ok(networks)
   assert.match(compose, /127\.0\.0\.1:\$\{GATEWAY_PORT:-8080\}:8080/)
+  assert.match(gateway, /^      - application$/m)
+  assert.match(gateway, /^      - ingress$/m)
+  assert.equal(compose.match(/^\s+- ingress$/gm)?.length, 1)
+  assert.match(networks, /^  application:\n    internal: true$/m)
+  assert.match(networks, /^  ingress: \{\}$/m)
   assert.doesNotMatch(compose, /api:[\s\S]*?ports:/)
   assert.match(compose, /ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000/)
   assert.match(compose, /command: \[['"]node['"], ['"]ace\.js['"], ['"]adventures:openings:work['"]\]/)

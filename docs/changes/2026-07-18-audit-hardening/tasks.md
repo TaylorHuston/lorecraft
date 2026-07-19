@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: PR #2 is remotely clean and Taylor approved merging with private-production verification recorded as an `accepted gap` for the merge gate; production acceptance itself remains pending deployment.
-- Next action: merge PR #2 into `main` without deleting `develop`, then publish immutable `main` images and continue the private deployment walkthrough.
-- Active branch/ref: `develop`; reviewed semantic PR head `3ed9bf8`, with the review-record reconciliation following it.
-- Expected dirty files: audit report, active Change, affected Epics/ADRs/README, bounded backend/frontend/CI files, and new portable deployment assets. Private host inventory and secrets remain outside the repository.
-- Known blockers: disposable validation and clean production migration are complete. GHCR publication, private-host LXC provisioning, Tailscale Serve mutation, deployment, restore drill, and production acceptance remain explicit execution-time gates. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
+- Last completed action: the first private-host deployment proved immutable images, migrations, API/worker startup, private provider reachability, and Tailscale HTTPS, but live Docker rejected the gateway's loopback publication while it was attached only to the internal application network.
+- Next action: add and verify a dedicated non-internal ingress network used only by the gateway, promote the corrected immutable build through `main`, and repeat the production release and acceptance walkthrough.
+- Active branch/ref: `fix/gateway-ingress-network` from `develop`; production merge baseline `8e5698a`.
+- Expected dirty files: `deploy/compose.yaml`, its focused container contract test, and this active Change ledger. Private host inventory and secrets remain outside the repository.
+- Known blockers: disposable validation, clean production migration, GHCR publication, LXC provisioning, Tailscale Serve, private HTTPS, and provider reachability are complete. A live-discovered gateway-network defect must be corrected before the release command can record a successful deployment; production account bootstrap, restore drill, restart/rollback proof, and final acceptance remain. The legacy default `production` branch remains untouched; `production-clean` is the migrated empty production candidate.
 
 ## Task Checklist
 
@@ -156,6 +156,7 @@ status: in_review
 | 2026-07-18 | Production PR review remediation            | main orchestrator; PR #2 automated review                          | release env parsing, evidence byte counts, retry bounds, proxy scheme, delayed route focus, focused tests            | Accepted six narrow findings: normalized quoted/spaced env values, avoided byte-count buffers, bounded extreme attempts, fixed trusted HTTPS forwarding, and preserved user-selected focus during delayed route rendering | `11509c2`      |
 | 2026-07-18 | Production PR Greptile remediation          | main orchestrator; PR #2 Greptile review                           | release startup recovery/state diagnostics and provider retry guidance                                               | Restored the previous stack when new-stack startup itself fails, rejected syntactically or semantically corrupt recovery state, and parsed provider retry guidance once per response                                                   | `631fef2`, `5b6f6ae` |
 | 2026-07-18 | Production PR connector remediation         | main orchestrator; PR #2 Codex connector review                    | rollback recovery, health probes, Compose liveness, desktop heading order                                             | Restored the current stack after failed rollback health, bounded each release probe, removed continuous DB readiness traffic from container health, and placed the Story `h1` first in document order without changing the grid | `3ed9bf8`      |
+| 2026-07-18 | Live gateway ingress remediation            | main orchestrator; `sdd-apply` manual-feedback loop and PR #3 review | `deploy/compose.yaml`, container contract, active Change ledger                                                      | Added a gateway-only non-internal ingress network after live Docker proved loopback publication is omitted for an internal-only container; PR review strengthened order-independent proof that no other service joins ingress | `93f8521`, pending review fix |
 
 ## Verification Ledger
 
@@ -195,6 +196,7 @@ status: in_review
 | 2026-07-18 | Full frontend test, lint, typecheck, and build                                                                                                    | broad supporting gate                        | The semantic heading fix introduces no frontend behavior, static-analysis, type, or production-build regression                                                                                                                                                                                   | passed; 119 tests                                                                                         |
 | 2026-07-18 | Changed-surface orphan inventory from `develop`, scoped to LC-003                                                                                 | reverse traceability                         | Both changed source files and the focused test remain owned by LC-003; no changed source/test traceability gaps. The reported `github/workflows/images.yml` missing reference is a parser false positive for the existing correct `.github/workflows/images.yml` path.                                                                 | passed/classified; `.neon` remains excluded private-local state                                            |
 | 2026-07-18 | Release gate: lint, typecheck, build, contracts, Storybook build/browser, deployment contracts, disposable migrations/tests, and desktop/mobile E2E | production release verification | Reviewed `develop` candidate compiles, generated contracts are clean, guarded database behavior passes from a fresh schema, and browser journeys cover desktop/mobile production boundaries | passed; backend 112, frontend 119, Storybook 78, E2E 7, container 6, image 1, deployment 5 |
+| 2026-07-18 | Gateway ingress container contract RED/GREEN and live Docker recreation                                                                          | focused automated plus live-host verification | The gateway has an explicit non-internal path for Docker's loopback publication while API/worker stay unpublished; same-origin gateway and DB readiness remain healthy over private HTTPS | RED: focused contract failed; GREEN: 6/6 container tests, loopback gateway `200`, readiness `200`, private HTTPS `200` |
 
 ## Manual Feedback
 
@@ -206,6 +208,7 @@ status: in_review
 | 2026-07-18 | User requested actual private deployment in the current Change | scope expansion                          | Add portable images, private host, isolated Neon environments, release/recovery, and production verification                                                                                                                                                  | resolved |
 | 2026-07-18 | User confirmed deployment decisions one at a time              | architecture and operational constraints | Docker Compose LXC; GHCR/manual promotion; layered auth; Neon-only environments; clean starter seed; required restore drill; minimal monitoring; existing private provider; `main` production images; host secrets; maintenance window; always-running worker | resolved |
 | 2026-07-18 | Release gate found skipped Adventure state heading levels      | defect                                   | Added level-specific assertions; changed pending/failure titles from `h3` to `h2`; reran focused and Storybook accessibility suites                                                                                              | resolved |
+| 2026-07-18 | First live Compose release could not reach the loopback gateway | defect                                   | Added a gateway-only ingress network, retained the internal application network, and proved Docker now publishes only `127.0.0.1:8080`                                                                                           | resolved |
 
 ## Planning Updates
 
@@ -259,6 +262,6 @@ status: in_review
 - `review.md` findings resolved: yes; regression verification and commit-based conflict/contract checks passed
 - Planning updates resolved: yes
 - Manual UI confirmation status: local UI user confirmed 2026-07-18; private production pending user
-- PR / merge state: production release PR #2 is remotely clean from `develop` to `main`; Taylor authorized merge with private-production verification accepted as a post-merge deployment gate
+- PR / merge state: production release PR #2 merged `develop` into `main` at `8e5698a7c7156a71a7a9c642cc5cf1845b8173f1`; `develop` remains active
 - Deferred scope accepted: yes, including public/cloud ingress, auto-deploy, zero-downtime/multi-host operation, provider failover, infrastructure-as-code, and external monitoring
 - Change moved to `docs/changes/closed/`: no
