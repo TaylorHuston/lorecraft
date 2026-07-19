@@ -31,6 +31,8 @@ test('Compose publishes only the gateway on host loopback', async () => {
   const compose = await read('deploy/compose.yaml')
 
   assert.match(compose, /127\.0\.0\.1:\$\{GATEWAY_PORT:-8080\}:8080/)
+  assert.match(compose, /gateway:[\s\S]*?networks:\s+- application\s+- ingress/)
+  assert.match(compose, /networks:[\s\S]*?application:\s+internal: true\s+ingress: \{\}/)
   assert.doesNotMatch(compose, /api:[\s\S]*?ports:/)
   assert.match(compose, /ADVENTURE_WORKER_POLL_INTERVAL_MS: 5000/)
   assert.match(compose, /command: \[['"]node['"], ['"]ace\.js['"], ['"]adventures:openings:work['"]\]/)
