@@ -4,7 +4,7 @@
 
 ready
 
-The consolidated implementation findings, release-gate heading defect, and six production-PR review findings are remediated. Independent code/security, artifact/traceability, and verification/UI regression passes are clean, and commit `11509c267b77d027a9c907b6ac7a90e2b50b0ec1` is the refreshed immutable semantic review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
+The consolidated implementation findings, release-gate heading defect, and nine production-PR review findings are remediated. Independent code/security, artifact/traceability, and verification/UI regression passes are clean, and commit `5b6f6ae9d808139ba04f11e438e9e15158237822` is the refreshed immutable semantic review watermark. Local UI acceptance is `user confirmed`; private-production acceptance remains `pending user`, so deployment and closeout are not yet acceptance-ready.
 
 ## Gate Scorecard
 
@@ -18,7 +18,7 @@ The consolidated implementation findings, release-gate heading defect, and six p
 | Reverse traceability                  | pass                                          | 65 changed-surface candidates classified; remaining CI/generated/database-guard candidates are supporting infrastructure.                             |
 | Tests and verification                | pass with external gaps                       | PR-focused tests, all 120 frontend tests, build, lint, typecheck, contracts, and scoped validation pass; prior disposable-Neon/E2E evidence remains current; real Docker/host/restore proof remains pending. |
 | Manual UI confirmation                | local user confirmed; production pending user | Taylor approved the provider-backed pending-to-ready Adventure UI and generated opening; private HTTPS/session/host/recovery checks await deployment. |
-| Code review                           | pass after remediation                        | Release env parsing, retry bounds, evidence byte counting, trusted HTTPS forwarding, and delayed-route focus preservation are corrected and independently rereviewed. |
+| Code review                           | pass after remediation                        | Release env/state handling and startup recovery, retry guidance/bounds, evidence byte counting, trusted HTTPS forwarding, and delayed-route focus preservation are corrected and independently rereviewed. |
 | Visual / UX consistency               | pass                                          | Pending/failure headings now follow the Story `h1`; focused and Storybook accessibility tests pass, with no visual redesign.                           |
 | Security review                       | pass                                          | Metadata-only evidence, trusted private-HTTPS forwarding, secret isolation, loopback publishing, non-root images, and fail-closed DB guards are preserved. |
 | Documentation                         | pass                                          | README, ADRs, Epics, and Change ledger describe current local versus live-production truth.                                                           |
@@ -50,7 +50,7 @@ The consolidated implementation findings, release-gate heading defect, and six p
 
 | Command / Scenario                                          | Evidence Type                  | Requirement / Scenario                     | Result                    | What It Proves                                                                                                    |
 | ----------------------------------------------------------- | ------------------------------ | ------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `npm run test:deployment`                                   | focused automated test         | LC-003/S1 R3-S9..R3-S10 support            | 6 passed                  | Tolerant production env parsing, immutable image derivation, release order, explicit recovery, and failed-health restoration. |
+| `npm run test:deployment`                                   | focused automated test         | LC-003/S1 R3-S9..R3-S10 support            | 8 passed                  | Production env/state validation, immutable image derivation, release order, explicit recovery, and failed-start/health restoration. |
 | `npm run test:containers`                                   | focused automated test         | LC-001 production support; LC-003/S1 R3-S9 | 6 passed                  | Loopback gateway, same-origin proxy, health boundaries, production commands, migration isolation, and log bounds. |
 | `npm run test:images`                                       | focused automated test         | production image provenance                | 1 passed                  | PR builds and immutable publication are restricted to `main`.                                                     |
 | `node --test apps/backend/scripts/database-safety.test.mjs` | focused automated test         | database safety boundary                   | 20 passed                 | Disposable and production URL identity, pooled/direct, acknowledgement, and environment guards.                   |
@@ -68,14 +68,14 @@ The consolidated implementation findings, release-gate heading defect, and six p
 ## Review Bundle
 
 - Source branch/ref: `develop`
-- Reviewed source commit: `11509c267b77d027a9c907b6ac7a90e2b50b0ec1`
+- Reviewed source commit: `5b6f6ae9d808139ba04f11e438e9e15158237822`
 - Target branch/ref: `origin/main` at `1dd901c3a5fe0df0f898acda39ba18fcb065e11c`
 - Merge base: `cfe17b8f65892ff75a3497487bfbae06e3ebce6d`
-- Source-only commits: 16, ending with `11509c2 Address release PR feedback`
+- Source-only commits: 19, ending with `5b6f6ae Validate release recovery state`
 - Target-only commits: none
-- Changed files in PR-remediation regression scope: 12
-- Diff stat in PR-remediation regression scope: 104 insertions, 15 deletions
-- Conflict check: `git merge-tree --write-tree origin/main develop` passed and produced tree `d269128e00971e599b283b288c251b472928eee2`
+- Changed files in PR-remediation regression scope: 13
+- Diff stat in PR-remediation regression scope: 228 insertions, 57 deletions
+- Conflict check: `git merge-tree --write-tree origin/main 5b6f6ae` passed and produced tree `40ad1b44199267778433cfc21eb133fde1bde6c3`
 - Dirty state: only private-local `.neon` remains untracked
 - Branch policy: production release PR `develop` to `main` is correct; merge remains unauthorized
 - Reverse-traceability command/result: packaged orphan audits with `--changed-from df92d33` for LC-001 and LC-003; the combined changed source/tests are owned. The stripped-leading-dot `.github/workflows/images.yml` report remains a classified parser false positive.
@@ -103,7 +103,7 @@ The consolidated implementation findings, release-gate heading defect, and six p
 
 ## Consolidated Remediation
 
-- Root causes addressed: permissive env parsing, unbounded unexpected retry input, unnecessary byte-count allocation, untrusted proxy scheme propagation, delayed focus theft, and stale review state.
+- Root causes addressed: permissive env/state parsing, incomplete startup-failure recovery, repeated time-sensitive retry parsing, unbounded unexpected retry input, unnecessary byte-count allocation, untrusted proxy scheme propagation, delayed focus theft, and stale review state.
 - Safe-fix batch: release parser/tests, provider/retry implementation/tests, gateway contract, route presentation/test, LC-001/LC-003 evidence, tasks ledger, and review record.
 - Deferred or unsafe findings: none from code review; external production execution remains an explicit workflow gate.
 - Affected verification union: deployment/container/image/database-safety tests, lint, typecheck, build, reverse traceability, and scoped validation.
@@ -113,10 +113,10 @@ The consolidated implementation findings, release-gate heading defect, and six p
 ## PR / Merge Readiness
 
 - Source branch: `develop`
-- Reviewed source commit: `11509c267b77d027a9c907b6ac7a90e2b50b0ec1`
+- Reviewed source commit: `5b6f6ae9d808139ba04f11e438e9e15158237822`
 - Target branch: `main`
 - Conflict check: passed
-- Commit state: reviewed semantic source committed at `11509c2`; this review/task reconciliation is documentation-only
+- Commit state: reviewed semantic source committed at `5b6f6ae`; this review/task reconciliation is documentation-only
 - PR status: #2 open; reconciled head not yet pushed
 - Merge status: not authorized; remote checks/review and required acceptance policy remain gates
 
@@ -129,3 +129,4 @@ The consolidated implementation findings, release-gate heading defect, and six p
 - 2026-07-18: User authorized local integration of the reviewed heading fix; merged `fix/adventure-heading-order` into `develop` at `76239fade23bdb171895406080dafb478fb6cc79`. No push, branch deletion, deployment, or closeout occurred.
 - 2026-07-18: `/sdd-release` passed the full local gate, committed public release communication, pushed `develop`, and opened production release PR #2 to `main`. Hosted CI, PR image builds, remote review, merge authorization, deployment, restore, and production acceptance remain pending.
 - 2026-07-18: PR #2 automated review produced six accepted findings. Semantic remediation commit `11509c2` passed focused deployment/container/backend/frontend checks, all 120 frontend tests, lint, typecheck, build, generated-contract cleanliness, conflict checking, scoped validation, reverse traceability, and three independent regression passes. Verdict remains `ready`; the remote gate and private-production acceptance remain pending.
+- 2026-07-18: Greptile added three accepted release-path findings. Commits `631fef2` and `5b6f6ae` now recover from start-command failure, reject malformed or mutable recovery state, and parse provider retry guidance once. Eight deployment tests, thirteen provider tests, lint, typecheck, scoped validation, and two independent regression passes are clean; verdict remains `ready` with remote and production-acceptance gates pending.
