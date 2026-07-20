@@ -31,7 +31,11 @@ const paneLabels: Record<AdventurePane, string> = {
   scene: 'Scene',
 }
 
-const emptyNpcMemoryFallback = 'No interactions with the player have been recorded yet.'
+const emptyNpcStateFallback = {
+  mood: 'No current mood has been recorded yet.',
+  status: 'No current status has been recorded yet.',
+  memory: 'No interactions with the player have been recorded yet.',
+} as const
 
 function NpcFieldError({ error, id }: { error?: string; id: string }) {
   return error ? (
@@ -450,7 +454,9 @@ function NpcDebugEditor({
   npc: AdventureView['scene']['npcs'][number]
   onSave: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
 }) {
-  const initialMemory = npc.memory.trim() || emptyNpcMemoryFallback
+  const initialMood = npc.mood.trim() || emptyNpcStateFallback.mood
+  const initialStatus = npc.status.trim() || emptyNpcStateFallback.status
+  const initialMemory = npc.memory.trim() || emptyNpcStateFallback.memory
   const [draft, setDraft] = useState<UpdateAdventureNpcStateInput>({
     name: npc.name,
     currentLocationKey: npc.currentLocation.key,
@@ -459,8 +465,8 @@ function NpcDebugEditor({
     personality: npc.personality,
     voice: npc.voice,
     privateKnowledge: npc.privateKnowledge,
-    mood: npc.mood,
-    status: npc.status,
+    mood: initialMood,
+    status: initialStatus,
     memory: initialMemory,
   })
   const [saving, setSaving] = useState(false)
@@ -474,8 +480,8 @@ function NpcDebugEditor({
     personality: npc.personality,
     voice: npc.voice,
     privateKnowledge: npc.privateKnowledge,
-    mood: npc.mood,
-    status: npc.status,
+    mood: initialMood,
+    status: initialStatus,
     memory: initialMemory,
   })
   const draftSignature = JSON.stringify(draft)

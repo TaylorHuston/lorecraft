@@ -130,7 +130,7 @@ describe('AdventureWorkbench', () => {
     )
   })
 
-  it('LC-003/S3/R3-S1 gives a frozen legacy NPC a usable memory default without changing its source', async () => {
+  it('LC-003/S3/R3-S1 gives a frozen legacy NPC usable state defaults without changing its source', async () => {
     const user = userEvent.setup()
     const saveNpcState = vi.fn().mockResolvedValue(undefined)
     render(
@@ -139,7 +139,7 @@ describe('AdventureWorkbench', () => {
           ...readyAdventure,
           scene: {
             ...readyAdventure.scene,
-            npcs: [{ ...readyAdventure.scene.npcs[0], memory: '' }],
+            npcs: [{ ...readyAdventure.scene.npcs[0], mood: '', status: '', memory: '' }],
           },
         }}
         onSaveNpcState={saveNpcState}
@@ -147,17 +147,21 @@ describe('AdventureWorkbench', () => {
     )
 
     await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    expect(screen.getByLabelText('Mood')).toHaveValue('No current mood has been recorded yet.')
+    expect(screen.getByLabelText('Status')).toHaveValue('No current status has been recorded yet.')
     expect(screen.getByLabelText('Memory')).toHaveValue(
       'No interactions with the player have been recorded yet.'
     )
 
-    await user.clear(screen.getByLabelText('Mood'))
-    await user.type(screen.getByLabelText('Mood'), 'Curious')
+    await user.clear(screen.getByLabelText('Name'))
+    await user.type(screen.getByLabelText('Name'), 'Mira Vale')
     await waitFor(() =>
       expect(saveNpcState).toHaveBeenCalledWith(
         'mira',
         expect.objectContaining({
-          mood: 'Curious',
+          name: 'Mira Vale',
+          mood: 'No current mood has been recorded yet.',
+          status: 'No current status has been recorded yet.',
           memory: 'No interactions with the player have been recorded yet.',
         })
       )
