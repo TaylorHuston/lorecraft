@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: repaired deterministic E2E Character-card isolation: card locators are scoped to the Characters region, each mutable test restores canonical seed data, and mobile waits for desktop coverage.
+- Last completed action: committed deterministic E2E Character-card isolation as `cd8f979`: card locators are scoped to the Characters region, each mutable test restores canonical seed data, and mobile waits for desktop coverage.
 - Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence showed both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500. The owner retry succeeded after about 5.5 seconds, and the Adventure is ready with a complete opening; the protected trace has no truncation outcome.
 - Next action: complete the live-provider Act/Guide/Pass quality matrix, exact frozen-version/post-turn E2E path, and owner manual acceptance.
 - Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from immutable candidate `ab036a3`.
-- Expected dirty files: E2E isolation remediation and its verification ledger until the authorized local commit.
+- Expected dirty files: none.
 - Known blocker: the review's aggregate backend wrapper remains safely blocked without an explicit disposable-database acknowledgement. The remaining E2E, live Act/Guide/Pass, and owner acceptance evidence is still required. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -138,7 +138,7 @@ status: in_progress
 | 2026-07-20 | Local provider configuration gate | focused unit tests + live provider acceptance | The smoke command shares worker configuration, uses bounded synthetic current-Scene input, and rejects provider truncation before a creator attempts an Adventure opening. | passed: 18 focused unit tests; `gemma4:26b` at 500 tokens returned `finish_reason: stop` with 227 completion tokens from one synthetic provider request |
 | 2026-07-20 | Owner opening retry after cap correction | live-provider + protected local Debug inspection | The previously failed Adventure retried at the 500-token cap; no provider prose was copied into normal logs or this record. | passed: one 5.5-second complete response, 1,317-character narration committed atomically, Adventure status `ready`, and trace outcome `succeeded` without truncation |
 | 2026-07-20 | E2E failure diagnosis | deterministic E2E trace inspection | Character CRUD created the test NPC, but its broad `article` locator also matched the containing World. The viewport projects share one seeded schema, so a failed or overlapping CRUD cleanup can contaminate the next viewport. | remediation in progress: scope card locators to the Characters region, reset the starter seed in `finally`, and make mobile depend on completed desktop coverage |
-| 2026-07-20 | E2E isolation remediation | deterministic E2E | Character CRUD is scoped to its card, restores the canonical starter World after each mutable path, and desktop/mobile no longer share overlapping mutable work. | passed: isolated direct-schema run completed all 9 Playwright setup, desktop, and mobile tests; test servers exited normally and the temporary schema was dropped |
+| 2026-07-20 | E2E isolation remediation | deterministic E2E | Character CRUD is scoped to its card, restores the canonical starter World after each mutable path, and desktop/mobile no longer share overlapping mutable work. | passed: isolated direct-schema run completed all 9 Playwright setup, desktop, and mobile tests; test servers exited normally and the temporary schema was dropped; `cd8f979` |
 
 ## Manual Feedback
 
