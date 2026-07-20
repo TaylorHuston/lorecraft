@@ -3,7 +3,7 @@ import db from '@adonisjs/lucid/services/db'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import { createHash } from 'node:crypto'
 
-const snapshotSchemaVersion = 1 as const
+const snapshotSchemaVersion = 2 as const
 const stableKeyPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 function validateStableKey(kind: 'Location' | 'Character' | 'Starting Point', key: string) {
@@ -61,6 +61,9 @@ export async function publishWorldVersionInTransaction(
       'personality',
       'voice',
       'private_knowledge',
+      'initial_mood',
+      'initial_status',
+      'initial_memory',
       'sort_order'
     )
   const startingPoints = await trx
@@ -103,6 +106,9 @@ export async function publishWorldVersionInTransaction(
       personality: character.personality,
       voice: character.voice,
       privateKnowledge: character.private_knowledge,
+      initialMood: character.initial_mood,
+      initialStatus: character.initial_status,
+      initialMemory: character.initial_memory,
       sortOrder: character.sort_order,
     })),
     startingPoints: startingPoints.map((startingPoint) => ({

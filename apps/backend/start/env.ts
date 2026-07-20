@@ -37,6 +37,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   LLM_TEMPERATURE: Env.schema.number.optional(),
   LLM_REASONING_EFFORT: Env.schema.enum.optional(['none', 'low', 'medium', 'high'] as const),
   ADVENTURE_WORKER_POLL_INTERVAL_MS: Env.schema.number.optional(),
+  LORECRAFT_DEBUG_TRACE: Env.schema.boolean.optional(),
+  LORECRAFT_DEBUG_TRACE_RAW_REQUEST: Env.schema.boolean.optional(),
+  LORECRAFT_DEBUG_TRACE_RAW_RESPONSE: Env.schema.boolean.optional(),
 
   // Session
   SESSION_DRIVER: Env.schema.enum(['memory', 'database'] as const),

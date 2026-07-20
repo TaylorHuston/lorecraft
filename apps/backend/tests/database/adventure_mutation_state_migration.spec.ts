@@ -8,6 +8,7 @@ import AddFrozenWorldSourceFoundation from '../../database/migrations/1784233200
 import CreateAdventureAggregate from '../../database/migrations/1784236800000_create_adventure_aggregate.js'
 import AddDurableAdventureTurns from '../../database/migrations/1784409600000_add_durable_adventure_turns.js'
 import AddAdventureMutationState from '../../database/migrations/1784413200000_add_adventure_mutation_state.js'
+import AddAdventureCharacterDebugOverrides from '../../database/migrations/1784420400000_add_adventure_character_debug_overrides.js'
 import {
   rollbackMigration,
   runMigration,
@@ -247,6 +248,53 @@ test.group('Adventure mutation state database migration', () => {
       await assert.rejects(
         () => rollbackMigration(client, AddAdventureMutationState, mutationMigrationName),
         /Cannot remove Adventure mutation state while it contains data/
+      )
+    })
+  })
+
+  test('LC-003/S3/R3-S4: NPC debug overrides upgrade existing state and refuse data-bearing rollback', async ({
+    assert,
+  }) => {
+    await withIsolatedMigrationDatabase(async (client) => {
+      const fixture = await installSource(client)
+      await runMigration(client, AddAdventureMutationState, mutationMigrationName)
+      const adventure = await createAdventure(client, fixture, '000000000004')
+      await client.table('adventure_character_states').insert({
+        adventure_id: adventure.id,
+        character_key: 'mira',
+        current_location_key: 'chapel',
+        mood: 'Uneasy.',
+        status: 'Waiting.',
+        memory: 'The player arrived.',
+        created_at: createdAt,
+      })
+
+      await runMigration(
+        client,
+        AddAdventureCharacterDebugOverrides,
+        '1784420400000_add_adventure_character_debug_overrides'
+      )
+      const upgraded = await client
+        .from('adventure_character_states')
+        .where('adventure_id', adventure.id)
+        .where('character_key', 'mira')
+        .firstOrFail()
+      assert.equal(upgraded.mood, 'Uneasy.')
+      assert.isNull(upgraded.private_knowledge)
+
+      await client
+        .from('adventure_character_states')
+        .where('adventure_id', adventure.id)
+        .where('character_key', 'mira')
+        .update({ private_knowledge: 'The bell rope is hidden in the wall.' })
+      await assert.rejects(
+        () =>
+          rollbackMigration(
+            client,
+            AddAdventureCharacterDebugOverrides,
+            '1784420400000_add_adventure_character_debug_overrides'
+          ),
+        /Cannot remove Adventure NPC debug overrides while they contain data/
       )
     })
   })

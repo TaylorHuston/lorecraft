@@ -6,7 +6,11 @@ import {
   type AdventureStateExtractor,
 } from './adventure_state_extractor.js'
 import { assembleAdventureStateExtractionPrompt } from './adventure_state_extraction_prompt.js'
-import { StoryGenerationError, type StoryGenerationResult } from './story_generator.js'
+import {
+  StoryGenerationError,
+  type StoryGenerationDebugContext,
+  type StoryGenerationResult,
+} from './story_generator.js'
 
 /**
  * Keeps structured extraction on its own application contract while allowing the
@@ -17,19 +21,22 @@ export class OpenAICompatibleAdventureStateExtractor implements AdventureStateEx
     private readonly transport: {
       generatePrompt(
         prompt: { system: string; user: string },
-        signal?: AbortSignal
+        signal?: AbortSignal,
+        debug?: StoryGenerationDebugContext
       ): Promise<StoryGenerationResult>
     }
   ) {}
 
   async extract(
     input: AdventureStateExtractionInput,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<AdventureStateExtractionResult> {
     try {
       const result = await this.transport.generatePrompt(
         assembleAdventureStateExtractionPrompt(input),
-        signal
+        signal,
+        debug
       )
       return {
         provider: result.provider,

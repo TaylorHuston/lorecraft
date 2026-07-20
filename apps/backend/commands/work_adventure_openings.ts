@@ -2,6 +2,10 @@ import AdventureOpeningWorker, {
   leaseDurationForProviderTimeout,
 } from '#services/adventure_opening_worker'
 import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
+import {
+  createDevelopmentDebugTrace,
+  resolveDevelopmentDebugTraceOptions,
+} from '#services/story_generation/development_debug_trace'
 import { BaseCommand } from '@adonisjs/core/ace'
 import env from '#start/env'
 import logger from '@adonisjs/core/services/logger'
@@ -70,6 +74,14 @@ export default class WorkAdventureOpenings extends BaseCommand {
     }
 
     const workerId = `${hostname()}:${process.pid}:${randomUUID()}`
+    const debugTrace = createDevelopmentDebugTrace(
+      resolveDevelopmentDebugTraceOptions({
+        nodeEnv: env.get('NODE_ENV'),
+        enabled: env.get('LORECRAFT_DEBUG_TRACE'),
+        captureRawRequest: env.get('LORECRAFT_DEBUG_TRACE_RAW_REQUEST'),
+        captureRawResponse: env.get('LORECRAFT_DEBUG_TRACE_RAW_RESPONSE'),
+      })
+    )
     const worker = new AdventureOpeningWorker({
       generator: new OpenAICompatibleStoryGenerator({
         fetch,
@@ -84,6 +96,7 @@ export default class WorkAdventureOpenings extends BaseCommand {
         timeoutMs,
       }),
       workerId,
+      debugTrace,
       leaseDurationMs: leaseDurationForProviderTimeout(timeoutMs),
       logger: {
         info(event, fields) {

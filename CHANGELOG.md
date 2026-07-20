@@ -8,6 +8,8 @@ The format is based on Keep a Changelog 1.1.0.
 
 ### Added
 
+- World authors can create, edit, and delete complete Character Cards, including their initial Adventure mood, status, and memory.
+- Adventure Scene panels now let owners inspect a complete development/debug card for each NPC currently present.
 - Account creation, sign-in, persistent browser sessions, sign-out, and a protected Lorecraft workspace.
 - An authenticated World catalog with a shared read-only `Stormbound Chapel` starter World.
 - Structured World detail for canonical Locations and Characters, including character descriptions, backgrounds, personalities, voices, and locations while withholding private Character knowledge from shared reader/player views.

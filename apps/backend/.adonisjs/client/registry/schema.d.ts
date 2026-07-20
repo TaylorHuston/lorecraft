@@ -115,6 +115,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['show']>>>
     }
   }
+  'worlds.store_character': {
+    methods: ["POST"]
+    pattern: '/api/v1/worlds/:slug/characters'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/character').createCharacterValidator)>>
+      paramsTuple: [ParamValue]
+      params: { slug: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/character').createCharacterValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['storeCharacter']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['storeCharacter']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'worlds.update_character': {
+    methods: ["PATCH"]
+    pattern: '/api/v1/worlds/:slug/characters/:key'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/character').updateCharacterValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { slug: ParamValue; key: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/character').updateCharacterValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['updateCharacter']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['updateCharacter']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'worlds.destroy_character': {
+    methods: ["DELETE"]
+    pattern: '/api/v1/worlds/:slug/characters/:key'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { slug: ParamValue; key: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['destroyCharacter']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/worlds_controller').default['destroyCharacter']>>>
+    }
+  }
   'adventures.store': {
     methods: ["POST"]
     pattern: '/api/v1/worlds/:slug/adventures'
@@ -149,6 +185,18 @@ export interface Registry {
       query: ExtractQuery<InferInput<(typeof import('#validators/adventure').submitAdventureTurnValidator)>>
       response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['submitTurn']>>>
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['submitTurn']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'adventures.update_npc_debug_state': {
+    methods: ["PATCH"]
+    pattern: '/api/v1/adventures/:id/npcs/:key/debug-state'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/adventure').updateAdventureNpcStateValidator)>>
+      paramsTuple: [ParamValue, ParamValue]
+      params: { id: ParamValue; key: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/adventure').updateAdventureNpcStateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['updateNpcDebugState']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['updateNpcDebugState']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'adventures.retry_turn': {

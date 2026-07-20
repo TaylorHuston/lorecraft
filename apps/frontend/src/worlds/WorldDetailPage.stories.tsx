@@ -24,6 +24,10 @@ const detail: WorldDetail = {
       background: 'Mira grew up around the chapel.',
       personality: 'Cautious and observant.',
       voice: 'Plain-spoken and restrained.',
+      privateKnowledge: 'Mira rang the bell before the storm arrived.',
+      initialMood: 'Watchful',
+      initialStatus: 'Sheltering in the chapel.',
+      initialMemory: 'She has not yet met the player.',
       location: { key: 'chapel', name: 'Chapel' },
     },
   ],
@@ -32,6 +36,9 @@ const detail: WorldDetail = {
 const emptyApi: WorldApi = {
   listWorlds: async () => [],
   getWorld: async () => detail,
+  createCharacter: async () => undefined,
+  updateCharacter: async () => undefined,
+  deleteCharacter: async () => undefined,
 }
 
 const adventureApi: AdventureApi = {
@@ -63,9 +70,13 @@ function detailApi(world: WorldDetail): WorldApi {
   return { ...emptyApi, getWorld: async () => world }
 }
 
-function renderDetail(api: WorldApi, route = '/worlds/stormbound-chapel') {
+function renderDetail(
+  api: WorldApi,
+  route = '/worlds/stormbound-chapel',
+  account?: { id: number; email: string } | null
+) {
   return (
-    <StorybookAppProviders route={route}>
+    <StorybookAppProviders account={account} route={route}>
       <Routes>
         <Route
           path="/worlds/:slug"
@@ -77,6 +88,13 @@ function renderDetail(api: WorldApi, route = '/worlds/stormbound-chapel') {
 }
 
 const loadedApi = detailApi(detail)
+const authorDetail: WorldDetail = { ...detail, readOnly: false }
+const authoringApi: WorldApi = {
+  ...detailApi(authorDetail),
+  createCharacter: async () => undefined,
+  updateCharacter: async () => undefined,
+  deleteCharacter: async () => undefined,
+}
 const loadingApi: WorldApi = { ...emptyApi, getWorld: () => new Promise(() => undefined) }
 const missingApi: WorldApi = {
   ...emptyApi,
@@ -147,6 +165,32 @@ export const Loaded: Story = {
 export const LoadedMobile: Story = {
   ...Loaded,
   parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
+export const Authoring: Story = {
+  args: { worldApi: authoringApi },
+  render: () =>
+    renderDetail(authoringApi, '/worlds/stormbound-chapel', {
+      id: 1,
+      email: 'keeper@lorecraft.test',
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add Character' }))
+    await expect(canvas.getByRole('heading', { name: 'Add a Character' })).toBeVisible()
+    await expect(canvas.getByLabelText('Private knowledge')).toBeVisible()
+    await expect(canvas.getByLabelText('Initial memory')).toBeVisible()
+  },
+}
+
+export const CharacterDeleteConfirmation: Story = {
+  ...Authoring,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(canvasElement.ownerDocument.body)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Delete' }))
+    await expect(page.getByRole('dialog', { name: 'Delete Mira?' })).toBeVisible()
+  },
 }
 
 const populatedAdventureDetail: WorldDetail = {

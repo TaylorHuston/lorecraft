@@ -61,6 +61,24 @@ function containsDirectReflection(narration: string, protectedValue: string): bo
 }
 
 /**
+ * Reject literal disclosure of private card material. This intentionally cannot
+ * detect semantic paraphrase; the provider instruction still forbids that and
+ * tests must continue to exercise it during prompt refinement.
+ */
+export function assertNarrationDoesNotReflectPrivateValues(
+  narration: string,
+  privateValues: ReadonlyArray<string | null | undefined>
+): void {
+  const protectedValues = privateValues
+    .filter((value): value is string => Boolean(value?.trim()))
+    .map(normalizedForDisclosureCheck)
+  const normalizedNarration = normalizedForDisclosureCheck(narration)
+  if (protectedValues.some((value) => containsDirectReflection(normalizedNarration, value))) {
+    throw new UnsafeNarrationPublicationError()
+  }
+}
+
+/**
  * Reject direct reflection of private prompt material before it can become
  * durable, player-visible narration. This complements prompt instructions;
  * provider prose is untrusted and must not be published on instruction alone.
@@ -69,14 +87,10 @@ export function assertNarrationSafeForPublication(
   narration: string,
   context: AdventureTurnContext
 ): void {
-  const protectedValues = [context.trigger === 'guide' ? context.input : null]
-    .filter((value): value is string => Boolean(value?.trim()))
-    .map(normalizedForDisclosureCheck)
-
-  const normalizedNarration = normalizedForDisclosureCheck(narration)
-  if (protectedValues.some((value) => containsDirectReflection(normalizedNarration, value))) {
-    throw new UnsafeNarrationPublicationError()
-  }
+  assertNarrationDoesNotReflectPrivateValues(narration, [
+    context.trigger === 'guide' ? context.input : null,
+    ...context.frozenCanon.characters.map((character) => character.privateKnowledge),
+  ])
 }
 
 /** Assembles a bounded, data-delimited prompt for one turn's narration. */
@@ -120,8 +134,11 @@ export function assembleTurnPrompt(input: TurnStoryInput): TurnPrompt {
       `Background: ${character.background}`,
       `Personality: ${character.personality}`,
       `Voice: ${character.voice}`,
+      `Private knowledge: ${character.privateKnowledge}`,
       `Current location key: ${currentState?.currentLocationKey ?? 'Not present in Adventure state.'}`,
-      'Private knowledge and hidden mutable Character state are intentionally excluded from narration context.'
+      `Current mood: ${currentState?.mood ?? character.initialMood}`,
+      `Current status: ${currentState?.currentStatus ?? character.initialStatus}`,
+      `Player memory: ${currentState?.summarizedMemory ?? character.initialMemory}`
     )
   }
 

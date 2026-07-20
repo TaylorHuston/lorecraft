@@ -1,5 +1,5 @@
-import type { AdventureTurnState } from './adventure_turn_context.js'
-import type { StoryGenerationEvidence } from './story_generator.js'
+import type { AdventureTurnState, TurnFrozenCanon } from './adventure_turn_context.js'
+import type { StoryGenerationDebugContext, StoryGenerationEvidence } from './story_generator.js'
 
 const maximumExtractionBytes = 100_000
 const maximumProposals = 24
@@ -30,6 +30,7 @@ export type AdventureStateExtraction = {
 export type AdventureStateExtractionInput = {
   narration: string
   currentState: AdventureTurnState
+  charactersPresent: TurnFrozenCanon['characters']
 }
 
 export type AdventureStateExtractionResult = StoryGenerationEvidence & {
@@ -57,7 +58,8 @@ export class AdventureStateExtractionError extends Error {
 export interface AdventureStateExtractor {
   extract(
     input: AdventureStateExtractionInput,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<AdventureStateExtractionResult>
 }
 

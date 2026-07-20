@@ -11,6 +11,9 @@ const emptyWorldApi: WorldApi = {
   getWorld: async () => {
     throw new Error('Not used in this story.')
   },
+  createCharacter: async () => undefined,
+  updateCharacter: async () => undefined,
+  deleteCharacter: async () => undefined,
 }
 
 const populatedWorldApi: WorldApi = {

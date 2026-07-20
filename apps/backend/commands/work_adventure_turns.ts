@@ -2,6 +2,10 @@ import AdventureTurnProductionCompletionPort from '#services/adventure_turn_prod
 import AdventureTurnWorker from '#services/adventure_turn_worker'
 import { OpenAICompatibleAdventureStateExtractor } from '#services/story_generation/openai_compatible_adventure_state_extractor'
 import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
+import {
+  createDevelopmentDebugTrace,
+  resolveDevelopmentDebugTraceOptions,
+} from '#services/story_generation/development_debug_trace'
 import { BaseCommand } from '@adonisjs/core/ace'
 import env from '#start/env'
 import logger from '@adonisjs/core/services/logger'
@@ -69,10 +73,19 @@ export default class WorkAdventureTurns extends BaseCommand {
       timeoutMs,
     })
     const workerId = `${hostname()}:${process.pid}:${randomUUID()}`
+    const debugTrace = createDevelopmentDebugTrace(
+      resolveDevelopmentDebugTraceOptions({
+        nodeEnv: env.get('NODE_ENV'),
+        enabled: env.get('LORECRAFT_DEBUG_TRACE'),
+        captureRawRequest: env.get('LORECRAFT_DEBUG_TRACE_RAW_REQUEST'),
+        captureRawResponse: env.get('LORECRAFT_DEBUG_TRACE_RAW_RESPONSE'),
+      })
+    )
     const worker = new AdventureTurnWorker({
       completion: new AdventureTurnProductionCompletionPort({
         storyGenerator,
         stateExtractor: new OpenAICompatibleAdventureStateExtractor(storyGenerator),
+        debugTrace,
       }),
       workerId,
       leaseDurationMs: timeoutMs * 2 + 30_000,

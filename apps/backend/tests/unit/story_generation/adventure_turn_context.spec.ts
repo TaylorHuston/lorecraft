@@ -4,7 +4,11 @@ import {
   assembleAdventureTurnContext,
   type AdventureTurnContextInput,
 } from '#services/story_generation/adventure_turn_context'
-import { assembleTurnPrompt } from '#services/story_generation/turn_prompt'
+import {
+  assertNarrationSafeForPublication,
+  assembleTurnPrompt,
+  UnsafeNarrationPublicationError,
+} from '#services/story_generation/turn_prompt'
 
 const turnContextInput: AdventureTurnContextInput = {
   frozenCanon: {
@@ -30,6 +34,9 @@ const turnContextInput: AdventureTurnContextInput = {
         personality: 'Careful and observant.',
         voice: 'Quiet and direct.',
         privateKnowledge: 'She has seen the missing bell rope.',
+        initialMood: 'Uneasy.',
+        initialStatus: 'Watching the chapel door.',
+        initialMemory: 'Taylor arrived during the storm.',
         sortOrder: 10,
       },
     ],
@@ -118,9 +125,9 @@ test.group('Adventure turn context', () => {
     assert.notInclude(prompt.user, 'do-not-leak')
     assert.notInclude(prompt.user, 'unknown location')
     assert.notInclude(prompt.user, 'succeeded')
-    assert.notInclude(prompt.user, 'She has seen the missing bell rope.')
-    assert.notInclude(prompt.user, 'Taylor arrived during the storm.')
-    assert.notInclude(prompt.user, 'Wary')
+    assert.include(prompt.user, 'She has seen the missing bell rope.')
+    assert.include(prompt.user, 'Taylor arrived during the storm.')
+    assert.include(prompt.user, 'Wary')
   })
 
   test('includes current Guide once as private current direction but not as normal history', ({
@@ -157,5 +164,109 @@ test.group('Adventure turn context', () => {
       'The player deliberately passes; advance the scene without inventing player intent.'
     )
     assert.notInclude(prompt.user, 'this must not cross the trigger boundary')
+  })
+
+  test('includes complete cards for current-Scene NPCs and excludes off-scene NPCs', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext({
+      ...turnContextInput,
+      frozenCanon: {
+        ...turnContextInput.frozenCanon,
+        characters: [
+          ...turnContextInput.frozenCanon.characters,
+          {
+            key: 'outside',
+            name: 'The Groundskeeper',
+            physicalDescription: 'Mud-stained boots.',
+            background: 'Tends the graveyard.',
+            personality: 'Taciturn.',
+            voice: 'Rough.',
+            privateKnowledge: 'Hides the tower key.',
+            initialMood: 'Distrustful.',
+            initialStatus: 'Outside in the storm.',
+            initialMemory: 'Has not met Taylor.',
+            sortOrder: 20,
+          },
+        ],
+      },
+      currentState: {
+        ...turnContextInput.currentState,
+        characters: [
+          ...turnContextInput.currentState.characters,
+          {
+            characterKey: 'outside',
+            currentLocationKey: 'graveyard',
+            mood: 'Distrustful.',
+            currentStatus: 'Outside in the storm.',
+            summarizedMemory: 'Has not met Taylor.',
+          },
+        ],
+      },
+    })
+    const prompt = assembleTurnPrompt({ platformInstructions: 'GM.', context })
+
+    assert.deepEqual(
+      context.frozenCanon.characters.map((character) => character.key),
+      ['mira']
+    )
+    assert.deepEqual(
+      context.currentState.characters.map((character) => character.characterKey),
+      ['mira']
+    )
+    assert.include(prompt.user, 'Private knowledge: She has seen the missing bell rope.')
+    assert.include(prompt.user, 'Current mood: Wary')
+    assert.notInclude(prompt.user, 'The Groundskeeper')
+    assert.notInclude(prompt.user, 'Hides the tower key.')
+  })
+
+  test('uses local Debug card overrides for the next turn without changing frozen canon', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext({
+      ...turnContextInput,
+      currentState: {
+        ...turnContextInput.currentState,
+        characters: [
+          {
+            ...turnContextInput.currentState.characters[0],
+            name: 'Mira of the Vestry',
+            physicalDescription: 'Soot-streaked with a brass lantern.',
+            background: 'Guards the chapel ledger after midnight.',
+            personality: 'Focused and guarded.',
+            voice: 'Low and clipped.',
+            privateKnowledge: 'The ledger is sealed inside the vestry wall.',
+          },
+        ],
+      },
+    })
+    const prompt = assembleTurnPrompt({ platformInstructions: 'GM.', context })
+
+    assert.deepInclude(context.frozenCanon.characters[0], {
+      name: 'Mira of the Vestry',
+      privateKnowledge: 'The ledger is sealed inside the vestry wall.',
+    })
+    assert.equal(turnContextInput.frozenCanon.characters[0].name, 'Mira')
+    assert.include(prompt.user, 'Mira of the Vestry')
+    assert.include(prompt.user, 'The ledger is sealed inside the vestry wall.')
+    assert.notInclude(prompt.user, 'She has seen the missing bell rope.')
+  })
+
+  test('LC-003/S2/R3-S5: rejects direct reflection of NPC private knowledge before publication', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext(turnContextInput)
+
+    assert.throws(
+      () =>
+        assertNarrationSafeForPublication(
+          'Mira admits that she has seen the missing bell rope.',
+          context
+        ),
+      UnsafeNarrationPublicationError
+    )
+    assert.doesNotThrow(() =>
+      assertNarrationSafeForPublication('Mira looks toward the bell tower in silence.', context)
+    )
   })
 })

@@ -13,6 +13,8 @@ import {
 import { assertNarrationSafeForPublication } from '#services/story_generation/turn_prompt'
 import type { TurnStoryGenerator } from '#services/story_generation/turn_story_generator'
 import { StoryGenerationError } from '#services/story_generation/story_generator'
+import type { StoryGenerationDebugContext } from '#services/story_generation/story_generator'
+import type { DevelopmentDebugTrace } from '#services/story_generation/development_debug_trace'
 import type {
   AdventureTurnCompletion,
   AdventureTurnCompletionPort,
@@ -67,7 +69,13 @@ function stateFrom(
   },
   characterRows: Array<{
     character_key: string
+    name: string | null
     current_location_key: string
+    physical_description: string | null
+    background: string | null
+    personality: string | null
+    voice: string | null
+    private_knowledge: string | null
     mood: string
     status: string
     memory: string
@@ -78,7 +86,13 @@ function stateFrom(
     const row = byKey.get(character.key)
     return {
       characterKey: character.key,
+      name: row?.name ?? null,
       currentLocationKey: row?.current_location_key ?? character.locationKey,
+      physicalDescription: row?.physical_description ?? null,
+      background: row?.background ?? null,
+      personality: row?.personality ?? null,
+      voice: row?.voice ?? null,
+      privateKnowledge: row?.private_knowledge ?? null,
       mood: row?.mood ?? '',
       currentStatus: row?.status ?? '',
       summarizedMemory: row?.memory ?? '',
@@ -127,6 +141,13 @@ function evidenceFor(result: {
   }
 }
 
+function npcCardMetadata(characters: AdventureTurnContext['frozenCanon']['characters']) {
+  return {
+    npcCardCount: characters.length,
+    npcCardCharacterCount: JSON.stringify(characters).length,
+  }
+}
+
 /**
  * The production completion boundary stages provider work outside the database
  * transaction and only publishes a fully validated, revision-linked result.
@@ -135,15 +156,18 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
   readonly #storyGenerator: TurnStoryGenerator
   readonly #stateExtractor: AdventureStateExtractor
   readonly #platformInstructions: string
+  readonly #debugTrace: DevelopmentDebugTrace | null
 
   constructor(options: {
     storyGenerator: TurnStoryGenerator
     stateExtractor: AdventureStateExtractor
     platformInstructions?: string
+    debugTrace?: DevelopmentDebugTrace | null
   }) {
     this.#storyGenerator = options.storyGenerator
     this.#stateExtractor = options.stateExtractor
     this.#platformInstructions = options.platformInstructions ?? defaultPlatformInstructions
+    this.#debugTrace = options.debugTrace ?? null
   }
 
   async resolve(
@@ -151,43 +175,101 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
     signal?: AbortSignal
   ): Promise<AdventureTurnCompletion> {
     const current = await this.#loadCurrentState(claim)
+    const metadata = npcCardMetadata(current.context.frozenCanon.characters)
+    const narrationDebug = this.#debugContext(claim, 'turn_narration_generation')
     let narration
     try {
+      await narrationDebug?.trace.capture({
+        ...narrationDebug,
+        stage: 'input',
+        input: {
+          trigger: current.context.trigger,
+          currentState: current.context.currentState,
+          charactersPresent: current.context.frozenCanon.characters,
+        },
+      })
       narration = await this.#storyGenerator.generateTurn(
         { platformInstructions: this.#platformInstructions, context: current.context },
-        signal
+        signal,
+        narrationDebug
       )
       assertNarrationSafeForPublication(narration.narration, current.context)
+      await narrationDebug?.trace.capture({
+        ...narrationDebug,
+        stage: 'outcome',
+        narration: narration.narration,
+        provider: narration.provider,
+        model: narration.model,
+        status: 'succeeded',
+      })
       await this.#recordModelCall(
         claim,
         'turn_narration_generation',
         'succeeded',
-        evidenceFor(narration)
+        evidenceFor(narration),
+        metadata
       )
     } catch (error) {
-      await this.#recordFailure(claim, 'turn_narration_generation', error)
+      await narrationDebug?.trace.capture({
+        ...narrationDebug,
+        stage: 'failure',
+        status: error instanceof StoryGenerationError ? error.code : 'provider_failure',
+      })
+      await this.#recordFailure(claim, 'turn_narration_generation', error, metadata)
       throw error
     }
+    const extractionDebug = this.#debugContext(claim, 'turn_state_extraction')
     let extraction
     try {
-      extraction = await this.#stateExtractor.extract(
-        { narration: narration.narration, currentState: current.context.currentState },
-        signal
-      )
+      const extractionInput = {
+        narration: narration.narration,
+        currentState: current.context.currentState,
+        charactersPresent: current.context.frozenCanon.characters,
+      }
+      await extractionDebug?.trace.capture({
+        ...extractionDebug,
+        stage: 'input',
+        input: extractionInput,
+      })
+      extraction = await this.#stateExtractor.extract(extractionInput, signal, extractionDebug)
+      await extractionDebug?.trace.capture({
+        ...extractionDebug,
+        stage: 'outcome',
+        parsedOutput: extraction.extraction,
+        provider: extraction.provider,
+        model: extraction.model,
+        status: 'succeeded',
+      })
       await this.#recordModelCall(
         claim,
         'turn_state_extraction',
         'succeeded',
-        evidenceFor(extraction)
+        evidenceFor(extraction),
+        metadata
       )
     } catch (error) {
-      await this.#recordFailure(claim, 'turn_state_extraction', error)
+      await extractionDebug?.trace.capture({
+        ...extractionDebug,
+        stage: 'failure',
+        status:
+          error instanceof StoryGenerationError || error instanceof AdventureStateExtractionError
+            ? error.code
+            : 'provider_failure',
+      })
+      await this.#recordFailure(claim, 'turn_state_extraction', error, metadata)
       throw error
     }
     const mutations = resolveAdventureMutations({
       snapshot: current.snapshot,
       state: current.mutationState,
       proposals: extraction.extraction.proposals,
+    })
+    await extractionDebug?.trace.capture({
+      ...extractionDebug,
+      stage: 'outcome',
+      acceptedUpdates: mutations.accepted,
+      ignoredUpdates: mutations.rejected,
+      status: 'mutations_resolved',
     })
 
     return this.#completion({
@@ -226,7 +308,19 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
       db
         .from('adventure_character_states')
         .where('adventure_id', claim.adventureId)
-        .select('character_key', 'current_location_key', 'mood', 'status', 'memory'),
+        .select(
+          'character_key',
+          'name',
+          'current_location_key',
+          'physical_description',
+          'background',
+          'personality',
+          'voice',
+          'private_knowledge',
+          'mood',
+          'status',
+          'memory'
+        ),
       db
         .from('adventure_revisions')
         .where('adventure_id', claim.adventureId)
@@ -375,6 +469,7 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
     operation: string,
     status: 'succeeded' | 'failed',
     evidence: ModelEvidence,
+    metadata: { npcCardCount: number; npcCardCharacterCount: number },
     failure?: { code: string; message: string }
   ) {
     const completedAt = new Date()
@@ -382,7 +477,7 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
       adventure_id: claim.adventureId,
       job_id: claim.jobId,
       operation,
-      request_metadata: evidence.request,
+      request_metadata: { ...evidence.request, ...metadata },
       response_metadata: evidence.response,
       provider: evidence.provider,
       model: evidence.model,
@@ -399,7 +494,12 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
     })
   }
 
-  async #recordFailure(claim: ClaimedAdventureTurn, operation: string, error: unknown) {
+  async #recordFailure(
+    claim: ClaimedAdventureTurn,
+    operation: string,
+    error: unknown,
+    metadata: { npcCardCount: number; npcCardCharacterCount: number }
+  ) {
     const unavailable: ModelEvidence = {
       provider: 'unknown',
       model: 'unknown',
@@ -416,9 +516,24 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
         ? 'malformed_response'
         : (source?.code ?? 'provider_failure')
     const evidence = source?.evidence ? evidenceFor(source.evidence) : unavailable
-    await this.#recordModelCall(claim, operation, 'failed', evidence, {
+    await this.#recordModelCall(claim, operation, 'failed', evidence, metadata, {
       code,
       message: `Adventure turn ${operation} failed: ${code}.`,
     })
+  }
+
+  #debugContext(
+    claim: ClaimedAdventureTurn,
+    operation: StoryGenerationDebugContext['operation']
+  ): StoryGenerationDebugContext | undefined {
+    if (!this.#debugTrace) return undefined
+    return {
+      trace: this.#debugTrace,
+      traceId: `${claim.adventureId}:${claim.turnId}:${operation}:${claim.attempt}`,
+      operation,
+      adventureId: claim.adventureId,
+      jobId: claim.jobId,
+      turnId: claim.turnId,
+    }
   }
 }

@@ -43,6 +43,14 @@ export type AdventureDetailDto = Omit<AdventureSummaryDto, 'playerName'> & {
       key: string
       name: string
       physicalDescription: string
+      background: string
+      personality: string
+      voice: string
+      privateKnowledge: string
+      currentLocation: { key: string; name: string }
+      mood: string
+      status: string
+      memory: string
     }>
   }
   activeTurn: {
@@ -158,7 +166,19 @@ export default class AdventureQueryService {
       db
         .from('adventure_character_states')
         .where('adventure_id', adventure.id)
-        .select('character_key', 'current_location_key', 'mood', 'status', 'memory'),
+        .select(
+          'character_key',
+          'current_location_key',
+          'mood',
+          'status',
+          'memory',
+          'name',
+          'physical_description',
+          'background',
+          'personality',
+          'voice',
+          'private_knowledge'
+        ),
       db
         .from('adventure_turns')
         .where('adventure_id', adventure.id)
@@ -225,10 +245,27 @@ export default class AdventureQueryService {
                 character.locationKey) === currentLocation.key
           )
           .map((character) => {
+            const state = characterStateByKey.get(character.key)
             return {
               key: character.key,
-              name: character.name,
-              physicalDescription: character.physicalDescription,
+              name: (state?.name as string | null | undefined) ?? character.name,
+              physicalDescription:
+                (state?.physical_description as string | null | undefined) ??
+                character.physicalDescription,
+              background: (state?.background as string | null | undefined) ?? character.background,
+              personality:
+                (state?.personality as string | null | undefined) ?? character.personality,
+              voice: (state?.voice as string | null | undefined) ?? character.voice,
+              privateKnowledge:
+                (state?.private_knowledge as string | null | undefined) ??
+                character.privateKnowledge,
+              currentLocation: {
+                key: state?.current_location_key ?? character.locationKey,
+                name: currentLocation.name,
+              },
+              mood: state?.mood ?? character.initialMood ?? '',
+              status: state?.status ?? character.initialStatus ?? '',
+              memory: state?.memory ?? character.initialMemory ?? '',
             }
           }),
       },

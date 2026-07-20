@@ -15,6 +15,7 @@ import {
   type AdventureApi,
   type AdventureDetail,
   type SubmitAdventureTurnInput,
+  type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 import styles from './AdventurePage.module.css'
 
@@ -53,6 +54,7 @@ export function AdventurePage({
   const [resetError, setResetError] = useState<string | null>(null)
   const [retryingLoad, setRetryingLoad] = useState(false)
   const queryKey = adventureQueryKeys.detail(account?.id ?? 0, id)
+  const updateNpcStateFromApi = adventureApi.updateNpcState
   const adventure = useQuery({
     queryKey,
     queryFn: () => adventureApi.getAdventure(id),
@@ -134,6 +136,23 @@ export function AdventurePage({
       void queryClient.invalidateQueries({ queryKey })
     },
   })
+  const updateNpcState = useMutation({
+    mutationFn: ({
+      characterKey,
+      input,
+    }: {
+      characterKey: string
+      input: UpdateAdventureNpcStateInput
+    }) => {
+      if (!updateNpcStateFromApi) {
+        throw new AdventureApiError('network', 'NPC state editing is unavailable.')
+      }
+      return updateNpcStateFromApi(id, characterKey, input)
+    },
+    onSuccess: (updatedAdventure) => {
+      queryClient.setQueryData(queryKey, updatedAdventure)
+    },
+  })
 
   useEffect(() => {
     const error =
@@ -154,6 +173,7 @@ export function AdventurePage({
     retry.error,
     retryTurn.error,
     submitTurn.error,
+    updateNpcState.error,
   ])
 
   if (adventure.isPending && !retryingLoad) {
@@ -254,6 +274,13 @@ export function AdventurePage({
         onDiscardTurn={(turnId) => discardTurn.mutate(turnId)}
         discardingTurn={discardTurn.isPending}
         turnDiscardError={turnDiscardError}
+        onSaveNpcState={
+          import.meta.env.DEV && updateNpcStateFromApi
+            ? async (characterKey, input) => {
+                await updateNpcState.mutateAsync({ characterKey, input })
+              }
+            : undefined
+        }
       />
       {settingsOpen ? (
         <Dialog

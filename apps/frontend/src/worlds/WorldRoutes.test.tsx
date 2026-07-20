@@ -28,6 +28,10 @@ const stormboundDetail: WorldDetail = {
       background: 'Mira grew up around the chapel.',
       personality: 'Cautious and observant.',
       voice: 'Plain-spoken and restrained.',
+      privateKnowledge: 'Mira rang the bell before the storm arrived.',
+      initialMood: 'Watchful',
+      initialStatus: 'Sheltering in the chapel.',
+      initialMemory: 'She has not yet met the player.',
       location: { key: 'chapel', name: 'Chapel' },
     },
   ],
@@ -272,7 +276,7 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByRole('link', { name: 'Back to Worlds' })).toHaveAttribute('href', '/worlds')
     expect(screen.getByRole('heading', { name: 'Locations' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Mira' })).toBeVisible()
-    expect(screen.queryByText('Private knowledge')).not.toBeInTheDocument()
+    expect(screen.getByText('Private knowledge')).toBeInTheDocument()
     expect(screen.getByText('Chapel', { selector: 'span' })).toBeVisible()
     expect(screen.queryByText('member@example.com')).not.toBeInTheDocument()
   })
@@ -425,6 +429,62 @@ describe('World catalog and detail routes', () => {
     expect(screen.getByRole('region', { name: 'Locations' })).toContainElement(
       screen.getByRole('heading', { name: 'Chapel' })
     )
+  })
+
+  it('LC-002/S3/R6-S1 exposes complete debug cards but only author controls to the World author', async () => {
+    const user = userEvent.setup()
+    const createCharacter = vi.fn().mockResolvedValue(undefined)
+    const authorWorld = { ...stormboundDetail, readOnly: false }
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'author@example.com' },
+      worldApi: { getWorld: async () => authorWorld, createCharacter },
+    })
+
+    expect(await screen.findByText('Development / debug information: complete Character Cards include private knowledge and initial Adventure state.')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Add Character' }))
+    await user.type(screen.getByLabelText('Key'), 'alden')
+    await user.type(screen.getByLabelText('Name'), 'Brother Alden')
+    await user.selectOptions(screen.getByLabelText('Canonical Location'), 'chapel')
+    await user.type(screen.getByLabelText('Physical description'), 'A tired priest with a lantern.')
+    await user.type(screen.getByLabelText('Background'), 'He guards the chapel archive.')
+    await user.type(screen.getByLabelText('Personality'), 'Reserved and dutiful.')
+    await user.type(screen.getByLabelText('Voice'), 'Measured and formal.')
+    await user.type(screen.getByLabelText('Private knowledge'), 'He carries the vestry key.')
+    await user.type(screen.getByLabelText('Initial mood'), 'Concerned')
+    await user.type(screen.getByLabelText('Initial status'), 'Watching the player.')
+    await user.type(screen.getByLabelText('Initial memory'), 'He has not yet spoken to the player.')
+    await user.click(screen.getByRole('button', { name: 'Create Character' }))
+
+    await waitFor(() =>
+      expect(createCharacter).toHaveBeenCalledWith('stormbound-chapel', {
+        key: 'alden',
+        name: 'Brother Alden',
+        locationKey: 'chapel',
+        physicalDescription: 'A tired priest with a lantern.',
+        background: 'He guards the chapel archive.',
+        personality: 'Reserved and dutiful.',
+        voice: 'Measured and formal.',
+        privateKnowledge: 'He carries the vestry key.',
+        initialMood: 'Concerned',
+        initialStatus: 'Watching the player.',
+        initialMemory: 'He has not yet spoken to the player.',
+      })
+    )
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Characters' })).toHaveFocus())
+  })
+
+  it('LC-002/S3/R6-S1 keeps mutation controls out of a non-author World detail', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 9, email: 'reader@example.com' },
+      worldApi: { getWorld: async () => stormboundDetail },
+    })
+
+    expect(await screen.findByText('Private knowledge')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Add Character' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument()
   })
 
   it('LC-002/S2/R2-S2 keeps return navigation available while World detail is loading', async () => {

@@ -12,6 +12,7 @@ import {
   type AdventureTurnSubmission,
   type AdventureTurnStatus,
   type AdventureTurnTrigger,
+  type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 
 const adventureStatuses = new Set<AdventureStatus>([
@@ -52,6 +53,16 @@ const validationMessages: Record<AdventureField, string> = {
   'player.name': 'Enter a player name using 100 characters or fewer.',
   'player.physicalDescription': 'Use 2,000 characters or fewer.',
   'player.backstory': 'Use 8,000 characters or fewer.',
+  'name': 'Enter a name using 100 characters or fewer.',
+  'currentLocationKey': 'Choose a frozen Location key using 100 characters or fewer.',
+  'physicalDescription': 'Use 320 characters or fewer.',
+  'background': 'Use 700 characters or fewer.',
+  'personality': 'Use 320 characters or fewer.',
+  'voice': 'Use 240 characters or fewer.',
+  'privateKnowledge': 'Use 700 characters or fewer.',
+  'mood': 'Use 500 characters or fewer.',
+  'status': 'Use 1,000 characters or fewer.',
+  'memory': 'Use 2,000 characters or fewer.',
 }
 
 function validationApiError(error: unknown) {
@@ -154,7 +165,14 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         typeof npc.key === 'string' &&
         typeof npc.name === 'string' &&
         typeof npc.physicalDescription === 'string' &&
-        !('privateKnowledge' in npc)
+        typeof npc.background === 'string' &&
+        typeof npc.personality === 'string' &&
+        typeof npc.voice === 'string' &&
+        typeof npc.privateKnowledge === 'string' &&
+        typeof npc.mood === 'string' &&
+        typeof npc.status === 'string' &&
+        typeof npc.memory === 'string' &&
+        isLocationIdentity(npc.currentLocation)
     ) &&
     (value.activeTurn === null ||
       (isRecord(value.activeTurn) &&
@@ -294,6 +312,23 @@ export function createTuyauAdventureApi(baseUrl: string): AdventureApi {
         if (mapped) throw mapped
         if (error instanceof AdventureApiError) throw error
         throw new AdventureApiError('network', 'Lorecraft could not discard this turn.')
+      }
+    },
+    async updateNpcState(adventureId, characterKey, input: UpdateAdventureNpcStateInput) {
+      try {
+        await client.api.auth.csrf({})
+        return dataOf(
+          await client.api.adventures.updateNpcDebugState({
+            params: { id: adventureId, key: characterKey },
+            body: input,
+          }),
+          isAdventureDetail
+        )
+      } catch (error) {
+        const mapped = sharedApiError(error, 'Adventure or NPC not found.')
+        if (mapped) throw mapped
+        if (error instanceof AdventureApiError) throw error
+        throw new AdventureApiError('network', 'Lorecraft could not save this NPC state.')
       }
     },
     async resetAdventure(adventureId) {

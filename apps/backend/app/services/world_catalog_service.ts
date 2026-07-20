@@ -14,14 +14,14 @@ export type WorldSummaryDto = {
   readOnly: boolean
 }
 
-function summary(world: World): WorldSummaryDto {
+function summary(world: World, userId: number): WorldSummaryDto {
   return {
     id: world.id,
     slug: world.slug,
     name: world.name,
     description: world.description,
     visibility: world.visibility,
-    readOnly: true,
+    readOnly: world.authorId !== userId,
   }
 }
 
@@ -57,7 +57,10 @@ export default class WorldCatalogService {
       .orWhere('authorId', userId)
       .preload('currentVersion')
       .orderBy('name')
-    return worlds.map((world) => ({ ...summary(world), playability: playabilityFor(world) }))
+    return worlds.map((world) => ({
+      ...summary(world, userId),
+      playability: playabilityFor(world),
+    }))
   }
 
   async findFor(userId: number, slug: string) {
@@ -73,7 +76,7 @@ export default class WorldCatalogService {
 
     if (!world) return null
     return {
-      ...summary(world),
+      ...summary(world, userId),
       playability: playabilityFor(world),
       locations: world.locations.map((location) => ({
         key: location.key,
@@ -87,6 +90,10 @@ export default class WorldCatalogService {
         background: character.background,
         personality: character.personality,
         voice: character.voice,
+        privateKnowledge: character.privateKnowledge,
+        initialMood: character.initialMood,
+        initialStatus: character.initialStatus,
+        initialMemory: character.initialMemory,
         location: character.location
           ? { key: character.location.key, name: character.location.name }
           : null,

@@ -4,7 +4,7 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
 export type WorldVersionSnapshot = {
-  schemaVersion: 1
+  schemaVersion: 1 | 2
   world: {
     slug: string
     name: string
@@ -27,6 +27,9 @@ export type WorldVersionSnapshot = {
     personality: string
     voice: string
     privateKnowledge: string
+    initialMood?: string
+    initialStatus?: string
+    initialMemory?: string
     sortOrder: number
   }>
   startingPoints: Array<{

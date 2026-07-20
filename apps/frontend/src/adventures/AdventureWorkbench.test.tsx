@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -35,6 +35,14 @@ const readyAdventure: AdventureView = {
         key: 'mira',
         name: 'Mira the Restless',
         physicalDescription: 'A spectral figure carrying a dying candle.',
+        background: 'A keeper bound to the chapel.',
+        personality: 'Reserved and exacting.',
+        voice: 'Low and deliberate.',
+        privateKnowledge: 'She knows why the bell rang.',
+        currentLocation: { key: 'chapel', name: 'Stormbound Chapel' },
+        mood: 'Uneasy',
+        status: 'Watching the doors.',
+        memory: 'The player has just arrived.',
       },
     ],
   },
@@ -73,6 +81,100 @@ describe('AdventureWorkbench', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('LC-003/S3/R1-S1 opens a complete NPC debug card and restores list focus on Back', async () => {
+    const user = userEvent.setup()
+    render(<AdventureWorkbench adventure={readyAdventure} />)
+
+    const npc = screen.getByRole('button', { name: 'Mira the Restless' })
+    await user.click(npc)
+
+    const card = screen.getByRole('region', { name: 'NPC debug card' })
+    expect(card).toHaveTextContent('Development / debug information')
+    expect(card).toHaveTextContent('Mira the Restless')
+    expect(card).toHaveTextContent('She knows why the bell rang.')
+    expect(card).toHaveTextContent('Watching the doors.')
+
+    await user.click(screen.getByRole('button', { name: 'Back to Scene' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Mira the Restless' })).toHaveFocus()
+    )
+  })
+
+  it('LC-003/S3/R3-S1 autosaves every editable Adventure-owned NPC card field', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />)
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    expect(screen.getByText(/Click a card value to edit/i)).toBeVisible()
+    expect(screen.getByText(/never changes the frozen World or seed data/i)).toBeVisible()
+
+    const mood = screen.getByLabelText('Mood')
+    await user.clear(mood)
+    await user.type(mood, 'Curious')
+
+    await waitFor(() =>
+      expect(saveNpcState).toHaveBeenCalledWith('mira', {
+        name: 'Mira the Restless',
+        currentLocationKey: 'chapel',
+        physicalDescription: 'A spectral figure carrying a dying candle.',
+        background: 'A keeper bound to the chapel.',
+        personality: 'Reserved and exacting.',
+        voice: 'Low and deliberate.',
+        privateKnowledge: 'She knows why the bell rang.',
+        mood: 'Curious',
+        status: 'Watching the doors.',
+        memory: 'The player has just arrived.',
+      })
+    )
+  })
+
+  it('LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<AdventureWorkbench adventure={readyAdventure} />)
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    expect(screen.getByRole('region', { name: 'NPC debug card' })).toBeVisible()
+
+    rerender(
+      <AdventureWorkbench
+        adventure={{ ...readyAdventure, scene: { ...readyAdventure.scene, npcs: [] } }}
+      />
+    )
+
+    expect(await screen.findByText('No one else is visible here.')).toBeVisible()
+    expect(screen.queryByRole('region', { name: 'NPC debug card' })).not.toBeInTheDocument()
+  })
+
+  it('LC-003/S3/R3-S3 keeps the Debug editor usable after moving its selected NPC out of Scene', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi.fn().mockResolvedValue(undefined)
+    const { rerender } = render(
+      <AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    const location = screen.getByLabelText('Current location key')
+    await user.clear(location)
+    await user.type(location, 'vestry')
+    await waitFor(() => expect(saveNpcState).toHaveBeenCalledTimes(1))
+
+    rerender(
+      <AdventureWorkbench
+        adventure={{ ...readyAdventure, scene: { ...readyAdventure.scene, npcs: [] } }}
+        onSaveNpcState={saveNpcState}
+      />
+    )
+
+    expect(screen.getByRole('region', { name: 'NPC debug card' })).toBeVisible()
+    expect(screen.getByLabelText('Current location key')).toHaveValue('vestry')
+    expect(screen.getByText(/no longer in the current Scene/i)).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Mira the Restless' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Back to Scene' }))
+    expect(await screen.findByText('No one else is visible here.')).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('region', { name: 'Scene' })).toHaveFocus())
+  })
+
   it('renders repeated narration paragraphs without duplicate React keys', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
     render(
@@ -98,9 +200,9 @@ describe('AdventureWorkbench', () => {
 
     try {
       const { rerender } = render(<AdventureWorkbench adventure={readyAdventure} />)
-      const storyContent = screen.getByRole('region', { name: 'Story' }).querySelector(
-        '[data-slot="story-scroll-region"]'
-      ) as HTMLDivElement
+      const storyContent = screen
+        .getByRole('region', { name: 'Story' })
+        .querySelector('[data-slot="story-scroll-region"]') as HTMLDivElement
       expect(storyContent.scrollTop).toBe(1_000)
 
       storyContent.scrollTop = 50
@@ -206,7 +308,9 @@ describe('AdventureWorkbench', () => {
     expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'true')
     expect(
-      screen.queryByText('This direction guides only this resolution. It is not shown in the story.')
+      screen.queryByText(
+        'This direction guides only this resolution. It is not shown in the story.'
+      )
     ).not.toBeInTheDocument()
   })
 
@@ -267,7 +371,9 @@ describe('AdventureWorkbench', () => {
         onDiscardTurn={discardTurn}
       />
     )
-    expect(screen.getByRole('alert')).toHaveTextContent('did not change the story')
+    const failure = screen.getByRole('alert')
+    expect(failure).toHaveTextContent('did not change the story')
+    expect(failure.closest('[data-slot="turn-composer-dock"]')).not.toBeNull()
     await user.click(screen.getByRole('button', { name: 'Retry turn' }))
     await user.click(screen.getByRole('button', { name: 'Discard' }))
     expect(retryTurn).toHaveBeenCalledWith('turn-1')

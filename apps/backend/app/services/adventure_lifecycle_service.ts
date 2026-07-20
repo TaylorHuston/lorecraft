@@ -199,9 +199,9 @@ export default class AdventureLifecycleService {
             adventure_id: adventure.id,
             character_key: character.key,
             current_location_key: character.locationKey,
-            mood: '',
-            status: '',
-            memory: '',
+            mood: character.initialMood ?? '',
+            status: character.initialStatus ?? '',
+            memory: character.initialMemory ?? '',
             created_at: now,
             updated_at: null,
           }))

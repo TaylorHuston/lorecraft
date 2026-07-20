@@ -1,6 +1,7 @@
 import type {
   OpeningStoryInput,
   StoryGenerationEvidence,
+  StoryGenerationDebugContext,
   StoryGenerationResult,
   StoryGenerationSettings,
   StoryGenerator,
@@ -163,25 +164,32 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator, TurnStory
   /** Shared transport primitive for a separately-owned structured operation. */
   async generatePrompt(
     prompt: { system: string; user: string },
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
-    return this.#generate(prompt, signal)
+    return this.#generate(prompt, signal, debug)
   }
 
   async generateOpening(
     input: OpeningStoryInput,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
-    return this.generatePrompt(assembleOpeningPrompt(input), signal)
+    return this.generatePrompt(assembleOpeningPrompt(input), signal, debug)
   }
 
-  async generateTurn(input: TurnStoryInput, signal?: AbortSignal): Promise<StoryGenerationResult> {
-    return this.generatePrompt(assembleTurnPrompt(input), signal)
+  async generateTurn(
+    input: TurnStoryInput,
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
+  ): Promise<StoryGenerationResult> {
+    return this.generatePrompt(assembleTurnPrompt(input), signal, debug)
   }
 
   async #generate(
     prompt: { system: string; user: string },
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
     const url = `${this.config.baseUrl.replace(/\/$/, '')}/chat/completions`
     const body = {
@@ -297,6 +305,31 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator, TurnStory
         ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
       },
     }
+    await debug?.trace.capture({
+      traceId: debug.traceId,
+      operation: debug.operation,
+      stage: 'provider',
+      adventureId: debug.adventureId,
+      jobId: debug.jobId,
+      turnId: debug.turnId,
+      provider: pendingEvidence.provider,
+      model: pendingEvidence.model,
+      promptSummary: {
+        systemCharacters: prompt.system.length,
+        userCharacters: prompt.user.length,
+      },
+      promptByteCount: Buffer.byteLength(`${prompt.system}\n${prompt.user}`, 'utf8'),
+      rawRequest: {
+        headers: {
+          'accept': 'application/json',
+          'authorization': `Bearer ${this.config.apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: serializedBody,
+      },
+      rawResponse,
+      status: response.ok ? 'succeeded' : 'failed',
+    })
 
     if (!response.ok) {
       throw new StoryGenerationError(

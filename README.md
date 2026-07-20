@@ -12,7 +12,7 @@ Implemented now:
 
 - Account creation, sign-in, session restoration, protected workspace access, and sign-out.
 - An authenticated catalog of Worlds available to the current account.
-- Read-only inspection of structured World metadata, Locations, and Characters.
+- Inspection of structured World metadata, Locations, and complete development/debug Character Cards; World authors can create, edit, and delete Characters for future Adventures.
 - Explicit, repeatable installation of the shared `Stormbound Chapel` starter World for local testing.
 - Private Adventures created from a frozen version of an accessible World, with a durable generated opening, resume, retry, reset, and delete flows.
 - Owner-only Act, Pass, and private Guide turns with durable resolution, bounded Adventure-owned state changes, and retry or discard recovery.
@@ -105,6 +105,8 @@ Backend configuration lives in `apps/backend/.env`:
 - `LLM_TIMEOUT_MS`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE`, optional `LLM_REASONING_EFFORT`, and `ADVENTURE_WORKER_POLL_INTERVAL_MS` tune bounded Adventure generation and queue polling. Set reasoning effort to `none` for compatible local models that otherwise spend the narration budget on hidden reasoning.
 
 Adventure opening and turn generation send the applicable player profile, frozen World context, current Adventure state, and current Act or private Guide input to the configured AI provider. Lorecraft retains accepted narration and bounded operational metadata, but not assembled prompts, provider request messages, raw provider responses, or private Guide text as operational evidence.
+
+Local development defaults to protected JSONL diagnostics and sanitized raw provider request/response capture under ignored `apps/backend/tmp/debug/`. Set `LORECRAFT_DEBUG_TRACE=0`, `LORECRAFT_DEBUG_TRACE_RAW_REQUEST=0`, or `LORECRAFT_DEBUG_TRACE_RAW_RESPONSE=0` to explicitly disable the corresponding local capture mode. This feature refuses production, redacts sensitive values, makes directories/files owner-only, and purges traces older than seven days. It never writes Debug content to normal logs, model-call records, or browser APIs.
 
 Frontend configuration lives in `apps/frontend/.env`:
 

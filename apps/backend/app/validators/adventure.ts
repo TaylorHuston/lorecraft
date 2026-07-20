@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { characterFieldLimits } from '#validators/character'
 
 export const ACT_INPUT_MAX_LENGTH = 4_000
 export const GUIDE_INPUT_MAX_LENGTH = 1_200
@@ -35,3 +36,25 @@ export const submitAdventureTurnValidator = vine.create(
       ])
     )
 )
+
+/** Development-only editor input for Adventure-owned NPC state, never World canon. */
+export const updateAdventureNpcStateValidator = vine.create({
+  name: vine.string().trim().minLength(1).maxLength(characterFieldLimits.name),
+  currentLocationKey: vine.string().trim().minLength(1).maxLength(100),
+  physicalDescription: vine
+    .string()
+    .trim()
+    .minLength(1)
+    .maxLength(characterFieldLimits.physicalDescription),
+  background: vine.string().trim().minLength(1).maxLength(characterFieldLimits.background),
+  personality: vine.string().trim().minLength(1).maxLength(characterFieldLimits.personality),
+  voice: vine.string().trim().minLength(1).maxLength(characterFieldLimits.voice),
+  privateKnowledge: vine
+    .string()
+    .trim()
+    .minLength(1)
+    .maxLength(characterFieldLimits.privateKnowledge),
+  mood: vine.string().trim().maxLength(500),
+  status: vine.string().trim().maxLength(1_000),
+  memory: vine.string().trim().maxLength(2_000),
+})

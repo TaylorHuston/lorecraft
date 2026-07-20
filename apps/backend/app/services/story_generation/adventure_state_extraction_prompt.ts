@@ -7,7 +7,8 @@ export type AdventureStateExtractionPrompt = {
 
 /**
  * Keeps extraction separate from narration generation: it receives staged prose
- * plus current structured state, never raw action/Guide input or story history.
+ * plus complete current-Scene NPC cards and current structured state, never raw
+ * action/Guide input or story history.
  */
 export function assembleAdventureStateExtractionPrompt(
   input: AdventureStateExtractionInput
@@ -18,6 +19,7 @@ export function assembleAdventureStateExtractionPrompt(
     user: JSON.stringify({
       narration: input.narration,
       currentState: input.currentState,
+      charactersPresent: input.charactersPresent,
       allowedProposalShapes: [
         { type: 'player_location', locationKey: 'existing-location-key' },
         {

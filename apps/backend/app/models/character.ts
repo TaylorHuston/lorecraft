@@ -36,6 +36,15 @@ export default class Character extends BaseModel {
   declare privateKnowledge: string
 
   @column()
+  declare initialMood: string
+
+  @column()
+  declare initialStatus: string
+
+  @column()
+  declare initialMemory: string
+
+  @column()
   declare sortOrder: number
 
   @column.dateTime({ autoCreate: true })

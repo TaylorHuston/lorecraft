@@ -38,6 +38,14 @@ const readyAdventure: AdventureDetail = {
         key: 'mira',
         name: 'Mira',
         physicalDescription: 'A watchful local with rain-dark hair.',
+        background: 'Mira grew up around the chapel.',
+        personality: 'Cautious and observant.',
+        voice: 'Plain-spoken and restrained.',
+        privateKnowledge: 'Mira rang the bell before the storm arrived.',
+        currentLocation: { key: 'chapel', name: 'Chapel' },
+        mood: 'Watchful',
+        status: 'Sheltering in the chapel.',
+        memory: 'She has not yet met the player.',
       },
     ],
   },
@@ -67,6 +75,7 @@ function apiFor(adventure: AdventureDetail): AdventureApi {
     }),
     retryTurn: async (turnId) => ({ id: turnId, status: 'pending' }),
     discardTurn: async () => undefined,
+    updateNpcState: async () => adventure,
     resetAdventure: async () => ({ adventureId: id, status: 'opening_pending', generation: 2 }),
     deleteAdventure: async () => undefined,
   }
@@ -130,6 +139,18 @@ export const ReadyMobile: Story = {
       'aria-selected',
       'true'
     )
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
+export const DebugNpcEditor: Story = {
+  render: () => renderAdventure(readyAdventure),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Mira' }))
+    await expect(canvas.findByText(/Click a card value to edit/i)).resolves.toBeVisible()
+    await expect(canvas.getByLabelText('Name')).toHaveValue('Mira')
+    await expect(canvas.getByLabelText('Mood')).toHaveValue('Watchful')
     expectNoHorizontalOverflow(canvasElement)
   },
 }
