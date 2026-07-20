@@ -34,7 +34,12 @@ function isAdventureWorkActive(adventure: AdventureDetail | undefined) {
 }
 
 function mutationError(error: unknown, fallback: string) {
-  if (error instanceof AdventureApiError) return error.reason ?? error.message
+  if (error instanceof AdventureApiError) {
+    // Conflict codes are useful to the client, but they are not copy for a
+    // creator. Preserve a server-supplied human reason when one exists.
+    if (error.reason && !/^[A-Z][A-Z0-9_]+$/.test(error.reason)) return error.reason
+    return error.message
+  }
   return fallback
 }
 
@@ -93,7 +98,7 @@ export function AdventurePage({
     },
     onError: (error) => {
       if (error instanceof AdventureApiError && error.code === 'conflict') {
-        setResetError(error.reason ?? error.message)
+        setResetError(mutationError(error, 'Lorecraft could not reset this Adventure. Try again.'))
       } else if (!(error instanceof AdventureApiError && error.code === 'unauthorized')) {
         setResetError('Lorecraft could not reset this Adventure. Try again.')
       }
@@ -222,7 +227,7 @@ export function AdventurePage({
 
   const retryError = retry.error
     ? retry.error instanceof AdventureApiError && retry.error.code === 'conflict'
-      ? (retry.error.reason ?? retry.error.message)
+      ? mutationError(retry.error, 'Lorecraft could not retry this opening. Try again.')
       : 'Lorecraft could not retry this opening. Try again.'
     : null
   const submitTurnError = submitTurn.error

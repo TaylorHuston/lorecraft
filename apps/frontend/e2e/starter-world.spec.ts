@@ -68,6 +68,7 @@ test('LC-002/S3 author creates, edits, and deletes a complete Character Card', a
   await page.getByLabel('Email').fill(email)
   await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL(/\/worlds$/)
   await page.goto('/worlds/stormbound-chapel')
 
   await page.getByRole('button', { name: 'Add Character' }).click()

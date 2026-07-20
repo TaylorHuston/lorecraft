@@ -139,7 +139,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     }
 
     const privateGuide = 'Let the ledger matter, but do not reveal why.'
-    await page.getByRole('tab', { name: 'Guide' }).click()
+    await page.getByRole('button', { name: 'Guide' }).click()
     await page.getByLabel('Private direction for this turn').fill(privateGuide)
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(page.getByText(guideTurn)).toBeVisible({ timeout: 15_000 })
