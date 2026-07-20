@@ -26,13 +26,11 @@ export const initialCharacterStateDefaults = {
   memory: 'No interactions with the player have been recorded yet.',
 } as const
 
-export function completeInitialCharacterState(
-  character: {
-    initialMood?: string | null
-    initialStatus?: string | null
-    initialMemory?: string | null
-  }
-) {
+export function completeInitialCharacterState(character: {
+  initialMood?: string | null
+  initialStatus?: string | null
+  initialMemory?: string | null
+}) {
   const valueOrDefault = (value: string | null | undefined, fallback: string) =>
     typeof value === 'string' && value.trim().length > 0 ? value : fallback
 

@@ -8,24 +8,42 @@ const legacyDefaults = {
 
 export default class extends BaseSchema {
   async up() {
-    await this.db.from('characters').whereRaw("regexp_replace(initial_mood, '[[:space:]]', '', 'g') = ''").update({
-      initial_mood: legacyDefaults.mood,
-    })
-    await this.db.from('characters').whereRaw("regexp_replace(initial_status, '[[:space:]]', '', 'g') = ''").update({
-      initial_status: legacyDefaults.status,
-    })
-    await this.db.from('characters').whereRaw("regexp_replace(initial_memory, '[[:space:]]', '', 'g') = ''").update({
-      initial_memory: legacyDefaults.memory,
-    })
-    await this.db.from('adventure_character_states').whereRaw("regexp_replace(mood, '[[:space:]]', '', 'g') = ''").update({
-      mood: legacyDefaults.mood,
-    })
-    await this.db.from('adventure_character_states').whereRaw("regexp_replace(status, '[[:space:]]', '', 'g') = ''").update({
-      status: legacyDefaults.status,
-    })
-    await this.db.from('adventure_character_states').whereRaw("regexp_replace(memory, '[[:space:]]', '', 'g') = ''").update({
-      memory: legacyDefaults.memory,
-    })
+    await this.db
+      .from('characters')
+      .whereRaw("regexp_replace(initial_mood, '[[:space:]]', '', 'g') = ''")
+      .update({
+        initial_mood: legacyDefaults.mood,
+      })
+    await this.db
+      .from('characters')
+      .whereRaw("regexp_replace(initial_status, '[[:space:]]', '', 'g') = ''")
+      .update({
+        initial_status: legacyDefaults.status,
+      })
+    await this.db
+      .from('characters')
+      .whereRaw("regexp_replace(initial_memory, '[[:space:]]', '', 'g') = ''")
+      .update({
+        initial_memory: legacyDefaults.memory,
+      })
+    await this.db
+      .from('adventure_character_states')
+      .whereRaw("regexp_replace(mood, '[[:space:]]', '', 'g') = ''")
+      .update({
+        mood: legacyDefaults.mood,
+      })
+    await this.db
+      .from('adventure_character_states')
+      .whereRaw("regexp_replace(status, '[[:space:]]', '', 'g') = ''")
+      .update({
+        status: legacyDefaults.status,
+      })
+    await this.db
+      .from('adventure_character_states')
+      .whereRaw("regexp_replace(memory, '[[:space:]]', '', 'g') = ''")
+      .update({
+        memory: legacyDefaults.memory,
+      })
 
     this.schema.raw(`
       ALTER TABLE characters
