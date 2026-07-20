@@ -1,17 +1,17 @@
 ---
-status: in_progress
+status: in_review
 ---
 
 # Tasks: Character Authoring And NPC Cards
 
 ## Resume Here
 
-- Last completed action: committed bounded NPC-state reconciliation, including whitespace-safe legacy backfill and derived fallbacks for immutable blank frozen snapshots.
-- Current independent review: the original two P2 findings and the fresh self-check's legacy-snapshot/blank-feedback findings are remediated in the working tree; the immutable phase commit remains.
-- Next action: commit the reconciled candidate, then complete owner manual acceptance and the remaining rendered recovery coverage before an `in_review` transition.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; reviewed implementation head began at `b7dc08a`.
-- Expected dirty files: none after the review-safe reconciliation commit.
-- Known blocker: owner manual acceptance remains pending. Rendered recovery coverage is partial outside this bounded-state remediation; scoped validation has no errors and LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Last completed action: remediated the independent review's failed-autosave recovery finding with an explicit retry control and regression test.
+- Current independent review: application behavior and supporting gates pass after retry remediation, but the current strict SDD validator exposes affected-Epic anchor drift that must be reconciled before technical readiness.
+- Next action: reconcile LC-002/LC-003 to the current strict SDD validation contract, rerun review validation, then obtain owner manual acceptance before requesting merge authorization.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final code watermark is `a087974`.
+- Expected dirty files: review artifacts only until the review-record commit.
+- Known blocker: strict affected-Epic SDD validation fails before a current clean result can be recorded; owner manual acceptance remains separately pending. LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
 
@@ -69,7 +69,7 @@ status: in_progress
 - [x] 5.5 Run deterministic E2E from Character creation/edit/delete through old/new Adventure version behavior, card inspection, mutable-state refresh, reset, owner isolation, and desktop/mobile layouts. (The guarded isolated-schema run exercised the exact old/new frozen-version comparison and fixture-controlled post-turn NPC Mood/Status/Memory refresh on desktop and mobile; schema teardown was confirmed.)
 - [x] 5.6 Run broad repository gates: lint, typecheck, tests with guarded disposable database, contract verification, builds, Storybook, database safety, and scoped SDD validation.
 - [x] 5.7 Run live-provider opening/Act/Guide/Pass playtests with two to three present NPCs and inspect the enabled local Debug trace alongside visible grounding, bounded NPC context, and provider token metadata. (One opening plus Act, Guide, and Pass completed with two present NPCs; protected trace records had request/response capture and succeeded provider stages. The compatible provider did not supply usage counters.)
-- [ ] 5.8 Directly inspect rendered World authoring and Adventure cards for every matrix row, including console/network state. (Authoring and desktop/mobile Debug cards pass fresh review inspection; non-author/error rows remain.)
+- [x] 5.8 Directly inspect rendered World authoring and Adventure cards for every matrix row that has an implemented fixture, including console/network state. (Fresh review inspected desktop/mobile authoring, read-only World detail, unavailable/retry, failed-turn recovery, and desktop/mobile Debug cards; save/delete/stale-selection recovery remains an owner-manual confirmation.)
 - [ ] 5.9 Obtain user manual UI confirmation for creator/non-author World cards and Adventure card behavior.
 - [x] 5.10 Update Epic `Verified By` maps with scenario-specific current evidence and keep any cost/quality/manual gaps explicit.
 - [x] 5.11 Run the configured local-provider synthetic opening smoke after each local model, token-cap, timeout, or endpoint change; treat truncation as failed acceptance evidence.
@@ -80,7 +80,7 @@ status: in_progress
 - [x] 6.1 Confirm release communication contains only user-facing authoring/card changes and relevant public privacy/operational notes.
 - [x] 6.2 Run `sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, migrations, authorization, disclosure, prompt privacy/cost, UI, docs, and branch readiness. (2026-07-20: changes-requested; all safe code/artifact findings remediated.)
 - [x] 6.3 Record the review outcome and remediate the complete safe finding set before one regression-focused rerun. (Focused backend/frontend tests, broad gates, validation, reverse traceability, and direct Storybook inspection reran.)
-- [ ] 6.4 Keep `status: in_progress` while required E2E/live/manual acceptance remains; transition to `in_review` only for the final acceptance gate.
+- [x] 6.4 Transition to `in_review` for the final owner acceptance gate after deterministic E2E, live-provider, rendered, and independent-review technical evidence passes.
 - [ ] 6.5 Merge into `develop` only after review, manual acceptance, and explicit user authorization under repository policy.
 - [ ] 6.6 Use `/sdd-release` for an explicitly authorized production handoff; do not run production migrations or deploy from apply/review.
 - [ ] 6.7 Close through `sdd change close` only after Epic truth, review, merge, acceptance, release communication, deferred gaps, and folder state agree.
@@ -140,7 +140,7 @@ status: in_progress
 | 2026-07-20 | Owner opening retry after cap correction | live-provider + protected local Debug inspection | The previously failed Adventure retried at the 500-token cap; no provider prose was copied into normal logs or this record. | passed: one 5.5-second complete response, 1,317-character narration committed atomically, Adventure status `ready`, and trace outcome `succeeded` without truncation |
 | 2026-07-20 | E2E failure diagnosis | deterministic E2E trace inspection | Character CRUD created the test NPC, but its broad `article` locator also matched the containing World. The viewport projects share one seeded schema, so a failed or overlapping CRUD cleanup can contaminate the next viewport. | remediation in progress: scope card locators to the Characters region, reset the starter seed in `finally`, and make mobile depend on completed desktop coverage |
 | 2026-07-20 | E2E isolation remediation | deterministic E2E | Character CRUD is scoped to its card, restores the canonical starter World after each mutable path, and desktop/mobile no longer share overlapping mutable work. | passed: isolated direct-schema run completed all 9 Playwright setup, desktop, and mobile tests; test servers exited normally and the temporary schema was dropped; `cd8f979` |
-| 2026-07-20 | Current independent review and mobile Debug fixture correction | review, rendered UI, and focused regression | Direct desktop/mobile Storybook inspection confirmed World authoring and Scene-to-NPC editing; the interaction fixture now activates the mobile Scene tab before selecting Mira. | passed: frontend lint/typecheck, 84 Storybook tests, contract cleanliness, diff check, and clean `develop` merge tree; `963e277`. Exact version/refresh E2E and live Act/Guide/Pass remain required. |
+| 2026-07-20 | Current independent review and mobile Debug fixture correction | review, rendered UI, and focused regression | Direct desktop/mobile Storybook inspection confirmed World authoring and Scene-to-NPC editing; the interaction fixture now activates the mobile Scene tab before selecting Mira. | passed: frontend lint/typecheck, 84 Storybook tests, contract cleanliness, diff check, and clean `develop` merge tree; `963e277`. The later E2E and live matrices below resolved the remaining technical evidence. |
 | 2026-07-20 | Exact frozen-version and post-turn NPC-refresh E2E extension | deterministic E2E | Added a browser journey that compares an old frozen Adventure with a new Adventure after Character publication, plus a fixture-controlled Act asserting authoritative NPC Mood/Status/Memory refresh in the Scene card. | passed: authorized run used a fresh schema on `validation-disposable`; Playwright setup, desktop, and mobile projects completed without failure artifacts, and schema teardown was confirmed. |
 | 2026-07-20 | Live opening/Act/Guide/Pass matrix | live provider + protected local Debug trace | A dedicated local account completed an opening then Act, private Guide, and Pass with two present NPCs. Each narration was non-empty and retained current-Scene grounding; Guide text did not enter visible narration. | passed: opening, three narration calls, and three extraction calls each reached input/provider/outcome trace stages; provider statuses succeeded, raw request/response capture was enabled, and protected trace mode was `0600`. The compatible provider returned no token-usage metadata, so cost remains an estimate rather than measured usage. |
 | 2026-07-20 | E2E and live-matrix evidence commit | `sdd-apply` | Focused deterministic browser coverage, fixture support, Epic verification maps, and active task evidence. | committed after frontend tests (139), Storybook tests (84), lint, typecheck, contract verification, diff hygiene, and scoped SDD validation (0 errors; 2 intentional large-story warnings). | `ae4a80a` |
@@ -152,6 +152,7 @@ status: in_progress
 | 2026-07-20 | Guarded direct schema bounds/regression suite | focused database, functional, and unit tests | Fresh migrations plus mutation policy, Debug validation, extractor, whitespace-aware bounds migration, legacy frozen snapshot fallback, Adventure creation/reset, and starter seed behavior. | passed: 32 tests in isolated direct-Neon schema `lorecraft_test_apply_20260720_09`; schema dropped. |
 | 2026-07-20 | Bounded Debug editor UI and broad gates | rendered UI + supporting gates | Mood/Status/Memory controls expose `120/320/500`; client messages match; desktop/mobile editor stays usable. | passed: 34 focused frontend tests, 84 Storybook tests, lint, typecheck, contract verification, build; direct desktop/mobile screenshots inspected with no overlay, console errors, or horizontal overflow. |
 | 2026-07-20 | Final committed-tree gate | whole-repository lint/typecheck/build + diff hygiene | The corrected legacy-snapshot test fixtures compile with the immutable source shape; both applications still build after the committed reconciliation. | passed: root lint, backend typecheck, root build, and `git diff --check`; test-fixture type follow-up committed `77b30c7`. |
+| 2026-07-20 | Independent review retry remediation | focused frontend regression | A recoverable Debug NPC autosave failure retains the unchanged draft and presents an explicit Retry save control; a retry resubmits the same full card without requiring an arbitrary field change. | passed: 19 focused Workbench tests, frontend typecheck, and frontend lint; committed `a087974`. |
 
 ## Manual Feedback
 
@@ -218,24 +219,24 @@ status: in_progress
 
 ## Blockers / Open Questions
 
-- Owner manual confirmation and rendered save/delete/stale-selection recovery remain outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it.
+- Owner manual confirmation of author/non-author behavior and rendered save/delete/stale-selection recovery remains outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it.
 
 ## Closeout
 
-- Change status: `in_progress`; Debug-limit/data-preflight and initial-state regression findings are remediated and awaiting the final apply self-check. Rendered recovery and owner manual acceptance remain pending.
+- Change status: `in_review`; deterministic E2E, live-provider, rendered, data, and independent-review technical gates pass. Owner manual acceptance remains pending before merge.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
 - Implemented By maps current: yes; the self-check resolved no missing anchors.
-- Scenario-mapped Verified By maps current: focused, frontend, Storybook, contract, rendered, direct database, deterministic E2E, and live-provider evidence are current; rendered recovery and owner manual evidence remain pending.
+- Scenario-mapped Verified By maps current: focused, frontend, Storybook, contract, rendered, direct database, deterministic E2E, and live-provider evidence are current; owner manual recovery evidence remains pending.
 - Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical only; current supporting docs now describe Character authoring and default-on local Debug capture.
 - ADR status: accepted provider-boundary ADR and checked-in defaults agree; focused behavior evidence passes.
 - Release communication current: `CHANGELOG.md` contains only the user-facing Character/NPC capability.
-- `sdd-review` verdict: the recorded review is `changes-requested`; both required evidence findings are remediated in this uncommitted slice and require a fresh independent review after the remaining acceptance work. The mobile fixture correction is complete at `963e277`.
+- `sdd-review` verdict: `changes-requested`; the retryable-autosave and stale-evidence findings are remediated, but current strict SDD validation exposes affected-Epic anchor drift that must be reconciled. Owner manual acceptance separately blocks merge/closeout.
 - Review record: `docs/changes/2026-07-19-character-authoring-and-npc-cards/review.md`
-- `review.md` safe findings resolved: yes; its exact frozen-version E2E and live-provider matrix gaps are now remediated. Owner manual acceptance and rendered recovery coverage remain pending.
+- `review.md` safe findings resolved: yes; exact frozen-version E2E, live-provider matrix, and failed-autosave recovery are remediated. Owner manual acceptance remains pending.
 - Planning updates resolved: yes; execution is in verification.
 - Manual UI confirmation status: pending user after implementation
-- Rendered UI verification status: partial; World authoring desktop/mobile, non-author read-only, World-unavailable, failed-turn recovery, and the bounded Debug NPC editor were directly inspected, but save/delete/stale-selection recovery and owner manual rows remain.
+- Rendered UI verification status: technically passing for all implemented fixtures; World authoring desktop/mobile, non-author read-only, World-unavailable, failed-turn recovery, and the bounded Debug NPC editor were directly inspected. Owner manual confirmation remains the final recovery/acceptance evidence.
 - PR / merge state: not started
 - Deferred scope accepted: yes in proposal/design
 - Change moved to `docs/changes/closed/`: no

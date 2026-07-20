@@ -293,19 +293,18 @@ The system SHALL identify an accessible World detail destination through its doc
 
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
-| S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts` | Current structured detail authorization, safe not-found behavior, immutable seed provenance, and exact reconciliation. It does not prove the planned complete-card disclosure. | Passing 2026-07-17 |
+| S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts` | Current structured detail authorization, complete debug-card projection, safe not-found behavior, immutable seed provenance, and exact reconciliation. | Passing 2026-07-20 against a guarded isolated schema |
 | S2/R1-S3 | `apps/backend/tests/database/world_seed_identity_migration.spec.ts` | Existing rows survive upgrade and starter provenance remains unique. | Passing 2026-07-15 |
 | S2/R1 | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Same-World Character Location integrity and upgrade safety. | Passing 2026-07-15 |
 | S2/R1-S1, S2/R2-S1, S2/R2-S2, S2/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Complete-card fields, debug disclosure, author/non-author visibility, and detail loading/error/empty/recovery states. | Passing 2026-07-19 |
-| S2/R1-S1 | `apps/backend/tests/database/character_initial_state_migration.spec.ts` | Upgrade path for persisted initial mood, status, and memory. | Implemented; guarded database runner blocked before execution. |
+| S2/R1-S1 | `apps/backend/tests/database/character_initial_state_migration.spec.ts` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts` | Upgrade and rollback safety for persisted initial mood, status, and memory; whitespace-only legacy values receive neutral defaults without replacing authored content. | Passing 2026-07-20 against a guarded isolated schema |
 | S2/R1-S1, S2/R2-S1 | Storybook `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Directly inspected complete-card authoring form and populated card with no horizontal overflow or browser errors. | Passing 2026-07-19 |
 | S2/R3-S1, S2/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | World-detail and unavailable-destination title/heading focus without refresh focus theft. | Passing 2026-07-18 |
-| S2/R2-S1, S2/R2-S2 | `apps/frontend/e2e/starter-world.spec.ts` | Current loaded detail, Adventure actions, return navigation, touch access, and overflow-free layout. It does not prove the planned full-card surface. | Passing 2026-07-17 |
+| S2/R1-S1, S2/R2-S1, S2/R2-S2 | `apps/frontend/e2e/starter-world.spec.ts` | Complete-card authoring, current loaded detail, Adventure actions, return navigation, touch access, and overflow-free layout. | Passing 2026-07-20 against a guarded isolated schema |
 
 #### Verification Gaps
 
-- `S2/R1-S1`, `S2/R2-S1`: Database-backed API and deterministic E2E evidence for complete-card fields remain pending because guarded disposable database configuration is absent.
-- `S2/R1-S1`, `S2/R2-S1`: Direct non-author rendered confirmation remains pending user/test-account access.
+- `S2/R1-S1`, `S2/R2-S1`: Owner manual confirmation of complete-card authoring and non-author access remains pending; deterministic database, E2E, and rendered read-only fixture evidence now pass.
 - `S2/R1-S4`: Fresh browser credential submission and restored structured-canon inspection remain an accepted prior closeout gap.
 
 #### Story Notes

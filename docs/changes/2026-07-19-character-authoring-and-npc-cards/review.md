@@ -6,21 +6,32 @@ changes-requested
 
 ## Current Review (2026-07-20)
 
-Reviewed `e04cc3cbc070f8c6b087fc57a81f5443eb63eee` and the safe review remediation `963e277` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. Earlier review sections are historical.
+Reviewed code through `90b1328` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The current safe remediation is uncommitted while this record is written. Earlier review sections are historical.
 
 ### Gate Scorecard
 
 | Gate | Result | Notes |
 | --- | --- | --- |
-| Change artifacts / status / Epic truth | pass | Current task ledger remains `in_progress` because required verification is unfinished; `sdd validate` has zero errors and two accepted LC-003 large-Story warnings. |
-| Cold navigation / Story references | pass | LC-002/S3 and LC-003/S3 retain concrete primary anchors and scenario-mapped evidence. |
-| Source diff / reverse traceability | pass | `develop...HEAD` has 89 changed candidates; both Epic-scoped audits have zero missing implementation or verification references. |
-| Tests and verification | findings | Lint, typecheck, build, contract generation/cleanliness, 139 frontend tests, 84 Storybook tests, and a 9/9 isolated E2E run pass; required exact version/refresh E2E and live-provider matrix remain. |
-| Rendered UI | findings remediated | Direct review passed World authoring and Debug NPC cards at desktop and 390px mobile; the DebugNpcEditor mobile play function needed to select Scene before Mira. |
-| Manual acceptance | pending user | Current walkthrough remains valid; author/non-author/error/save-request confirmation is still owner work. |
-| Code / security / data safety | pass | Fresh diff review found no authorization, raw-trace privacy, migration, extraction, or source-isolation regression. |
-| Supporting docs / Idea / release / PRD | pass | README, CHANGELOG, ADR, Idea current-state routing, and product direction align with implementation. |
-| Integration readiness | changes requested | Merge tree is clean and source is committed, but required deterministic/live verification and owner acceptance remain open. |
+| Change artifacts | findings | Current Change files are present and status is `in_review`, but the current strict validator cannot complete affected-Epic validation. |
+| Change status | pass | `in_review` agrees with the final review/owner-acceptance stage. |
+| Epic truth | findings | The current validator requires stable `#` anchors in legacy and normalized maps; affected LC-002/LC-003 rows are not yet fully compliant. |
+| Requirements and Scenarios | pass | Proposal/design and LC-002/S3 plus LC-003/S3 stay aligned with Character authoring, Adventure-owned cards, and source isolation. |
+| Story reference traceability | pass | No duplicate Story labels; changed Stories retain primary ownership anchors. |
+| Reverse traceability | pass | Epic-scoped audits report zero missing implementation or verification references in the changed candidate inventory. |
+| Tests and verification | pass | 143 frontend tests, 84 Storybook interactions, prior isolated schema/database evidence, deterministic E2E, and live opening/Act/Guide/Pass matrix are recorded; the review retry regression passes. |
+| Evidence falsification | pass | Direct test review found the failed-autosave retry gap; the new test proves unchanged draft resubmission after a recoverable failure. |
+| Pattern conformance | pass | Retry feedback follows the existing named recovery-control pattern without exposing state outside the owner Adventure. |
+| Stateful transitions | pass | Draft, pending write, validation, retry, authoritative refresh, and selected-card continuity were independently sampled. |
+| Rendered UI verification | pass | Independent Storybook inspection covered authoring, read-only World detail, unavailable/retry, failed turn, and Debug editor at desktop/mobile without overflow, overlay, or console failures. |
+| Manual UI confirmation | pending user | Owner confirmation of author/non-author behavior and recovery feel remains required before merge. |
+| Code review | pass after remediation | Recoverable autosaves now expose an explicit retry path; no other validated code finding remains. |
+| Visual / UX consistency | pass | Dark, reference-first World and Story-first mobile layouts remain intact. |
+| Security review | pass | Owner scope, production Debug refusal, trace permissions/redaction, frozen canon isolation, and bounds migration were independently reviewed. |
+| Documentation | pass after remediation | README, CHANGELOG, tasks, and affected evidence maps reflect the implemented behavior. |
+| Idea repository / current-state truth | pass | Idea README, PRD direction, and visual identity remain aligned. |
+| Release communication | pass | CHANGELOG contains user-facing authoring/card and relevant local-Debug privacy notes only. |
+| Branch and merge readiness | changes requested | Merge tree is clean; affected Epic strict-validation repair and owner acceptance remain before merge. |
+| PRD alignment | pass | Creator-first canon authority and non-canonical, Adventure-owned state remain intact. |
 
 ### Findings
 
@@ -30,8 +41,7 @@ Reviewed `e04cc3cbc070f8c6b087fc57a81f5443eb63eee` and the safe review remediati
 
 #### REQUIRED
 
-- [ ] `docs/changes/2026-07-19-character-authoring-and-npc-cards/tasks.md:69` — The deterministic E2E run still lacks the exact old-versus-new frozen-version comparison and post-turn NPC refresh path. This is required non-manual verification.
-- [ ] `docs/changes/2026-07-19-character-authoring-and-npc-cards/tasks.md:71` — Live opening evidence and two observed turns do not prove the required Act/Guide/Pass quality matrix with protected Debug-trace inspection. This is required non-manual verification.
+- [ ] `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` — `sdd validate` under the current CLI (`0.11.0`) cannot validate the affected Epics: it first encounters a directory read and, when scoped directly to LC-003, reports strict v2 implementation/evidence-anchor and coverage failures. Reconcile the legacy maps to the current validator's stable `path#anchor` contract, then rerun scoped validation before declaring technical readiness.
 
 #### SUGGESTION
 
@@ -41,35 +51,35 @@ Reviewed `e04cc3cbc070f8c6b087fc57a81f5443eb63eee` and the safe review remediati
 
 | Command / Scenario | Evidence Type | Result |
 | --- | --- | --- |
-| scoped `sdd validate` | artifact validation | pass: 0 errors; two accepted LC-003 scope warnings |
+| scoped `sdd validate` | artifact validation | findings: current CLI cannot complete Change validation (`EISDIR` while validating affected Epic); direct LC-003 validation exposes 138 strict-map errors and two large-Story warnings |
 | Epic-scoped `sdd_orphan_audit.py --changed-from develop` | reverse traceability | pass: no missing implementation or verification references |
-| `npm run lint && npm run typecheck && npm run build && npm run verify:contracts` | broad supporting gates | pass |
-| `npm run test --workspace @lorecraft/frontend` | focused frontend suite | pass: 139 tests |
+| `npm run lint && npm run typecheck && npm run build && npm run verify:contracts` | broad supporting gates | pass after formatting remediation |
+| `npm run test --workspace @lorecraft/frontend` | focused frontend suite | pass: 143 tests |
 | `npm run test:storybook --workspace @lorecraft/frontend` | Storybook interaction suite | pass: 84 tests after the review fixture correction |
-| isolated `npm run test:e2e --workspace @lorecraft/frontend` | deterministic E2E | pass: 9 tests; temporary direct schema dropped |
+| isolated `npm run test:e2e --workspace @lorecraft/frontend` | deterministic E2E | pass: 9 tests; temporary direct schema dropped (recorded prior to this documentation-only review remediation) |
 
 ### Rendered UI Verification
 
 | Surface | Viewport | State / interaction | Direct evidence | Console / network | Result |
 | --- | --- | --- | --- | --- | --- |
-| main sign-in | desktop | initial route | meaningful content, no overlay | clean | pass |
-| World authoring | 1440px and 390px | full required Character form | disclosure, 11 fields, readable mobile layout, no overflow | only favicon 404 | pass |
-| Adventure Debug NPC editor | 1440px and 390px | Scene → Mira, edit card, Back path | all ten editable fields, immutable key, disclosure, Story-first tabs, no overflow | only favicon 404 | pass after fixture correction |
+| World authoring/read-only detail | 1440px and 390px | full author form and non-author card | disclosure, complete card hierarchy, no mutation controls for read-only viewer, no overflow | clean | pass |
+| Adventure Debug NPC editor | 1440px and 390px | Scene → Mira, edit, retry/recovery control | all ten editable fields, immutable key, disclosure, Story-first tabs, no overflow | clean | pass |
+| Adventure/World recovery | desktop/mobile | unavailable retry and failed-turn composer | named recovery controls remain in their local surface | clean | pass |
 
 ### Consolidated Remediation
 
-- Safe batch: make `DebugNpcEditor` select the mobile Scene tab before it seeks Mira; refresh this review record.
-- Regression verification: rerun Storybook interactions, lint/typecheck, contract cleanliness, and the source merge-tree check.
-- Residual required work: exact frozen-version/post-turn E2E and live Act/Guide/Pass quality checks. Owner manual confirmation remains `pending user` and separately blocks integration/closeout.
+- Safe batch: added explicit Retry save for an unchanged recoverable NPC draft; added its focused regression test; formatted the earlier NPC-state reconciliation files; reconciled stale task/Epic evidence.
+- Regression verification: frontend focused/full suite, Storybook, lint, typecheck, build, contracts, diff hygiene, and merge tree pass.
+- Residual required work: strict affected-Epic validation repair. Owner manual confirmation remains `pending user` and separately blocks merge/closeout.
 
 ### Review Bundle
 
 - Source branch: `change/character-authoring-and-npc-cards`
 - Target branch: `develop`
 - Merge base: `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`
-- Initial reviewed source: `e04cc3cbc070f8c6b087fc57a81f5443eb63eee`; final code watermark: `963e277`.
+- Initial reviewed source: `0ce798902f7d4d517955f12d29e5044c1afc58a8`; final code watermark: `90b1328`.
 - Conflict check: clean (`git merge-tree --write-tree develop HEAD`).
-- Dirty state at review start: clean.
+- Dirty state at review start: only the expected `tasks.md` status transition; current safe review artifacts remain uncommitted.
 
 ## Prior Review (2026-07-20)
 
