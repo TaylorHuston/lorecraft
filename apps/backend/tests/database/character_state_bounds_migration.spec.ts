@@ -77,13 +77,11 @@ test.group('Character state bounds database migration', () => {
 
       await assert.rejects(
         () =>
-          client
-            .table('characters')
-            .insert({
-              initial_mood: '\t',
-              initial_status: 'Ready.',
-              initial_memory: 'Remembered.',
-            }),
+          client.table('characters').insert({
+            initial_mood: '\t',
+            initial_status: 'Ready.',
+            initial_memory: 'Remembered.',
+          }),
         /character_initial_mood_complete_check/
       )
       await assert.rejects(
