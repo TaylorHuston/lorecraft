@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: completed the deterministic isolated-schema E2E extension and the authorized live-provider opening/Act/Guide/Pass trace matrix. The remaining acceptance work is direct rendered failure/recovery coverage and owner manual confirmation.
+- Last completed action: committed `ae4a80a`, completing the deterministic isolated-schema E2E extension and the authorized live-provider opening/Act/Guide/Pass trace matrix. The remaining acceptance work is direct rendered failure/recovery coverage and owner manual confirmation.
 - Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence showed both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500. The owner retry succeeded after about 5.5 seconds, and the Adventure is ready with a complete opening; the protected trace has no truncation outcome.
 - Next action: obtain owner manual confirmation, then complete or explicitly defer the remaining rendered failure/recovery matrix rows before requesting the final independent review.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the final code watermark is `963e277`.
-- Expected dirty files: `apps/frontend/e2e/adventure-foundation.spec.ts`, `apps/frontend/e2e/fake-story-provider.mjs`, `apps/frontend/e2e/starter-world.spec.ts`, `docs/epics/lc-002-world-bible-catalog/epic.md`, `docs/epics/lc-003-adventure-play/epic.md`, and this task ledger pending the verification evidence commit.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `ae4a80a`.
+- Expected dirty files: this task ledger only, pending its commit-reference update.
 - Known blocker: the external database and provider operations were explicitly approved and completed. Owner manual acceptance and the rendered error/recovery matrix rows remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -142,6 +142,7 @@ status: in_progress
 | 2026-07-20 | Current independent review and mobile Debug fixture correction | review, rendered UI, and focused regression | Direct desktop/mobile Storybook inspection confirmed World authoring and Scene-to-NPC editing; the interaction fixture now activates the mobile Scene tab before selecting Mira. | passed: frontend lint/typecheck, 84 Storybook tests, contract cleanliness, diff check, and clean `develop` merge tree; `963e277`. Exact version/refresh E2E and live Act/Guide/Pass remain required. |
 | 2026-07-20 | Exact frozen-version and post-turn NPC-refresh E2E extension | deterministic E2E | Added a browser journey that compares an old frozen Adventure with a new Adventure after Character publication, plus a fixture-controlled Act asserting authoritative NPC Mood/Status/Memory refresh in the Scene card. | passed: authorized run used a fresh schema on `validation-disposable`; Playwright setup, desktop, and mobile projects completed without failure artifacts, and schema teardown was confirmed. |
 | 2026-07-20 | Live opening/Act/Guide/Pass matrix | live provider + protected local Debug trace | A dedicated local account completed an opening then Act, private Guide, and Pass with two present NPCs. Each narration was non-empty and retained current-Scene grounding; Guide text did not enter visible narration. | passed: opening, three narration calls, and three extraction calls each reached input/provider/outcome trace stages; provider statuses succeeded, raw request/response capture was enabled, and protected trace mode was `0600`. The compatible provider returned no token-usage metadata, so cost remains an estimate rather than measured usage. |
+| 2026-07-20 | E2E and live-matrix evidence commit | `sdd-apply` | Focused deterministic browser coverage, fixture support, Epic verification maps, and active task evidence. | committed after frontend tests (139), Storybook tests (84), lint, typecheck, contract verification, diff hygiene, and scoped SDD validation (0 errors; 2 intentional large-story warnings). | `ae4a80a` |
 
 ## Manual Feedback
 
