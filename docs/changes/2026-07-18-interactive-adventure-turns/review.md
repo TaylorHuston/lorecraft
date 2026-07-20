@@ -2,15 +2,15 @@
 
 ## Verdict
 
-changes-requested
+ready
 
-The committed turn implementation is sound and the current UI/remediation work passes its focused checks, but this review cannot mark the source ready for integration while 27 related application files remain uncommitted. The refreshed review also found and remediated the missing turn-submission provider disclosure, incomplete composer tab semantics, and one stale Ember secondary control. A live-provider and owner manual walkthrough remains required before merge or Change closeout; that is acceptance evidence, not an unresolved code-review finding.
+The committed turn implementation and current UI/remediation work pass review. The refreshed review remediated the missing turn-submission provider disclosure, incomplete composer tab semantics, and one stale Ember secondary control. A live-provider and owner manual walkthrough remains required before merge or Change closeout; that is acceptance evidence, not an unresolved code-review finding.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
-| Change artifacts and status | findings | The Change remains `in_review`, but its prior review watermark predates `623ec42` and the related uncommitted UI work. This record and the ledger now state the required commit/watermark step. |
+| Change artifacts and status | pass | The Change remains `in_review`; the reviewed UI/remediation batch is committed as `0ed8f90`. |
 | Requirements and scenarios | pass | Automated evidence covers reset, recovery, concurrency, disclosure, and current composer semantics. |
 | Story and reverse traceability | pass | Orphan audit reports zero missing implementation or verification references; generated Tuyau registry output is the only expected ownership exclusion. |
 | Code and security | pass | Narrator context excludes private Character knowledge and mutable state. A direct reflection of private Guide text is rejected before extraction, metadata recording, or publication. |
@@ -19,7 +19,7 @@ The committed turn implementation is sound and the current UI/remediation work p
 | Supporting gates | pass | Lint, typecheck, build, generated-contract check, frontend suite, Storybook, and container/image/deployment contracts pass. |
 | Documentation and private Idea truth | pass | Change design and private visual identity now agree with Ember and the approved removal of Guide-specific help. |
 | Manual and live-provider acceptance | pending user | Required before merge/closeout. No provider payload, raw Guide, or prompt is to be retained. |
-| Branch and merge readiness | findings | The committed source merges cleanly into `develop`, but 27 related uncommitted files block an integration-ready watermark. No merge, push, or PR action is authorized. |
+| Branch and merge readiness | pending acceptance | The committed source merges cleanly into `develop`; no merge, push, or PR action is authorized, and required live-provider/owner acceptance remains pending. |
 
 ## Findings
 
@@ -32,10 +32,6 @@ The committed turn implementation is sound and the current UI/remediation work p
 - [x] Turn submission now discloses that the turn and relevant Adventure/World context are processed by Lorecraft's configured AI provider, as required by the provider-boundary ADR.
 - [x] The Act/Guide controls retain their approved tab appearance but now use native keyboard-operable semantic toggle buttons rather than incomplete ARIA tabs.
 - [x] Return to World uses the borderless raised-secondary Ember treatment on desktop and mobile.
-
-### Required Before Integration
-
-- [ ] Commit the reviewed current worktree, then refresh the review watermark and rerun the staleness/conflict check. The current worktree has 27 related uncommitted application, documentation, tooling, and test files.
 
 ### Acceptance Evidence Pending
 
@@ -59,13 +55,13 @@ The committed turn implementation is sound and the current UI/remediation work p
 ## Review Bundle
 
 - Source branch/ref: `change/interactive-adventure-turns`
-- Committed implementation watermark: `623ec422742957f94ffb3a60ea415ad4cd1b8b97`
+- Committed implementation watermark: `0ed8f90a829a2764085804b3f46e2a98eb823256`
 - Target branch/ref: `develop`
 - Merge base: `d389ccd6d7b93e4fa6b11fb82cd9eec1efbd0e79`
-- Source-only commits reviewed: `a6a911f`, `33870e4`, `ff1d2ec`, `4290467`, `623ec42`
-- Conflict check: clean for committed source (`git merge-tree --write-tree develop HEAD` -> `26110a7c16d07af42d1d02c775623d54fde5c0e5`)
-- Dirty state: 27 related uncommitted source-repository files, including the current Ember/workbench UI, documentation, tests, review artifacts, and local browser-check tooling. This blocks an integration-ready review watermark. `.neon` remains unrelated and untouched.
-- Private supporting documentation: the Lorecraft visual-identity note is reconciled in the vault working tree; unrelated vault state remains untouched.
+- Source-only commits reviewed: `a6a911f`, `33870e4`, `ff1d2ec`, `4290467`, `623ec42`, `0ed8f90`
+- Conflict check: clean for committed source (`git merge-tree --write-tree develop HEAD` -> `3e1993a9eca90e9e4c86e64765fca6923c327c68`)
+- Dirty state: clean.
+- Private supporting documentation: the Lorecraft visual-identity note is reconciled in vault backup commit `569ec71aa`; unrelated vault state remains untouched.
 - Branch policy: correct `change/*` source targeting non-production `develop`; no PR, merge, push, deployment, or closeout was authorized.
 
 ## Manual UI Confirmation
@@ -79,4 +75,4 @@ The committed turn implementation is sound and the current UI/remediation work p
 ## Review Log
 
 - 2026-07-19: Initial independent review returned `changes-requested` for private-context publication, reset, recovery/concurrency, and documentation gaps.
-- 2026-07-19: A current full independent review remediated the provider disclosure, composer semantics, Ember Return control, and visual-documentation drift. Focused/frontend/broad checks and direct desktop/mobile rendering pass. Verdict is `changes-requested` solely until the 27 related uncommitted source files are committed and the review watermark is refreshed; live-provider and owner manual acceptance remain pending after that technical gate.
+- 2026-07-19: A current full independent review remediated the provider disclosure, composer semantics, Ember Return control, and visual-documentation drift. Focused/frontend/broad checks and direct desktop/mobile rendering pass. `0ed8f90` commits the reviewed application batch, so the verdict is `ready`; live-provider and owner manual acceptance remain pending before merge or closeout.

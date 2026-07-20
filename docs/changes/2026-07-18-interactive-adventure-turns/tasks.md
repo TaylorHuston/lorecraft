@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: independent review remediated provider disclosure, composer semantics, and Ember action consistency against the current working tree
-- Next action: commit the reviewed feature/UI work, refresh the review watermark, then complete the live-provider/manual acceptance walkthrough before any merge or closeout
+- Last completed action: committed the reviewed Ember/workbench batch and refreshed integration readiness
+- Next action: complete the live-provider/manual acceptance walkthrough before any merge or closeout
 - Active branch/ref: `change/interactive-adventure-turns` from `d389ccd` (`develop` at branch creation)
-- Expected dirty files: reviewed Ember/workbench feature UI, its focused tests/docs/tooling, and review artifacts; `.neon` remains unrelated and untracked
+- Expected dirty files: none in the Lorecraft repository; `.neon` remains unrelated and untracked
 - Known review findings: direct private-context disclosure, reset-after-turn proof, browser recovery/concurrency, HTTP recovery, and Idea-side current-state drift are resolved. Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence, not automated review gaps.
 
 ## Task Checklist
