@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
+import { AdventureApiError } from './adventureApi'
 import { AdventureWorkbench, type AdventureView } from './AdventureWorkbench'
 
 const readyAdventure: AdventureView = {
@@ -127,6 +128,31 @@ describe('AdventureWorkbench', () => {
         memory: 'The player has just arrived.',
       })
     )
+  })
+
+  it('LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi.fn().mockRejectedValue(
+      new AdventureApiError('validation', 'Correct the highlighted fields.', {
+        mood: 'Use 500 characters or fewer.',
+      })
+    )
+    render(<AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />)
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    await user.clear(screen.getByLabelText('Mood'))
+    await user.type(screen.getByLabelText('Mood'), 'Curious')
+
+    await waitFor(() => expect(screen.getByLabelText('Mood')).toHaveAttribute('aria-invalid', 'true'))
+    expect(screen.getByLabelText('Mood')).toHaveAccessibleDescription(
+      'Use 500 characters or fewer.'
+    )
+    expect(screen.getByText('Use 500 characters or fewer.')).toBeVisible()
+    expect(screen.getByText('Correct the highlighted fields.')).toBeVisible()
+
+    await user.type(screen.getByLabelText('Mood'), '!')
+    expect(screen.getByLabelText('Mood')).not.toHaveAttribute('aria-invalid')
+    expect(screen.queryByText('Correct the highlighted fields.')).not.toBeInTheDocument()
   })
 
   it('LC-003/S3/R3-S1 preserves the active editor through an authoritative autosave refresh', async () => {

@@ -405,6 +405,17 @@
   resize: vertical;
 }
 
+.npcEditor input[aria-invalid='true'],
+.npcEditor textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.npcEditorFieldError {
+  color: var(--danger-text);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
 .npcEditorNote {
   margin: var(--space-4) 0 0;
   color: var(--text-muted);

@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed `ae4a80a`, completing the deterministic isolated-schema E2E extension and the authorized live-provider opening/Act/Guide/Pass trace matrix. The remaining acceptance work is direct rendered failure/recovery coverage and owner manual confirmation.
-- Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence showed both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500. The owner retry succeeded after about 5.5 seconds, and the Adventure is ready with a complete opening; the protected trace has no truncation outcome.
+- Last completed action: mapped the NPC Debug autosave's structured validation errors to visible field-level errors rather than a generic status-only message; focused component, type, and lint verification pass.
+- Latest manual feedback: the Debug editor reported “Correct the highlighted fields” after autosave but did not identify or visually mark any field. The editor now preserves recognized API field errors, marks the matching input, and clears the stale error when that input is edited.
 - Next action: obtain owner manual confirmation, then complete or explicitly defer the remaining rendered failure/recovery matrix rows before requesting the final independent review.
 - Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `ae4a80a`.
-- Expected dirty files: this task ledger only, pending its commit-reference update.
+- Expected dirty files: `apps/frontend/src/adventures/AdventureWorkbench.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.module.css`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `docs/epics/lc-003-adventure-play/epic.md`, and this task ledger pending the focused defect-fix commit.
 - Known blocker: the external database and provider operations were explicitly approved and completed. Owner manual acceptance and the rendered error/recovery matrix rows remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -143,6 +143,7 @@ status: in_progress
 | 2026-07-20 | Exact frozen-version and post-turn NPC-refresh E2E extension | deterministic E2E | Added a browser journey that compares an old frozen Adventure with a new Adventure after Character publication, plus a fixture-controlled Act asserting authoritative NPC Mood/Status/Memory refresh in the Scene card. | passed: authorized run used a fresh schema on `validation-disposable`; Playwright setup, desktop, and mobile projects completed without failure artifacts, and schema teardown was confirmed. |
 | 2026-07-20 | Live opening/Act/Guide/Pass matrix | live provider + protected local Debug trace | A dedicated local account completed an opening then Act, private Guide, and Pass with two present NPCs. Each narration was non-empty and retained current-Scene grounding; Guide text did not enter visible narration. | passed: opening, three narration calls, and three extraction calls each reached input/provider/outcome trace stages; provider statuses succeeded, raw request/response capture was enabled, and protected trace mode was `0600`. The compatible provider returned no token-usage metadata, so cost remains an estimate rather than measured usage. |
 | 2026-07-20 | E2E and live-matrix evidence commit | `sdd-apply` | Focused deterministic browser coverage, fixture support, Epic verification maps, and active task evidence. | committed after frontend tests (139), Storybook tests (84), lint, typecheck, contract verification, diff hygiene, and scoped SDD validation (0 errors; 2 intentional large-story warnings). | `ae4a80a` |
+| 2026-07-20 | NPC Debug validation feedback | focused frontend regression | Structured validation errors from autosave are retained per editable NPC field, render with an explicit message and invalid border, and clear when that field changes. Unknown validation payloads no longer falsely claim a field was highlighted. | passed: 17 Workbench tests, frontend typecheck, and frontend lint. |
 
 ## Manual Feedback
 
@@ -166,6 +167,7 @@ status: in_progress
 | 2026-07-20 | Opening screen reported an interruption even though the local provider returned two truncated responses. | diagnostic/usability defect | Inspected protected trace metadata and response structure, raised the ignored local token cap from 250 to 500, restarted the local API/workers, and changed the generic state label to “Opening failed”. | resolved; owner retry and trace inspection remain pending |
 | 2026-07-20 | Apply the proposed live-configuration acceptance gate. | requirement refinement | Added a shared runtime resolver, effective worker startup logging, a bounded synthetic opening command, and a truncation-failing unit/live acceptance path. | resolved; the configured local-provider smoke completed at 500 tokens without truncation |
 | 2026-07-20 | Approve the isolated E2E database write and live provider playtest. | external-operation approval | Used a fresh disposable schema only, dropped it afterward, and used a dedicated local account for the live opening/Act/Guide/Pass matrix. | resolved; no raw prompt, Guide, narration, or provider body was copied into this ledger |
+| 2026-07-20 | NPC Debug save error said a field was highlighted when none was visible. | usability defect | Preserve structured autosave field errors in the NPC editor, render an invalid border and per-field message, and clear stale feedback when the field changes. | resolved; focused regression passes |
 
 ## Planning Updates
 

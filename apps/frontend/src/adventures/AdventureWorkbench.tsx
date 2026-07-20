@@ -10,15 +10,17 @@ import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
 import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { creationRequestId } from './creationRequestId'
-import type {
-  AdventureDetail,
-  AdventureTurnTrigger,
-  SubmitAdventureTurnInput,
-  UpdateAdventureNpcStateInput,
+import {
+  AdventureApiError,
+  type AdventureDetail,
+  type AdventureTurnTrigger,
+  type SubmitAdventureTurnInput,
+  type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 import styles from './AdventureWorkbench.module.css'
 
 export type AdventureView = AdventureDetail
+type NpcField = keyof UpdateAdventureNpcStateInput
 
 type AdventurePane = 'story' | 'player' | 'scene'
 
@@ -27,6 +29,14 @@ const paneLabels: Record<AdventurePane, string> = {
   story: 'Story',
   player: 'Player',
   scene: 'Scene',
+}
+
+function NpcFieldError({ error, id }: { error?: string; id: string }) {
+  return error ? (
+    <span className={styles.npcEditorFieldError} id={id} role="alert">
+      {error}
+    </span>
+  ) : null
 }
 
 function PanelHeading({ eyebrow, id, title }: { eyebrow: string; id: string; title: string }) {
@@ -452,6 +462,7 @@ function NpcDebugEditor({
   })
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<NpcField, string>>>({})
   const sourceSignature = JSON.stringify({
     name: npc.name,
     currentLocationKey: npc.currentLocation.key,
@@ -476,6 +487,18 @@ function NpcDebugEditor({
       setSaveError(null)
       void onSave(npc.key, draft)
         .catch((error: unknown) => {
+          if (error instanceof AdventureApiError && error.code === 'validation') {
+            const nextFieldErrors = Object.fromEntries(
+              Object.entries(error.fieldErrors).filter(([field]) => field in draft)
+            ) as Partial<Record<NpcField, string>>
+            setFieldErrors(nextFieldErrors)
+            setSaveError(
+              Object.keys(nextFieldErrors).length > 0
+                ? 'Correct the highlighted fields.'
+                : 'NPC state could not be saved. Please try again.'
+            )
+            return
+          }
           setSaveError(error instanceof Error ? error.message : 'NPC state could not be saved.')
         })
         .finally(() => setSaving(false))
@@ -487,7 +510,27 @@ function NpcDebugEditor({
     field: K,
     value: UpdateAdventureNpcStateInput[K]
   ) {
+    if (fieldErrors[field]) {
+      setFieldErrors((current) => {
+        const remaining = { ...current }
+        delete remaining[field]
+        return remaining
+      })
+      setSaveError(null)
+    }
     setDraft((current) => ({ ...current, [field]: value }))
+  }
+
+  function errorId(field: NpcField) {
+    return `npc-${npc.key}-${field}-error`
+  }
+
+  function fieldAccessibility(field: NpcField) {
+    const error = fieldErrors[field]
+    return {
+      'aria-describedby': error ? errorId(field) : undefined,
+      'aria-invalid': error ? true : undefined,
+    }
   }
 
   return (
@@ -501,7 +544,9 @@ function NpcDebugEditor({
             maxLength={100}
             onChange={(event) => update('name', event.target.value)}
             value={draft.name}
+            {...fieldAccessibility('name')}
           />
+          <NpcFieldError error={fieldErrors.name} id={errorId('name')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -513,6 +558,11 @@ function NpcDebugEditor({
             maxLength={100}
             onChange={(event) => update('currentLocationKey', event.target.value)}
             value={draft.currentLocationKey}
+            {...fieldAccessibility('currentLocationKey')}
+          />
+          <NpcFieldError
+            error={fieldErrors.currentLocationKey}
+            id={errorId('currentLocationKey')}
           />
         </dd>
       </div>
@@ -525,6 +575,11 @@ function NpcDebugEditor({
             maxLength={320}
             onChange={(event) => update('physicalDescription', event.target.value)}
             value={draft.physicalDescription}
+            {...fieldAccessibility('physicalDescription')}
+          />
+          <NpcFieldError
+            error={fieldErrors.physicalDescription}
+            id={errorId('physicalDescription')}
           />
         </dd>
       </div>
@@ -537,7 +592,9 @@ function NpcDebugEditor({
             maxLength={700}
             onChange={(event) => update('background', event.target.value)}
             value={draft.background}
+            {...fieldAccessibility('background')}
           />
+          <NpcFieldError error={fieldErrors.background} id={errorId('background')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -549,7 +606,9 @@ function NpcDebugEditor({
             maxLength={320}
             onChange={(event) => update('personality', event.target.value)}
             value={draft.personality}
+            {...fieldAccessibility('personality')}
           />
+          <NpcFieldError error={fieldErrors.personality} id={errorId('personality')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -561,7 +620,9 @@ function NpcDebugEditor({
             maxLength={240}
             onChange={(event) => update('voice', event.target.value)}
             value={draft.voice}
+            {...fieldAccessibility('voice')}
           />
+          <NpcFieldError error={fieldErrors.voice} id={errorId('voice')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -573,6 +634,11 @@ function NpcDebugEditor({
             maxLength={700}
             onChange={(event) => update('privateKnowledge', event.target.value)}
             value={draft.privateKnowledge}
+            {...fieldAccessibility('privateKnowledge')}
+          />
+          <NpcFieldError
+            error={fieldErrors.privateKnowledge}
+            id={errorId('privateKnowledge')}
           />
         </dd>
       </div>
@@ -585,7 +651,9 @@ function NpcDebugEditor({
             maxLength={500}
             onChange={(event) => update('mood', event.target.value)}
             value={draft.mood}
+            {...fieldAccessibility('mood')}
           />
+          <NpcFieldError error={fieldErrors.mood} id={errorId('mood')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -597,7 +665,9 @@ function NpcDebugEditor({
             maxLength={1_000}
             onChange={(event) => update('status', event.target.value)}
             value={draft.status}
+            {...fieldAccessibility('status')}
           />
+          <NpcFieldError error={fieldErrors.status} id={errorId('status')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -609,7 +679,9 @@ function NpcDebugEditor({
             maxLength={2_000}
             onChange={(event) => update('memory', event.target.value)}
             value={draft.memory}
+            {...fieldAccessibility('memory')}
           />
+          <NpcFieldError error={fieldErrors.memory} id={errorId('memory')} />
         </dd>
       </div>
       <div className={styles.npcEditorStatus}>
