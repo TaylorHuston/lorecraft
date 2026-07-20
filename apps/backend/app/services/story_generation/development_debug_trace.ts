@@ -157,6 +157,12 @@ function removeUndefined(value: Record<string, unknown>) {
 }
 
 function secretKey(key: string) {
+  // OpenAI-compatible providers commonly return these accounting counters.
+  // They are not credentials, and keeping them available in the local-only
+  // trace is necessary to estimate per-operation API cost.
+  if (/^(?:prompt|completion|total|input|output|cached|reasoning)(?:_|)tokens$/i.test(key)) {
+    return false
+  }
   return /authorization|cookie|api[-_]?key|token|secret|password/i.test(key)
 }
 

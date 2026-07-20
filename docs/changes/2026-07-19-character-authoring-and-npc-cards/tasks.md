@@ -6,12 +6,12 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed the final safe remediation, its verification ledger, the opening-failure recovery copy, and the live provider configuration gate as `0b214dc`, `dab67d7`, `d4fda8f`, `bbc1d2e`, and `54b645f`.
+- Last completed action: completed the fresh independent review, found safe regressions in debug usage capture, concise private-value publication guards, and editor focus, and began the scoped remediation batch.
 - Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence showed both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500. The owner retry succeeded after about 5.5 seconds, and the Adventure is ready with a complete opening; the protected trace has no truncation outcome.
-- Next action: complete the remaining live-provider Act/Guide/Pass and owner manual acceptance before an independent review rerun.
-- Active branch/ref: `change/character-authoring-and-npc-cards` at `54b645f`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
-- Expected dirty files: none after this ledger commit.
-- Known blocker: no local technical blocker remains. The direct schema-isolated target requires an explicit create/migrate/test/drop harness because CI uses a whole disposable database; each local test schema was dropped afterward. Live-provider playtests and owner manual confirmation remain outstanding acceptance evidence. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Next action: finish this review's regression verification, then complete the live-provider Act/Guide/Pass quality matrix, exact frozen-version/post-turn E2E path, and owner manual acceptance.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from immutable candidate `ab036a3`.
+- Expected dirty files: scoped review remediation, tests, Epic truth, and review ledger until the authorized local review commit.
+- Known blocker: the review's aggregate backend wrapper remains safely blocked without an explicit disposable-database acknowledgement. The remaining E2E, live Act/Guide/Pass, and owner acceptance evidence is still required. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
 
@@ -68,18 +68,19 @@ status: in_progress
 - [x] 5.4 Run frontend component/API/Storybook tests for full cards, authoring states, Location-move editor continuity, confirmation, selection/refresh, empty/error/loading/pending states, focus, touch, zoom, and overflow. (Component suite complete; rendered Storybook rerun remains under 5.8.)
 - [ ] 5.5 Run deterministic E2E from Character creation/edit/delete through old/new Adventure version behavior, card inspection, mutable-state refresh, reset, owner isolation, and desktop/mobile layouts. (Creator CRUD, debug-card inspection, and Adventure reset now run in E2E; the exact old/new frozen-version comparison and post-turn NPC-refresh sequence remain only direct functional coverage.)
 - [x] 5.6 Run broad repository gates: lint, typecheck, tests with guarded disposable database, contract verification, builds, Storybook, database safety, and scoped SDD validation.
-- [ ] 5.7 Run live-provider opening/Act/Guide/Pass playtests with two to three present NPCs and inspect the enabled local Debug trace alongside visible grounding, bounded NPC context, and provider token metadata.
-- [ ] 5.8 Directly inspect rendered World authoring and Adventure cards for every matrix row, including console/network state.
+- [ ] 5.7 Run live-provider opening/Act/Guide/Pass playtests with two to three present NPCs and inspect the enabled local Debug trace alongside visible grounding, bounded NPC context, and provider token metadata. (One opening and two observed turns pass; Guide/Pass quality remains untested.)
+- [ ] 5.8 Directly inspect rendered World authoring and Adventure cards for every matrix row, including console/network state. (Authoring and desktop/mobile Debug cards pass fresh review inspection; non-author/error rows remain.)
 - [ ] 5.9 Obtain user manual UI confirmation for creator/non-author World cards and Adventure card behavior.
 - [x] 5.10 Update Epic `Verified By` maps with scenario-specific current evidence and keep any cost/quality/manual gaps explicit.
 - [x] 5.11 Run the configured local-provider synthetic opening smoke after each local model, token-cap, timeout, or endpoint change; treat truncation as failed acceptance evidence.
+- [x] 5.12 Regression-test review remediation: preserve non-secret provider usage counters, normalize compatible string counters, avoid concise-value false failures, and retain editor focus through an authoritative autosave refresh.
 
 ### 6. Review And Closeout
 
 - [x] 6.1 Confirm release communication contains only user-facing authoring/card changes and relevant public privacy/operational notes.
-- [ ] 6.2 Run `sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, migrations, authorization, disclosure, prompt privacy/cost, UI, docs, and branch readiness.
-- [ ] 6.3 Record the review outcome and remediate the complete safe finding set before one regression-focused rerun.
-- [ ] 6.4 Keep `status: in_review` while live-provider/manual acceptance and integration gates remain.
+- [x] 6.2 Run `sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, migrations, authorization, disclosure, prompt privacy/cost, UI, docs, and branch readiness. (2026-07-20: changes-requested; all safe code/artifact findings remediated.)
+- [x] 6.3 Record the review outcome and remediate the complete safe finding set before one regression-focused rerun. (Focused backend/frontend tests, broad gates, validation, reverse traceability, and direct Storybook inspection reran.)
+- [ ] 6.4 Keep `status: in_progress` while required E2E/live/manual acceptance remains; transition to `in_review` only for the final acceptance gate.
 - [ ] 6.5 Merge into `develop` only after review, manual acceptance, and explicit user authorization under repository policy.
 - [ ] 6.6 Use `/sdd-release` for an explicitly authorized production handoff; do not run production migrations or deploy from apply/review.
 - [ ] 6.7 Close through `sdd change close` only after Epic truth, review, merge, acceptance, release communication, deferred gaps, and folder state agree.

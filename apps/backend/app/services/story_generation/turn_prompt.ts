@@ -53,12 +53,12 @@ function normalizedForDisclosureCheck(value: string): string {
 }
 
 function containsDirectReflection(narration: string, protectedValue: string): boolean {
-  // Character validation permits concise private knowledge. One- and two-
-  // character values occur naturally in ordinary prose, so they cannot be
-  // distinguished as an intentional disclosure without rejecting safe turns.
-  // Prompt instructions still cover them; semantic paraphrase is likewise a
+  // Card validation permits very concise private knowledge. Short literals
+  // occur naturally in ordinary prose, so a deterministic substring guard
+  // cannot distinguish them from an intentional disclosure. Prompt
+  // instructions cover concise values; semantic paraphrase remains a
   // live-provider evaluation concern rather than a deterministic guarantee.
-  if (protectedValue.length < 3) return false
+  if (protectedValue.length < 12) return false
 
   return narration.includes(protectedValue)
 }

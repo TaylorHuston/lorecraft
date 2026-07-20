@@ -696,7 +696,7 @@ function SceneRegion({
             </div>
             {onSaveNpcState ? (
               <NpcDebugEditor
-                key={JSON.stringify(selected)}
+                key={selected.key}
                 npc={selected}
                 onSave={onSaveNpcState}
               />

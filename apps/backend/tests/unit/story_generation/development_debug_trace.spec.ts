@@ -73,7 +73,8 @@ test.group('DevelopmentDebugTrace', () => {
         headers: { authorization: 'Bearer secret-token', cookie: 'session=secret' },
         body: '{"apiKey":"secret-key"}',
       },
-      rawResponse: '{"authorization":"secret-response"}',
+      rawResponse:
+        '{"authorization":"secret-response","usage":{"prompt_tokens":201,"completion_tokens":"9","total_tokens":210}}',
     })
 
     const contents = await readFile(filePath, 'utf8')
@@ -84,10 +85,45 @@ test.group('DevelopmentDebugTrace', () => {
     assert.notInclude(JSON.stringify(record), 'secret-token')
     assert.notInclude(JSON.stringify(record), 'secret-key')
     assert.notInclude(JSON.stringify(record), 'session=secret')
+    assert.deepInclude(record.rawRequest as Record<string, unknown>, {
+      headers: { authorization: '[REDACTED]', cookie: '[REDACTED]' },
+    })
     const directoryMetadata = await stat(debugTraceDirectory)
     const fileMetadata = await stat(filePath)
     assert.equal(directoryMetadata.mode & 0o777, 0o700)
     assert.equal(fileMetadata.mode & 0o777, 0o600)
+
+    await unlink(filePath)
+  })
+
+  test('LC-003/S2/R3-S6: preserves non-secret provider usage counters while redacting credentials', async ({
+    assert,
+  }) => {
+    const now = new Date('2026-07-19T12:00:00.000Z')
+    const trace = createDevelopmentDebugTrace({
+      nodeEnv: 'development',
+      enabled: true,
+      captureRawRequest: false,
+      captureRawResponse: true,
+      now: () => now,
+    })!
+    const filePath = join(debugTraceDirectory, `trace-${now.toISOString().slice(0, 10)}.jsonl`)
+
+    await trace.capture({
+      traceId: 'trace-usage',
+      operation: 'turn_narration_generation',
+      stage: 'provider',
+      rawResponse:
+        '{"usage":{"prompt_tokens":"201","completion_tokens":"9","total_tokens":210},"access_token":"provider-secret"}',
+    })
+
+    const contents = await readFile(filePath, 'utf8')
+    const [line] = contents.trim().split('\n')
+    const record = JSON.parse(line) as { rawResponse: string }
+    assert.include(record.rawResponse, '"prompt_tokens":"201"')
+    assert.include(record.rawResponse, '"completion_tokens":"9"')
+    assert.include(record.rawResponse, '"total_tokens":210')
+    assert.notInclude(record.rawResponse, 'provider-secret')
 
     await unlink(filePath)
   })

@@ -232,6 +232,30 @@ test.group('OpenAI-compatible story generator', () => {
     assert.notInclude(JSON.stringify(result), rawResponse)
   })
 
+  test('normalizes string token usage counters returned by compatible local providers', async ({
+    assert,
+  }) => {
+    const generator = new OpenAICompatibleStoryGenerator({
+      fetch: async () =>
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: 'The chapel waits.' } }],
+            usage: { prompt_tokens: '201', completion_tokens: '9' },
+          }),
+          { status: 200 }
+        ),
+      baseUrl: 'https://story.example.test/v1',
+      apiKey: 'test-secret',
+      model: 'story-model',
+      settings: { temperature: 0.7, maxTokens: 800 },
+      timeoutMs: 100,
+    })
+
+    const result = await generator.generateOpening(openingInput)
+
+    assert.deepInclude(result.response, { promptTokens: 201, completionTokens: 9 })
+  })
+
   test('normalizes an empty narration response', async ({ assert }) => {
     const rawResponse = JSON.stringify({ choices: [{ message: { content: '   ' } }] })
     const generator = new OpenAICompatibleStoryGenerator({

@@ -4,6 +4,43 @@
 
 changes-requested
 
+## Current Review (2026-07-20)
+
+Reviewed `ab036a318eb099dca9b2540d4a265cd01bdfdeca` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical review below remains a record of the earlier pre-implementation tree.
+
+### Required findings and safe remediation
+
+- Debug trace sanitization treated every `*token*` key as a credential, so `prompt_tokens`, `completion_tokens`, and `total_tokens` were redacted. The trace now retains only recognized accounting counters while redacting credentials; compatible string counters are normalized into bounded provider metadata.
+- The literal private-value guard rejected ordinary narration for any valid three-character value such as `the` or `red`. It now applies only to sufficiently distinctive literals (12+ normalized characters); concise values remain prompt-enforced and are an explicit live-provider quality limitation.
+- Autosave replaced the Adventure cache and the editor key used the full NPC JSON, remounting the input and dropping focus. The editor now has a stable character-key identity, with a test covering the authoritative refresh.
+- Epic and task truth was stale about guarded database, deterministic E2E, provider smoke/opening/turn, and trace evidence. The maps now classify `story_generator.ts` as the S1/S2 provider-boundary adapter and retain only genuine outstanding verification.
+
+### Current gate scorecard
+
+| Gate | Result | Notes |
+|---|---|---|
+| Change artifacts, requirements, Epic truth, traceability | pass after remediation | `sdd validate` has 0 errors and two accepted LC-003 scope warnings; no orphaned implementation or verification references. |
+| Code/security | pass after remediation | No additional authorization, injection, or production-trace exposure finding. Local raw traces remain development-only, protected, and time-bounded. |
+| Focused regression tests | pass | 27 backend unit tests and 16 workbench tests cover the safe fixes. |
+| Broad gates | pass except backend aggregate | lint, typecheck, build, frontend tests, Storybook, and contract verification pass; backend aggregate safely stops without disposable database acknowledgement. |
+| Rendered UI | partial | Fresh Storybook desktop/mobile Debug and World authoring inspection passed without overlay or overflow; non-author/error matrix rows remain. |
+| Live/manual/E2E acceptance | changes requested | Exact frozen-version/post-turn E2E, full Act/Guide/Pass quality, and owner manual acceptance remain required. |
+| Branch/merge readiness | not ready | Merge is clean, but no merge/PR authorization exists and required acceptance evidence remains. |
+
+### Regression-focused rereview
+
+- Reinspected each remediated source/test/artifact diff. `git diff --check` passes and the `develop` merge-tree is clean (`537fe808f6bbe50e4d3a66ec65aeb91c4b5ba19a`).
+- Focused rerun: 27 backend unit tests covering trace capture, compatible usage metadata, and private-value safety; 16 focused workbench tests covering autosave focus; all pass.
+- Broad rerun: lint, typecheck, build, 138 frontend tests, 84 Storybook tests, and contract cleanliness pass. The backend aggregate safety suite passes its 20 checks and then correctly refuses database writes without `ALLOW_TEST_DATABASE_WRITES=1`; no database test was run in this review.
+- SDD validation passes with 0 errors and the two intentional LC-003 large-story warnings. Reverse traceability has no missing implementation or verification references; remaining conservative `source_without`/`tests_without` entries are cross-Epic, generated, or support candidates.
+- Direct Storybook review confirms the Debug NPC editor has all ten editable fields and no overflow/overlay at desktop width. A delegated independent visual pass also confirmed the 375px Debug card, World authoring, and failed-turn composer recovery; non-author/error matrix rows remain pending.
+
+### Remaining changes-requested items
+
+- Run the exact old/new frozen-version and post-turn NPC-refresh E2E path.
+- Run live Act, Guide, and Pass quality checks with the enabled protected trace; the opening and two observed turns do not cover that full matrix.
+- Complete owner manual acceptance, including non-author/error states.
+
 ## Remediation Status (2026-07-20)
 
 This is the historical independent review of the pre-implementation working tree at `1d3b5fd`. Its safe findings were implemented in `f1b4c4a` and verification was recorded in `c1810ed`:

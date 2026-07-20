@@ -129,6 +129,36 @@ describe('AdventureWorkbench', () => {
     )
   })
 
+  it('LC-003/S3/R3-S1 preserves the active editor through an authoritative autosave refresh', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi.fn().mockResolvedValue(undefined)
+    const { rerender } = render(
+      <AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    const mood = screen.getByLabelText('Mood')
+    await user.clear(mood)
+    await user.type(mood, 'Curious')
+    await waitFor(() => expect(saveNpcState).toHaveBeenCalledTimes(1))
+
+    rerender(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          scene: {
+            ...readyAdventure.scene,
+            npcs: [{ ...readyAdventure.scene.npcs[0], mood: 'Curious' }],
+          },
+        }}
+        onSaveNpcState={saveNpcState}
+      />
+    )
+
+    expect(screen.getByLabelText('Mood')).toHaveValue('Curious')
+    expect(screen.getByLabelText('Mood')).toHaveFocus()
+  })
+
   it('LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it', async () => {
     const user = userEvent.setup()
     const { rerender } = render(<AdventureWorkbench adventure={readyAdventure} />)

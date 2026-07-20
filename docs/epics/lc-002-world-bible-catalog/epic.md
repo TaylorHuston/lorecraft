@@ -3,8 +3,8 @@ schema: sdd-epic-v2
 id: LC-002
 status: in_progress
 created: 2026-07-14
-modified: 2026-07-19
-last_verified: 2026-07-18
+modified: 2026-07-20
+last_verified: 2026-07-20
 stories:
   - S1
   - S2

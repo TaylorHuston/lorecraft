@@ -34,6 +34,12 @@ const defaultMaxResponseBytes = 1_000_000
 const maximumRetryAfterMs = 60_000
 const knownFinishReasons = new Set(['stop', 'length', 'tool_calls', 'content_filter'])
 
+function usageTokenCount(value: unknown) {
+  if (typeof value !== 'number' && typeof value !== 'string') return undefined
+  const parsed = typeof value === 'number' ? value : Number(value)
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : undefined
+}
+
 export function parseRetryAfter(value: string | null, nowMs = Date.now()) {
   if (!value) return undefined
   const trimmed = value.trim()
@@ -148,13 +154,9 @@ function parsedResponseFrom(rawResponse: string, evidence: StoryGenerationEviden
         ? parsed.choices[0].finish_reason
         : undefined,
     promptTokens:
-      usage && 'prompt_tokens' in usage && typeof usage.prompt_tokens === 'number'
-        ? usage.prompt_tokens
-        : undefined,
+      usage && 'prompt_tokens' in usage ? usageTokenCount(usage.prompt_tokens) : undefined,
     completionTokens:
-      usage && 'completion_tokens' in usage && typeof usage.completion_tokens === 'number'
-        ? usage.completion_tokens
-        : undefined,
+      usage && 'completion_tokens' in usage ? usageTokenCount(usage.completion_tokens) : undefined,
   }
 }
 

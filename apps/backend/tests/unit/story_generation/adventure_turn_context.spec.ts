@@ -270,7 +270,7 @@ test.group('Adventure turn context', () => {
     )
   })
 
-  test('LC-003/S2/R3-S5: does not reject ordinary narration for a concise private value', ({
+  test('LC-003/S2/R3-S5: does not reject ordinary narration for concise private values', ({
     assert,
   }) => {
     const context = assembleAdventureTurnContext({
@@ -288,6 +288,22 @@ test.group('Adventure turn context', () => {
 
     assert.doesNotThrow(() =>
       assertNarrationSafeForPublication('A bell tolls across the empty chapel.', context)
+    )
+    assert.doesNotThrow(() =>
+      assertNarrationSafeForPublication('The red candle burns beside the door.', {
+        ...context,
+        frozenCanon: {
+          ...context.frozenCanon,
+          characters: [
+            { ...context.frozenCanon.characters[0], privateKnowledge: 'the' },
+            {
+              ...context.frozenCanon.characters[0],
+              key: 'second-character',
+              privateKnowledge: 'red',
+            },
+          ],
+        },
+      })
     )
   })
 })
