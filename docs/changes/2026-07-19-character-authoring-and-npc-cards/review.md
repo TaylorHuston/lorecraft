@@ -6,6 +6,75 @@ changes-requested
 
 ## Current Review (2026-07-20)
 
+Reviewed `e04cc3cbc070f8c6b087fc57a81f5443eb63eee` and the safe review remediation `963e277` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. Earlier review sections are historical.
+
+### Gate Scorecard
+
+| Gate | Result | Notes |
+| --- | --- | --- |
+| Change artifacts / status / Epic truth | pass | Current task ledger remains `in_progress` because required verification is unfinished; `sdd validate` has zero errors and two accepted LC-003 large-Story warnings. |
+| Cold navigation / Story references | pass | LC-002/S3 and LC-003/S3 retain concrete primary anchors and scenario-mapped evidence. |
+| Source diff / reverse traceability | pass | `develop...HEAD` has 89 changed candidates; both Epic-scoped audits have zero missing implementation or verification references. |
+| Tests and verification | findings | Lint, typecheck, build, contract generation/cleanliness, 139 frontend tests, 84 Storybook tests, and a 9/9 isolated E2E run pass; required exact version/refresh E2E and live-provider matrix remain. |
+| Rendered UI | findings remediated | Direct review passed World authoring and Debug NPC cards at desktop and 390px mobile; the DebugNpcEditor mobile play function needed to select Scene before Mira. |
+| Manual acceptance | pending user | Current walkthrough remains valid; author/non-author/error/save-request confirmation is still owner work. |
+| Code / security / data safety | pass | Fresh diff review found no authorization, raw-trace privacy, migration, extraction, or source-isolation regression. |
+| Supporting docs / Idea / release / PRD | pass | README, CHANGELOG, ADR, Idea current-state routing, and product direction align with implementation. |
+| Integration readiness | changes requested | Merge tree is clean and source is committed, but required deterministic/live verification and owner acceptance remain open. |
+
+### Findings
+
+#### BLOCKING
+
+- None.
+
+#### REQUIRED
+
+- [ ] `docs/changes/2026-07-19-character-authoring-and-npc-cards/tasks.md:69` — The deterministic E2E run still lacks the exact old-versus-new frozen-version comparison and post-turn NPC refresh path. This is required non-manual verification.
+- [ ] `docs/changes/2026-07-19-character-authoring-and-npc-cards/tasks.md:71` — Live opening evidence and two observed turns do not prove the required Act/Guide/Pass quality matrix with protected Debug-trace inspection. This is required non-manual verification.
+
+#### SUGGESTION
+
+- None.
+
+### Verification Evidence
+
+| Command / Scenario | Evidence Type | Result |
+| --- | --- | --- |
+| scoped `sdd validate` | artifact validation | pass: 0 errors; two accepted LC-003 scope warnings |
+| Epic-scoped `sdd_orphan_audit.py --changed-from develop` | reverse traceability | pass: no missing implementation or verification references |
+| `npm run lint && npm run typecheck && npm run build && npm run verify:contracts` | broad supporting gates | pass |
+| `npm run test --workspace @lorecraft/frontend` | focused frontend suite | pass: 139 tests |
+| `npm run test:storybook --workspace @lorecraft/frontend` | Storybook interaction suite | pass: 84 tests after the review fixture correction |
+| isolated `npm run test:e2e --workspace @lorecraft/frontend` | deterministic E2E | pass: 9 tests; temporary direct schema dropped |
+
+### Rendered UI Verification
+
+| Surface | Viewport | State / interaction | Direct evidence | Console / network | Result |
+| --- | --- | --- | --- | --- | --- |
+| main sign-in | desktop | initial route | meaningful content, no overlay | clean | pass |
+| World authoring | 1440px and 390px | full required Character form | disclosure, 11 fields, readable mobile layout, no overflow | only favicon 404 | pass |
+| Adventure Debug NPC editor | 1440px and 390px | Scene → Mira, edit card, Back path | all ten editable fields, immutable key, disclosure, Story-first tabs, no overflow | only favicon 404 | pass after fixture correction |
+
+### Consolidated Remediation
+
+- Safe batch: make `DebugNpcEditor` select the mobile Scene tab before it seeks Mira; refresh this review record.
+- Regression verification: rerun Storybook interactions, lint/typecheck, contract cleanliness, and the source merge-tree check.
+- Residual required work: exact frozen-version/post-turn E2E and live Act/Guide/Pass quality checks. Owner manual confirmation remains `pending user` and separately blocks integration/closeout.
+
+### Review Bundle
+
+- Source branch: `change/character-authoring-and-npc-cards`
+- Target branch: `develop`
+- Merge base: `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`
+- Initial reviewed source: `e04cc3cbc070f8c6b087fc57a81f5443eb63eee`; final code watermark: `963e277`.
+- Conflict check: clean (`git merge-tree --write-tree develop HEAD`).
+- Dirty state at review start: clean.
+
+## Prior Review (2026-07-20)
+
+### Historical Review Details
+
 Reviewed `ab036a318eb099dca9b2540d4a265cd01bdfdeca` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical review below remains a record of the earlier pre-implementation tree.
 
 ### Required findings and safe remediation

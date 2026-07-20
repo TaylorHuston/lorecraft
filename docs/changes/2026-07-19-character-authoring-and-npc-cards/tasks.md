@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed deterministic E2E Character-card isolation as `cd8f979`: card locators are scoped to the Characters region, each mutable test restores canonical seed data, and mobile waits for desktop coverage.
+- Last completed action: current independent review committed the mobile Debug NPC Storybook fixture correction as `963e277`; the full Storybook interaction suite now selects Scene before Mira at mobile width.
 - Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence showed both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500. The owner retry succeeded after about 5.5 seconds, and the Adventure is ready with a complete opening; the protected trace has no truncation outcome.
 - Next action: complete the live-provider Act/Guide/Pass quality matrix, exact frozen-version/post-turn E2E path, and owner manual acceptance.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from immutable candidate `ab036a3`.
-- Expected dirty files: none.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the final code watermark is `963e277`.
+- Expected dirty files: review record and task-ledger reconciliation until committed.
 - Known blocker: the review's aggregate backend wrapper remains safely blocked without an explicit disposable-database acknowledgement. The remaining E2E, live Act/Guide/Pass, and owner acceptance evidence is still required. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -139,6 +139,7 @@ status: in_progress
 | 2026-07-20 | Owner opening retry after cap correction | live-provider + protected local Debug inspection | The previously failed Adventure retried at the 500-token cap; no provider prose was copied into normal logs or this record. | passed: one 5.5-second complete response, 1,317-character narration committed atomically, Adventure status `ready`, and trace outcome `succeeded` without truncation |
 | 2026-07-20 | E2E failure diagnosis | deterministic E2E trace inspection | Character CRUD created the test NPC, but its broad `article` locator also matched the containing World. The viewport projects share one seeded schema, so a failed or overlapping CRUD cleanup can contaminate the next viewport. | remediation in progress: scope card locators to the Characters region, reset the starter seed in `finally`, and make mobile depend on completed desktop coverage |
 | 2026-07-20 | E2E isolation remediation | deterministic E2E | Character CRUD is scoped to its card, restores the canonical starter World after each mutable path, and desktop/mobile no longer share overlapping mutable work. | passed: isolated direct-schema run completed all 9 Playwright setup, desktop, and mobile tests; test servers exited normally and the temporary schema was dropped; `cd8f979` |
+| 2026-07-20 | Current independent review and mobile Debug fixture correction | review, rendered UI, and focused regression | Direct desktop/mobile Storybook inspection confirmed World authoring and Scene-to-NPC editing; the interaction fixture now activates the mobile Scene tab before selecting Mira. | passed: frontend lint/typecheck, 84 Storybook tests, contract cleanliness, diff check, and clean `develop` merge tree; `963e277`. Exact version/refresh E2E and live Act/Guide/Pass remain required. |
 
 ## Manual Feedback
 
@@ -212,9 +213,9 @@ status: in_progress
 - Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical only; current supporting docs now describe Character authoring and default-on local Debug capture.
 - ADR status: accepted provider-boundary ADR and checked-in defaults agree; focused behavior evidence passes.
 - Release communication current: `CHANGELOG.md` contains only the user-facing Character/NPC capability.
-- `sdd-review` verdict: the historical `changes-requested` review is remediated at `c1810ed`; a fresh independent review remains required after the outstanding evidence is available.
+- `sdd-review` verdict: current review is `changes-requested`; its only required findings are the exact old/new frozen-version plus post-turn refresh E2E and live Act/Guide/Pass trace-quality matrix. The mobile fixture correction is complete at `963e277`.
 - Review record: `docs/changes/2026-07-19-character-authoring-and-npc-cards/review.md`
-- `review.md` safe findings resolved: yes; the remaining evidence gaps are the exact old/new frozen-version E2E comparison, live-provider, and manual acceptance.
+- `review.md` safe findings resolved: yes; current required evidence gaps are the exact old/new frozen-version E2E comparison and live-provider matrix. Owner manual acceptance remains pending.
 - Planning updates resolved: yes; execution is in verification.
 - Manual UI confirmation status: pending user after implementation
 - Rendered UI verification status: partial; World authoring desktop/mobile and the Debug NPC editor were directly inspected, but live routed/e2e/manual rows remain.
