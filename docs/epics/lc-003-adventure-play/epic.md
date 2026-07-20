@@ -28,7 +28,7 @@ Lorecraft's creator-owned Worlds are authoritative canon. Adventure play lets an
 
 ## Outcome
 
-Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The active Character-authoring Change extends frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards; guarded schema, synthetic smoke, one completed opening, and two observed turns pass, while the exact E2E refresh path, full Act/Guide/Pass quality matrix, and owner acceptance remain pending.
+Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The active Character-authoring Change extends frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards; guarded schema, synthetic smoke, deterministic E2E refresh, and the live-provider Act/Guide/Pass matrix pass, while owner acceptance remains pending.
 
 ## Current Scope
 
@@ -305,7 +305,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 
 #### Implementation Gaps
 
-- None. Guarded database migration/create/reset/query evidence remains a verification gap.
+- None.
 
 #### Verified By
 
@@ -560,7 +560,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 
 #### Implementation Gaps
 
-- None. The exact E2E refresh path, full live-provider Act/Guide/Pass quality matrix, and owner acceptance remain verification gaps.
+- None.
 - Successful-turn Retry, rollback, branching, Story utilities, streaming, model controls, and multiplayer remain deferred rather than gaps in S2.
 
 #### Verified By
@@ -670,7 +670,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 
 #### Implementation Gaps
 
-- None. Authoritative post-turn refresh and deterministic E2E evidence remain verification gaps.
+- None.
 
 #### Verified By
 

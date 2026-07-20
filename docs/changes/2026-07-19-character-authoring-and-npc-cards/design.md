@@ -168,7 +168,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 ##### Implementation Gaps
 
-- None; guarded database and deterministic end-to-end verification remain below.
+- None.
 
 ##### Verified By
 
@@ -176,7 +176,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 ##### Verification Gaps
 
-- Database migration/service/API/E2E proof is blocked until the guarded disposable database is configured; manual author/non-author confirmation remains pending.
+- Manual author/non-author confirmation and rendered recovery coverage remain pending.
 
 #### Supersedes / Reconciles
 
@@ -292,7 +292,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 
 ##### Implementation Gaps
 
-- None; authoritative refresh and long/recovery evidence remain below.
+- None.
 
 ##### Verified By
 
@@ -300,7 +300,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 
 ##### Verification Gaps
 
-- Database-backed refresh/E2E/manual proof remains pending; Storybook remounting prevented a stable selected-card raster capture.
+- Long-card/recovery/manual confirmation remains pending; Storybook remounting prevented a stable selected-card raster capture.
 
 #### Supersedes / Reconciles
 

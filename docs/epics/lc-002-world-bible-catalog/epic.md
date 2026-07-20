@@ -437,7 +437,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 #### Implementation Gaps
 
-- None. Guarded database and end-to-end paths remain verification gaps.
+- None.
 
 #### Verified By
 

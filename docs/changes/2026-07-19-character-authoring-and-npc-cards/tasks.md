@@ -6,12 +6,12 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed `0917e18`, extending the frozen-Adventure compatibility fallback from Memory to Mood and Status so a legacy blank card can be edited and saved one field at a time.
-- Latest manual feedback: after the Memory fallback appeared, blank Mood still prevented the same save. Existing frozen Adventures now display neutral defaults for all three mutable state fields until the owner saves an Adventure-local edit.
-- Next action: obtain owner manual confirmation, then complete or explicitly defer the remaining rendered failure/recovery matrix rows before requesting the final independent review.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `0917e18`.
-- Expected dirty files: this task ledger only, pending its commit-reference update.
-- Known blocker: the external database and provider operations were explicitly approved and completed. Owner manual acceptance and the rendered error/recovery matrix rows remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Last completed action: committed `b7dc08a`, reconciling the local starter World so all four seeded Character cards carry non-empty initial Adventure state.
+- Current independent review: safe artifact/test corrections are in progress; the review returned this Change to `in_progress` for two material P2 findings.
+- Next action: preflight existing Adventure state, reconcile Debug-card mood/status/memory limits with the accepted 120/320/500 prompt bound, and add direct create/reset plus all-four-seed regression coverage before a fresh independent review.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; reviewed implementation head began at `b7dc08a`.
+- Expected dirty files: review-safe documentation/test reconciliation and the refreshed review record, pending verification and commit.
+- Known blocker: changing the Debug field limits requires the design-mandated existing-data preflight; owner manual acceptance and rendered error/recovery rows also remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
 
@@ -217,7 +217,7 @@ status: in_progress
 
 ## Closeout
 
-- Change status: `in_progress`; the independent-review evidence gaps are remediated, but rendered error/recovery coverage and owner manual acceptance remain.
+- Change status: `in_progress`; the current independent review found unresolved Debug-limit/data-preflight and initial-state regression-coverage work, alongside pending rendered recovery and owner manual acceptance.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
 - Implemented By maps current: yes; the self-check resolved no missing anchors.

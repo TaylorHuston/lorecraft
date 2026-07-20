@@ -175,7 +175,7 @@ test.group('World catalog API', (group) => {
     assert.notInclude(JSON.stringify(otherDetail.body()), ownerEmail)
   })
 
-  test('LC-002/S2/R1-S1 + R1-S2: detail is structured, minimized, and safely missing', async ({
+  test('LC-002/S2/R1-S1 + R1-S2: detail exposes complete debug cards and is safely missing', async ({
     client,
     assert,
   }) => {
@@ -206,14 +206,14 @@ test.group('World catalog API', (group) => {
             key: 'mira',
             name: 'Mira',
             location: { key: 'chapel', name: 'Chapel' },
+            privateKnowledge:
+              'Mira knows the storm began after the chapel bell rang at midnight, but she is afraid to say that plainly.',
           },
         ],
       },
     })
     assert.notProperty(response.body().data, 'authorId')
     assert.notProperty(response.body().data, 'author')
-    assert.notInclude(JSON.stringify(response.body()), 'privateKnowledge')
-    assert.notInclude(JSON.stringify(response.body()), 'storm began after the chapel bell')
     assert.notInclude(JSON.stringify(response.body()), author.email)
     const missing = await withBrowserSession(client.get('/api/v1/worlds/unknown-world'), viewer)
     missing.assertStatus(404)
