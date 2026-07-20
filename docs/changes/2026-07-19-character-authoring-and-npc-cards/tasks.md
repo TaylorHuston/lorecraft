@@ -6,10 +6,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed the final safe remediation and its verification ledger as `0b214dc` and `dab67d7`.
+- Last completed action: committed the final safe remediation, its verification ledger, and the opening-failure recovery copy as `0b214dc`, `dab67d7`, and `d4fda8f`.
 - Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence shows both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500 and the API/workers have been restarted. No new provider call was made by Apply.
 - Next action: have the owner retry the failed opening, then inspect the protected local Debug trace for a complete response and token metadata; complete the remaining live-provider/manual acceptance before an independent review rerun.
-- Active branch/ref: `change/character-authoring-and-npc-cards` at `dab67d7`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Active branch/ref: `change/character-authoring-and-npc-cards` at `d4fda8f`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
 - Expected dirty files: none after this ledger commit.
 - Known blocker: no local technical blocker remains. The direct schema-isolated target requires an explicit create/migrate/test/drop harness because CI uses a whole disposable database; each local test schema was dropped afterward. Live-provider playtests and owner manual confirmation remain outstanding acceptance evidence. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
@@ -98,7 +98,7 @@ status: in_progress
 | 2026-07-20 | Cohesive implementation commit | `sdd-apply` | Complete active Change implementation, contracts, tests, SDD artifacts, and supporting documentation | The active Change is now reviewable from an immutable source commit; guarded database/E2E/live/manual verification remains explicitly open. | `f1b4c4a` |
 | 2026-07-20 | Verification record commit | `sdd-apply` | Verification ledger and Epic evidence maps | Recorded the passing focused, broad, contract, and rendered-UI evidence against the immutable implementation source. | `c1810ed` |
 | 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | `0b214dc` |
-| 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | commit pending |
+| 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | `d4fda8f` |
 
 ## Verification Ledger
 
