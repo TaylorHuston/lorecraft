@@ -196,6 +196,31 @@ describe('AdventureWorkbench', () => {
     expect(screen.queryByText('Correct the highlighted fields.')).not.toBeInTheDocument()
   })
 
+  it('LC-003/S3/R3-S2 retries an unchanged NPC draft after a recoverable autosave failure', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('NPC state could not be saved.'))
+      .mockResolvedValueOnce(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />)
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    await user.clear(screen.getByLabelText('Mood'))
+    await user.type(screen.getByLabelText('Mood'), 'Curious')
+
+    await waitFor(() => expect(saveNpcState).toHaveBeenCalledTimes(1))
+    expect(screen.getByRole('alert')).toHaveTextContent('NPC state could not be saved.')
+    expect(screen.getByRole('button', { name: 'Retry save' })).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Retry save' }))
+    await waitFor(() => expect(saveNpcState).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(screen.getByText('NPC state saved.')).toBeVisible())
+    expect(saveNpcState).toHaveBeenLastCalledWith(
+      'mira',
+      expect.objectContaining({ mood: 'Curious' })
+    )
+  })
+
   it('LC-003/S3/R3-S1 preserves the active editor through an authoritative autosave refresh', async () => {
     const user = userEvent.setup()
     const saveNpcState = vi.fn().mockResolvedValue(undefined)

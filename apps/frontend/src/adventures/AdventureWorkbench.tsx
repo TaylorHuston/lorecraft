@@ -530,6 +530,12 @@ function NpcDebugEditor({
     setDraft((current) => ({ ...current, [field]: value }))
   }
 
+  function retrySave() {
+    setFieldErrors({})
+    setSaveError(null)
+    setLastSubmittedSignature('')
+  }
+
   function errorId(field: NpcField) {
     return `npc-${npc.key}-${field}-error`
   }
@@ -697,7 +703,14 @@ function NpcDebugEditor({
         <dt>Save status</dt>
         <dd aria-live="polite">
           {saveError ? (
-            <span role="alert">{saveError}</span>
+            <>
+              <span role="alert">{saveError}</span>
+              {Object.keys(fieldErrors).length === 0 ? (
+                <Button onClick={retrySave} size="dense" variant="secondary">
+                  Retry save
+                </Button>
+              ) : null}
+            </>
           ) : saving ? (
             'Saving NPC state…'
           ) : (
