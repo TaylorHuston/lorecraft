@@ -197,9 +197,7 @@ test.group('AdventureCreationService', (group) => {
       slug: 'legacy-snapshot-create-world',
       includeCharacter: true,
     })
-    const legacySnapshot = structuredClone(version!.snapshot) as {
-      characters: Array<{ initialMood?: string; initialStatus?: string; initialMemory?: string }>
-    }
+    const legacySnapshot = structuredClone(version!.snapshot)
     legacySnapshot.characters[0].initialMood = ''
     legacySnapshot.characters[0].initialStatus = ' \t '
     legacySnapshot.characters[0].initialMemory = undefined

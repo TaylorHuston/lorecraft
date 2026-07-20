@@ -355,9 +355,7 @@ test.group('AdventureLifecycleService', (group) => {
   }) => {
     const owner = await createUser('legacy-snapshot-reset-owner@example.com')
     const source = await createWorld({ authorId: owner.id, slug: 'legacy-snapshot-reset-world' })
-    const legacySnapshot = structuredClone(source.version.snapshot) as {
-      characters: Array<{ initialMood?: string; initialStatus?: string; initialMemory?: string }>
-    }
+    const legacySnapshot = structuredClone(source.version.snapshot)
     legacySnapshot.characters[0].initialMood = ''
     legacySnapshot.characters[0].initialStatus = '\n'
     legacySnapshot.characters[0].initialMemory = undefined
