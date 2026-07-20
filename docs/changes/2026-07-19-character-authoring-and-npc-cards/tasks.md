@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: extended the frozen-Adventure compatibility fallback from Memory to Mood and Status, so a legacy blank card can be edited and saved one field at a time.
+- Last completed action: committed `0917e18`, extending the frozen-Adventure compatibility fallback from Memory to Mood and Status so a legacy blank card can be edited and saved one field at a time.
 - Latest manual feedback: after the Memory fallback appeared, blank Mood still prevented the same save. Existing frozen Adventures now display neutral defaults for all three mutable state fields until the owner saves an Adventure-local edit.
 - Next action: obtain owner manual confirmation, then complete or explicitly defer the remaining rendered failure/recovery matrix rows before requesting the final independent review.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `0104848`.
-- Expected dirty files: `apps/frontend/src/adventures/AdventureWorkbench.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, and this task ledger pending the compatibility-fallback commit.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `0917e18`.
+- Expected dirty files: this task ledger only, pending its commit-reference update.
 - Known blocker: the external database and provider operations were explicitly approved and completed. Owner manual acceptance and the rendered error/recovery matrix rows remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -145,7 +145,7 @@ status: in_progress
 | 2026-07-20 | E2E and live-matrix evidence commit | `sdd-apply` | Focused deterministic browser coverage, fixture support, Epic verification maps, and active task evidence. | committed after frontend tests (139), Storybook tests (84), lint, typecheck, contract verification, diff hygiene, and scoped SDD validation (0 errors; 2 intentional large-story warnings). | `ae4a80a` |
 | 2026-07-20 | NPC Debug validation feedback | focused frontend regression | Structured validation errors from autosave are retained per editable NPC field, render with an explicit message and invalid border, and clear when that field changes. Unknown validation payloads no longer falsely claim a field was highlighted. | passed: 17 Workbench tests, frontend typecheck, and frontend lint. |
 | 2026-07-20 | Starter NPC-state completion | focused frontend regression + backend typecheck | The starter source now publishes non-empty initial mood/status/memory values. Existing frozen Adventures retain their source, but the Debug editor presents a neutral Memory fallback and sends it only when the owner next saves an edit. | committed as `0104848`: 18 Workbench tests, frontend lint/typecheck, backend typecheck, build, 141 frontend tests, 84 Storybook tests, and scoped SDD validation passed. The guarded seed integration test needs a disposable `TEST_DATABASE_URL`; no database write occurred. |
-| 2026-07-20 | Frozen NPC all-state compatibility fallback | focused frontend regression | Manual acceptance exposed that Mood and Status could be blank in the same legacy frozen source as Memory. The Debug editor now supplies neutral values for all mutable state fields only in its local draft. | passed: 18 Workbench tests, frontend lint, and frontend typecheck. |
+| 2026-07-20 | Frozen NPC all-state compatibility fallback | focused frontend regression | Manual acceptance exposed that Mood and Status could be blank in the same legacy frozen source as Memory. The Debug editor now supplies neutral values for all mutable state fields only in its local draft. | committed as `0917e18`: 18 Workbench tests, 141 frontend tests, frontend lint/typecheck, 84 Storybook tests, and scoped SDD validation passed. |
 
 ## Manual Feedback
 
