@@ -55,8 +55,8 @@ status: in_review
 - [x] 5.3 Run frontend component/API coverage for R5 and relevant R1/R2 lifecycle states.
 - [x] 5.4 Run deterministic E2E for Act, Pass, Guide, reload/restart, concurrent tabs, state updates, failure recovery, reset, cross-account isolation, and desktop/mobile layouts.
 - [x] 5.5 Run broad repository gates: lint, typecheck, tests, contracts, builds, Storybook, and worker/container/deployment checks affected by the change.
-- [ ] 5.6 Run live-provider Act and Guide playtests while recording only visible behavior and bounded metadata.
-- [ ] 5.7 Obtain user manual UI confirmation for ready/pending/completed/failed desktop and mobile flows.
+- [x] 5.6 Record the owner-accepted live-provider evidence gap without retaining prompts, Guide text, or provider bodies.
+- [x] 5.7 Record owner acceptance of the remaining desktop/mobile walkthrough gap before local integration.
 - [x] 5.8 Update LC-003/S2 `Verified By` with scenario-mapped evidence and leave any real gaps explicit.
 - [x] 5.9 Run scoped `sdd validate` and resolve deterministic errors/warnings before review handoff.
 
@@ -65,7 +65,7 @@ status: in_review
 - [x] 6.1 Run `sdd-review` as the independent local gate for behavior, security, data lineage, provider privacy, docs, ADRs, and branch readiness.
 - [x] 6.2 Address findings or record explicitly accepted non-blocking risks; keep status `in_review` during closeout.
 - [x] 6.3 Confirm release communication, Epic truth, ADR status, generated contracts, and manual confirmation agree with implementation reality.
-- [ ] 6.4 Merge according to the repository's develop-integration policy only after review and explicit user authorization.
+- [x] 6.4 Merge according to the repository's develop-integration policy after review and explicit user authorization.
 - [ ] 6.5 Use `sdd-release` for an explicitly authorized main/deployment handoff; run production migration and authenticated Tailscale acceptance only in that workflow.
 - [ ] 6.6 Close the Change only after review, merge, acceptance, deferred-scope confirmation, and status reconciliation are complete.
 
@@ -112,6 +112,7 @@ status: in_review
 | Date       | Feedback                                                                               | Classification         | Action / Artifact Updates                                       | Status   |
 | ---------- | -------------------------------------------------------------------------------------- | ---------------------- | --------------------------------------------------------------- | -------- |
 | 2026-07-18 | Immediate phase should implement Act, Pass, and Guide; Story and utilities can follow. | requirement refinement | proposal/design/tasks use one LC-003/S2 resolving-turn boundary | resolved |
+| 2026-07-19 | Owner explicitly authorized local merge and Change closeout before the live-provider/manual walkthrough was performed. | accepted verification gap | Closeout preserves the missing walkthrough as an accepted risk; no provider payload, raw Guide, or prompt was retained. | accepted |
 
 ## Planning Updates
 
@@ -127,7 +128,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: accepted by owner for local integration on 2026-07-19
 - App URL / route: development `/adventures/<owned-ready-adventure-id>`
 - Required setup or test data: signed-in owner, seeded Stormbound Chapel, ready Adventure, deterministic and live-provider test paths
 - Steps for the user: submit Act, Pass, and Guide; observe pending/completion; reload while pending; retry/discard a forced failure; inspect Player/Scene changes on desktop and mobile
@@ -136,23 +137,23 @@ status: in_review
 
 ## Blockers / Open Questions
 
-- Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence. No raw prompt, Guide, or provider body will be retained.
+- Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation were accepted by the owner as a local-integration risk on 2026-07-19. No raw prompt, Guide, or provider body was retained.
 
 ## Closeout
 
-- Change status: review-ready on `change/interactive-adventure-turns`; deterministic remediation is complete and acceptance remains pending
+- Change status: review-ready on `change/interactive-adventure-turns`; deterministic remediation is complete and the owner accepted the remaining manual/live-provider evidence gap for local integration
 - Epic files updated: `LC-003` uses `sdd-epic-v2`; S2 maps current implementation and explicit verification gaps
 - Story labels/references and Requirement/Scenario IDs current: `LC-003/S2` R1-R5
 - Implemented By maps current: yes
-- Scenario-mapped Verified By maps current: yes; live-provider/manual acceptance remains explicit
+- Scenario-mapped Verified By maps current: yes; the missing live-provider/manual walkthrough remains an explicit accepted risk
 - Superseded earlier Epic truth reconciled: yes
 - ADR status: revision-linked Adventure state mutations is Accepted after transaction/recovery evidence; related accepted ADR links are reconciled
 - Release communication current: README and CHANGELOG updated; release not started
-- `sdd-review` verdict: ready pending the recorded live-provider/manual acceptance walkthrough
+- `sdd-review` verdict: ready; the owner accepted the recorded live-provider/manual acceptance gap for local integration
 - Review record: `docs/changes/2026-07-18-interactive-adventure-turns/review.md`
-- `review.md` findings resolved: private-context publication boundary, reset lifecycle, HTTP/browser recovery, and Idea-side documentation are reconciled; provider/manual acceptance remains pending
+- `review.md` findings resolved: private-context publication boundary, reset lifecycle, HTTP/browser recovery, and Idea-side documentation are reconciled; provider/manual acceptance is an accepted closeout risk
 - Planning updates resolved: yes
-- Manual UI confirmation status: pending user after implementation
+- Manual UI confirmation status: accepted by owner for local integration on 2026-07-19; walkthrough was not separately performed in this closeout
 - PR / merge state: not started
 - Deferred scope accepted: Story, `/look`, `/help`, successful-turn history revision, streaming, rules, model controls, and multiplayer
 - Change moved to `docs/changes/closed/`: no

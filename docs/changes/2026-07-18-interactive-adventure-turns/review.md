@@ -18,8 +18,8 @@ The committed turn implementation and current UI/remediation work pass review. T
 | Browser verification | pass | Deterministic Playwright covers turn lifecycle behavior; direct current Storybook desktop/mobile inspection covers Ember controls, provider notice, composer semantics, and no-overflow/error-overlay checks. |
 | Supporting gates | pass | Lint, typecheck, build, generated-contract check, frontend suite, Storybook, and container/image/deployment contracts pass. |
 | Documentation and private Idea truth | pass | Change design and private visual identity now agree with Ember and the approved removal of Guide-specific help. |
-| Manual and live-provider acceptance | pending user | Required before merge/closeout. No provider payload, raw Guide, or prompt is to be retained. |
-| Branch and merge readiness | pending acceptance | The committed source merges cleanly into `develop`; no merge, push, or PR action is authorized, and required live-provider/owner acceptance remains pending. |
+| Manual and live-provider acceptance | pass with accepted risk | The owner explicitly authorized local integration and Change closeout on 2026-07-19 before the live-provider/manual walkthrough. No provider payload, raw Guide, or prompt is retained. |
+| Branch and merge readiness | pass | The committed source merges cleanly into `develop`; local merge-and-close is explicitly authorized. No push, PR, deployment, or production action is authorized. |
 
 ## Findings
 
@@ -33,10 +33,9 @@ The committed turn implementation and current UI/remediation work pass review. T
 - [x] The Act/Guide controls retain their approved tab appearance but now use native keyboard-operable semantic toggle buttons rather than incomplete ARIA tabs.
 - [x] Return to World uses the borderless raised-secondary Ember treatment on desktop and mobile.
 
-### Acceptance Evidence Pending
+### Accepted Closeout Risk
 
-- [ ] Run one live-provider Act and private Guide walkthrough, recording only visible behavior and bounded metadata.
-- [ ] Obtain owner confirmation of ready, pending, completed, and failed recovery states on desktop and mobile.
+- [x] The owner accepted the missing live-provider Act/Guide and desktop/mobile walkthrough evidence for this local integration on 2026-07-19. This does not claim that walkthrough was performed.
 
 ## Verification Evidence
 
@@ -66,7 +65,7 @@ The committed turn implementation and current UI/remediation work pass review. T
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: accepted by owner for local integration on 2026-07-19
 - Route: development `/adventures/<owned-ready-adventure-id>`
 - Setup: signed-in owner, seeded Stormbound Chapel, ready Adventure, and a live provider.
 - Steps: submit an Act and a private Guide; observe pending/completion; reload while resolving; exercise a failed turn's retry/discard state; confirm Player/Scene updates and responsive layout on desktop and mobile.
@@ -75,4 +74,4 @@ The committed turn implementation and current UI/remediation work pass review. T
 ## Review Log
 
 - 2026-07-19: Initial independent review returned `changes-requested` for private-context publication, reset, recovery/concurrency, and documentation gaps.
-- 2026-07-19: A current full independent review remediated the provider disclosure, composer semantics, Ember Return control, and visual-documentation drift. Focused/frontend/broad checks and direct desktop/mobile rendering pass. `0ed8f90` commits the reviewed application batch, so the verdict is `ready`; live-provider and owner manual acceptance remain pending before merge or closeout.
+- 2026-07-19: A current full independent review remediated the provider disclosure, composer semantics, Ember Return control, and visual-documentation drift. Focused/frontend/broad checks and direct desktop/mobile rendering pass. `0ed8f90` commits the reviewed application batch. The owner explicitly accepted the remaining live-provider/manual walkthrough gap for local integration and Change closeout; the gap remains recorded as an accepted risk rather than completed evidence.
