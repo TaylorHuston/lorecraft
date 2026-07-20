@@ -358,7 +358,7 @@ function StoryRegion({
           ) : null}
           {adventure.status === 'opening_failed' ? (
             <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
-              <p className={styles.stateEyebrow}>Opening interrupted</p>
+              <p className={styles.stateEyebrow}>Opening failed</p>
               <h2>Lorecraft couldn't prepare your opening</h2>
               <p>No partial story was saved. Try again when you're ready.</p>
               {retryError ? <p className={styles.retryError}>{retryError}</p> : null}

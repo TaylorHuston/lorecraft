@@ -184,6 +184,7 @@ export const OpeningFailed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
@@ -197,6 +198,7 @@ export const OpeningFailedMobile: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()

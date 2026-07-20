@@ -6,9 +6,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed the final safe remediation, direct schema-isolated database/E2E proof, and artifact reconciliation as `0b214dc`.
-- Next action: complete broad regression gates, then complete live-provider and manual acceptance before an independent review rerun.
-- Active branch/ref: `change/character-authoring-and-npc-cards` at `c1810ed`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Last completed action: committed the final safe remediation and its verification ledger as `0b214dc` and `dab67d7`.
+- Latest manual feedback: an opening failed after two completed local-provider responses. Protected Debug evidence shows both ended with `finish_reason: length` at the local 250-token cap; the UI had inaccurately called this an interruption. The ignored local development cap is now 500 and the API/workers have been restarted. No new provider call was made by Apply.
+- Next action: have the owner retry the failed opening, then inspect the protected local Debug trace for a complete response and token metadata; complete the remaining live-provider/manual acceptance before an independent review rerun.
+- Active branch/ref: `change/character-authoring-and-npc-cards` at `dab67d7`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
 - Expected dirty files: none after this ledger commit.
 - Known blocker: no local technical blocker remains. The direct schema-isolated target requires an explicit create/migrate/test/drop harness because CI uses a whole disposable database; each local test schema was dropped afterward. Live-provider playtests and owner manual confirmation remain outstanding acceptance evidence. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
@@ -97,6 +98,7 @@ status: in_progress
 | 2026-07-20 | Cohesive implementation commit | `sdd-apply` | Complete active Change implementation, contracts, tests, SDD artifacts, and supporting documentation | The active Change is now reviewable from an immutable source commit; guarded database/E2E/live/manual verification remains explicitly open. | `f1b4c4a` |
 | 2026-07-20 | Verification record commit | `sdd-apply` | Verification ledger and Epic evidence maps | Recorded the passing focused, broad, contract, and rendered-UI evidence against the immutable implementation source. | `c1810ed` |
 | 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | `0b214dc` |
+| 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | commit pending |
 
 ## Verification Ledger
 
@@ -129,6 +131,7 @@ status: in_progress
 | 2026-07-20 | Guarded direct schema migration + focused database/API suite | focused database and functional tests | Populated-row upgrade and data-bearing rollback refusal, complete Character publication/versioning, and Debug autosave/owner/validation/active-turn boundaries | passed: 16 tests after applying all migrations to a direct `lorecraft_test_character_authoring` schema; the schema was dropped afterward |
 | 2026-07-20 | Guarded deterministic E2E | deterministic E2E | Browser account/workspace, complete-card inspection, creator Character CRUD, and Adventure lifecycle/reset against the fake provider and isolated backend/database setup | passed on desktop and mobile after reconciling the public Debug-card expectation. The exact old/new frozen-version comparison and post-turn NPC-refresh sequence remain direct functional coverage. The direct `lorecraft_e2e_character_authoring` schema was dropped afterward. |
 | 2026-07-20 | Final broad gates | broad supporting gates | Lint, typecheck, production build, frontend/Storybook tests, generated contract cleanliness, full guarded backend suite, and scoped SDD structure | passed: lint, typecheck, build, 137 frontend tests, 84 Storybook tests, contract check, full backend suite against direct `lorecraft_test_full_regression`, and scoped validation. Temporary test schemas were dropped after use. |
+| 2026-07-20 | Opening truncation diagnosis and failure-state copy | protected local Debug inspection + focused frontend/Storybook tests | The failing Adventure made two 4–5 second provider requests that returned valid response objects but `finish_reason: length`, so no partial opening was saved; the generic failure UI now avoids falsely asserting an interruption. | passed: Debug trace metadata/response shape inspected without disclosing story content; 15 focused Workbench tests and 84 Storybook tests passed. The 500-token cap is loaded only in ignored local development configuration; owner retry/live provider evidence remains pending. |
 
 ## Manual Feedback
 
@@ -148,6 +151,7 @@ status: in_progress
 | 2026-07-19 | Inspect the next Debug trace with raw payload capture enabled.                                    | debug/log evidence     | `gemma4:26b` captured raw request and response payloads for narration and extraction. The narration request contained frozen World, current player, locations, two current-Scene character cards, visible history, and the current act; extraction received only staged narration, current state, present characters, and allowed proposal shapes. The first narration response was truncated at the local 250-token limit after about 6.9s; the automatic retry succeeded in about 4.1s, and extraction succeeded in about 3.6s. Five updates were accepted; one was correctly ignored as `no_change`. | diagnostic; raise the narration token ceiling or constrain narration length before treating latency as stable |
 | 2026-07-19 | Make NPC Debug fields editable with autosave while preserving the seed World.                     | scope refinement       | Added `LC-003/S3/R3`: local Debug editing covers every bounded displayable NPC card field except its stable key; overrides remain Adventure-owned, production/active-turn edits are refused, and frozen canon stays unchanged.                                                                                                                                                                                                                                                                                                                                                                          | implemented; database-backed isolation proof pending                                                          |
 | 2026-07-19 | Failed turn recovery was rendered above the transcript and required scrolling back to recover.    | usability defect       | Moved the recovery alert and Retry/Discard controls into the composer dock, where the normal input appears.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | resolved                                                                                                      |
+| 2026-07-20 | Opening screen reported an interruption even though the local provider returned two truncated responses. | diagnostic/usability defect | Inspected protected trace metadata and response structure, raised the ignored local token cap from 250 to 500, restarted the local API/workers, and changed the generic state label to “Opening failed”. | resolved; owner retry and trace inspection remain pending |
 
 ## Planning Updates
 
@@ -187,11 +191,11 @@ status: in_progress
 
 ## Blockers / Open Questions
 
-- Disposable backend/E2E database configuration is required before database-backed service, migration, and browser verification can run. No safe local substitute was inferred.
+- Live-provider retry and owner manual confirmation remain outstanding. Apply did not trigger another provider request after changing the ignored local token cap.
 
 ## Closeout
 
-- Change status: `in_progress`; the review remediation is implemented and committed, but direct database/E2E, live-provider, and owner manual evidence remain.
+- Change status: `in_progress`; the review remediation plus opening-truncation recovery copy are implemented, but live-provider and owner manual evidence remain.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
 - Implemented By maps current: yes; the self-check resolved no missing anchors.

@@ -244,6 +244,7 @@ describe('AdventureWorkbench', () => {
     )
 
     const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent('Opening failed')
     expect(alert).toHaveTextContent("couldn't prepare your opening")
     expect(
       screen.getByRole('heading', {
