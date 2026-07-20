@@ -49,7 +49,7 @@ export default defineConfig({
     },
     {
       name: 'mobile-chromium',
-      dependencies: ['starter-world-setup'],
+      dependencies: ['desktop-chromium'],
       testIgnore: /starter-world\.setup\.ts/,
       use: { ...devices['Pixel 7'] },
     },

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { resetStarterWorld } from './starterWorld'
 import { expectMobileTouchTarget, expectNoHorizontalOverflow } from './uiAssertions'
 
 test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({
@@ -71,36 +72,41 @@ test('LC-002/S3 author creates, edits, and deletes a complete Character Card', a
   await expect(page).toHaveURL(/\/worlds$/)
   await page.goto('/worlds/stormbound-chapel')
 
-  await page.getByRole('button', { name: 'Add Character' }).click()
-  await page.getByLabel('Key').fill('e2e-bell-keeper')
-  await page.getByLabel('Name').fill(createdName)
-  await page.getByLabel('Canonical Location').selectOption('chapel')
-  await page.getByLabel('Physical description').fill('A watchful keeper in a worn blue coat.')
-  await page.getByLabel('Background').fill('Keeps the chapel keys through each storm.')
-  await page.getByLabel('Personality').fill('Patient and practical.')
-  await page.getByLabel('Voice').fill('Quiet and measured.')
-  await page.getByLabel('Private knowledge').fill('The spare bell key is beneath the altar.')
-  await page.getByLabel('Initial mood').fill('Alert')
-  await page.getByLabel('Initial status').fill('Watching the doors.')
-  await page.getByLabel('Initial memory').fill('Has not met the player.')
-  await page.getByRole('button', { name: 'Create Character' }).click()
+  try {
+    await page.getByRole('button', { name: 'Add Character' }).click()
+    await page.getByLabel('Key').fill('e2e-bell-keeper')
+    await page.getByLabel('Name').fill(createdName)
+    await page.getByLabel('Canonical Location').selectOption('chapel')
+    await page.getByLabel('Physical description').fill('A watchful keeper in a worn blue coat.')
+    await page.getByLabel('Background').fill('Keeps the chapel keys through each storm.')
+    await page.getByLabel('Personality').fill('Patient and practical.')
+    await page.getByLabel('Voice').fill('Quiet and measured.')
+    await page.getByLabel('Private knowledge').fill('The spare bell key is beneath the altar.')
+    await page.getByLabel('Initial mood').fill('Alert')
+    await page.getByLabel('Initial status').fill('Watching the doors.')
+    await page.getByLabel('Initial memory').fill('Has not met the player.')
+    await page.getByRole('button', { name: 'Create Character' }).click()
 
-  const created = page
-    .locator('article')
-    .filter({ has: page.getByRole('heading', { name: createdName }) })
-  await expect(created).toBeVisible()
-  await created.getByRole('button', { name: 'Edit' }).click()
-  await page.getByLabel('Name').fill(updatedName)
-  await page.getByRole('button', { name: 'Save Character' }).click()
+    const characters = page.getByRole('region', { name: 'Characters' })
+    const created = characters.locator('article').filter({
+      has: page.getByRole('heading', { level: 3, name: createdName, exact: true }),
+    })
+    await expect(created).toBeVisible()
+    await created.getByRole('button', { name: 'Edit' }).click()
+    await page.getByLabel('Name').fill(updatedName)
+    await page.getByRole('button', { name: 'Save Character' }).click()
 
-  const updated = page
-    .locator('article')
-    .filter({ has: page.getByRole('heading', { name: updatedName }) })
-  await expect(updated).toBeVisible()
-  await updated.getByRole('button', { name: 'Delete' }).click()
-  await page
-    .getByRole('dialog', { name: `Delete ${updatedName}?` })
-    .getByRole('button', { name: 'Delete Character' })
-    .click()
-  await expect(page.getByRole('heading', { name: updatedName })).toHaveCount(0)
+    const updated = characters.locator('article').filter({
+      has: page.getByRole('heading', { level: 3, name: updatedName, exact: true }),
+    })
+    await expect(updated).toBeVisible()
+    await updated.getByRole('button', { name: 'Delete' }).click()
+    await page
+      .getByRole('dialog', { name: `Delete ${updatedName}?` })
+      .getByRole('button', { name: 'Delete Character' })
+      .click()
+    await expect(updated).toHaveCount(0)
+  } finally {
+    await resetStarterWorld()
+  }
 })
