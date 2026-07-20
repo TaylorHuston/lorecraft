@@ -6,10 +6,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: applied the review remediation, committed it as `f1b4c4a`, then recorded its verification in `c1810ed`; the current self-check found and fixed one concise-private-value false positive plus stale default-on Debug documentation.
+- Last completed action: committed the final safe remediation, direct schema-isolated database/E2E proof, and artifact reconciliation as `0b214dc`.
 - Next action: complete broad regression gates, then complete live-provider and manual acceptance before an independent review rerun.
 - Active branch/ref: `change/character-authoring-and-npc-cards` at `c1810ed`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
-- Expected dirty files: the focused private-value regression fix, affected Epic/change/supporting documentation, and the resulting verification ledger only.
+- Expected dirty files: none after this ledger commit.
 - Known blocker: no local technical blocker remains. The direct schema-isolated target requires an explicit create/migrate/test/drop harness because CI uses a whole disposable database; each local test schema was dropped afterward. Live-provider playtests and owner manual confirmation remain outstanding acceptance evidence. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -96,7 +96,7 @@ status: in_progress
 | 2026-07-20 | Replanned safety and continuity slices | `sdd-apply`; backend/frontend unit and component tests | Debug env/default resolution; opening/turn private-card publication guards; migration rollback tests; Debug route boundary tests; Scene editor continuity; README/Idea/Epic reconciliation | Default-on development capture can be disabled explicitly; direct private-card reflection cannot publish in opening or turn narration; selected editor survives its own valid Location move without exposing off-scene selection. | uncommitted; guarded database/E2E/live/manual evidence pending |
 | 2026-07-20 | Cohesive implementation commit | `sdd-apply` | Complete active Change implementation, contracts, tests, SDD artifacts, and supporting documentation | The active Change is now reviewable from an immutable source commit; guarded database/E2E/live/manual verification remains explicitly open. | `f1b4c4a` |
 | 2026-07-20 | Verification record commit | `sdd-apply` | Verification ledger and Epic evidence maps | Recorded the passing focused, broad, contract, and rendered-UI evidence against the immutable implementation source. | `c1810ed` |
-| 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | commit pending |
+| 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | `0b214dc` |
 
 ## Verification Ledger
 
