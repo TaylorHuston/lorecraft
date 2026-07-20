@@ -167,6 +167,14 @@ npm run verify:contracts
 
 `npm run dev` starts the frontend, API, opening worker, and turn worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
 
+Before relying on a changed local provider model or token limit, run one synthetic opening acceptance check:
+
+```bash
+npm run smoke:opening --workspace @lorecraft/backend
+```
+
+The command makes one configured-provider request using bounded synthetic World, player, and two-NPC context. It exits non-zero if the provider truncates the opening, and logs only the effective model, token cap, timeout, and bounded response metadata—not narration, prompts, or creator data.
+
 `npm run verify:contracts` regenerates the tracked Tuyau client and fails when `apps/backend/.adonisjs/client` differs from the committed contract. CI runs the same scoped cleanliness check immediately after the application build.
 
 Use a workspace selector when only one application is relevant. For example:

@@ -2,6 +2,7 @@ import AdventureOpeningWorker, {
   leaseDurationForProviderTimeout,
 } from '#services/adventure_opening_worker'
 import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
+import { resolveStoryGenerationRuntimeConfiguration } from '#services/story_generation/runtime_configuration'
 import {
   createDevelopmentDebugTrace,
   resolveDevelopmentDebugTraceOptions,
@@ -13,9 +14,6 @@ import { hostname } from 'node:os'
 import { randomUUID } from 'node:crypto'
 
 const defaultPollIntervalMs = 1_000
-const defaultTimeoutMs = 120_000
-const defaultMaxTokens = 500
-const defaultTemperature = 0.8
 
 function positiveNumber(value: number | undefined, fallback: number, name: string) {
   const resolved = value ?? fallback
@@ -53,26 +51,19 @@ export default class WorkAdventureOpenings extends BaseCommand {
   }
 
   async run() {
-    const baseUrl = env.get('LLM_BASE_URL')?.trim()
-    const model = env.get('LLM_MODEL')?.trim()
-    if (!baseUrl || !model) {
-      this.logger.error('LLM_BASE_URL and LLM_MODEL are required to run the Adventure worker.')
-      this.exitCode = 1
-      return
-    }
-
+    const configuration = resolveStoryGenerationRuntimeConfiguration({
+      LLM_BASE_URL: env.get('LLM_BASE_URL'),
+      LLM_MODEL: env.get('LLM_MODEL'),
+      LLM_TIMEOUT_MS: env.get('LLM_TIMEOUT_MS'),
+      LLM_MAX_TOKENS: env.get('LLM_MAX_TOKENS'),
+      LLM_TEMPERATURE: env.get('LLM_TEMPERATURE'),
+      LLM_REASONING_EFFORT: env.get('LLM_REASONING_EFFORT'),
+    })
     const pollIntervalMs = positiveNumber(
       env.get('ADVENTURE_WORKER_POLL_INTERVAL_MS'),
       defaultPollIntervalMs,
       'ADVENTURE_WORKER_POLL_INTERVAL_MS'
     )
-    const timeoutMs = positiveNumber(env.get('LLM_TIMEOUT_MS'), defaultTimeoutMs, 'LLM_TIMEOUT_MS')
-    const maxTokens = positiveNumber(env.get('LLM_MAX_TOKENS'), defaultMaxTokens, 'LLM_MAX_TOKENS')
-    const temperature = env.get('LLM_TEMPERATURE') ?? defaultTemperature
-    if (!Number.isFinite(temperature) || temperature < 0 || temperature > 2) {
-      throw new Error('LLM_TEMPERATURE must be between 0 and 2.')
-    }
-
     const workerId = `${hostname()}:${process.pid}:${randomUUID()}`
     const debugTrace = createDevelopmentDebugTrace(
       resolveDevelopmentDebugTraceOptions({
@@ -85,19 +76,15 @@ export default class WorkAdventureOpenings extends BaseCommand {
     const worker = new AdventureOpeningWorker({
       generator: new OpenAICompatibleStoryGenerator({
         fetch,
-        baseUrl,
+        baseUrl: configuration.baseUrl,
         apiKey: env.get('LLM_API_KEY') ?? 'local-provider',
-        model,
-        settings: {
-          temperature,
-          maxTokens,
-          reasoningEffort: env.get('LLM_REASONING_EFFORT'),
-        },
-        timeoutMs,
+        model: configuration.model,
+        settings: configuration.settings,
+        timeoutMs: configuration.timeoutMs,
       }),
       workerId,
       debugTrace,
-      leaseDurationMs: leaseDurationForProviderTimeout(timeoutMs),
+      leaseDurationMs: leaseDurationForProviderTimeout(configuration.timeoutMs),
       logger: {
         info(event, fields) {
           logger.info(fields, event)
@@ -108,7 +95,16 @@ export default class WorkAdventureOpenings extends BaseCommand {
     const stop = () => shutdown.abort()
     process.once('SIGINT', stop)
     process.once('SIGTERM', stop)
-    logger.info({ workerId, model, pollIntervalMs }, 'adventure_opening.worker_started')
+    logger.info(
+      {
+        workerId,
+        model: configuration.model,
+        maxTokens: configuration.settings.maxTokens,
+        timeoutMs: configuration.timeoutMs,
+        pollIntervalMs,
+      },
+      'adventure_opening.worker_started'
+    )
 
     try {
       while (!shutdown.signal.aborted) {

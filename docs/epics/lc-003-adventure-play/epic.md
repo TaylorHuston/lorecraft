@@ -42,6 +42,7 @@ Accounts can enter an authorized World through private Adventures, receive and r
 - Keep authorization, source isolation, lifecycle, provider orchestration, and typed API behavior in the AdonisJS backend.
 - Present World-contained Adventure discovery and a responsive story-first Adventure route in the React client.
 - Complete frozen-and-current NPC Cards for all and only NPCs in the current Scene, bounded context-size metadata, local development Debug diagnostics, and owner debug inspection.
+- Provide a developer-run synthetic opening smoke command that uses the same effective provider configuration as the workers and fails when a response is truncated.
 
 ## Deferred Scope
 
@@ -65,7 +66,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 
 | Story | Implementation | Verification | Capability                             | Last Verified | Notes                                                                                                                              |
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-19    | Complete NPC-card source/init/query code and prompt tests exist; database-backed migration/create/reset proof is pending.          |
+| S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-20    | Complete NPC-card source/init/query code and prompt tests exist; direct database and live-opening evidence pass, while broader manual acceptance remains pending. |
 | S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-19    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; database/live proof remains pending. |
 | S3    | implemented    | partial      | Inspect complete NPC Cards.            | 2026-07-20    | Current-Scene projection, Debug boundary database proof, and interactive UI exist; post-turn refresh/manual proof remains pending. |
 
@@ -77,7 +78,7 @@ Implementation: implemented
 Verification: partial
 Created: 2026-07-16
 Modified: 2026-07-19
-Last verified: 2026-07-19
+Last verified: 2026-07-20
 
 As a signed-in account holder, I want to start and resume a private Adventure from an accessible World, so that I can enter stable canon as my own player character.
 
@@ -207,6 +208,12 @@ The system SHALL durably generate and atomically publish one opening narration b
 - THEN shutdown does not consume a provider-failure attempt or publish partial narration
 - AND the restarted worker safely reclaims or resumes eligible work without duplicate publication.
 
+###### Scenario R3-S11: Local Provider Configuration Smoke
+
+- WHEN a developer changes the local configured model, token cap, timeout, or provider endpoint and runs the opening smoke command
+- THEN Lorecraft sends one bounded synthetic opening request using the same effective configuration as the opening and turn workers
+- AND it exits non-zero when the provider returns truncated or otherwise invalid narration while logging only bounded model, configuration, and response metadata.
+
 ##### Requirement R4: Resume And Lifecycle
 
 The system SHALL list and reopen the owner's Adventures under their source World and keep destructive lifecycle actions Adventure-scoped.
@@ -288,6 +295,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R3-S1, S1/R3-S3, S1/R3-S4           | `apps/backend/app/services/story_generation/opening_prompt.ts#assembleOpeningPrompt` and `apps/backend/app/services/story_generation/openai_compatible_story_generator.ts#OpenAICompatibleStoryGenerator.generateOpening` | adapter       | Builds bounded frozen starting-Scene card context, validates provider prose, and normalizes sanitized failures.                    |
 | S1/R3-S5, S1/R3-S6, S1/R3-S7, S1/R3-S8 | `apps/backend/app/services/adventure_opening_policy.ts#retryDisposition` and `apps/backend/database/migrations/1784323200000_minimize_model_call_evidence.ts`                                                             | support       | Enforces retry policy and metadata-only model evidence.                                                                            |
 | S1/R3-S9, S1/R3-S10                    | `apps/backend/commands/work_adventure_openings.ts`, `deploy/compose.yaml`, and `deploy/release-command.mjs`                                                                                                               | configuration | Runs the worker separately and coordinates safe deployment/restart behavior.                                                       |
+| S1/R3-S11                               | `apps/backend/commands/smoke_adventure_opening.ts#SmokeAdventureOpening`, `apps/backend/app/services/story_generation/runtime_configuration.ts#resolveStoryGenerationRuntimeConfiguration`, and `apps/backend/app/services/story_generation/opening_smoke.ts#generateOpeningSmoke` | configuration | Reuses worker provider configuration for one bounded synthetic local acceptance request and fails safely on invalid narration. |
 | S1/R4                                  | `apps/backend/app/services/adventure_lifecycle_service.ts#AdventureLifecycleService.reset`                                                                                                                                | primary       | Owns owner-filtered recovery, reset to the frozen source, and aggregate-scoped deletion.                                           |
 | S1/R4-S1                               | `apps/backend/app/services/adventure_query_service.ts#AdventureQueryService.findForOwner`                                                                                                                                 | adapter       | Projects owner-scoped current-Scene complete NPC Cards without source snapshots or provider evidence.                              |
 | S1/R4-S1, S1/R4-S2, S1/R4-S3           | `apps/frontend/src/worlds/WorldDetailPage.tsx#WorldDetailPage` and `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`                                                                                         | presentation  | Presents create, resume, retry, reset, delete, and lifecycle feedback.                                                             |
@@ -311,6 +319,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R3-S5                                                             | `apps/backend/tests/functional/adventure_api.spec.ts`                                                                                                                                                                                                                                      | Account-scoped creation, retry, and reset burst limiting rejects excess work before lifecycle mutation.                                                               | Passing 2026-07-18                    |
 | S1/R3-S6                                                             | `apps/backend/tests/unit/story_generation/openai_compatible_story_generator.spec.ts`, `apps/backend/tests/functional/adventure_opening_worker.spec.ts`, and `apps/backend/tests/database/adventure_aggregate_migration.spec.ts`                                                            | Model-call persistence and logs retain only bounded metadata; provider bodies, prompts, and credentials are absent.                                                   | Passing 2026-07-18                    |
 | S1/R3-S9, S1/R3-S10                                                  | `deploy/container-contract.test.mjs`, `deploy/release-command.test.mjs`, `scripts/image-workflow.test.mjs`, and the 2026-07-18 private-production acceptance                                                                                                                               | Separate worker supervision, five-second polling, tailnet-only ingress, restart recovery, one real opening, and deterministic application rollback.                   | Passing and user confirmed 2026-07-18 |
+| S1/R3-S11                                                           | `apps/backend/tests/unit/story_generation/runtime_configuration.spec.ts`, `apps/backend/tests/unit/story_generation/opening_smoke.spec.ts`, and `npm run smoke:opening --workspace @lorecraft/backend`                                                                                         | The smoke check shares the worker token-cap defaults, uses bounded synthetic Scene context, rejects a provider-truncated response, and completed one configured local-provider request without truncation. | Passing 2026-07-20 |
+| S1/R3-S1                                                            | Protected local Debug trace for the owner retry after the 500-token cap update                                                                                                                                                                                            | One real opening used complete current-Scene context, returned a complete provider response in about 5.5 seconds, and atomically made the Adventure ready without publishing a prior truncated response. | Passing 2026-07-20 |
 | S1/R4-S1, S1/R4-S2, S1/R4-S3                                         | `apps/backend/tests/functional/adventure_query_service.spec.ts`, `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts`, `apps/backend/tests/functional/adventure_api.spec.ts`, and `apps/frontend/e2e/adventure-foundation.spec.ts`                                          | Owner-only list/detail, frozen-source reset, aggregate-only deletion, and desktop/mobile lifecycle journeys.                                                          | Passing 2026-07-18                    |
 | S1/R5-S1, S1/R5-S2, S1/R5-S3, S1/R5-S4                               | `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `apps/frontend/src/adventures/AdventurePage.stories.tsx`, `apps/frontend/src/components/Dialog/Dialog.test.tsx`, and `apps/frontend/e2e/adventure-foundation.spec.ts` | Creation, pending, failure, ready, reset/delete confirmation, accessible dialogs, responsive Player/Story/Scene composition, and overflow-free desktop/mobile states. | Passing 2026-07-18                    |
 | S1/R5-S5, S1/R5-S6                                                   | `apps/frontend/src/app/RoutePresentation.test.tsx` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx`                                                                                                                                                                             | Adventure destinations receive title/heading focus; background completion is announced without stealing focus.                                                        | Passing 2026-07-18                    |
@@ -319,7 +329,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 #### Verification Gaps
 
 - `S1/R2-S1`, `S1/R4-S1`, `S1/R4-S2`: Guarded database migration/create/reset/query evidence is pending because disposable database configuration is absent.
-- `S1/R3-S1`: Live-provider opening grounding and local Debug trace inspection remain pending.
+- `S1/R3-S1`: One live opening and protected Debug trace now pass at the 500-token cap; broader grounding/quality remains owner manual acceptance evidence.
 
 #### Story Notes
 
