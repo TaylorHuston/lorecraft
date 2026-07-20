@@ -3,13 +3,12 @@
   place-items: center;
   flex: 0 0 auto;
   padding: 0;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--text-secondary);
   transition:
     background-color var(--motion-fast) ease,
-    border-color var(--motion-fast) ease,
     color var(--motion-fast) ease,
     opacity var(--motion-fast) ease;
 }
@@ -40,4 +39,11 @@
 .touch {
   inline-size: var(--control-touch);
   block-size: var(--control-touch);
+}
+
+@media (pointer: coarse) {
+  .button {
+    inline-size: var(--control-touch);
+    block-size: var(--control-touch);
+  }
 }

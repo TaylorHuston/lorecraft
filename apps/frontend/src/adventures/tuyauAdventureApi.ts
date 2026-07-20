@@ -8,6 +8,10 @@ import {
   type AdventureLifecycleResult,
   type AdventureStatus,
   type AdventureSummary,
+  type AdventureTurnLifecycleResult,
+  type AdventureTurnSubmission,
+  type AdventureTurnStatus,
+  type AdventureTurnTrigger,
 } from './adventureApi'
 
 const adventureStatuses = new Set<AdventureStatus>([
@@ -16,6 +20,9 @@ const adventureStatuses = new Set<AdventureStatus>([
   'opening_failed',
   'ready',
 ])
+
+const adventureTurnStatuses = new Set<AdventureTurnStatus>(['pending', 'processing', 'failed'])
+const adventureTurnTriggers = new Set<AdventureTurnTrigger>(['act', 'pass', 'guide'])
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -39,7 +46,9 @@ function errorEntriesOf(error: unknown): ErrorEntry[] {
 }
 
 const validationMessages: Record<AdventureField, string> = {
-  creationRequestId: 'Start this Adventure again.',
+  'creationRequestId': 'Start this Adventure again.',
+  'requestId': 'Try that turn again.',
+  'input': 'Enter the requested text using the allowed length.',
   'player.name': 'Enter a player name using 100 characters or fewer.',
   'player.physicalDescription': 'Use 2,000 characters or fewer.',
   'player.backstory': 'Use 8,000 characters or fewer.',
@@ -147,6 +156,13 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         typeof npc.physicalDescription === 'string' &&
         !('privateKnowledge' in npc)
     ) &&
+    (value.activeTurn === null ||
+      (isRecord(value.activeTurn) &&
+        typeof value.activeTurn.id === 'string' &&
+        typeof value.activeTurn.trigger === 'string' &&
+        adventureTurnTriggers.has(value.activeTurn.trigger as AdventureTurnTrigger) &&
+        typeof value.activeTurn.status === 'string' &&
+        adventureTurnStatuses.has(value.activeTurn.status as AdventureTurnStatus))) &&
     Array.isArray(story) &&
     story.every(
       (entry) =>
@@ -156,6 +172,24 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         typeof entry.content === 'string'
     )
   )
+}
+
+function isAdventureTurnSubmission(value: unknown): value is AdventureTurnSubmission {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'string' &&
+    typeof value.adventureId === 'string' &&
+    typeof value.trigger === 'string' &&
+    adventureTurnTriggers.has(value.trigger as AdventureTurnTrigger) &&
+    typeof value.status === 'string' &&
+    (adventureTurnStatuses.has(value.status as AdventureTurnStatus) ||
+      value.status === 'succeeded') &&
+    typeof value.route === 'string'
+  )
+}
+
+function isAdventureTurnLifecycleResult(value: unknown): value is AdventureTurnLifecycleResult {
+  return isRecord(value) && typeof value.id === 'string' && value.status === 'pending'
 }
 
 function isAdventureLifecycleResult(value: unknown): value is AdventureLifecycleResult {
@@ -181,7 +215,6 @@ export function createTuyauAdventureApi(baseUrl: string): AdventureApi {
     credentials: 'include',
     headers: { Accept: 'application/json' },
   })
-
   return {
     async createAdventure(worldSlug, input) {
       try {
@@ -222,6 +255,45 @@ export function createTuyauAdventureApi(baseUrl: string): AdventureApi {
         if (mapped) throw mapped
         if (error instanceof AdventureApiError) throw error
         throw new AdventureApiError('network', 'Lorecraft could not retry this Adventure.')
+      }
+    },
+    async submitTurn(adventureId, input) {
+      try {
+        await client.api.auth.csrf({})
+        return dataOf(
+          await client.api.adventures.submitTurn({ params: { id: adventureId }, body: input }),
+          isAdventureTurnSubmission
+        )
+      } catch (error) {
+        const mapped = sharedApiError(error, 'Adventure not found.')
+        if (mapped) throw mapped
+        if (error instanceof AdventureApiError) throw error
+        throw new AdventureApiError('network', 'Lorecraft could not submit this turn.')
+      }
+    },
+    async retryTurn(adventureId, turnId) {
+      try {
+        await client.api.auth.csrf({})
+        return dataOf(
+          await client.api.adventures.retryTurn({ params: { id: adventureId, turnId } }),
+          isAdventureTurnLifecycleResult
+        )
+      } catch (error) {
+        const mapped = sharedApiError(error, 'Adventure not found.')
+        if (mapped) throw mapped
+        if (error instanceof AdventureApiError) throw error
+        throw new AdventureApiError('network', 'Lorecraft could not retry this turn.')
+      }
+    },
+    async discardTurn(adventureId, turnId) {
+      try {
+        await client.api.auth.csrf({})
+        await client.api.adventures.discardTurn({ params: { id: adventureId, turnId } })
+      } catch (error) {
+        const mapped = sharedApiError(error, 'Adventure not found.')
+        if (mapped) throw mapped
+        if (error instanceof AdventureApiError) throw error
+        throw new AdventureApiError('network', 'Lorecraft could not discard this turn.')
       }
     },
     async resetAdventure(adventureId) {

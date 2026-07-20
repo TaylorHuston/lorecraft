@@ -1,6 +1,7 @@
 import Adventure, { type AdventureStatus } from '#models/adventure'
 import AdventureStoryEntry from '#models/adventure_story_entry'
 import World from '#models/world'
+import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -44,11 +45,32 @@ export type AdventureDetailDto = Omit<AdventureSummaryDto, 'playerName'> & {
       physicalDescription: string
     }>
   }
+  activeTurn: {
+    id: string
+    trigger: 'act' | 'pass' | 'guide'
+    status: 'pending' | 'processing' | 'failed'
+  } | null
   story: Array<{
     id: string
     kind: string
     content: string
   }>
+}
+
+function activeRevisionIds(
+  revisions: Array<{ id: string; parent_revision_id: string | null }>,
+  headRevisionId: string
+) {
+  const byId = new Map(revisions.map((revision) => [revision.id, revision]))
+  const ids: string[] = []
+  let cursor: string | null = headRevisionId
+  while (cursor) {
+    const revision = byId.get(cursor)
+    if (!revision) throw new Error('Adventure revision lineage is invalid.')
+    ids.push(revision.id)
+    cursor = revision.parent_revision_id
+  }
+  return ids.reverse()
 }
 
 function summaryFor(adventure: Adventure): AdventureSummaryDto {
@@ -132,12 +154,38 @@ export default class AdventureQueryService {
         `Adventure ${adventure.id} references missing frozen Location ${adventure.player.currentLocationKey}.`
       )
     }
-    const storyEntries = adventure.headRevisionId
+    const [characterRows, activeTurn, revisions] = await Promise.all([
+      db
+        .from('adventure_character_states')
+        .where('adventure_id', adventure.id)
+        .select('character_key', 'current_location_key', 'mood', 'status', 'memory'),
+      db
+        .from('adventure_turns')
+        .where('adventure_id', adventure.id)
+        .whereIn('status', ['pending', 'processing', 'failed'])
+        .orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'processing' THEN 1 ELSE 2 END")
+        .orderBy('created_at', 'desc')
+        .select('id', 'trigger', 'status')
+        .first(),
+      adventure.headRevisionId
+        ? db
+            .from('adventure_revisions')
+            .where('adventure_id', adventure.id)
+            .select('id', 'parent_revision_id')
+        : Promise.resolve([]),
+    ])
+    const characterStateByKey = new Map(
+      characterRows.map((row) => [row.character_key as string, row])
+    )
+    const lineageIds = adventure.headRevisionId
+      ? activeRevisionIds(revisions, adventure.headRevisionId)
+      : []
+    const storyEntries = lineageIds.length
       ? await AdventureStoryEntry.query()
           .where('adventureId', adventure.id)
-          .where('revisionId', adventure.headRevisionId)
-          .orderBy('sequence')
+          .whereIn('revisionId', lineageIds)
           .orderBy('createdAt')
+          .orderBy('sequence')
       : []
 
     const summary = summaryFor(adventure)
@@ -171,13 +219,26 @@ export default class AdventureQueryService {
           description: currentLocation.description,
         },
         npcs: snapshot.characters
-          .filter((character) => character.locationKey === currentLocation.key)
-          .map((character) => ({
-            key: character.key,
-            name: character.name,
-            physicalDescription: character.physicalDescription,
-          })),
+          .filter(
+            (character) =>
+              (characterStateByKey.get(character.key)?.current_location_key ??
+                character.locationKey) === currentLocation.key
+          )
+          .map((character) => {
+            return {
+              key: character.key,
+              name: character.name,
+              physicalDescription: character.physicalDescription,
+            }
+          }),
       },
+      activeTurn: activeTurn
+        ? {
+            id: activeTurn.id,
+            trigger: activeTurn.trigger,
+            status: activeTurn.status,
+          }
+        : null,
       story: storyEntries.map((entry) => ({
         id: entry.id,
         kind: entry.kind,

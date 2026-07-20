@@ -30,6 +30,9 @@ export interface ApiDefinition {
   adventures: {
     store: typeof routes['adventures.store']
     show: typeof routes['adventures.show']
+    submitTurn: typeof routes['adventures.submit_turn']
+    retryTurn: typeof routes['adventures.retry_turn']
+    discardTurn: typeof routes['adventures.discard_turn']
     retryOpening: typeof routes['adventures.retry_opening']
     reset: typeof routes['adventures.reset']
     destroy: typeof routes['adventures.destroy']

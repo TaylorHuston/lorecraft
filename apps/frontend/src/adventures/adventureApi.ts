@@ -1,10 +1,29 @@
 import { accountOwnedQueryKeyFor } from '../auth/accountQueryKeys'
 
-export type AdventureStatus =
-  | 'opening_pending'
-  | 'opening_processing'
-  | 'opening_failed'
-  | 'ready'
+export type AdventureStatus = 'opening_pending' | 'opening_processing' | 'opening_failed' | 'ready'
+
+export type AdventureTurnTrigger = 'act' | 'pass' | 'guide'
+
+export type AdventureTurnStatus = 'pending' | 'processing' | 'failed'
+
+export type SubmitAdventureTurnInput = {
+  requestId: string
+  trigger: AdventureTurnTrigger
+  input?: string
+}
+
+export type AdventureTurnSubmission = {
+  id: string
+  adventureId: string
+  trigger: AdventureTurnTrigger
+  status: AdventureTurnStatus | 'succeeded'
+  route: string
+}
+
+export type AdventureTurnLifecycleResult = {
+  id: string
+  status: 'pending'
+}
 
 export type AdventureSummary = {
   id: string
@@ -54,6 +73,11 @@ export type AdventureDetail = Omit<AdventureSummary, 'playerName'> & {
       physicalDescription: string
     }>
   }
+  activeTurn: {
+    id: string
+    trigger: AdventureTurnTrigger
+    status: AdventureTurnStatus
+  } | null
   story: Array<{
     id: string
     kind: string
@@ -71,6 +95,9 @@ export interface AdventureApi {
   createAdventure(worldSlug: string, input: CreateAdventureInput): Promise<AdventureSummary>
   getAdventure(adventureId: string): Promise<AdventureDetail>
   retryOpening(adventureId: string): Promise<AdventureLifecycleResult>
+  submitTurn(adventureId: string, input: SubmitAdventureTurnInput): Promise<AdventureTurnSubmission>
+  retryTurn(adventureId: string, turnId: string): Promise<AdventureTurnLifecycleResult>
+  discardTurn(adventureId: string, turnId: string): Promise<void>
   resetAdventure(adventureId: string): Promise<AdventureLifecycleResult>
   deleteAdventure(adventureId: string): Promise<void>
 }
@@ -82,17 +109,14 @@ export const adventureQueryKeys = {
 
 export type AdventureField =
   | 'creationRequestId'
+  | 'requestId'
+  | 'input'
   | 'player.name'
   | 'player.physicalDescription'
   | 'player.backstory'
 
 export type AdventureApiErrorCode =
-  | 'unauthorized'
-  | 'not-found'
-  | 'conflict'
-  | 'validation'
-  | 'csrf-expired'
-  | 'network'
+  'unauthorized' | 'not-found' | 'conflict' | 'validation' | 'csrf-expired' | 'network'
 
 export class AdventureApiError extends Error {
   constructor(

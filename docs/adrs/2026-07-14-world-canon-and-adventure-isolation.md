@@ -2,8 +2,8 @@
 
 - Status: Accepted
 - Date: 2026-07-14
-- Related change: `docs/changes/closed/2026-07-16-private-adventure-foundation/`
-- Related Epics / Stories: `LC-003/S1`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/2026-07-18-interactive-adventure-turns/`
+- Related Epics / Stories: `LC-003/S1` and `LC-003/S2/R4`
 
 ## Context
 

@@ -76,9 +76,7 @@ export default class AdventureLifecycleService {
         )
       }
 
-      const activeJob = jobs.find(
-        (job) => job.type === 'opening' && ['pending', 'processing'].includes(job.status)
-      )
+      const activeJob = jobs.find((job) => ['pending', 'processing'].includes(job.status))
       if (activeJob) {
         throw new AdventureLifecycleError(
           'ADVENTURE_BUSY',
@@ -149,9 +147,7 @@ export default class AdventureLifecycleService {
         )
       }
 
-      const activeJob = jobs.find(
-        (job) => job.type === 'opening' && ['pending', 'processing'].includes(job.status)
-      )
+      const activeJob = jobs.find((job) => ['pending', 'processing'].includes(job.status))
       if (activeJob) {
         throw new AdventureLifecycleError(
           'ADVENTURE_BUSY',
@@ -186,14 +182,31 @@ export default class AdventureLifecycleService {
         head_revision_id: null,
         updated_at: now,
       })
+      await trx.from('adventure_turns').where('adventure_id', adventure.id).delete()
       await trx.from('adventure_story_entries').where('adventure_id', adventure.id).delete()
       await trx.from('adventure_revisions').where('adventure_id', adventure.id).delete()
       await trx.from('adventure_jobs').where('adventure_id', adventure.id).delete()
+      await trx.from('adventure_character_states').where('adventure_id', adventure.id).delete()
       await trx.from('adventure_players').where('adventure_id', adventure.id).update({
         status: '',
         current_location_key: startingLocation.key,
         updated_at: now,
       })
+      const snapshot = version.snapshot as WorldVersionSnapshot
+      if (snapshot.characters.length > 0) {
+        await trx.table('adventure_character_states').insert(
+          snapshot.characters.map((character) => ({
+            adventure_id: adventure.id,
+            character_key: character.key,
+            current_location_key: character.locationKey,
+            mood: '',
+            status: '',
+            memory: '',
+            created_at: now,
+            updated_at: null,
+          }))
+        )
+      }
       await trx.from('adventures').where('id', adventure.id).update({
         status: 'opening_pending',
         generation,

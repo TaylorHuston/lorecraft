@@ -6,6 +6,9 @@ const tuyau = vi.hoisted(() => ({
   createAdventure: vi.fn(),
   getAdventure: vi.fn(),
   retryOpening: vi.fn(),
+  submitTurn: vi.fn(),
+  retryTurn: vi.fn(),
+  discardTurn: vi.fn(),
   resetAdventure: vi.fn(),
   deleteAdventure: vi.fn(),
 }))
@@ -18,6 +21,9 @@ vi.mock('@tuyau/core/client', () => ({
         store: tuyau.createAdventure,
         show: tuyau.getAdventure,
         retryOpening: tuyau.retryOpening,
+        submitTurn: tuyau.submitTurn,
+        retryTurn: tuyau.retryTurn,
+        discardTurn: tuyau.discardTurn,
         reset: tuyau.resetAdventure,
         destroy: tuyau.deleteAdventure,
       },
@@ -95,6 +101,7 @@ describe('Tuyau Adventure adapter', () => {
           },
         ],
       },
+      activeTurn: null,
       story: [
         {
           id: '44444444-4444-4444-8444-444444444444',
@@ -123,6 +130,38 @@ describe('Tuyau Adventure adapter', () => {
     await expect(api.retryOpening(summary.id)).resolves.toEqual(result)
     expect(tuyau.csrf).toHaveBeenCalledWith({})
     expect(tuyau.retryOpening).toHaveBeenCalledWith({ params: { id: summary.id } })
+  })
+
+  it('submits, retries, and discards a guarded Adventure turn contract', async () => {
+    const pending = {
+      id: '66666666-6666-4666-8666-666666666666',
+      adventureId: summary.id,
+      trigger: 'act' as const,
+      status: 'pending' as const,
+      route: summary.route,
+    }
+    tuyau.submitTurn.mockResolvedValue({ data: pending })
+    tuyau.retryTurn.mockResolvedValue({ data: { id: pending.id, status: 'pending' } })
+    tuyau.discardTurn.mockResolvedValue(undefined)
+    const api = createTuyauAdventureApi('http://frontend.example.test')
+    const input = {
+      requestId: '77777777-7777-4777-8777-777777777777',
+      trigger: 'act' as const,
+      input: 'I ask Mira about the bell.',
+    }
+
+    await expect(api.submitTurn(summary.id, input)).resolves.toEqual(pending)
+    await expect(api.retryTurn(summary.id, pending.id)).resolves.toEqual({
+      id: pending.id,
+      status: 'pending',
+    })
+    await expect(api.discardTurn(summary.id, pending.id)).resolves.toBeUndefined()
+    expect(tuyau.csrf).toHaveBeenCalledTimes(3)
+    expect(tuyau.submitTurn).toHaveBeenCalledWith({ params: { id: summary.id }, body: input })
+    expect(tuyau.retryTurn).toHaveBeenCalledWith({ params: { id: summary.id, turnId: pending.id } })
+    expect(tuyau.discardTurn).toHaveBeenCalledWith({
+      params: { id: summary.id, turnId: pending.id },
+    })
   })
 
   it('resets an Adventure through the lifecycle contract', async () => {
@@ -212,7 +251,7 @@ describe('Tuyau Adventure adapter', () => {
       code: 'validation',
       message: 'Correct the highlighted fields.',
       fieldErrors: {
-        creationRequestId: 'Start this Adventure again.',
+        'creationRequestId': 'Start this Adventure again.',
         'player.name': 'Enter a player name using 100 characters or fewer.',
         'player.physicalDescription': 'Use 2,000 characters or fewer.',
         'player.backstory': 'Use 8,000 characters or fewer.',

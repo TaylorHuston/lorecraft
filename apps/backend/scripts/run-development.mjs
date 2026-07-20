@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process'
 const children = [
   spawn(process.execPath, ['ace', 'serve', '--hmr'], { stdio: 'inherit' }),
   spawn(process.execPath, ['ace', 'adventures:openings:work'], { stdio: 'inherit' }),
+  spawn(process.execPath, ['ace', 'adventures:turns:work'], { stdio: 'inherit' }),
 ]
 let stopping = false
 

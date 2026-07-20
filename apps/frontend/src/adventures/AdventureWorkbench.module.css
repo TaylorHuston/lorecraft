@@ -9,7 +9,6 @@
 .sideRegion,
 .storyRegion {
   min-width: 0;
-  overflow: auto;
 }
 
 .sideRegion:focus-visible,
@@ -19,6 +18,7 @@
 }
 
 .sideRegion {
+  overflow: auto;
   padding: var(--space-5);
   background: var(--surface);
 }
@@ -39,15 +39,13 @@
   display: grid;
   grid-column: 2;
   grid-row: 1;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .storyRegion:focus-visible {
-  outline: none;
-}
-
-.storyRegion:focus-visible > .panelHeading {
-  border-bottom-color: var(--focus-ring);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
 }
 
 .srOnly {
@@ -80,10 +78,6 @@
   font-size: 1rem;
   line-height: 1.4;
   overflow-wrap: anywhere;
-}
-
-.storyRegion > .panelHeading {
-  padding: var(--space-4) var(--space-6);
 }
 
 .details {
@@ -121,6 +115,16 @@
   padding: clamp(var(--space-6), 5vw, 4rem);
 }
 
+.storyBody {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+}
+
+.composerDock {
+  padding: var(--space-4) clamp(var(--space-4), 5vw, 4rem) var(--space-6);
+}
+
 .storyEntry {
   width: min(100%, 48rem);
   margin: 0 auto;
@@ -139,7 +143,7 @@
 
 .stateEyebrow {
   margin: 0;
-  color: var(--action-hover);
+  color: var(--action-text);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -162,11 +166,11 @@
 }
 
 .failureState .stateEyebrow {
-  color: var(--danger);
+  color: var(--danger-text);
 }
 
 .retryError {
-  color: var(--danger);
+  color: var(--danger-text);
 }
 
 .stateActions {
@@ -194,6 +198,142 @@
 
 .storyEntry p {
   margin: 0 0 var(--space-5);
+}
+
+.turnComposer {
+  display: grid;
+  width: min(100%, 48rem);
+  gap: var(--space-3);
+  margin: 0 auto;
+}
+
+.turnComposerResolving {
+  min-height: 7rem;
+  place-items: center;
+}
+
+.composerProgress {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-style: italic;
+}
+
+.composerSpinner {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--border);
+  border-top-color: var(--action);
+  border-radius: 50%;
+  animation: composer-spin 700ms linear infinite;
+}
+
+@keyframes composer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composerSpinner {
+    animation: none;
+  }
+}
+
+.composerModes {
+  display: flex;
+  align-items: end;
+  gap: var(--space-1);
+  margin-bottom: -1px;
+  padding-left: var(--space-2);
+  position: relative;
+  z-index: 1;
+}
+
+.composerModes button {
+  border: 1px solid var(--border);
+  border-bottom-color: var(--control-boundary);
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
+  background: var(--surface);
+}
+
+.composerModes button[aria-pressed='true'] {
+  border-color: var(--control-boundary);
+  border-bottom-color: var(--background);
+  background: var(--background);
+  color: var(--action-text);
+}
+
+.composerModes button:hover:not(:disabled),
+.composerModes button:active:not(:disabled) {
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.composerModes button[aria-pressed='true']:hover:not(:disabled),
+.composerModes button[aria-pressed='true']:active:not(:disabled) {
+  background: var(--background);
+  color: var(--action-text);
+}
+
+.composerInput {
+  display: grid;
+  gap: 0;
+}
+
+.turnComposer label {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.turnComposer .composerPrompt {
+  color: var(--text-muted);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.turnComposer textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: none;
+  padding: var(--space-3);
+  border: 1px solid var(--control-boundary);
+  border-radius: 0 var(--radius-control) var(--radius-control) var(--radius-control);
+  background: var(--background);
+  color: var(--text-primary);
+  font: inherit;
+  line-height: 1.5;
+}
+
+.turnComposer textarea:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.composerDisclosure,
+.composerError {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.composerDisclosure {
+  color: var(--text-muted);
+}
+
+.composerError {
+  color: var(--danger-text);
+}
+
+.composerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .sceneDescription {
@@ -261,7 +401,7 @@
 
 .mobileTabs button[aria-selected='true'] {
   border-bottom-color: var(--action);
-  color: var(--action-hover);
+  color: var(--action-text);
 }
 
 @media (hover: hover) {
@@ -272,10 +412,13 @@
 }
 
 @media (max-width: 30rem) {
-  .storyRegion > .panelHeading,
   .storyContent,
   .sideRegion {
     padding-right: var(--space-4);
     padding-left: var(--space-4);
+  }
+
+  .composerDock {
+    padding: var(--space-3) var(--space-4) var(--space-4);
   }
 }

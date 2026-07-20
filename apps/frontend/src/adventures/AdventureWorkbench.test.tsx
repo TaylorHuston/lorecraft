@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -38,6 +38,7 @@ const readyAdventure: AdventureView = {
       },
     ],
   },
+  activeTurn: null,
   story: [
     {
       id: 'opening',
@@ -56,11 +57,20 @@ describe('AdventureWorkbench', () => {
     )
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
-    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Story')
-    expect(screen.getAllByRole('heading')[0]).toHaveProperty('tagName', 'H1')
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /act|pass|guide|send/i })).not.toBeInTheDocument()
-    expect(screen.queryByText(/private knowledge|personality|director observation/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Story' })).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'What would you like to do?' })).toBeVisible()
+    expect(screen.getByRole('textbox').closest('[data-slot="turn-composer-dock"]')).not.toBeNull()
+    expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'false')
+    expect(
+      screen.getByText(
+        "Your turn and relevant Adventure and World context will be processed by Lorecraft's configured AI provider."
+      )
+    ).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Pass' })).toBeVisible()
+    expect(
+      screen.queryByText(/private knowledge|personality|director observation/i)
+    ).not.toBeInTheDocument()
   })
 
   it('renders repeated narration paragraphs without duplicate React keys', () => {
@@ -79,11 +89,35 @@ describe('AdventureWorkbench', () => {
     consoleError.mockRestore()
   })
 
+  it('LC-003/S1/R5-S2 snaps the narration scroller to its newest entry after load and refresh', () => {
+    const scrollHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollHeight')
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get: () => 1_000,
+    })
+
+    try {
+      const { rerender } = render(<AdventureWorkbench adventure={readyAdventure} />)
+      const storyContent = screen.getByRole('region', { name: 'Story' }).querySelector(
+        '[data-slot="story-scroll-region"]'
+      ) as HTMLDivElement
+      expect(storyContent.scrollTop).toBe(1_000)
+
+      storyContent.scrollTop = 50
+      rerender(<AdventureWorkbench adventure={{ ...readyAdventure }} />)
+      expect(storyContent.scrollTop).toBe(1_000)
+    } finally {
+      if (scrollHeight) {
+        Object.defineProperty(HTMLElement.prototype, 'scrollHeight', scrollHeight)
+      } else {
+        delete (HTMLElement.prototype as { scrollHeight?: number }).scrollHeight
+      }
+    }
+  })
+
   it('LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending', () => {
     render(
-      <AdventureWorkbench
-        adventure={{ ...readyAdventure, status: 'opening_pending', story: [] }}
-      />
+      <AdventureWorkbench adventure={{ ...readyAdventure, status: 'opening_pending', story: [] }} />
     )
 
     expect(screen.getByRole('status')).toHaveTextContent('Preparing your opening')
@@ -150,8 +184,122 @@ describe('AdventureWorkbench', () => {
 
     await user.keyboard('{End}')
     expect(screen.getByRole('tab', { name: 'Scene' })).toHaveFocus()
-    expect(screen.getByRole('tabpanel', { name: 'Scene' })).toHaveTextContent(
-      'Mira the Restless'
+    expect(screen.getByRole('tabpanel', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
+  })
+
+  it('LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'What would you like to do?' }),
+      'I ask Mira about the bell.'
     )
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(submitTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Guide' }))
+    expect(screen.getByRole('textbox', { name: 'Private direction for this turn' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'true')
+    expect(
+      screen.queryByText('This direction guides only this resolution. It is not shown in the story.')
+    ).not.toBeInTheDocument()
+  })
+
+  it('LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    const input = screen.getByRole('textbox', { name: 'What would you like to do?' })
+    await user.type(input, 'I ask Mira{Shift>}{Enter}{/Shift}about the bell.')
+    expect(submitTurn).not.toHaveBeenCalled()
+
+    await user.keyboard('{Enter}')
+    expect(submitTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: 'act', input: 'I ask Mira\nabout the bell.' })
+    )
+  })
+
+  it('LC-003/S2/R5-S1 confirms Pass before submitting an empty turn', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    await user.click(screen.getByRole('button', { name: 'Pass' }))
+    const dialog = screen.getByRole('dialog', { name: 'Pass this moment?' })
+    expect(dialog).toHaveTextContent('without an action from you')
+    await user.click(within(dialog).getByRole('button', { name: 'Pass' }))
+    expect(submitTurn).toHaveBeenCalledWith(expect.objectContaining({ trigger: 'pass' }))
+    expect(submitTurn.mock.calls[0][0]).not.toHaveProperty('input')
+  })
+
+  it('LC-003/S2/R5-S2..R5-S4 preserves story during progress and offers failed-turn recovery', async () => {
+    const user = userEvent.setup()
+    const retryTurn = vi.fn()
+    const discardTurn = vi.fn()
+    const { rerender } = render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'pending' },
+        }}
+      />
+    )
+    expect(screen.getByRole('status', { name: 'Resolving your turn' })).toHaveTextContent(
+      'Resolving…'
+    )
+    expect(screen.getByText('The chapel doors open against the storm.')).toBeVisible()
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Your Adventure is safe.')).not.toBeInTheDocument()
+
+    rerender(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'failed' },
+        }}
+        onRetryTurn={retryTurn}
+        onDiscardTurn={discardTurn}
+      />
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('did not change the story')
+    await user.click(screen.getByRole('button', { name: 'Retry turn' }))
+    await user.click(screen.getByRole('button', { name: 'Discard' }))
+    expect(retryTurn).toHaveBeenCalledWith('turn-1')
+    expect(discardTurn).toHaveBeenCalledWith('turn-1')
+  })
+
+  it('LC-003/S2/R5-S3 announces one completed turn without stealing focus', () => {
+    const { rerender } = render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'processing' },
+        }}
+      />
+    )
+    const player = screen.getByRole('region', { name: 'Player' })
+    player.focus()
+    rerender(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          turnCount: 1,
+          activeTurn: null,
+          story: [
+            ...readyAdventure.story,
+            { id: 'turn-1', kind: 'narration', content: 'Mira answers quietly.' },
+          ],
+        }}
+      />
+    )
+    expect(screen.getByRole('status')).toHaveTextContent('Your turn is ready.')
+    expect(player).toHaveFocus()
+    expect(screen.getByText('Mira answers quietly.')).toBeVisible()
   })
 })

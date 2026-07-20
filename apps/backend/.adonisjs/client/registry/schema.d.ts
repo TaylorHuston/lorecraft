@@ -139,6 +139,42 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['show']>>>
     }
   }
+  'adventures.submit_turn': {
+    methods: ["POST"]
+    pattern: '/api/v1/adventures/:id/turns'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/adventure').submitAdventureTurnValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/adventure').submitAdventureTurnValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['submitTurn']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['submitTurn']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
+  'adventures.retry_turn': {
+    methods: ["POST"]
+    pattern: '/api/v1/adventures/:id/turns/:turnId/retry'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { id: ParamValue; turnId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['retryTurn']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['retryTurn']>>>
+    }
+  }
+  'adventures.discard_turn': {
+    methods: ["DELETE"]
+    pattern: '/api/v1/adventures/:id/turns/:turnId'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue, ParamValue]
+      params: { id: ParamValue; turnId: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['discardTurn']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['discardTurn']>>>
+    }
+  }
   'adventures.retry_opening': {
     methods: ["POST"]
     pattern: '/api/v1/adventures/:id/opening/retry'

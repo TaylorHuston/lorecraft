@@ -72,6 +72,24 @@ const routes = {
     tokens: [{"old":"/api/v1/adventures/:id","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id","type":1,"val":"id","end":""}],
     types: placeholder as Registry['adventures.show']['types'],
   },
+  'adventures.submit_turn': {
+    methods: ["POST"],
+    pattern: '/api/v1/adventures/:id/turns',
+    tokens: [{"old":"/api/v1/adventures/:id/turns","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/turns","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"turns","end":""}],
+    types: placeholder as Registry['adventures.submit_turn']['types'],
+  },
+  'adventures.retry_turn': {
+    methods: ["POST"],
+    pattern: '/api/v1/adventures/:id/turns/:turnId/retry',
+    tokens: [{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":0,"val":"turns","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":1,"val":"turnId","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId/retry","type":0,"val":"retry","end":""}],
+    types: placeholder as Registry['adventures.retry_turn']['types'],
+  },
+  'adventures.discard_turn': {
+    methods: ["DELETE"],
+    pattern: '/api/v1/adventures/:id/turns/:turnId',
+    tokens: [{"old":"/api/v1/adventures/:id/turns/:turnId","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId","type":0,"val":"turns","end":""},{"old":"/api/v1/adventures/:id/turns/:turnId","type":1,"val":"turnId","end":""}],
+    types: placeholder as Registry['adventures.discard_turn']['types'],
+  },
   'adventures.retry_opening': {
     methods: ["POST"],
     pattern: '/api/v1/adventures/:id/opening/retry',

@@ -4,10 +4,11 @@ Lorecraft extends the shared Taylor UI foundation with a creator-first world-bib
 
 ## Color Roles
 
-- Zinc surfaces and text remain the dominant application foundation.
-- Burnished Orange `#E58A3A` is Lorecraft's identity and interaction color. It owns primary actions, links, selection, keyboard focus, the wordmark, canon-oriented eyebrows, and deliberate creator-owned emphasis.
-- Deep Steel Blue `#3F6F99` is reserved for semantic information that must remain distinct from Lorecraft interaction and identity.
-- Lorecraft does not currently use Deep Steel Blue as a filled-control background. Any future filled blue informational control must use `#FFFFFF` text and icons.
+- Ember uses neutral charcoal surfaces with a restrained copper identity.
+- Filled creator actions use Ember copper `#9F5A29`; their text and icons are white.
+- Readable copper text uses `#E19666`. It owns links, selection labels, the wordmark, canon-oriented eyebrows, and deliberate creator-owned emphasis.
+- Ember's dark copper `#2F241E` remains available as an identity surface, not as text.
+- Informational indicators use readable Ember copper rather than a separate filled-control color.
 - Moss or storm green may represent persistent World truth only when that domain role is introduced explicitly. It is not a generic action or success color.
 - Success, warning, and danger retain their conventional semantic colors and must not be replaced with identity or action colors.
 
@@ -15,19 +16,21 @@ Lorecraft extends the shared Taylor UI foundation with a creator-first world-bib
 
 | Role | Token | Value |
 |---|---|---|
-| Action and identity | `--action`, `--identity` | `#E58A3A` |
-| Action foreground | `--action-foreground` | `#18130A` |
-| Action hover | `--action-hover` | `#F2A15A` |
-| Information | `--info` | `#3F6F99` |
-| Keyboard focus | `--focus-ring` | `var(--action)` |
+| Filled action | `--action` | `#9F5A29` |
+| Action foreground | `--action-foreground` | `#FFFFFF` |
+| Action hover and active | `--action-hover`, `--action-active` | `#8C4C22`, `#78411E` |
+| Readable identity text | `--action-text`, `--identity` | `#E19666` |
+| Identity surface | `--identity-surface` | `#2F241E` |
+| Information | `--info` | `var(--action-text)` |
+| Keyboard focus | `--focus-ring` | `#D1885C` |
 
-Components consume semantic tokens rather than raw palette values. The `--primary` and `--accent` aliases remain mapped to Lorecraft's orange identity.
+Components consume semantic tokens rather than raw palette values. The `--primary` alias remains mapped to filled action; `--accent` remains mapped to visible identity text.
 
 ## Application
 
-- Authentication, navigation, links, focus, and creator actions remain Burnished Orange.
-- Informational messages and indicators use Deep Steel Blue where color provides useful semantic distinction.
-- Lorecraft branding, World-canon section eyebrows, and identity markers remain Burnished Orange.
+- Authentication and creator actions use filled Ember copper, while navigation, links, focus, and creator-owned labels use the readable copper role.
+- Informational messages and indicators use readable Ember copper where color provides useful semantic distinction.
+- Lorecraft branding, World-canon section eyebrows, and identity markers use readable copper.
 - Danger, success, and warning treatments remain unchanged.
 
-This is a token reconciliation, not a broader restyle. Existing layout, density, typography, surfaces, component shapes, and responsive behavior remain authoritative.
+Shared controls follow the Ember component grammar: filled and destructive buttons are borderless semantic fills; secondary actions use raised surfaces; ghost actions remain transparent; and pointer-coarse devices promote controls to the 44px touch target. Existing layout, typography, and responsive behavior otherwise remain authoritative.

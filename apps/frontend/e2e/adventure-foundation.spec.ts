@@ -5,6 +5,12 @@ import { expectMobileTouchTarget, expectNoHorizontalOverflow } from './uiAsserti
 const password = 'correct horse battery staple'
 const opening =
   'Rain drums against the chapel doors as you step beneath the cracked lintel. Mira watches from the aisle while Brother Alden steadies the lantern, and somewhere above them the bell sounds once without a hand on its rope.'
+const actTurn =
+  'The bell answers your question with a second, hollow toll. Mira leads you through the side door into the vestry.'
+const guideTurn =
+  'Brother Alden opens the ledger at last, and a faded name catches the lantern light before the storm swallows the sound outside.'
+const passTurn =
+  'The silence lengthens. Rain keeps time against the shutters until Mira finally turns toward the altar.'
 
 async function deleteAdventureIfPresent(page: Page, playerName: string) {
   await page.goto('/worlds')
@@ -17,6 +23,20 @@ async function deleteAdventureIfPresent(page: Page, playerName: string) {
   const dialog = page.getByRole('dialog', { name: `Delete ${playerName}'s Adventure?` })
   await dialog.getByRole('button', { name: 'Delete Adventure' }).click()
   await expect(deleteButton).toHaveCount(0)
+}
+
+async function expectVestryContext(page: Page, testInfo: { project: { name: string } }) {
+  if (testInfo.project.name.includes('mobile')) {
+    await page.getByRole('tab', { name: 'Player' }).click()
+    await expect(page.getByRole('tabpanel', { name: 'Player' })).toContainText('Vestry')
+    await page.getByRole('tab', { name: 'Scene' }).click()
+    await expect(page.getByRole('tabpanel', { name: 'Scene' })).toContainText('Vestry')
+    await page.getByRole('tab', { name: 'Story' }).click()
+    return
+  }
+
+  await expect(page.getByRole('region', { name: 'Player' })).toContainText('Vestry')
+  await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Vestry')
 }
 
 test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure', async ({
@@ -78,7 +98,9 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     const outsiderContext = await browser.newContext()
     const outsiderPage = await outsiderContext.newPage()
     await outsiderPage.goto('/sign-up')
-    await outsiderPage.getByLabel('Email').fill(`outsider-${testInfo.project.name}-${identity}@example.com`)
+    await outsiderPage
+      .getByLabel('Email')
+      .fill(`outsider-${testInfo.project.name}-${identity}@example.com`)
     await outsiderPage.getByLabel('Password', { exact: true }).fill(password)
     await outsiderPage.getByLabel('Confirm password', { exact: true }).fill(password)
     await outsiderPage.getByRole('button', { name: 'Create account' }).click()
@@ -100,6 +122,81 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
       await expect(page.getByRole('region', { name: 'Player' })).toContainText(playerName)
       await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Mira')
     }
+
+    await page.getByLabel('What would you like to do?').fill('I ask why the bell rang.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
+    await expect(page.getByText(actTurn)).toBeVisible({ timeout: 15_000 })
+    if (testInfo.project.name.includes('mobile')) {
+      await page.getByRole('tab', { name: 'Player' }).click()
+      await expect(page.getByRole('tabpanel', { name: 'Player' })).toContainText('Vestry')
+      await page.getByRole('tab', { name: 'Scene' }).click()
+      await expect(page.getByRole('tabpanel', { name: 'Scene' })).toContainText('Vestry')
+      await page.getByRole('tab', { name: 'Story' }).click()
+    } else {
+      await expect(page.getByRole('region', { name: 'Player' })).toContainText('Vestry')
+      await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Vestry')
+    }
+
+    const privateGuide = 'Let the ledger matter, but do not reveal why.'
+    await page.getByRole('tab', { name: 'Guide' }).click()
+    await page.getByLabel('Private direction for this turn').fill(privateGuide)
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByText(guideTurn)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(privateGuide, { exact: true })).toHaveCount(0)
+
+    await page.getByRole('button', { name: 'Pass' }).click()
+    const passDialog = page.getByRole('dialog', { name: 'Pass this moment?' })
+    await passDialog.getByRole('button', { name: 'Pass' }).click()
+    await expect(page.getByText(passTurn)).toBeVisible({ timeout: 15_000 })
+
+    const concurrentPage = await page.context().newPage()
+    await concurrentPage.goto(adventureUrl)
+    await expect(concurrentPage.getByLabel('What would you like to do?')).toBeVisible()
+    await concurrentPage
+      .getByLabel('What would you like to do?')
+      .fill('I wait for the next bell toll.')
+    await page
+      .getByLabel('What would you like to do?')
+      .fill('E2E_SLOW_TURN: I wait for the next bell toll.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
+    await concurrentPage.getByRole('button', { name: 'Continue' }).click()
+    await expect(concurrentPage.getByRole('alert')).toContainText('resolving turn')
+    await page.reload()
+    await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2, { timeout: 15_000 })
+    await concurrentPage.close()
+
+    await page
+      .getByLabel('What would you like to do?')
+      .fill('E2E_FAIL_TWICE: ask Mira about the ledger.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(
+      page.getByRole('heading', { name: 'Your last turn did not change the story' })
+    ).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2)
+    await expectVestryContext(page, testInfo)
+    await page.getByRole('button', { name: 'Retry turn' }).click()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3, { timeout: 15_000 })
+
+    await page
+      .getByLabel('What would you like to do?')
+      .fill('E2E_FAIL_ALWAYS: ask Mira about the ledger.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(
+      page.getByRole('heading', { name: 'Your last turn did not change the story' })
+    ).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expectVestryContext(page, testInfo)
+    await page.getByRole('button', { name: 'Discard' }).click()
+    await expect(page.getByLabel('What would you like to do?')).toBeVisible()
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expectVestryContext(page, testInfo)
 
     await page.getByRole('button', { name: 'Adventure settings' }).click()
     const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })

@@ -7,7 +7,14 @@ import AdventureLifecycleService, {
   AdventureLifecycleError,
   type AdventureResetResult,
 } from '#services/adventure_lifecycle_service'
-import { createAdventureValidator } from '#validators/adventure'
+import AdventureTurnSubmissionService, {
+  AdventureTurnSubmissionError,
+  type AdventureTurnSubmissionResult,
+} from '#services/adventure_turn_submission_service'
+import AdventureTurnLifecycleService, {
+  AdventureTurnLifecycleError,
+} from '#services/adventure_turn_lifecycle_service'
+import { createAdventureValidator, submitAdventureTurnValidator } from '#validators/adventure'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export type AdventureSummaryResponseDto = {
@@ -20,6 +27,14 @@ export type AdventureDetailResponseDto = {
 
 export type AdventureLifecycleResponseDto = {
   data: AdventureResetResult
+}
+
+export type AdventureTurnSubmissionResponseDto = {
+  data: AdventureTurnSubmissionResult
+}
+
+export type AdventureTurnLifecycleResponseDto = {
+  data: { id: string; status: 'pending' }
 }
 
 type AdventureErrorResponseDto = {
@@ -39,6 +54,18 @@ function lifecycleErrorResponse(error: AdventureLifecycleError): AdventureErrorR
   return {
     errors: [{ code: error.code, message: error.message }],
   }
+}
+
+function turnSubmissionErrorResponse(
+  error: AdventureTurnSubmissionError
+): AdventureErrorResponseDto {
+  return {
+    errors: [{ code: error.code, message: error.message }],
+  }
+}
+
+function turnLifecycleErrorResponse(error: AdventureTurnLifecycleError): AdventureErrorResponseDto {
+  return { errors: [{ code: error.code, message: error.message }] }
 }
 
 const adventureNotFoundResponse: AdventureErrorResponseDto = {
@@ -92,6 +119,65 @@ export default class AdventuresController {
 
     const body: AdventureDetailResponseDto = { data: adventure }
     return body
+  }
+
+  async submitTurn({ auth, params, request, response }: HttpContext) {
+    const input = (await request.validateUsing(submitAdventureTurnValidator)) as {
+      requestId: string
+      trigger: 'act' | 'pass' | 'guide'
+      input?: string
+    }
+
+    try {
+      const turn = await new AdventureTurnSubmissionService().submit({
+        ownerId: auth.user!.id,
+        adventureId: params.id,
+        requestId: input.requestId,
+        trigger: input.trigger,
+        input: input.input,
+      })
+      const body: AdventureTurnSubmissionResponseDto = { data: turn }
+      return response.created(body)
+    } catch (error) {
+      if (error instanceof AdventureTurnSubmissionError) {
+        return response.status(error.status).send(turnSubmissionErrorResponse(error))
+      }
+
+      throw error
+    }
+  }
+
+  async retryTurn({ auth, params, response }: HttpContext) {
+    try {
+      const turn = await new AdventureTurnLifecycleService().retry({
+        ownerId: auth.user!.id,
+        adventureId: params.id,
+        turnId: params.turnId,
+      })
+      const body: AdventureTurnLifecycleResponseDto = { data: turn }
+      return body
+    } catch (error) {
+      if (error instanceof AdventureTurnLifecycleError) {
+        return response.status(error.status).send(turnLifecycleErrorResponse(error))
+      }
+      throw error
+    }
+  }
+
+  async discardTurn({ auth, params, response }: HttpContext) {
+    try {
+      await new AdventureTurnLifecycleService().discard({
+        ownerId: auth.user!.id,
+        adventureId: params.id,
+        turnId: params.turnId,
+      })
+      return response.noContent()
+    } catch (error) {
+      if (error instanceof AdventureTurnLifecycleError) {
+        return response.status(error.status).send(turnLifecycleErrorResponse(error))
+      }
+      throw error
+    }
   }
 
   async retryOpening({ auth, params, response }: HttpContext) {

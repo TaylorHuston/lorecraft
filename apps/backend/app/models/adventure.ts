@@ -2,6 +2,7 @@ import AdventureJob from '#models/adventure_job'
 import AdventurePlayer from '#models/adventure_player'
 import AdventureRevision from '#models/adventure_revision'
 import AdventureStoryEntry from '#models/adventure_story_entry'
+import AdventureTurn from '#models/adventure_turn'
 import ModelCall from '#models/model_call'
 import User from '#models/user'
 import World from '#models/world'
@@ -75,6 +76,9 @@ export default class Adventure extends BaseModel {
 
   @hasMany(() => AdventureJob)
   declare jobs: HasMany<typeof AdventureJob>
+
+  @hasMany(() => AdventureTurn)
+  declare turns: HasMany<typeof AdventureTurn>
 
   @hasMany(() => ModelCall)
   declare modelCalls: HasMany<typeof ModelCall>

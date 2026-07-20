@@ -86,6 +86,17 @@ router
       .group(() => {
         router.get(':id', [AdventuresController, 'show'])
         router
+          .post(':id/turns', [AdventuresController, 'submitTurn'])
+          .use(middleware.browserCsrf())
+          .use(adventureGenerationThrottle)
+        router
+          .post(':id/turns/:turnId/retry', [AdventuresController, 'retryTurn'])
+          .use(middleware.browserCsrf())
+          .use(adventureGenerationThrottle)
+        router
+          .delete(':id/turns/:turnId', [AdventuresController, 'discardTurn'])
+          .use(middleware.browserCsrf())
+        router
           .post(':id/opening/retry', [AdventuresController, 'retryOpening'])
           .use(middleware.browserCsrf())
           .use(adventureGenerationThrottle)

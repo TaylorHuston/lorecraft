@@ -53,7 +53,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--space-3);
-  border: 1px solid var(--control-boundary);
+  border: 0;
   border-radius: var(--radius-control);
   background: var(--surface-raised);
   color: var(--text-primary);
@@ -63,7 +63,11 @@
 }
 
 .navigationLink:hover {
-  background: var(--surface-interactive);
+  background: color-mix(in srgb, var(--surface-raised) 88%, var(--text-primary));
+}
+
+.navigationLink:active {
+  background: color-mix(in srgb, var(--surface-raised) 94%, var(--text-primary));
 }
 
 .content {
@@ -138,10 +142,22 @@
   min-height: var(--control-touch);
   align-items: center;
   padding: 0 var(--space-3);
-  color: var(--action-hover);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-foreground);
   font-size: 0.8125rem;
-  font-weight: 700;
+  font-weight: 650;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+.newAdventure:hover {
+  background: var(--action-hover);
+}
+
+.newAdventure:active {
+  background: var(--action-active);
 }
 
 .adventureList {
@@ -173,20 +189,19 @@
   padding: 0 var(--space-3);
   border: 0;
   border-radius: var(--radius-control);
-  background: transparent;
+  background: var(--surface-raised);
+  color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 650;
   text-decoration: none;
 }
 
-.resumeAdventure {
-  border: 1px solid var(--control-boundary);
-  color: var(--action-hover);
+.resumeAdventure:hover {
+  background: color-mix(in srgb, var(--surface-raised) 88%, var(--text-primary));
 }
 
-.resumeAdventure:hover {
-  background: var(--surface-interactive);
-  color: var(--text-primary);
+.resumeAdventure:active {
+  background: color-mix(in srgb, var(--surface-raised) 94%, var(--text-primary));
 }
 
 .deleteAdventure {
@@ -209,7 +224,7 @@
 
 .adventureIdentity > span {
   flex: 0 0 auto;
-  color: var(--action-hover);
+  color: var(--action-text);
   font-size: 0.75rem;
 }
 

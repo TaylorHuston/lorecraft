@@ -7,6 +7,8 @@ import type {
 } from './story_generator.js'
 import { StoryGenerationError } from './story_generator.js'
 import { assembleOpeningPrompt } from './opening_prompt.js'
+import type { TurnStoryGenerator, TurnStoryInput } from './turn_story_generator.js'
+import { assembleTurnPrompt } from './turn_prompt.js'
 
 export type StoryGenerationFetch = (
   input: string | URL | Request,
@@ -155,15 +157,33 @@ function parsedResponseFrom(rawResponse: string, evidence: StoryGenerationEviden
   }
 }
 
-export class OpenAICompatibleStoryGenerator implements StoryGenerator {
+export class OpenAICompatibleStoryGenerator implements StoryGenerator, TurnStoryGenerator {
   constructor(private readonly config: OpenAICompatibleStoryGeneratorConfig) {}
+
+  /** Shared transport primitive for a separately-owned structured operation. */
+  async generatePrompt(
+    prompt: { system: string; user: string },
+    signal?: AbortSignal
+  ): Promise<StoryGenerationResult> {
+    return this.#generate(prompt, signal)
+  }
 
   async generateOpening(
     input: OpeningStoryInput,
     signal?: AbortSignal
   ): Promise<StoryGenerationResult> {
+    return this.generatePrompt(assembleOpeningPrompt(input), signal)
+  }
+
+  async generateTurn(input: TurnStoryInput, signal?: AbortSignal): Promise<StoryGenerationResult> {
+    return this.generatePrompt(assembleTurnPrompt(input), signal)
+  }
+
+  async #generate(
+    prompt: { system: string; user: string },
+    signal?: AbortSignal
+  ): Promise<StoryGenerationResult> {
     const url = `${this.config.baseUrl.replace(/\/$/, '')}/chat/completions`
-    const prompt = assembleOpeningPrompt(input)
     const body = {
       model: this.config.model,
       messages: [

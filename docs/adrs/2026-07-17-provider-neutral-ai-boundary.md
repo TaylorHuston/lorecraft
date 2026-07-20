@@ -2,14 +2,14 @@
 
 - Status: Accepted
 - Date: 2026-07-17
-- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/2026-07-18-audit-hardening/`
-- Related Epics / Stories: `LC-003/S1`, especially `R3`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/`, `docs/changes/2026-07-18-audit-hardening/`, and `docs/changes/2026-07-18-interactive-adventure-turns/`
+- Related Epics / Stories: `LC-003/S1/R3` and `LC-003/S2/R3`
 
 ## Context
 
 Lorecraft will use language models for Adventure narration and, later, creator-facing analysis and assistance. Development and playtesting must work with local models, while production may use hosted providers or gateways. Provider protocols, credentials, response shapes, and generation controls must not become domain contracts or leak into browser and future mobile clients.
 
-The first implemented operation uses a backend `StoryGenerator` interface and an OpenAI-compatible HTTP adapter.
+The implemented operations use narrow backend opening/turn narration and state-extraction interfaces with OpenAI-compatible HTTP adapters.
 
 ## Decision
 

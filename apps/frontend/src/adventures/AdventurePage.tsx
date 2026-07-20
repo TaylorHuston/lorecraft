@@ -14,11 +14,27 @@ import {
   adventureQueryKeys,
   type AdventureApi,
   type AdventureDetail,
+  type SubmitAdventureTurnInput,
 } from './adventureApi'
 import styles from './AdventurePage.module.css'
 
 function isOpeningActive(adventure: AdventureDetail | undefined) {
   return adventure?.status === 'opening_pending' || adventure?.status === 'opening_processing'
+}
+
+function isTurnActive(adventure: AdventureDetail | undefined) {
+  return (
+    adventure?.activeTurn?.status === 'pending' || adventure?.activeTurn?.status === 'processing'
+  )
+}
+
+function isAdventureWorkActive(adventure: AdventureDetail | undefined) {
+  return isOpeningActive(adventure) || isTurnActive(adventure)
+}
+
+function mutationError(error: unknown, fallback: string) {
+  if (error instanceof AdventureApiError) return error.reason ?? error.message
+  return fallback
 }
 
 export function AdventurePage({
@@ -41,7 +57,7 @@ export function AdventurePage({
     queryKey,
     queryFn: () => adventureApi.getAdventure(id),
     enabled: account !== null,
-    refetchInterval: (query) => (isOpeningActive(query.state.data) ? pollIntervalMs : false),
+    refetchInterval: (query) => (isAdventureWorkActive(query.state.data) ? pollIntervalMs : false),
   })
   const retry = useMutation({
     mutationFn: () => adventureApi.retryOpening(id),
@@ -81,13 +97,64 @@ export function AdventurePage({
       }
     },
   })
+  const submitTurn = useMutation({
+    mutationFn: (input: SubmitAdventureTurnInput) => adventureApi.submitTurn(id, input),
+    onSuccess: (turn) => {
+      queryClient.setQueryData<AdventureDetail>(queryKey, (current) =>
+        current
+          ? {
+              ...current,
+              activeTurn:
+                turn.status === 'succeeded'
+                  ? null
+                  : { id: turn.id, trigger: turn.trigger, status: turn.status },
+            }
+          : current
+      )
+      void queryClient.invalidateQueries({ queryKey })
+    },
+  })
+  const retryTurn = useMutation({
+    mutationFn: (turnId: string) => adventureApi.retryTurn(id, turnId),
+    onSuccess: (turn) => {
+      queryClient.setQueryData<AdventureDetail>(queryKey, (current) =>
+        current?.activeTurn
+          ? { ...current, activeTurn: { ...current.activeTurn, status: turn.status } }
+          : current
+      )
+      void queryClient.invalidateQueries({ queryKey })
+    },
+  })
+  const discardTurn = useMutation({
+    mutationFn: (turnId: string) => adventureApi.discardTurn(id, turnId),
+    onSuccess: () => {
+      queryClient.setQueryData<AdventureDetail>(queryKey, (current) =>
+        current ? { ...current, activeTurn: null } : current
+      )
+      void queryClient.invalidateQueries({ queryKey })
+    },
+  })
 
   useEffect(() => {
-    const error = adventure.error ?? retry.error ?? reset.error
+    const error =
+      adventure.error ??
+      retry.error ??
+      reset.error ??
+      submitTurn.error ??
+      retryTurn.error ??
+      discardTurn.error
     if (error instanceof AdventureApiError && error.code === 'unauthorized') {
       endSession()
     }
-  }, [adventure.error, endSession, reset.error, retry.error])
+  }, [
+    adventure.error,
+    discardTurn.error,
+    endSession,
+    reset.error,
+    retry.error,
+    retryTurn.error,
+    submitTurn.error,
+  ])
 
   if (adventure.isPending && !retryingLoad) {
     return (
@@ -138,6 +205,15 @@ export function AdventurePage({
       ? (retry.error.reason ?? retry.error.message)
       : 'Lorecraft could not retry this opening. Try again.'
     : null
+  const submitTurnError = submitTurn.error
+    ? mutationError(submitTurn.error, 'Lorecraft could not submit this turn. Try again.')
+    : null
+  const turnRetryError = retryTurn.error
+    ? mutationError(retryTurn.error, 'Lorecraft could not retry this turn. Try again.')
+    : null
+  const turnDiscardError = discardTurn.error
+    ? mutationError(discardTurn.error, 'Lorecraft could not discard this turn. Try again.')
+    : null
 
   return (
     <main className={styles.shell}>
@@ -167,6 +243,17 @@ export function AdventurePage({
         retrying={retry.isPending}
         retryError={retryError}
         onRetry={() => retry.mutate()}
+        onSubmitTurn={async (input) => {
+          await submitTurn.mutateAsync(input)
+        }}
+        submittingTurn={submitTurn.isPending}
+        submitTurnError={submitTurnError}
+        onRetryTurn={(turnId) => retryTurn.mutate(turnId)}
+        retryingTurn={retryTurn.isPending}
+        turnRetryError={turnRetryError}
+        onDiscardTurn={(turnId) => discardTurn.mutate(turnId)}
+        discardingTurn={discardTurn.isPending}
+        turnDiscardError={turnDiscardError}
       />
       {settingsOpen ? (
         <Dialog
@@ -178,8 +265,10 @@ export function AdventurePage({
           <div className={styles.settingsContent}>
             <Button
               className={styles.resetAction}
-              disabled={isOpeningActive(adventure.data)}
-              aria-describedby={isOpeningActive(adventure.data) ? 'reset-unavailable' : undefined}
+              disabled={isAdventureWorkActive(adventure.data)}
+              aria-describedby={
+                isAdventureWorkActive(adventure.data) ? 'reset-unavailable' : undefined
+              }
               onClick={() => {
                 setResetError(null)
                 setSettingsOpen(false)
@@ -190,8 +279,8 @@ export function AdventurePage({
             >
               Reset Adventure
             </Button>
-            {isOpeningActive(adventure.data) ? (
-              <p id="reset-unavailable">Reset is unavailable while the opening is active.</p>
+            {isAdventureWorkActive(adventure.data) ? (
+              <p id="reset-unavailable">Reset is unavailable while Adventure work is active.</p>
             ) : null}
           </div>
         </Dialog>
