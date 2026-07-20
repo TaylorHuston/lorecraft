@@ -1,6 +1,36 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type BrowserContext, type Page } from '@playwright/test'
+import { randomUUID } from 'node:crypto'
 import { resetStarterWorld } from './starterWorld'
 import { expectMobileTouchTarget, expectNoHorizontalOverflow } from './uiAssertions'
+
+const password = 'correct horse battery staple'
+const opening =
+  'Rain drums against the chapel doors as you step beneath the cracked lintel. Mira watches from the aisle while Brother Alden steadies the lantern, and somewhere above them the bell sounds once without a hand on its rope.'
+
+async function startAdventure(page: Page, playerName: string) {
+  await page.goto('/worlds/stormbound-chapel/adventures/new')
+  await page.getByLabel('Player name (required)').fill(playerName)
+  await page.getByRole('button', { name: 'Start Adventure' }).click()
+  await expect(page).toHaveURL(/\/adventures\/[0-9a-f-]+$/)
+  const adventureUrl = page.url()
+  await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
+  return adventureUrl
+}
+
+async function openScene(page: Page, mobile: boolean) {
+  if (mobile) await page.getByRole('tab', { name: 'Scene' }).click()
+  return mobile ? page.getByRole('tabpanel', { name: 'Scene' }) : page.getByRole('region', { name: 'Scene' })
+}
+
+async function signInStarterAuthor(context: BrowserContext) {
+  const page = await context.newPage()
+  await page.goto('/sign-in')
+  await page.getByLabel('Email').fill('e2e-starter-world-author@example.com')
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Sign in' }).click()
+  await expect(page).toHaveURL(/\/worlds$/)
+  return page
+}
 
 test('LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World', async ({
   page,
@@ -107,6 +137,57 @@ test('LC-002/S3 author creates, edits, and deletes a complete Character Card', a
       .click()
     await expect(updated).toHaveCount(0)
   } finally {
+    await resetStarterWorld()
+  }
+})
+
+test('LC-002/S3/R5-S1 + LC-003/S1/R2-S2 freezes existing NPC cards while new Adventures use published canon', async ({
+  browser,
+  page,
+}, testInfo) => {
+  const identity = randomUUID().slice(0, 8)
+  const originalPlayer = `E2E Frozen Original ${identity}`
+  const newPlayer = `E2E Frozen New ${identity}`
+  const renamedMira = `E2E Published Mira ${identity}`
+  const email = `frozen-${testInfo.project.name}-${identity}@example.com`
+  let authorContext: BrowserContext | null = null
+
+  await page.goto('/sign-up')
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByLabel('Confirm password', { exact: true }).fill(password)
+  await page.getByRole('button', { name: 'Create account' }).click()
+  await expect(page).toHaveURL(/\/worlds$/)
+
+  try {
+    const oldAdventureUrl = await startAdventure(page, originalPlayer)
+
+    authorContext = await browser.newContext()
+    const authorPage = await signInStarterAuthor(authorContext)
+    await authorPage.goto('/worlds/stormbound-chapel')
+    const characters = authorPage.getByRole('region', { name: 'Characters' })
+    const mira = characters.locator('article').filter({
+      has: authorPage.getByRole('heading', { level: 3, name: 'Mira', exact: true }),
+    })
+    await mira.getByRole('button', { name: 'Edit' }).click()
+    await authorPage.getByLabel('Name').fill(renamedMira)
+    await authorPage.getByRole('button', { name: 'Save Character' }).click()
+    await expect(
+      characters.getByRole('heading', { level: 3, name: renamedMira, exact: true })
+    ).toBeVisible()
+
+    await page.goto(oldAdventureUrl)
+    const oldScene = await openScene(page, testInfo.project.name.includes('mobile'))
+    await expect(oldScene.getByRole('button', { name: 'Mira', exact: true })).toBeVisible()
+    await expect(oldScene.getByRole('button', { name: renamedMira, exact: true })).toHaveCount(0)
+
+    const newAdventureUrl = await startAdventure(page, newPlayer)
+    await expect(newAdventureUrl).not.toBe(oldAdventureUrl)
+    const newScene = await openScene(page, testInfo.project.name.includes('mobile'))
+    await expect(newScene.getByRole('button', { name: renamedMira, exact: true })).toBeVisible()
+    await expect(newScene.getByRole('button', { name: 'Mira', exact: true })).toHaveCount(0)
+  } finally {
+    await authorContext?.close()
     await resetStarterWorld()
   }
 })

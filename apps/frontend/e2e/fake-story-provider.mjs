@@ -45,7 +45,19 @@ const server = createServer(async (request, response) => {
             {
               message: {
                 role: 'assistant',
-                content: context.includes(actTurn)
+                content: context.includes('E2E_NPC_REFRESH')
+                  ? JSON.stringify({
+                      proposals: [
+                        {
+                          type: 'character_state',
+                          characterKey: 'mira',
+                          mood: 'Watchful after the bell.',
+                          currentStatus: 'Waiting beside the altar.',
+                          summarizedMemory: 'The player asked about the second bell toll.',
+                        },
+                      ],
+                    })
+                  : context.includes(actTurn)
                   ? '{"proposals":[{"type":"player_location","locationKey":"vestry"}]}'
                   : '{"proposals":[]}',
               },
