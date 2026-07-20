@@ -19,7 +19,7 @@ The committed turn implementation and current UI/remediation work pass review. T
 | Supporting gates | pass | Lint, typecheck, build, generated-contract check, frontend suite, Storybook, and container/image/deployment contracts pass. |
 | Documentation and private Idea truth | pass | Change design and private visual identity now agree with Ember and the approved removal of Guide-specific help. |
 | Manual and live-provider acceptance | pass with accepted risk | The owner explicitly authorized local integration and Change closeout on 2026-07-19 before the live-provider/manual walkthrough. No provider payload, raw Guide, or prompt is retained. |
-| Branch and merge readiness | pass | The committed source merges cleanly into `develop`; local merge-and-close is explicitly authorized. No push, PR, deployment, or production action is authorized. |
+| Branch and merge readiness | pass | The source merged locally into `develop` as `78033ab`; the managed closeout moved this Change to closed history. No push, PR, deployment, or production action was performed. |
 
 ## Findings
 
@@ -61,7 +61,7 @@ The committed turn implementation and current UI/remediation work pass review. T
 - Conflict check: clean for committed source (`git merge-tree --write-tree develop HEAD` -> `3e1993a9eca90e9e4c86e64765fca6923c327c68`)
 - Dirty state: clean.
 - Private supporting documentation: the Lorecraft visual-identity note is reconciled in vault backup commit `569ec71aa`; unrelated vault state remains untouched.
-- Branch policy: correct `change/*` source targeting non-production `develop`; no PR, merge, push, deployment, or closeout was authorized.
+- Branch policy: correct `change/*` source targeting non-production `develop`; local merge and closeout were completed with owner authorization. No push, PR, deployment, or production action was performed.
 
 ## Manual UI Confirmation
 
@@ -75,3 +75,4 @@ The committed turn implementation and current UI/remediation work pass review. T
 
 - 2026-07-19: Initial independent review returned `changes-requested` for private-context publication, reset, recovery/concurrency, and documentation gaps.
 - 2026-07-19: A current full independent review remediated the provider disclosure, composer semantics, Ember Return control, and visual-documentation drift. Focused/frontend/broad checks and direct desktop/mobile rendering pass. `0ed8f90` commits the reviewed application batch. The owner explicitly accepted the remaining live-provider/manual walkthrough gap for local integration and Change closeout; the gap remains recorded as an accepted risk rather than completed evidence.
+- 2026-07-19: Local integration merged as `78033ab`; `sdd change close` moved the Change to closed history. No push, deployment, or production promotion was performed.

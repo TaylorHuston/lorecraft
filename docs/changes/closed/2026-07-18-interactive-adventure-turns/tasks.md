@@ -6,8 +6,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: committed the reviewed Ember/workbench batch and refreshed integration readiness
-- Next action: complete the live-provider/manual acceptance walkthrough before any merge or closeout
+- Last completed action: merged the approved change locally into `develop` and moved its artifacts to closed history
+- Next action: use `sdd-release` only for a separately authorized main/deployment handoff
 - Active branch/ref: `change/interactive-adventure-turns` from `d389ccd` (`develop` at branch creation)
 - Expected dirty files: none in the Lorecraft repository; `.neon` remains unrelated and untracked
 - Known review findings: direct private-context disclosure, reset-after-turn proof, browser recovery/concurrency, HTTP recovery, and Idea-side current-state drift are resolved. Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence, not automated review gaps.
@@ -67,7 +67,7 @@ status: in_review
 - [x] 6.3 Confirm release communication, Epic truth, ADR status, generated contracts, and manual confirmation agree with implementation reality.
 - [x] 6.4 Merge according to the repository's develop-integration policy after review and explicit user authorization.
 - [ ] 6.5 Use `sdd-release` for an explicitly authorized main/deployment handoff; run production migration and authenticated Tailscale acceptance only in that workflow.
-- [ ] 6.6 Close the Change only after review, merge, acceptance, deferred-scope confirmation, and status reconciliation are complete.
+- [x] 6.6 Close the Change after review, local `develop` merge, accepted verification gap, deferred-scope confirmation, and status reconciliation.
 
 ## Implementation Ledger
 
@@ -154,6 +154,6 @@ status: in_review
 - `review.md` findings resolved: private-context publication boundary, reset lifecycle, HTTP/browser recovery, and Idea-side documentation are reconciled; provider/manual acceptance is an accepted closeout risk
 - Planning updates resolved: yes
 - Manual UI confirmation status: accepted by owner for local integration on 2026-07-19; walkthrough was not separately performed in this closeout
-- PR / merge state: not started
+- PR / merge state: locally merged into `develop` with `78033ab` on 2026-07-19; no PR or push was requested
 - Deferred scope accepted: Story, `/look`, `/help`, successful-turn history revision, streaming, rules, model controls, and multiplayer
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: yes, after local `develop` merge `78033ab`; closeout commit pending
