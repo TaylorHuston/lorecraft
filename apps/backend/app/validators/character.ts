@@ -1,17 +1,7 @@
 import vine from '@vinejs/vine'
+import { characterFieldLimits } from '#services/character_field_limits'
 
-export const characterFieldLimits = {
-  key: 100,
-  name: 100,
-  physicalDescription: 320,
-  background: 700,
-  personality: 320,
-  voice: 240,
-  privateKnowledge: 700,
-  initialMood: 120,
-  initialStatus: 320,
-  initialMemory: 500,
-} as const
+export { characterFieldLimits }
 
 const completeCard = {
   name: vine.string().trim().minLength(1).maxLength(characterFieldLimits.name),

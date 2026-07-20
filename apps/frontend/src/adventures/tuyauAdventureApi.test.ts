@@ -9,6 +9,7 @@ const tuyau = vi.hoisted(() => ({
   submitTurn: vi.fn(),
   retryTurn: vi.fn(),
   discardTurn: vi.fn(),
+  updateNpcDebugState: vi.fn(),
   resetAdventure: vi.fn(),
   deleteAdventure: vi.fn(),
 }))
@@ -24,6 +25,7 @@ vi.mock('@tuyau/core/client', () => ({
         submitTurn: tuyau.submitTurn,
         retryTurn: tuyau.retryTurn,
         discardTurn: tuyau.discardTurn,
+        updateNpcDebugState: tuyau.updateNpcDebugState,
         reset: tuyau.resetAdventure,
         destroy: tuyau.deleteAdventure,
       },
@@ -263,6 +265,39 @@ describe('Tuyau Adventure adapter', () => {
         'player.name': 'Enter a player name using 100 characters or fewer.',
         'player.physicalDescription': 'Use 2,000 characters or fewer.',
         'player.backstory': 'Use 8,000 characters or fewer.',
+      },
+    })
+  })
+
+  it('maps bounded NPC state validation to the accepted field limits', async () => {
+    tuyau.updateNpcDebugState.mockRejectedValue({
+      status: 422,
+      response: {
+        errors: [{ field: 'mood' }, { field: 'status' }, { field: 'memory' }],
+      },
+    })
+    const api = createTuyauAdventureApi('http://frontend.example.test')
+
+    await expect(
+      api.updateNpcState?.(summary.id, 'mira', {
+        name: 'Mira',
+        currentLocationKey: 'chapel',
+        physicalDescription: 'Watchful.',
+        background: 'A chapel keeper.',
+        personality: 'Cautious.',
+        voice: 'Quiet.',
+        privateKnowledge: 'She knows the bell.',
+        mood: 'Uneasy',
+        status: 'Watching the doors.',
+        memory: 'The player has arrived.',
+      })
+    ).rejects.toMatchObject({
+      code: 'validation',
+      message: 'Correct the highlighted fields.',
+      fieldErrors: {
+        mood: 'Enter a value using 120 characters or fewer.',
+        status: 'Enter a value using 320 characters or fewer.',
+        memory: 'Enter a value using 500 characters or fewer.',
       },
     })
   })

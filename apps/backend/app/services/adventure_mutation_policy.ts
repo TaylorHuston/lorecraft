@@ -1,4 +1,5 @@
 import type { WorldVersionSnapshot } from '#models/world_version'
+import { characterFieldLimits } from '#services/character_field_limits'
 
 export type AdventureCharacterCurrentState = {
   currentLocationKey: string
@@ -54,11 +55,18 @@ const fieldByInputName = {
   memory: 'memory',
 } as const
 
+export const adventureMutationFieldLimits = {
+  currentLocationKey: characterFieldLimits.key,
+  mood: characterFieldLimits.initialMood,
+  status: characterFieldLimits.initialStatus,
+  memory: characterFieldLimits.initialMemory,
+} as const
+
 const maximumLengthByField = {
-  current_location_key: 100,
-  mood: 500,
-  status: 1_000,
-  memory: 2_000,
+  current_location_key: adventureMutationFieldLimits.currentLocationKey,
+  mood: adventureMutationFieldLimits.mood,
+  status: adventureMutationFieldLimits.status,
+  memory: adventureMutationFieldLimits.memory,
 } as const
 
 function copyState(state: AdventureMutationState): AdventureMutationState {
@@ -141,7 +149,7 @@ function normalizedValue(
   if (typeof value !== 'string') return { rejectionCode: 'invalid_value' }
 
   const normalized = value.trim()
-  if (field === 'current_location_key' && !normalized) return { rejectionCode: 'invalid_value' }
+  if (!normalized) return { rejectionCode: 'invalid_value' }
   if (normalized.length > maximumLengthByField[field]) return { rejectionCode: 'value_too_long' }
 
   return { value: normalized }

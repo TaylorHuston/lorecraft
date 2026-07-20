@@ -1,4 +1,5 @@
 import type { WorldVersionSnapshot } from '#models/world_version'
+import { completeInitialCharacterState } from '#services/character_field_limits'
 import db from '@adonisjs/lucid/services/db'
 
 type PlayerProfileInput = {
@@ -204,9 +205,7 @@ export default class AdventureCreationService {
             adventure_id: adventure.id,
             character_key: character.key,
             current_location_key: character.locationKey,
-            mood: character.initialMood ?? '',
-            status: character.initialStatus ?? '',
-            memory: character.initialMemory ?? '',
+            ...completeInitialCharacterState(character),
             created_at: now,
             updated_at: null,
           }))

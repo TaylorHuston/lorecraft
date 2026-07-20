@@ -53,7 +53,22 @@ test.group('Adventure state extractor contract', () => {
       }),
       JSON.stringify({ proposals: [{ type: 'character_state', characterKey: 'mira' }] }),
       JSON.stringify({
-        proposals: [{ type: 'character_state', characterKey: 'mira', mood: 'x'.repeat(161) }],
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', locationKey: 'x'.repeat(101) },
+        ],
+      }),
+      JSON.stringify({
+        proposals: [{ type: 'character_state', characterKey: 'mira', mood: 'x'.repeat(121) }],
+      }),
+      JSON.stringify({
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', currentStatus: 'x'.repeat(321) },
+        ],
+      }),
+      JSON.stringify({
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', summarizedMemory: 'x'.repeat(501) },
+        ],
       }),
       JSON.stringify({
         proposals: Array.from(

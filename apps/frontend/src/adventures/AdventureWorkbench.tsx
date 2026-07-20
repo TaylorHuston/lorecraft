@@ -657,7 +657,7 @@ function NpcDebugEditor({
           <textarea
             aria-label="Mood"
             disabled={saving}
-            maxLength={500}
+            maxLength={120}
             onChange={(event) => update('mood', event.target.value)}
             value={draft.mood}
             {...fieldAccessibility('mood')}
@@ -671,7 +671,7 @@ function NpcDebugEditor({
           <textarea
             aria-label="Status"
             disabled={saving}
-            maxLength={1_000}
+            maxLength={320}
             onChange={(event) => update('status', event.target.value)}
             value={draft.status}
             {...fieldAccessibility('status')}
@@ -685,7 +685,7 @@ function NpcDebugEditor({
           <textarea
             aria-label="Memory"
             disabled={saving}
-            maxLength={2_000}
+            maxLength={500}
             onChange={(event) => update('memory', event.target.value)}
             value={draft.memory}
             {...fieldAccessibility('memory')}

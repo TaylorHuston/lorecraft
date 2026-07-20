@@ -6,12 +6,12 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: committed `b7dc08a`, reconciling the local starter World so all four seeded Character cards carry non-empty initial Adventure state.
-- Current independent review: safe artifact/test corrections were committed in `426af33`; the review returned this Change to `in_progress` for two material P2 findings.
-- Next action: preflight existing Adventure state, reconcile Debug-card mood/status/memory limits with the accepted 120/320/500 prompt bound, and add direct create/reset plus all-four-seed regression coverage before a fresh independent review.
+- Last completed action: reconciled legacy blank Character/Adventure NPC state, applied the safe local development migration, and passed the new bounded-state regression suite in a disposable direct-Neon schema.
+- Current independent review: the original two P2 findings and the fresh self-check's legacy-snapshot/blank-feedback findings are remediated in the working tree; the immutable phase commit remains.
+- Next action: commit the reconciled candidate, then complete owner manual acceptance and the remaining rendered recovery coverage before an `in_review` transition.
 - Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; reviewed implementation head began at `b7dc08a`.
 - Expected dirty files: none after the review-safe reconciliation commit.
-- Known blocker: changing the Debug field limits requires the design-mandated existing-data preflight; owner manual acceptance and rendered error/recovery rows also remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Known blocker: owner manual acceptance remains pending. Rendered recovery coverage is partial outside this bounded-state remediation; scoped validation has no errors and LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
 
@@ -41,7 +41,7 @@ status: in_progress
 
 - [x] 3.1 Amend the accepted provider-neutral AI boundary for development-only local Debug capture; preserve metadata-only normal evidence, production refusal, redaction, protected temporary storage, expiry/purge, and backup exclusion.
 - [x] 3.2 Add and verify the Character initial-state/snapshot migration without silently truncating existing Character or Adventure content.
-- [x] 3.3 Centralize complete-card validation and compact field bounds across create/edit, publication, initialization, reset, extraction, and client contracts.
+- [x] 3.3 Centralize complete-card validation and compact field bounds across create/edit, publication, initialization, reset, extraction, client contracts, and legacy persisted state.
 - [x] 3.4 Preserve same-World Location integrity, immutable Character keys, immutable WorldVersions, and transactionally coupled Character mutation/publication.
 - [x] 3.5 Regenerate the Tuyau client after routes or DTOs change; typed contracts are synchronized. Contract cleanliness remains commit-pending.
 - [x] 3.6 Reconcile the accepted provider-boundary ADR and checked-in development defaults for default-on local Debug/raw capture, with explicit disablement, redaction, permissions, retention, and production refusal unchanged.
@@ -62,7 +62,7 @@ status: in_progress
 
 ### 5. Verification
 
-- [x] 5.1 Run focused migration/database checks including populated-row upgrade, data-bearing rollback refusal for both migrations, same-World references, and immutable snapshot schema handling.
+- [x] 5.1 Run focused migration/database checks including populated-row upgrade, bounded legacy-state reconciliation without truncation, data-bearing rollback refusal for both migrations, same-World references, and immutable snapshot schema handling.
 - [x] 5.2 Run backend service/API tests for complete CRUD, validation bounds, cross-owner non-disclosure, production/active-turn/invalid-Location Debug refusal, transaction rollback, version reuse/change, existing/new Adventure isolation, reset, and owner-only detail.
 - [x] 5.3 Run prompt/context and Debug tests for every current-Scene card/field, no off-scene cards, deterministic formatting, current mutable values, bounded normal metadata, private-knowledge reflection refusal, local-default-on/explicit-disable/production-refusal behavior, redaction, file permissions, and expiry/purge.
 - [x] 5.4 Run frontend component/API/Storybook tests for full cards, authoring states, Location-move editor continuity, confirmation, selection/refresh, empty/error/loading/pending states, focus, touch, zoom, and overflow. (Component suite complete; rendered Storybook rerun remains under 5.8.)
@@ -102,6 +102,7 @@ status: in_progress
 | 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | `0b214dc` |
 | 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | `d4fda8f` |
 | 2026-07-20 | Live provider configuration gate | `sdd-apply`; direct configuration acceptance | Shared worker/smoke runtime configuration; synthetic opening command; unit coverage; README and LC-003 evidence | Added one bounded synthetic provider request that reuses the actual worker model/token/timeout settings and exits non-zero for truncated narration; worker startup now logs the effective model and token cap. | `54b645f` |
+| 2026-07-20 | `LC-003/S1/R4-S2`, `LC-003/S3/R3` bound reconciliation | `sdd-apply`; focused backend/frontend/database verification | Shared Character/NPC limits, Debug validator/mutation/extractor, legacy-state migration, creation/reset/seed regressions, and editor controls | Preflight found no over-limit values, only legacy blanks. The migration preserved nonblank content, filled only blanks with neutral state, set complete defaults for legacy direct writes, and applied `120/320/500` database checks. | commit pending |
 
 ## Verification Ledger
 
@@ -147,6 +148,9 @@ status: in_progress
 | 2026-07-20 | Starter NPC-state completion | focused frontend regression + backend typecheck | The starter source now publishes non-empty initial mood/status/memory values. Existing frozen Adventures retain their source, but the Debug editor presents a neutral Memory fallback and sends it only when the owner next saves an edit. | committed as `0104848`: 18 Workbench tests, frontend lint/typecheck, backend typecheck, build, 141 frontend tests, 84 Storybook tests, and scoped SDD validation passed. The guarded seed integration test needs a disposable `TEST_DATABASE_URL`; no database write occurred. |
 | 2026-07-20 | Frozen NPC all-state compatibility fallback | focused frontend regression | Manual acceptance exposed that Mood and Status could be blank in the same legacy frozen source as Memory. The Debug editor now supplies neutral values for all mutable state fields only in its local draft. | committed as `0917e18`: 18 Workbench tests, 141 frontend tests, frontend lint/typecheck, 84 Storybook tests, and scoped SDD validation passed. |
 | 2026-07-20 | Local starter-state reconciliation | explicit local seed operation + read-only database check | Reconciled the existing starter World under its existing owner after adding complete initial NPC state. | passed: the local seed completed; Mira, Brother Alden, Rowan, and Lena each now have non-empty initial Mood, Status, and Memory. Existing Adventures remain frozen. |
+| 2026-07-20 | Existing-data preflight and local development migration | read-only aggregate check + development migration | Only counts, blanks, and maximum lengths were read before mutation; the migration never replaces nonblank authored content. | preflight: 0 values above `120/320/500`; legacy blanks existed. Post-migration: 0 incomplete Character rows, 0 incomplete/oversize Adventure-state rows. |
+| 2026-07-20 | Guarded direct schema bounds/regression suite | focused database, functional, and unit tests | Fresh migrations plus mutation policy, Debug validation, extractor, whitespace-aware bounds migration, legacy frozen snapshot fallback, Adventure creation/reset, and starter seed behavior. | passed: 32 tests in isolated direct-Neon schema `lorecraft_test_apply_20260720_09`; schema dropped. |
+| 2026-07-20 | Bounded Debug editor UI and broad gates | rendered UI + supporting gates | Mood/Status/Memory controls expose `120/320/500`; client messages match; desktop/mobile editor stays usable. | passed: 34 focused frontend tests, 84 Storybook tests, lint, typecheck, contract verification, build; direct desktop/mobile screenshots inspected with no overlay, console errors, or horizontal overflow. |
 
 ## Manual Feedback
 
@@ -207,17 +211,17 @@ status: in_progress
 | World Character section `/worlds/<slug>` | desktop        | author: populated, Add Character form                                          | Complete cards and authoring hierarchy are clear with no overflow                          | Storybook `Application/Worlds/Detail/Authoring` | directly inspected desktop screenshot                                                           | no overlay/errors                                | passed; validation/pending/request-error remain pending             |
 | World Character section `/worlds/<slug>` | 390px mobile   | author: populated, Add Character form                                          | Single-column card/form remains readable with no horizontal overflow                       | same Storybook fixture                          | directly inspected mobile screenshot                                                            | no overlay/errors; `scrollWidth === clientWidth` | passed; confirmation/focus and long-content remain pending          |
 | World Character section `/worlds/<slug>` | desktop/mobile | non-author full debug cards                                                    | Complete cards remain readable; mutation controls are absent; debug disclosure is explicit | Storybook `Application/Worlds/Detail/Loaded`    | directly inspected rendered read-only World detail; no Add/Edit/Delete controls were present   | no overlay/errors                                | desktop passed; mobile and complete-card depth remain pending          |
-| Adventure Scene `/adventures/<id>`       | desktop        | NPC list, selected full card, back                                             | Story remains dominant; selected card contains complete fields                             | Storybook `ReadyDesktop`                        | list screenshot inspected; selected card content directly read from rendered accessibility tree | no browser errors                                | partial; Storybook remount prevents stable selected-card screenshot |
-| Adventure Scene `/adventures/<id>`       | mobile         | Story-first tabs                                                               | Scene tab remains selectable without horizontal overflow                                   | Storybook `ReadyMobile`                         | Storybook test evidence                                                                         | pending direct selected-card mobile screenshot   | partial                                                             |
-| Character/NPC error and loading states   | desktop/mobile | missing/inaccessible, load failure, retry, failed save/delete, stale selection | Existing context remains stable; errors/actions are named; no cross-account data appears   | Storybook `Application/Worlds/Detail/Unavailable` plus routed failure injection | directly inspected World-unavailable copy and retry action; save/delete and stale-selection recovery remain unrendered | no overlay/errors                                | partial                                                             |
+| Adventure Scene `/adventures/<id>`       | desktop        | NPC list, selected full card, bounded Mood/Status/Memory editor               | Story remains dominant; selected card contains complete fields and `120/320/500` controls  | Storybook `DebugNpcEditor`                      | directly inspected desktop editor screenshot and DOM limits                                    | no overlay/errors                                | passed                                                              |
+| Adventure Scene `/adventures/<id>`       | 390px mobile   | Story-first tabs, Scene selection, selected bounded NPC card                   | Scene tab/card remains selectable without horizontal overflow                              | same Storybook fixture                          | directly inspected mobile Scene-to-card screenshot and DOM limits                              | no overlay/errors; no horizontal overflow        | passed                                                              |
+| Character/NPC error and loading states   | desktop/mobile | missing/inaccessible, load failure, retry, failed save/delete, stale selection | Existing context remains stable; errors/actions are named; no cross-account data appears   | Storybook `UnavailableMobile` and `TurnFailed` plus routed failure injection | directly inspected unavailable/retry and failed-turn recovery; save/delete and stale-selection recovery remain unrendered | no overlay/errors; no horizontal overflow        | partial                                                             |
 
 ## Blockers / Open Questions
 
-- Owner manual confirmation and the remaining rendered error/recovery rows are outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it.
+- Owner manual confirmation and rendered save/delete/stale-selection recovery remain outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it.
 
 ## Closeout
 
-- Change status: `in_progress`; the current independent review found unresolved Debug-limit/data-preflight and initial-state regression-coverage work, alongside pending rendered recovery and owner manual acceptance.
+- Change status: `in_progress`; Debug-limit/data-preflight and initial-state regression findings are remediated and awaiting the final apply self-check. Rendered recovery and owner manual acceptance remain pending.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
 - Implemented By maps current: yes; the self-check resolved no missing anchors.
@@ -230,7 +234,7 @@ status: in_progress
 - `review.md` safe findings resolved: yes; its exact frozen-version E2E and live-provider matrix gaps are now remediated. Owner manual acceptance and rendered recovery coverage remain pending.
 - Planning updates resolved: yes; execution is in verification.
 - Manual UI confirmation status: pending user after implementation
-- Rendered UI verification status: partial; World authoring desktop/mobile, non-author read-only, World-unavailable, and the Debug NPC editor were directly inspected, but save/delete/stale-selection recovery and owner manual rows remain.
+- Rendered UI verification status: partial; World authoring desktop/mobile, non-author read-only, World-unavailable, failed-turn recovery, and the bounded Debug NPC editor were directly inspected, but save/delete/stale-selection recovery and owner manual rows remain.
 - PR / merge state: not started
 - Deferred scope accepted: yes in proposal/design
 - Change moved to `docs/changes/closed/`: no

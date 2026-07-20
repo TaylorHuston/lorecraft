@@ -109,6 +109,9 @@ describe('AdventureWorkbench', () => {
     await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
     expect(screen.getByText(/Click a card value to edit/i)).toBeVisible()
     expect(screen.getByText(/never changes the frozen World or seed data/i)).toBeVisible()
+    expect(screen.getByLabelText('Mood')).toHaveAttribute('maxlength', '120')
+    expect(screen.getByLabelText('Status')).toHaveAttribute('maxlength', '320')
+    expect(screen.getByLabelText('Memory')).toHaveAttribute('maxlength', '500')
 
     const mood = screen.getByLabelText('Mood')
     await user.clear(mood)
@@ -172,23 +175,23 @@ describe('AdventureWorkbench', () => {
     const user = userEvent.setup()
     const saveNpcState = vi.fn().mockRejectedValue(
       new AdventureApiError('validation', 'Correct the highlighted fields.', {
-        mood: 'Use 500 characters or fewer.',
+        mood: 'Enter a value using 120 characters or fewer.',
       })
     )
     render(<AdventureWorkbench adventure={readyAdventure} onSaveNpcState={saveNpcState} />)
 
     await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
     await user.clear(screen.getByLabelText('Mood'))
-    await user.type(screen.getByLabelText('Mood'), 'Curious')
 
+    await waitFor(() => expect(saveNpcState).toHaveBeenCalledTimes(1))
     await waitFor(() => expect(screen.getByLabelText('Mood')).toHaveAttribute('aria-invalid', 'true'))
     expect(screen.getByLabelText('Mood')).toHaveAccessibleDescription(
-      'Use 500 characters or fewer.'
+      'Enter a value using 120 characters or fewer.'
     )
-    expect(screen.getByText('Use 500 characters or fewer.')).toBeVisible()
+    expect(screen.getByText('Enter a value using 120 characters or fewer.')).toBeVisible()
     expect(screen.getByText('Correct the highlighted fields.')).toBeVisible()
 
-    await user.type(screen.getByLabelText('Mood'), '!')
+    await user.type(screen.getByLabelText('Mood'), 'Curious')
     expect(screen.getByLabelText('Mood')).not.toHaveAttribute('aria-invalid')
     expect(screen.queryByText('Correct the highlighted fields.')).not.toBeInTheDocument()
   })

@@ -1,11 +1,12 @@
 import type { AdventureTurnState, TurnFrozenCanon } from './adventure_turn_context.js'
 import type { StoryGenerationDebugContext, StoryGenerationEvidence } from './story_generator.js'
+import { characterFieldLimits } from '#services/character_field_limits'
 
 const maximumExtractionBytes = 100_000
 const maximumProposals = 24
-const maximumMoodCharacters = 160
-const maximumStatusCharacters = 500
-const maximumMemoryCharacters = 2_000
+const maximumMoodCharacters = characterFieldLimits.initialMood
+const maximumStatusCharacters = characterFieldLimits.initialStatus
+const maximumMemoryCharacters = characterFieldLimits.initialMemory
 
 export type PlayerLocationProposal = {
   type: 'player_location'
@@ -116,7 +117,7 @@ function parseProposal(value: unknown): AdventureStateProposal {
       type: 'character_state',
       characterKey: requiredNonBlankString(value.characterKey),
     }
-    const locationKey = optionalBoundedString(value.locationKey, 160)
+    const locationKey = optionalBoundedString(value.locationKey, characterFieldLimits.key)
     const mood = optionalBoundedString(value.mood, maximumMoodCharacters)
     const currentStatus = optionalBoundedString(value.currentStatus, maximumStatusCharacters)
     const summarizedMemory = optionalBoundedString(value.summarizedMemory, maximumMemoryCharacters)

@@ -55,14 +55,14 @@ const validationMessages: Record<AdventureField, string> = {
   'player.backstory': 'Use 8,000 characters or fewer.',
   'name': 'Enter a name using 100 characters or fewer.',
   'currentLocationKey': 'Choose a frozen Location key using 100 characters or fewer.',
-  'physicalDescription': 'Use 320 characters or fewer.',
-  'background': 'Use 700 characters or fewer.',
-  'personality': 'Use 320 characters or fewer.',
-  'voice': 'Use 240 characters or fewer.',
-  'privateKnowledge': 'Use 700 characters or fewer.',
-  'mood': 'Use 500 characters or fewer.',
-  'status': 'Use 1,000 characters or fewer.',
-  'memory': 'Use 2,000 characters or fewer.',
+  'physicalDescription': 'Enter a value using 320 characters or fewer.',
+  'background': 'Enter a value using 700 characters or fewer.',
+  'personality': 'Enter a value using 320 characters or fewer.',
+  'voice': 'Enter a value using 240 characters or fewer.',
+  'privateKnowledge': 'Enter a value using 700 characters or fewer.',
+  'mood': 'Enter a value using 120 characters or fewer.',
+  'status': 'Enter a value using 320 characters or fewer.',
+  'memory': 'Enter a value using 500 characters or fewer.',
 }
 
 function validationApiError(error: unknown) {
