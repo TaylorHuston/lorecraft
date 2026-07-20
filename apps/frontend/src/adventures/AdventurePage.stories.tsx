@@ -147,6 +147,8 @@ export const DebugNpcEditor: Story = {
   render: () => renderAdventure(readyAdventure),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
+    const sceneTab = canvas.queryByRole('tab', { name: 'Scene' })
+    if (sceneTab) await userEvent.click(sceneTab)
     await userEvent.click(await canvas.findByRole('button', { name: 'Mira' }))
     await expect(canvas.findByText(/Click a card value to edit/i)).resolves.toBeVisible()
     await expect(canvas.getByLabelText('Name')).toHaveValue('Mira')
