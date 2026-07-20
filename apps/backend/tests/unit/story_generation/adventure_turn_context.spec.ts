@@ -269,4 +269,25 @@ test.group('Adventure turn context', () => {
       assertNarrationSafeForPublication('Mira looks toward the bell tower in silence.', context)
     )
   })
+
+  test('LC-003/S2/R3-S5: does not reject ordinary narration for a concise private value', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext({
+      ...turnContextInput,
+      frozenCanon: {
+        ...turnContextInput.frozenCanon,
+        characters: [
+          {
+            ...turnContextInput.frozenCanon.characters[0],
+            privateKnowledge: 'a',
+          },
+        ],
+      },
+    })
+
+    assert.doesNotThrow(() =>
+      assertNarrationSafeForPublication('A bell tolls across the empty chapel.', context)
+    )
+  })
 })

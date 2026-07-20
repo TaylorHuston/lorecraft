@@ -117,7 +117,7 @@ async function createReadyAdventure(ownerId: number) {
     updated_at: now,
   })
 
-  return { adventureId: created.adventureId, character, version }
+  return { adventureId: created.adventureId, character, openingRevisionId: opening.id, version }
 }
 
 test.group('Adventure NPC Debug state API', (group) => {
@@ -165,7 +165,7 @@ test.group('Adventure NPC Debug state API', (group) => {
       initialStatus: 'Watching the chapel door.',
       initialMemory: 'The player has not spoken with Mira yet.',
     })
-    assert.deepInclude(version.snapshot.characters, {
+    assert.deepInclude(version.snapshot.characters[0], {
       key: 'mira',
       locationKey: 'chapel',
       initialMood: 'Uneasy.',
@@ -215,7 +215,7 @@ test.group('Adventure NPC Debug state API', (group) => {
   }) => {
     const browser = await createAuthenticatedBrowser(client, 'npc-debug-bounds@example.com')
     const owner = await User.findByOrFail('email', 'npc-debug-bounds@example.com')
-    const { adventureId } = await createReadyAdventure(owner.id)
+    const { adventureId, openingRevisionId } = await createReadyAdventure(owner.id)
 
     const invalidLocation = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/npcs/mira/debug-state`),
@@ -232,7 +232,7 @@ test.group('Adventure NPC Debug state API', (group) => {
       trigger: 'act',
       input: 'Ask Mira about the bell.',
       status: 'pending',
-      attempt_count: 0,
+      source_revision_id: openingRevisionId,
       created_at: now,
       updated_at: now,
     })

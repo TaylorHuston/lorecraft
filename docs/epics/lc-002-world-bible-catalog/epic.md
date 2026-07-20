@@ -64,7 +64,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | --- | --- | --- | --- | --- | --- |
 | S1 | implemented | verified | Browse accessible Worlds. | 2026-07-19 | Public and owner-private catalog. |
 | S2 | implemented | partial | Inspect structured World canon and complete debug cards. | 2026-07-19 | Full-card API and rendered Storybook evidence exist; database and routed E2E proof remain pending. |
-| S3 | implemented | partial | Manage World Characters. | 2026-07-19 | Backend/UI implementation exists; guarded database and deterministic E2E evidence remain pending. |
+| S3 | implemented | partial | Manage World Characters. | 2026-07-20 | Guarded database and deterministic creator CRUD E2E evidence pass; recovery and owner manual confirmation remain pending. |
 
 ## Stories
 
@@ -320,7 +320,7 @@ Implementation: implemented
 Verification: partial
 Created: 2026-07-19
 Modified: 2026-07-19
-Last verified: 2026-07-19
+Last verified: 2026-07-20
 
 As a World creator, I want to create, edit, and delete complete Character Cards, so that my current canon and future Adventures use the Characters I intend.
 
@@ -444,13 +444,13 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
 | S3/R1-S1, S3/R2-S1, S3/R3-S1, S3/R4-S1, S3/R6-S1 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` | Author-only full-card creation flow, mutation payload, focus return, and non-author absence of mutation controls. | Passing 2026-07-19 |
-| S3/R1-S1, S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1, S3/R3-S2, S3/R4-S1, S3/R4-S2, S3/R5-S1, S3/R5-S2 | `apps/backend/tests/functional/world_character_authoring.spec.ts` | Owner/non-author mutation, complete-card validation, immutable keys, delete isolation, publication, and rollback scenarios. | Implemented; guarded database runner blocked before execution. |
+| S3/R1-S1, S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1, S3/R3-S2, S3/R4-S1, S3/R4-S2, S3/R5-S1, S3/R5-S2 | `apps/backend/tests/functional/world_character_authoring.spec.ts` | Owner/non-author mutation, complete-card validation, immutable keys, delete isolation, publication, and rollback scenarios. | Passing 2026-07-20 against a guarded direct disposable schema. |
+| S3/R1-S1, S3/R3-S1, S3/R4-S1, S3/R6-S1 | `apps/frontend/e2e/starter-world.spec.ts` | Creator-visible controls and complete Character Card create, edit, and delete behavior against the deterministic browser stack. | Passing 2026-07-20 on desktop and mobile. |
 | S3/R6-S1 | `apps/frontend/src/worlds/tuyauWorldApi.test.ts` | Typed create, update, and delete Character request/response adaptation. | Passing 2026-07-19 |
 | S3/R6-S1, S3/R6-S2 | `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` and direct Storybook inspection of `Authoring` desktop/mobile | Required fields, card hierarchy, delete confirmation fixture, responsive layout, and no horizontal overflow. | Passing 2026-07-19 |
 
 #### Verification Gaps
 
-- `S3/R1-S1`, `S3/R1-S2`, `S3/R2-S1`, `S3/R2-S2`, `S3/R3-S1`, `S3/R3-S2`, `S3/R4-S1`, `S3/R4-S2`, `S3/R5-S1`, `S3/R5-S2`: Guarded database service/API/migration evidence and deterministic E2E are blocked by missing disposable database configuration.
 - `S3/R6-S2`: Validation, failed-save, failed-delete, long-content, and live routed author/non-author confirmation remain pending.
 
 #### Story Notes
@@ -464,7 +464,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 - React owns catalog/detail presentation and client-local loading, error, navigation, draft, and dialog state.
 - Account-owned client cache entries are scoped by account identity and cleared when the shared session ends or changes.
 - The typed HTTP contract is reusable by future clients; no World rule lives only in the web UI.
-- Complete debug disclosure is intentionally temporary product behavior for this development stage. Normal model evidence omits card contents, assembled prompts, and private knowledge; an accepted local-only development Debug trace is separately opt-in and never part of normal operational evidence.
+- Complete debug disclosure is intentionally temporary product behavior for this development stage. Normal model evidence omits card contents, assembled prompts, and private knowledge; local-development Debug/raw capture defaults on, is explicitly disableable, and is never part of normal operational evidence.
 - Character canon changes must publish a new or reused immutable WorldVersion without altering existing Adventures.
 - Normal server startup never creates or rewrites canonical World data.
 

@@ -67,7 +67,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-19    | Complete NPC-card source/init/query code and prompt tests exist; database-backed migration/create/reset proof is pending.          |
 | S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-19    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; database/live proof remains pending. |
-| S3    | implemented    | partial      | Inspect complete NPC Cards.            | 2026-07-19    | Current-Scene projection and interactive UI exist; authoritative refresh/E2E/manual proof remains pending.                         |
+| S3    | implemented    | partial      | Inspect complete NPC Cards.            | 2026-07-20    | Current-Scene projection, Debug boundary database proof, and interactive UI exist; post-turn refresh/manual proof remains pending. |
 
 ## Stories
 
@@ -450,16 +450,16 @@ The system SHALL build each turn from current authoritative context and keep sto
 
 ###### Scenario R3-S6: Development Debug Trace
 
-- WHEN a developer explicitly enables local Debug capture outside production
+- WHEN a local development opening, narration, or extraction operation runs without an explicit Debug override
 - THEN Lorecraft writes correlated JSONL diagnostics beneath the protected, ignored backend temporary directory with normal metadata, prompt summaries, accepted/ignored extraction outcomes, and timings
-- AND raw provider requests and responses require separate opt-in flags, sensitive fields are redacted, files are owner-only, traces older than seven days are purged, and no Debug content is copied to model-call rows, standard logs, browser APIs, or production environments.
+- AND sanitized raw provider requests and responses are captured by default, each capture mode can be explicitly disabled, sensitive fields are redacted, files are owner-only, traces older than seven days are purged, and no Debug content is copied to model-call rows, standard logs, browser APIs, or production environments.
 
 ###### Scenario R3-S5: Complete Current-Scene NPC Context
 
 - WHEN narration or extraction context is assembled
 - THEN it contains the complete frozen-and-current card for every NPC whose Adventure-owned Location matches the current Scene
 - AND it contains no off-scene NPC card, no raw prompt persistence, and only bounded count/character-size metadata.
-- AND player-visible opening or turn narration that directly reflects a current-Scene card's private knowledge is rejected before publication; semantic paraphrase remains a live-provider evaluation limitation rather than an implied deterministic guarantee.
+- AND player-visible opening or turn narration that directly reflects a current-Scene card's private knowledge is rejected before publication; normalized private values shorter than three characters and semantic paraphrase remain live-provider evaluation limitations rather than implied deterministic guarantees.
 
 ##### Requirement R4: Bounded Adventure Consequences
 
@@ -582,7 +582,7 @@ Implementation: implemented
 Verification: partial
 Created: 2026-07-19
 Modified: 2026-07-19
-Last verified: 2026-07-19
+Last verified: 2026-07-20
 
 As an Adventure owner, I want to open complete cards for NPCs in my current Scene, so that I can inspect the exact canon and mutable state guiding the story during development.
 
@@ -667,12 +667,12 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 | Requirement / Scenario                 | Evidence                                                                                                                               | Proves                                                                                                                                                                                  | Status                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | S3/R1-S1, S3/R1-S2, S3/R2-S1, S3/R3-S1, S3/R3-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx` and `apps/frontend/src/adventures/AdventurePage.stories.tsx#DebugNpcEditor` | Present-NPC list, complete-card selection/back behavior, local Debug autosave draft, selected-editor continuity after a Location move, editable-state disclosure, keyboard/mobile layout fixtures, and no horizontal overflow assertions. | Passing 2026-07-20                                |
-| S3/R3-S1, S3/R3-S2                     | `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts`                                                                      | Owner-only bounded Adventure-state persistence, frozen World/seed isolation, and unchanged story revision/turn count.                                                                   | Pending guarded disposable database configuration |
+| S3/R3-S1, S3/R3-S2                     | `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts`                                                                      | Owner-only bounded Adventure-state persistence, frozen World/seed isolation, unchanged story revision/turn count, invalid-location refusal, and active-turn conflict.                   | Passing 2026-07-20 against a guarded direct disposable schema |
 | S3/R1-S1, S3/R2-S1                     | Storybook `Application/Adventures/Workbench/ReadyDesktop` and `ReadyMobile`                                                            | Directly inspected desktop list and complete-card interaction in the rendered fixture; mobile Story-first tabs render without horizontal overflow.                                      | Partial 2026-07-19                                |
 
 #### Verification Gaps
 
-- `S3/R1-S3`, `S3/R2-S2`, `S3/R3-S1`, `S3/R3-S2`: Deterministic post-turn/reset refresh, long sparse card, recovery, owner-isolation, and database-backed Debug-edit evidence remain pending behind disposable database setup.
+- `S3/R1-S3`, `S3/R2-S2`, `S3/R3-S1`, `S3/R3-S2`: Deterministic post-turn/reset refresh, long sparse card, and recovery confirmation remain pending; database-backed Debug-edit and owner-isolation evidence now passes.
 - `S3/R1-S1`, `S3/R2-S1`: Storybook remounting prevented a stable screenshot after selecting the card; its full selected-card content was confirmed through the rendered accessibility tree, but a static rendered capture remains a verification limitation.
 
 #### Story Notes

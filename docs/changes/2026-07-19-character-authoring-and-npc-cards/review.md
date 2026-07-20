@@ -4,6 +4,18 @@
 
 changes-requested
 
+## Remediation Status (2026-07-20)
+
+This is the historical independent review of the pre-implementation working tree at `1d3b5fd`. Its safe findings were implemented in `f1b4c4a` and verification was recorded in `c1810ed`:
+
+- default-on, explicitly disableable local Debug/raw capture and matching docs;
+- direct private-card reflection guards for openings and turns, including the documented concise-value limitation;
+- data-preserving migration rollback guards and focused migration tests;
+- Debug route authorization/validation/active-turn coverage; and
+- Location-move editor continuity, supporting docs, generated-contract verification, and committed source state.
+
+The remaining gaps are direct database/E2E proof with a schema-isolation-capable direct endpoint, live-provider playtests, and owner manual confirmation. A fresh independent `/sdd-review` is required once those are complete; this historical verdict is not a review of `c1810ed` or later commits.
+
 ## Gate Scorecard
 
 | Gate | Result | Notes |

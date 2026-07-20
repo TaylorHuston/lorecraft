@@ -484,7 +484,7 @@ It adds the smallest coherent creator capability on top of existing first-class 
   - Adventure creation/reset/query tests proving initial state, frozen old Adventure behavior, new-version behavior, complete card projection, and cross-owner non-disclosure.
   - Prompt tests proving every current-Scene card and field is included, off-scene Characters are excluded, fixed formatting is deterministic, mutable state overrides initial state, and normal metadata records only bounded counts.
   - Debug-capture tests proving local-default-on and explicit-disable behavior, production refusal, correlated JSONL record shape, credential/header redaction, temporary-path permissions, and seven-day purge.
-  - Narration safety tests proving direct private-knowledge reflection is never committed as player-visible narration.
+- Narration safety tests proving direct private-knowledge reflection is never committed as player-visible narration.
   - Frontend tests for complete cards, author/non-author controls, forms, errors, pending state, confirmation, Scene selection/refresh, empty state, focus, and responsive semantics.
 - Broad supporting gates:
   - Root lint, typecheck, build, test, contract generation/check, Storybook build/test, database safety, and scoped SDD validation.
@@ -506,12 +506,13 @@ It adds the smallest coherent creator capability on top of existing first-class 
 - Auto-publish or reuse a WorldVersion in the same transaction as each accepted mutation.
 - Expose the entire card as a permanent debug surface for the current stage.
 - Send full cards for all current-Scene NPCs and measure before optimizing.
-- Provide the spike's diagnostic depth through a strictly opt-in local Debug trace, not through normal persistence or production logging.
+- Provide the spike's diagnostic depth through default-on, explicitly disableable local development Debug capture, not through normal persistence or production logging.
 - Reuse the settled production shells and archived interaction reference without a separate `/sdd-design --plan` pass.
 
 ## Risks / Trade-Offs
 
 - Full cards intentionally reveal private knowledge to authorized readers and Adventure owners during development; the UI must label this as debug behavior so it is not mistaken for final player disclosure.
+- Deterministic direct-reflection checks deliberately ignore normalized private values shorter than three characters so ordinary narration cannot be rejected by values the schema permits; those concise values and semantic paraphrase remain live-provider evaluation limits.
 - Required fields can encourage filler. Concise guidance and playtesting must reward useful signal rather than prose volume.
 - All current-Scene cards may still become expensive in crowded scenes. Measurements and playtests are the reconsideration trigger; this Change does not solve crowd scaling.
 - Automatic publication creates more WorldVersions, but content hashing avoids duplicates and removes stale playable-state ambiguity.

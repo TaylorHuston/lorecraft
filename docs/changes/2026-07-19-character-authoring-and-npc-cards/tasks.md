@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: applied the replanned Debug defaults, direct private-card publication guards, rollback protections/tests, Debug-route boundary tests, and moved-editor continuity; reconciled affected docs and Epic maps.
-- Next action: configure an explicitly acknowledged disposable test database, run database/functional/E2E evidence, then complete live-provider and manual acceptance before independent review.
-- Active branch/ref: `change/character-authoring-and-npc-cards` from `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
-- Expected dirty files: Character/Adventure implementation and tests; `docs/changes/2026-07-19-character-authoring-and-npc-cards/`; `docs/adrs/2026-07-17-provider-neutral-ai-boundary.md`; and affected Epic/supporting-doc files.
-- Known blocker: the safe backend test wrapper refuses to run without `TEST_DATABASE_URL` and `ALLOW_TEST_DATABASE_WRITES=1`. No normal runtime database was used as a substitute. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Last completed action: applied the review remediation, committed it as `f1b4c4a`, then recorded its verification in `c1810ed`; the current self-check found and fixed one concise-private-value false positive plus stale default-on Debug documentation.
+- Next action: complete broad regression gates, then complete live-provider and manual acceptance before an independent review rerun.
+- Active branch/ref: `change/character-authoring-and-npc-cards` at `c1810ed`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Expected dirty files: the focused private-value regression fix, affected Epic/change/supporting documentation, and the resulting verification ledger only.
+- Known blocker: no local technical blocker remains. The direct schema-isolated target requires an explicit create/migrate/test/drop harness because CI uses a whole disposable database; each local test schema was dropped afterward. Live-provider playtests and owner manual confirmation remain outstanding acceptance evidence. Validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
 
@@ -39,7 +39,7 @@ status: in_progress
 ### 3. Architecture And Data Safety
 
 - [x] 3.1 Amend the accepted provider-neutral AI boundary for development-only local Debug capture; preserve metadata-only normal evidence, production refusal, redaction, protected temporary storage, expiry/purge, and backup exclusion.
-- [ ] 3.2 Add and verify the Character initial-state/snapshot migration without silently truncating existing Character or Adventure content. (Implemented; guarded database verification blocked.)
+- [x] 3.2 Add and verify the Character initial-state/snapshot migration without silently truncating existing Character or Adventure content.
 - [x] 3.3 Centralize complete-card validation and compact field bounds across create/edit, publication, initialization, reset, extraction, and client contracts.
 - [x] 3.4 Preserve same-World Location integrity, immutable Character keys, immutable WorldVersions, and transactionally coupled Character mutation/publication.
 - [x] 3.5 Regenerate the Tuyau client after routes or DTOs change; typed contracts are synchronized. Contract cleanliness remains commit-pending.
@@ -61,12 +61,12 @@ status: in_progress
 
 ### 5. Verification
 
-- [ ] 5.1 Run focused migration/database checks including populated-row upgrade, data-bearing rollback refusal for both migrations, same-World references, and immutable snapshot schema handling.
-- [ ] 5.2 Run backend service/API tests for complete CRUD, validation bounds, cross-owner non-disclosure, production/active-turn/invalid-Location Debug refusal, transaction rollback, version reuse/change, existing/new Adventure isolation, reset, and owner-only detail.
+- [x] 5.1 Run focused migration/database checks including populated-row upgrade, data-bearing rollback refusal for both migrations, same-World references, and immutable snapshot schema handling.
+- [x] 5.2 Run backend service/API tests for complete CRUD, validation bounds, cross-owner non-disclosure, production/active-turn/invalid-Location Debug refusal, transaction rollback, version reuse/change, existing/new Adventure isolation, reset, and owner-only detail.
 - [x] 5.3 Run prompt/context and Debug tests for every current-Scene card/field, no off-scene cards, deterministic formatting, current mutable values, bounded normal metadata, private-knowledge reflection refusal, local-default-on/explicit-disable/production-refusal behavior, redaction, file permissions, and expiry/purge.
 - [x] 5.4 Run frontend component/API/Storybook tests for full cards, authoring states, Location-move editor continuity, confirmation, selection/refresh, empty/error/loading/pending states, focus, touch, zoom, and overflow. (Component suite complete; rendered Storybook rerun remains under 5.8.)
-- [ ] 5.5 Run deterministic E2E from Character creation/edit/delete through old/new Adventure version behavior, card inspection, mutable-state refresh, reset, owner isolation, and desktop/mobile layouts.
-- [ ] 5.6 Run broad repository gates: lint, typecheck, tests with guarded disposable database, contract verification, builds, Storybook, database safety, and scoped SDD validation.
+- [ ] 5.5 Run deterministic E2E from Character creation/edit/delete through old/new Adventure version behavior, card inspection, mutable-state refresh, reset, owner isolation, and desktop/mobile layouts. (Creator CRUD, debug-card inspection, and Adventure reset now run in E2E; the exact old/new frozen-version comparison and post-turn NPC-refresh sequence remain only direct functional coverage.)
+- [x] 5.6 Run broad repository gates: lint, typecheck, tests with guarded disposable database, contract verification, builds, Storybook, database safety, and scoped SDD validation.
 - [ ] 5.7 Run live-provider opening/Act/Guide/Pass playtests with two to three present NPCs and inspect the enabled local Debug trace alongside visible grounding, bounded NPC context, and provider token metadata.
 - [ ] 5.8 Directly inspect rendered World authoring and Adventure cards for every matrix row, including console/network state.
 - [ ] 5.9 Obtain user manual UI confirmation for creator/non-author World cards and Adventure card behavior.
@@ -74,7 +74,7 @@ status: in_progress
 
 ### 6. Review And Closeout
 
-- [ ] 6.1 Confirm release communication contains only user-facing authoring/card changes and relevant public privacy/operational notes.
+- [x] 6.1 Confirm release communication contains only user-facing authoring/card changes and relevant public privacy/operational notes.
 - [ ] 6.2 Run `sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, migrations, authorization, disclosure, prompt privacy/cost, UI, docs, and branch readiness.
 - [ ] 6.3 Record the review outcome and remediate the complete safe finding set before one regression-focused rerun.
 - [ ] 6.4 Keep `status: in_review` while live-provider/manual acceptance and integration gates remain.
@@ -95,6 +95,8 @@ status: in_progress
 | 2026-07-19 | Review-driven replan                       | `sdd-change --replan`                                      | proposal, design, tasks, provider-boundary ADR, review record                                                                                                                                  | Replanned default-on local Debug/raw policy plus private-narration, migration, Debug-route, and Location-move safety work; no application or Epic code changed.                                                                        | uncommitted                                        |
 | 2026-07-20 | Replanned safety and continuity slices | `sdd-apply`; backend/frontend unit and component tests | Debug env/default resolution; opening/turn private-card publication guards; migration rollback tests; Debug route boundary tests; Scene editor continuity; README/Idea/Epic reconciliation | Default-on development capture can be disabled explicitly; direct private-card reflection cannot publish in opening or turn narration; selected editor survives its own valid Location move without exposing off-scene selection. | uncommitted; guarded database/E2E/live/manual evidence pending |
 | 2026-07-20 | Cohesive implementation commit | `sdd-apply` | Complete active Change implementation, contracts, tests, SDD artifacts, and supporting documentation | The active Change is now reviewable from an immutable source commit; guarded database/E2E/live/manual verification remains explicitly open. | `f1b4c4a` |
+| 2026-07-20 | Verification record commit | `sdd-apply` | Verification ledger and Epic evidence maps | Recorded the passing focused, broad, contract, and rendered-UI evidence against the immutable implementation source. | `c1810ed` |
+| 2026-07-20 | Apply self-check remediation | `sdd-apply`; delegated coverage/security/artifact passes | Private-narration publication guard; README/changelog; LC-002/LC-003; design/tasks/review truth | Ignored one- and two-character private values in deterministic literal matching to avoid rejecting ordinary prose; retained prompt instruction and documented the limitation. Reconciled default-on Debug claims and current commit state. | commit pending |
 
 ## Verification Ledger
 
@@ -122,6 +124,11 @@ status: in_progress
 | 2026-07-20 | Storybook `Application/Adventures/Workbench/DebugNpcEditor`                                                                                                  | direct rendered UI | All editable NPC fields, stable key display, autosave disclosure, and no Vite overlay in the live Storybook preview. | passed; screenshot directly inspected at desktop |
 | 2026-07-20 | Backend aggregate test wrapper                                                                                                                                | guarded database check | Safety tests protect against accidental writes and the application test runner refuses without acknowledged disposable configuration. | safety suite passed (20 tests); application suite blocked with no database mutation attempted |
 | 2026-07-20 | Scoped `sdd validate`                                                                                                                                        | structural SDD gate | Current Change/Epic structure and status after safety/continuity reconciliation. | passed: 0 errors; 2 intentional `LARGE_STORY_SCOPE` warnings |
+| 2026-07-20 | Guarded backend suite using a pooled schema-isolated target | database configuration check | The test wrapper's acknowledgement and target-isolation controls; local Neon endpoint compatibility | safety suite passed (20 tests); application tests could not connect because the pooled endpoint rejects `options=-csearch_path=...`; no test schema was created |
+| 2026-07-20 | Private-value guard regression tests | focused automated test | Direct NPC private-value reflection remains blocked while a valid concise private value cannot reject unrelated opening or turn narration | passed: 11 focused unit tests |
+| 2026-07-20 | Guarded direct schema migration + focused database/API suite | focused database and functional tests | Populated-row upgrade and data-bearing rollback refusal, complete Character publication/versioning, and Debug autosave/owner/validation/active-turn boundaries | passed: 16 tests after applying all migrations to a direct `lorecraft_test_character_authoring` schema; the schema was dropped afterward |
+| 2026-07-20 | Guarded deterministic E2E | deterministic E2E | Browser account/workspace, complete-card inspection, creator Character CRUD, and Adventure lifecycle/reset against the fake provider and isolated backend/database setup | passed on desktop and mobile after reconciling the public Debug-card expectation. The exact old/new frozen-version comparison and post-turn NPC-refresh sequence remain direct functional coverage. The direct `lorecraft_e2e_character_authoring` schema was dropped afterward. |
+| 2026-07-20 | Final broad gates | broad supporting gates | Lint, typecheck, production build, frontend/Storybook tests, generated contract cleanliness, full guarded backend suite, and scoped SDD structure | passed: lint, typecheck, build, 137 frontend tests, 84 Storybook tests, contract check, full backend suite against direct `lorecraft_test_full_regression`, and scoped validation. Temporary test schemas were dropped after use. |
 
 ## Manual Feedback
 
@@ -184,20 +191,20 @@ status: in_progress
 
 ## Closeout
 
-- Change status: proposed; independent review invalidated the Debug logging policy and requires this replan before implementation resumes.
-- Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` normalized; `docs/epics/lc-003-adventure-play/epic.md` reconciled for planned partial work
-- Story labels/references and Requirement/Scenario IDs current: planned `LC-002/S3`, modifications to `LC-002/S2`, `LC-003/S1-S2`, and planned `LC-003/S3`
-- Implemented By maps current: partial; final behavior-mapped anchors and gaps need reconciliation after remaining slices
-- Scenario-mapped Verified By maps current: partial static/frontend proof; database, browser, and provider evidence remains pending
-- Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical evidence only; current supporting-doc updates remain pending 4.8
-- ADR status: accepted provider-boundary ADR amended for local Debug capture; implementation evidence pending
+- Change status: `in_progress`; the review remediation is implemented and committed, but direct database/E2E, live-provider, and owner manual evidence remain.
+- Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
+- Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
+- Implemented By maps current: yes; the self-check resolved no missing anchors.
+- Scenario-mapped Verified By maps current: focused, frontend, Storybook, contract, rendered, direct database, and deterministic E2E evidence are current; the exact old/new frozen-version E2E comparison, live-provider, and owner manual evidence remain pending.
+- Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical only; current supporting docs now describe Character authoring and default-on local Debug capture.
+- ADR status: accepted provider-boundary ADR and checked-in defaults agree; focused behavior evidence passes.
 - Release communication current: `CHANGELOG.md` contains only the user-facing Character/NPC capability.
-- `sdd-review` verdict: changes-requested
+- `sdd-review` verdict: the historical `changes-requested` review is remediated at `c1810ed`; a fresh independent review remains required after the outstanding evidence is available.
 - Review record: `docs/changes/2026-07-19-character-authoring-and-npc-cards/review.md`
-- `review.md` findings resolved: no; the replan preserves them as implementation and verification work.
-- Planning updates resolved: yes; execution remains pending.
+- `review.md` safe findings resolved: yes; the remaining evidence gaps are the exact old/new frozen-version E2E comparison, live-provider, and manual acceptance.
+- Planning updates resolved: yes; execution is in verification.
 - Manual UI confirmation status: pending user after implementation
-- Rendered UI verification status: partial; World authoring desktop/mobile rendered and inspected, Adventure selection accessibility-tree verified, but live/routed/e2e/manual rows remain.
+- Rendered UI verification status: partial; World authoring desktop/mobile and the Debug NPC editor were directly inspected, but live routed/e2e/manual rows remain.
 - PR / merge state: not started
 - Deferred scope accepted: yes in proposal/design
 - Change moved to `docs/changes/closed/`: no

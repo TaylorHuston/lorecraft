@@ -88,7 +88,7 @@ test.group('World Character authoring API', (group) => {
     await world.refresh()
     assert.isString(world.currentVersionId)
     const version = await WorldVersion.findByOrFail('id', world.currentVersionId!)
-    assert.deepInclude(version.snapshot.characters, {
+    assert.deepInclude(version.snapshot.characters[0], {
       key: completeCard.key,
       locationKey: completeCard.locationKey,
       initialMood: completeCard.initialMood,
@@ -126,7 +126,7 @@ test.group('World Character authoring API', (group) => {
     await world.refresh()
     assert.notEqual(world.currentVersionId, oldVersion.id)
     await oldVersion.refresh()
-    assert.deepInclude(oldVersion.snapshot.characters, {
+    assert.deepInclude(oldVersion.snapshot.characters[0], {
       key: 'mira',
       name: 'Mira',
       initialMood: 'Uneasy.',
@@ -160,7 +160,7 @@ test.group('World Character authoring API', (group) => {
     await world.refresh()
     assert.notEqual(world.currentVersionId, oldVersionId)
     const oldVersion = await WorldVersion.findByOrFail('id', oldVersionId)
-    assert.deepInclude(oldVersion.snapshot.characters, { key: completeCard.key })
+    assert.deepInclude(oldVersion.snapshot.characters[0], { key: completeCard.key })
   })
 
   test('LC-002/S3/R1-S2 + R2-S2: a non-author and invalid input cannot mutate or publish canon', async ({

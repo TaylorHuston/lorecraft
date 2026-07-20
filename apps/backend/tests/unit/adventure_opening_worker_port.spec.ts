@@ -131,3 +131,42 @@ test('LC-003/S2/R3-S5: never publishes an opening that directly reflects NPC pri
   assert.isNull(repository.finalized)
   assert.deepInclude(repository.failure!, { code: 'malformed_response' })
 })
+
+test('LC-003/S2/R3-S5: permits ordinary opening prose when private knowledge is concise', async ({
+  assert,
+}) => {
+  const repository = new FakeRepository()
+  const worker = new AdventureOpeningWorker({
+    generator: {
+      async generateOpening() {
+        return { ...result, narration: 'A bell tolls across the empty chapel.' }
+      },
+    },
+    workerId: 'unit-worker',
+    repository,
+  })
+  repository.claimOne = async () => ({
+    ...claim,
+    input: {
+      ...claim.input,
+      charactersPresent: [
+        {
+          key: 'keeper',
+          name: 'Keeper',
+          physicalDescription: 'Watchful.',
+          background: 'Keeps the chapel.',
+          personality: 'Cautious.',
+          voice: 'Quiet.',
+          privateKnowledge: 'a',
+          initialMood: 'Uneasy.',
+          initialStatus: 'Waiting.',
+          initialMemory: '',
+          sortOrder: 0,
+        },
+      ],
+    },
+  })
+
+  assert.deepInclude(await worker.runOnce(), { status: 'succeeded', attempt: 1 })
+  assert.deepInclude(repository.finalized!, { narration: 'A bell tolls across the empty chapel.' })
+})

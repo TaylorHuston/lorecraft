@@ -89,7 +89,7 @@ test.group('WorldVersion publication', (group) => {
 
     const version = await publishWorldVersion(world.id)
     const expectedSnapshot = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       world: {
         slug: 'ordered-world',
         name: 'Ordered World',
@@ -121,6 +121,9 @@ test.group('WorldVersion publication', (group) => {
           personality: 'Alert.',
           voice: 'Direct.',
           privateKnowledge: 'First secret.',
+          initialMood: '',
+          initialStatus: '',
+          initialMemory: '',
           sortOrder: 10,
         },
         {
@@ -132,6 +135,9 @@ test.group('WorldVersion publication', (group) => {
           personality: 'Patient.',
           voice: 'Measured.',
           privateKnowledge: 'Later secret.',
+          initialMood: '',
+          initialStatus: '',
+          initialMemory: '',
           sortOrder: 20,
         },
       ],

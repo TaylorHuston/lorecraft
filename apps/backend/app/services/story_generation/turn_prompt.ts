@@ -53,11 +53,14 @@ function normalizedForDisclosureCheck(value: string): string {
 }
 
 function containsDirectReflection(narration: string, protectedValue: string): boolean {
-  if (protectedValue.length >= 3) return narration.includes(protectedValue)
+  // Character validation permits concise private knowledge. One- and two-
+  // character values occur naturally in ordinary prose, so they cannot be
+  // distinguished as an intentional disclosure without rejecting safe turns.
+  // Prompt instructions still cover them; semantic paraphrase is likewise a
+  // live-provider evaluation concern rather than a deterministic guarantee.
+  if (protectedValue.length < 3) return false
 
-  return new RegExp(`(^| )${protectedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( |$)`).test(
-    narration
-  )
+  return narration.includes(protectedValue)
 }
 
 /**

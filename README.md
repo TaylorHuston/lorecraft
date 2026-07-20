@@ -17,7 +17,7 @@ Implemented now:
 - Private Adventures created from a frozen version of an accessible World, with a durable generated opening, resume, retry, reset, and delete flows.
 - Owner-only Act, Pass, and private Guide turns with durable resolution, bounded Adventure-owned state changes, and retry or discard recovery.
 
-World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, Story utilities, history revision, streaming, combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics.
+World creation and broad World/Location editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, Story utilities, history revision, streaming, combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics.
 
 The [Epics](#documentation) are the canonical source for detailed implemented behavior, scenarios, and verification evidence. This section is only a current summary.
 
