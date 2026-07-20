@@ -1,13 +1,13 @@
 .field {
   display: grid;
   min-inline-size: 0;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .label {
-  color: var(--text-primary);
-  font-size: 0.8125rem;
-  font-weight: 650;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .control {
@@ -17,7 +17,7 @@
 
 .input {
   inline-size: 100%;
-  min-block-size: var(--control-touch);
+  min-block-size: var(--control-standard);
   padding-inline: var(--space-3);
   border: 1px solid var(--control-boundary);
   border-radius: var(--radius-control);
@@ -39,7 +39,7 @@
 }
 
 .input:hover:not(:disabled) {
-  border-color: var(--action-hover);
+  border-color: var(--action-text);
 }
 
 .input:focus-visible {
@@ -80,5 +80,11 @@
 }
 
 .error {
-  color: var(--danger);
+  color: var(--danger-text);
+}
+
+@media (pointer: coarse) {
+  .input {
+    min-block-size: var(--control-touch);
+  }
 }

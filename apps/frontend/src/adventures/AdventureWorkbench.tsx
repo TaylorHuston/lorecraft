@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
 import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
@@ -78,10 +85,12 @@ function TurnComposer({
   onSubmit,
   pending,
   error,
+  resolving = false,
 }: {
   onSubmit?: (input: SubmitAdventureTurnInput) => Promise<void>
   pending: boolean
   error: string | null
+  resolving?: boolean
 }) {
   const [mode, setMode] = useState<Exclude<AdventureTurnTrigger, 'pass'>>('act')
   const [text, setText] = useState('')
@@ -138,51 +147,83 @@ function TurnComposer({
     void submit(mode)
   }
 
+  function submitOnEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing) {
+      return
+    }
+
+    event.preventDefault()
+    if (!pending) {
+      void submit(mode)
+    }
+  }
+
+  if (resolving) {
+    return (
+      <div
+        aria-busy="true"
+        aria-label="Resolving your turn"
+        className={`${styles.turnComposer} ${styles.turnComposerResolving}`}
+        role="status"
+      >
+        <div className={styles.composerProgress}>
+          <span aria-hidden="true" className={styles.composerSpinner} />
+          <span>Resolving…</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <form className={styles.turnComposer} aria-busy={pending} onSubmit={submitForm}>
-        <div className={styles.composerModes} role="tablist" aria-label="Turn type">
-          {(['act', 'guide'] as const).map((trigger) => (
-            <Button
-              key={trigger}
-              aria-selected={mode === trigger}
-              onClick={() => {
-                setMode(trigger)
-                setLocalError(null)
-              }}
-              role="tab"
-              size="dense"
-              type="button"
-              variant="ghost"
-            >
-              {trigger === 'act' ? 'Act' : 'Guide'}
-            </Button>
-          ))}
-        </div>
-        <label htmlFor="adventure-turn-input">
-          {mode === 'act' ? 'What do you do?' : 'Private direction for this turn'}
+        <label
+          className={styles.composerPrompt}
+          htmlFor="adventure-turn-input"
+        >
+          <em>
+            {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
+          </em>
         </label>
-        <textarea
-          ref={textareaRef}
-          aria-describedby={mode === 'guide' ? 'adventure-guide-help' : undefined}
-          aria-invalid={Boolean(localError || error)}
-          disabled={pending}
-          id="adventure-turn-input"
-          maxLength={turnInputLimits[mode]}
-          onChange={(event) => {
-            setText(event.target.value)
-            setLocalError(null)
-          }}
-          placeholder={
-            mode === 'act' ? 'Describe your action…' : 'Direct the Game Master privately…'
-          }
-          value={text}
-        />
-        {mode === 'guide' ? (
-          <p className={styles.composerHelp} id="adventure-guide-help">
-            This direction guides only this resolution. It is not shown in the story.
-          </p>
-        ) : null}
+        <div className={styles.composerInput}>
+          <div className={styles.composerModes} aria-label="Turn type" role="group">
+            {(['act', 'guide'] as const).map((trigger) => (
+              <Button
+                key={trigger}
+                aria-pressed={mode === trigger}
+                onClick={() => {
+                  setMode(trigger)
+                  setLocalError(null)
+                }}
+                size="dense"
+                type="button"
+                variant="ghost"
+              >
+                {trigger === 'act' ? 'Act' : 'Guide'}
+              </Button>
+            ))}
+          </div>
+          <textarea
+            ref={textareaRef}
+            aria-invalid={Boolean(localError || error)}
+            disabled={pending}
+            id="adventure-turn-input"
+            maxLength={turnInputLimits[mode]}
+            onChange={(event) => {
+              setText(event.target.value)
+              setLocalError(null)
+            }}
+            onKeyDown={submitOnEnter}
+            placeholder={
+              mode === 'act' ? 'Describe your action…' : 'Direct the Game Master privately…'
+            }
+            value={text}
+          />
+        </div>
+        <p className={styles.composerDisclosure}>
+          Your turn and relevant Adventure and World context will be processed by Lorecraft&apos;s
+          configured AI provider.
+        </p>
         {localError || error ? (
           <p className={styles.composerError} role="alert">
             {localError ?? error}
@@ -254,6 +295,7 @@ function StoryRegion({
   const openingInProgress =
     adventure.status === 'opening_pending' || adventure.status === 'opening_processing'
   const regionRef = useRef<HTMLElement>(null)
+  const storyContentRef = useRef<HTMLDivElement>(null)
   const wasOpening = useRef(openingInProgress)
   const previousActiveTurnId = useRef(adventure.activeTurn?.id ?? null)
   const previousTurnCount = useRef(adventure.turnCount)
@@ -275,6 +317,13 @@ function StoryRegion({
     previousTurnCount.current = adventure.turnCount
   }, [adventure.activeTurn, adventure.status, adventure.turnCount, openingInProgress])
 
+  useLayoutEffect(() => {
+    const storyContent = storyContentRef.current
+    if (storyContent) {
+      storyContent.scrollTop = storyContent.scrollHeight
+    }
+  }, [adventure])
+
   function retryOpening() {
     onRetry?.()
     regionRef.current?.focus()
@@ -284,50 +333,51 @@ function StoryRegion({
     <section
       ref={regionRef}
       className={styles.storyRegion}
-      aria-labelledby="adventure-story-heading"
+      aria-label="Story"
+      data-route-heading
       tabIndex={-1}
     >
-      <header className={styles.panelHeading}>
-        <p>Chronicle</p>
-        <h1 data-route-heading id="adventure-story-heading">
-          Story
-        </h1>
-      </header>
-      <div role="status" aria-live="polite" aria-atomic="true">
-        {openingInProgress ? (
-          <div className={styles.storyState}>
-            <p className={styles.stateEyebrow}>Game Master</p>
-            <h2>Preparing your opening</h2>
-            <p>
-              Your Adventure is safe. You can leave this page and return while the story begins.
-            </p>
-          </div>
-        ) : (
-          <p className={styles.srOnly}>{completionAnnouncement}</p>
-        )}
-      </div>
-      <div className={styles.storyContent} data-slot="story-scroll-region" tabIndex={0}>
-        {adventure.status === 'opening_failed' ? (
-          <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
-            <p className={styles.stateEyebrow}>Opening interrupted</p>
-            <h2>Lorecraft couldn't prepare your opening</h2>
-            <p>No partial story was saved. Try again when you're ready.</p>
-            {retryError ? <p className={styles.retryError}>{retryError}</p> : null}
-            <div className={styles.stateActions}>
-              <Button
-                onClick={retryOpening}
-                pending={retrying}
-                pendingLabel="Trying again…"
-                size="touch"
-              >
-                Try again
-              </Button>
-              <Link to={adventure.sourceWorld.route}>Return to World</Link>
+      {!openingInProgress ? (
+        <p className={styles.srOnly} role="status" aria-atomic="true">
+          {completionAnnouncement}
+        </p>
+      ) : null}
+      <div className={styles.storyBody}>
+        <div
+          ref={storyContentRef}
+          className={styles.storyContent}
+          data-slot="story-scroll-region"
+          tabIndex={0}
+        >
+          {openingInProgress ? (
+            <div className={styles.storyState} role="status" aria-atomic="true">
+              <p className={styles.stateEyebrow}>Game Master</p>
+              <h2>Preparing your opening</h2>
+              <p>
+                Your Adventure is safe. You can leave this page and return while the story begins.
+              </p>
             </div>
-          </div>
-        ) : null}
-        {adventure.status === 'ready' && adventure.activeTurn ? (
-          adventure.activeTurn.status === 'failed' ? (
+          ) : null}
+          {adventure.status === 'opening_failed' ? (
+            <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
+              <p className={styles.stateEyebrow}>Opening interrupted</p>
+              <h2>Lorecraft couldn't prepare your opening</h2>
+              <p>No partial story was saved. Try again when you're ready.</p>
+              {retryError ? <p className={styles.retryError}>{retryError}</p> : null}
+              <div className={styles.stateActions}>
+                <Button
+                  onClick={retryOpening}
+                  pending={retrying}
+                  pendingLabel="Trying again…"
+                  size="touch"
+                >
+                  Try again
+                </Button>
+                <Link to={adventure.sourceWorld.route}>Return to World</Link>
+              </div>
+            </div>
+          ) : null}
+          {adventure.status === 'ready' && adventure.activeTurn?.status === 'failed' ? (
             <div className={`${styles.storyState} ${styles.failureState}`} role="alert">
               <p className={styles.stateEyebrow}>Turn interrupted</p>
               <h2>Your last turn did not change the story</h2>
@@ -355,24 +405,29 @@ function StoryRegion({
                 </Button>
               </div>
             </div>
-          ) : (
-            <div className={styles.storyState} role="status" aria-live="polite" aria-atomic="true">
-              <p className={styles.stateEyebrow}>Game Master</p>
-              <h2>Resolving your turn</h2>
-              <p>Your Adventure is safe. You can leave and return while this turn is prepared.</p>
-            </div>
-          )
-        ) : null}
-        {adventure.story.map((entry) => (
-          <article className={styles.storyEntry} key={entry.id}>
-            {entry.content.split(/\n\n+/).map((paragraph, index) => (
-              <p key={`${entry.id}-${index}`}>{paragraph}</p>
-            ))}
-          </article>
-        ))}
-        {adventure.status === 'ready' && !adventure.activeTurn ? (
-          <TurnComposer onSubmit={onSubmitTurn} pending={submittingTurn} error={submitTurnError} />
-        ) : null}
+          ) : null}
+          {adventure.story.map((entry) => (
+            <article className={styles.storyEntry} key={entry.id}>
+              {entry.content.split(/\n\n+/).map((paragraph, index) => (
+                <p key={`${entry.id}-${index}`}>{paragraph}</p>
+              ))}
+            </article>
+          ))}
+        </div>
+        <div className={styles.composerDock} data-slot="turn-composer-dock">
+          {adventure.status === 'ready' && !adventure.activeTurn ? (
+            <TurnComposer
+              onSubmit={onSubmitTurn}
+              pending={submittingTurn}
+              error={submitTurnError}
+            />
+          ) : null}
+          {adventure.status === 'ready' &&
+          adventure.activeTurn &&
+          adventure.activeTurn.status !== 'failed' ? (
+            <TurnComposer pending={false} error={null} resolving />
+          ) : null}
+        </div>
       </div>
     </section>
   )

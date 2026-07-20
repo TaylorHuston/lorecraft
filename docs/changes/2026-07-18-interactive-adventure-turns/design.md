@@ -362,7 +362,7 @@ Expose typed owner-only routes to submit, retry, and discard a turn. Extend Adve
 
 ### Accessibility And Interaction
 
-- Act and Guide have persistent labels and help text that explains visibility/authority; mode selection is keyboard and touch operable.
+- Act and Guide have persistent labels; mode selection uses keyboard- and touch-operable semantic toggle buttons, while a persistent provider notice explains the processing boundary.
 - Pass requires an explicit labeled action and confirmation so it is not triggered accidentally.
 - Validation associates errors with the active input and preserves the draft.
 - Pending state announces once, does not repeatedly steal focus during polling, and keeps navigation/context available.
@@ -371,7 +371,7 @@ Expose typed owner-only routes to submit, retry, and discard a turn. Extend Adve
 
 ### Visual Direction
 
-- Preserve the accepted dark Zinc workbench, Burnished Orange action/focus language, prose-first center pane, compact controls, and narrative typography.
+- Preserve the accepted Ember charcoal/copper workbench, white-on-copper filled actions, readable copper identity text/focus language, prose-first center pane, compact controls, and narrative typography.
 - Keep the composer utilitarian and integrated with the reading surface; avoid chat bubbles, floating AI gradients, oversized pills, or decorative card stacks.
 - Use restrained status language such as `Game Master is resolving your turn` rather than exposing worker/model implementation details.
 

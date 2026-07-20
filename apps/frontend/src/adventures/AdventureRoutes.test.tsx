@@ -206,7 +206,7 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 10,
     })
 
-    expect(await screen.findByRole('heading', { name: 'Story' })).toBeVisible()
+    expect(await screen.findByRole('region', { name: 'Story' })).toBeVisible()
     expect(screen.getByRole('status')).toHaveTextContent('Preparing your opening')
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
@@ -244,7 +244,7 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 10,
     })
 
-    expect(await screen.findByText('Resolving your turn')).toBeVisible()
+    expect(await screen.findByRole('status', { name: 'Resolving your turn' })).toBeVisible()
     const playerRegion = screen.getByRole('region', { name: 'Player' })
     playerRegion.focus()
     expect(await screen.findByText('Mira points toward the vestry door.')).toBeVisible()
@@ -277,7 +277,7 @@ describe('Adventure routes', () => {
     })
 
     await user.type(
-      await screen.findByRole('textbox', { name: 'What do you do?' }),
+      await screen.findByRole('textbox', { name: 'What would you like to do?' }),
       'I ask Mira about the bell.'
     )
     await user.click(screen.getByRole('button', { name: 'Continue' }))

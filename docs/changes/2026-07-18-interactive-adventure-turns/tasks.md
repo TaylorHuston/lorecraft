@@ -6,10 +6,10 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: review remediation and focused reruns completed; final independent review is next
-- Next action: complete the final review record and await the live-provider/manual acceptance walkthrough before any merge or closeout
+- Last completed action: independent review remediated provider disclosure, composer semantics, and Ember action consistency against the current working tree
+- Next action: commit the reviewed feature/UI work, refresh the review watermark, then complete the live-provider/manual acceptance walkthrough before any merge or closeout
 - Active branch/ref: `change/interactive-adventure-turns` from `d389ccd` (`develop` at branch creation)
-- Expected dirty files: review artifacts and scoped remediation only; `.neon` remains unrelated and untracked
+- Expected dirty files: reviewed Ember/workbench feature UI, its focused tests/docs/tooling, and review artifacts; `.neon` remains unrelated and untracked
 - Known review findings: direct private-context disclosure, reset-after-turn proof, browser recovery/concurrency, HTTP recovery, and Idea-side current-state drift are resolved. Live-provider Act/Guide behavior and owner manual desktop/mobile confirmation remain acceptance evidence, not automated review gaps.
 
 ## Task Checklist
@@ -98,6 +98,14 @@ status: in_review
 | 2026-07-19 | root `npm run test` without disposable test environment                                                                                                     | guard verification         | Backend test safety fails closed when a write acknowledgement or isolated target is absent                                                           | safety suite passed (20 tests); backend functional/database suite intentionally not run |
 | 2026-07-19 | guarded disposable-Neon backend rerun | executable database tests | Direct reflected Guide text produces no published narration, Story entry, revision, extractor request, or model-call evidence; reset rebuilds all player/NPC state and lineage; owner retry/discard contract works | passed |
 | 2026-07-19 | deterministic Playwright rerun | executable E2E | Pending reload and same-owner concurrent submission preserve one active turn; failed turns retry and discard while Player/Scene state remains stable on desktop and mobile | passed (3 projects) |
+| 2026-07-19 | Ember theme token update | executable/static/browser verification | The shared Ember charcoal/copper token mapping, readable text contrast, production bundle, and Storybook states remain valid | passed; 129 frontend tests, 81 Storybook tests, lint, typecheck, build, and local rendered UI inspection |
+| 2026-07-19 | Refreshed Ember controls | executable/static/browser verification | Current Ember tokens, button and icon variants, text controls, semantic error contrast, and local action exceptions match the refreshed UI Foundations grammar | passed; 129 frontend tests, 81 Storybook tests, lint, typecheck, build, and rendered sign-in plus Controls Storybook inspection via `agent-browser` |
+| 2026-07-19 | Worlds action controls | executable/browser verification | The authenticated World library applies the refreshed primary, secondary, and destructive Ember treatments to New Adventure, Resume, Sign out, and Delete | passed; 129 frontend tests and rendered `/worlds` inspection with computed tokens via the browser checker |
+| 2026-07-19 | Story header removal | executable/browser verification | The redundant Chronicle/Story heading is removed without changing the Story region's accessible name, route-focus target, scroll behavior, or composer docking | passed; 25 focused frontend tests and rendered Workbench Storybook inspection via `agent-browser` |
+| 2026-07-19 | Composer tab restoration | executable/browser verification | Act and Guide retain their intentional bordered, attached-tab treatment despite ordinary buttons becoming borderless in refreshed Ember | passed; 25 focused frontend tests and rendered Workbench Storybook inspection via `agent-browser` |
+| 2026-07-19 | Composer tab hover removal | executable verification | Act and Guide retain their resting or selected visual state on hover and press, without inheriting the shared ghost-button interaction effect | passed; 11 focused Workbench tests |
+| 2026-07-19 | review remediation: composer privacy and semantics | executable/static/browser verification | The pre-submit provider notice is visible for Act and Guide; the tab-styled controls use keyboard-operable semantic toggle buttons rather than incomplete tab semantics | passed; focused Workbench test, frontend lint/typecheck/build, Storybook, and direct desktop/mobile inspection |
+| 2026-07-19 | review remediation: Ember return control | executable/browser verification | Return to World now uses the refreshed borderless raised-secondary Ember treatment at desktop and mobile widths | passed; direct desktop/mobile inspection |
 
 ## Manual Feedback
 

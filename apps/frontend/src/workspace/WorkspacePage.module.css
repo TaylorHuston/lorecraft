@@ -157,7 +157,7 @@
   display: inline-flex;
   min-height: var(--control-touch);
   align-items: center;
-  color: var(--action-hover);
+  color: var(--action-text);
   text-decoration: none;
 }
 
@@ -203,17 +203,21 @@
   min-height: var(--control-touch);
   align-items: center;
   padding: 0 var(--space-3);
-  border: 1px solid var(--control-boundary);
+  border: 0;
   border-radius: var(--radius-control);
-  color: var(--action-hover);
+  background: var(--action);
+  color: var(--action-foreground);
   font-size: 0.8125rem;
-  font-weight: 700;
+  font-weight: 650;
   text-decoration: none;
 }
 
 .newAdventure:hover {
-  background: var(--surface-interactive);
-  color: var(--text-primary);
+  background: var(--action-hover);
+}
+
+.newAdventure:active {
+  background: var(--action-active);
 }
 
 .unavailableWorld,
@@ -254,7 +258,7 @@
 
 .adventureIdentity > span {
   flex: 0 0 auto;
-  color: var(--action-hover);
+  color: var(--action-text);
   font-size: 0.75rem;
 }
 
@@ -283,20 +287,19 @@
   padding: 0 var(--space-3);
   border: 0;
   border-radius: var(--radius-control);
-  background: transparent;
+  background: var(--surface-raised);
+  color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 650;
   text-decoration: none;
 }
 
-.resumeAdventure {
-  border: 1px solid var(--control-boundary);
-  color: var(--action-hover);
+.resumeAdventure:hover {
+  background: color-mix(in srgb, var(--surface-raised) 88%, var(--text-primary));
 }
 
-.resumeAdventure:hover {
-  background: var(--surface-interactive);
-  color: var(--text-primary);
+.resumeAdventure:active {
+  background: color-mix(in srgb, var(--surface-raised) 94%, var(--text-primary));
 }
 
 .deleteAdventure {
@@ -314,7 +317,7 @@
 
 .emptyLabel {
   margin-bottom: var(--space-3);
-  color: var(--action);
+  color: var(--action-text);
 }
 
 .emptyTitle {

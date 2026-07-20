@@ -84,7 +84,7 @@
   font-weight: 400;
 }
 .formError {
-  color: var(--danger);
+  color: var(--danger-text);
   font-size: 0.8125rem;
   line-height: 1.5;
 }

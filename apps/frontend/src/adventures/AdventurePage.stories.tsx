@@ -187,7 +187,9 @@ export const ReadyToAct: Story = {
   render: () => renderAdventure(readyAdventure),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.findByRole('textbox', { name: 'What do you do?' })).resolves.toBeVisible()
+    await expect(
+      canvas.findByRole('textbox', { name: 'What would you like to do?' })
+    ).resolves.toBeVisible()
     await expect(canvas.getByRole('button', { name: 'Pass' })).toBeVisible()
   },
 }
@@ -200,7 +202,9 @@ export const TurnPending: Story = {
     }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.findByText('Resolving your turn')).resolves.toBeVisible()
+    await expect(
+      canvas.findByRole('status', { name: 'Resolving your turn' })
+    ).resolves.toBeVisible()
     expect(canvas.queryByRole('textbox')).not.toBeInTheDocument()
     expectNoHorizontalOverflow(canvasElement)
   },

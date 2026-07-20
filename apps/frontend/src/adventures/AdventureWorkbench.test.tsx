@@ -57,11 +57,16 @@ describe('AdventureWorkbench', () => {
     )
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
-    expect(screen.getAllByRole('heading')[0]).toHaveTextContent('Story')
-    expect(screen.getAllByRole('heading')[0]).toHaveProperty('tagName', 'H1')
-    expect(screen.getByRole('textbox', { name: 'What do you do?' })).toBeVisible()
-    expect(screen.getByRole('tab', { name: 'Act' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('tab', { name: 'Guide' })).toHaveAttribute('aria-selected', 'false')
+    expect(screen.queryByRole('heading', { name: 'Story' })).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'What would you like to do?' })).toBeVisible()
+    expect(screen.getByRole('textbox').closest('[data-slot="turn-composer-dock"]')).not.toBeNull()
+    expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'false')
+    expect(
+      screen.getByText(
+        "Your turn and relevant Adventure and World context will be processed by Lorecraft's configured AI provider."
+      )
+    ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Pass' })).toBeVisible()
     expect(
       screen.queryByText(/private knowledge|personality|director observation/i)
@@ -82,6 +87,32 @@ describe('AdventureWorkbench', () => {
     expect(screen.getAllByText('The bell rings.')).toHaveLength(2)
     expect(consoleError).not.toHaveBeenCalledWith(expect.stringContaining('same key'))
     consoleError.mockRestore()
+  })
+
+  it('LC-003/S1/R5-S2 snaps the narration scroller to its newest entry after load and refresh', () => {
+    const scrollHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollHeight')
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get: () => 1_000,
+    })
+
+    try {
+      const { rerender } = render(<AdventureWorkbench adventure={readyAdventure} />)
+      const storyContent = screen.getByRole('region', { name: 'Story' }).querySelector(
+        '[data-slot="story-scroll-region"]'
+      ) as HTMLDivElement
+      expect(storyContent.scrollTop).toBe(1_000)
+
+      storyContent.scrollTop = 50
+      rerender(<AdventureWorkbench adventure={{ ...readyAdventure }} />)
+      expect(storyContent.scrollTop).toBe(1_000)
+    } finally {
+      if (scrollHeight) {
+        Object.defineProperty(HTMLElement.prototype, 'scrollHeight', scrollHeight)
+      } else {
+        delete (HTMLElement.prototype as { scrollHeight?: number }).scrollHeight
+      }
+    }
   })
 
   it('LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending', () => {
@@ -162,7 +193,7 @@ describe('AdventureWorkbench', () => {
     render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
 
     await user.type(
-      screen.getByRole('textbox', { name: 'What do you do?' }),
+      screen.getByRole('textbox', { name: 'What would you like to do?' }),
       'I ask Mira about the bell.'
     )
     await user.click(screen.getByRole('button', { name: 'Continue' }))
@@ -170,11 +201,28 @@ describe('AdventureWorkbench', () => {
       expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
     )
 
-    await user.click(screen.getByRole('tab', { name: 'Guide' }))
+    await user.click(screen.getByRole('button', { name: 'Guide' }))
     expect(screen.getByRole('textbox', { name: 'Private direction for this turn' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'true')
     expect(
-      screen.getByText('This direction guides only this resolution. It is not shown in the story.')
-    ).toBeVisible()
+      screen.queryByText('This direction guides only this resolution. It is not shown in the story.')
+    ).not.toBeInTheDocument()
+  })
+
+  it('LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break', async () => {
+    const user = userEvent.setup()
+    const submitTurn = vi.fn().mockResolvedValue(undefined)
+    render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
+
+    const input = screen.getByRole('textbox', { name: 'What would you like to do?' })
+    await user.type(input, 'I ask Mira{Shift>}{Enter}{/Shift}about the bell.')
+    expect(submitTurn).not.toHaveBeenCalled()
+
+    await user.keyboard('{Enter}')
+    expect(submitTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ trigger: 'act', input: 'I ask Mira\nabout the bell.' })
+    )
   })
 
   it('LC-003/S2/R5-S1 confirms Pass before submitting an empty turn', async () => {
@@ -202,13 +250,12 @@ describe('AdventureWorkbench', () => {
         }}
       />
     )
-    expect(
-      screen
-        .getAllByRole('status')
-        .find((status) => status.textContent?.includes('Resolving your turn'))
-    ).toBeTruthy()
+    expect(screen.getByRole('status', { name: 'Resolving your turn' })).toHaveTextContent(
+      'Resolving…'
+    )
     expect(screen.getByText('The chapel doors open against the storm.')).toBeVisible()
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(screen.queryByText('Your Adventure is safe.')).not.toBeInTheDocument()
 
     rerender(
       <AdventureWorkbench

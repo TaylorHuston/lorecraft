@@ -226,6 +226,15 @@ npm run test:e2e
 
 `npm run test` includes PostgreSQL-backed backend tests, and `npm run test:e2e` starts isolated frontend and backend services for desktop and mobile Playwright projects. Both require the guarded database configuration below. A successful command should be interpreted together with the suites it actually executed.
 
+For a quick browser-level smoke check of a running local app, use the root development dependency:
+
+```bash
+npm exec agent-browser -- open http://localhost:4310
+npm exec agent-browser -- wait --load networkidle
+npm exec agent-browser -- snapshot -i
+npm exec agent-browser -- close
+```
+
 ## Storybook
 
 Storybook is the local isolated UI workbench for production components, responsive states, interactions, and accessibility checks:

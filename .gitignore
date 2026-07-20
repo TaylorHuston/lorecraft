@@ -27,6 +27,7 @@ tmp/*
 # Environment and secrets
 .env
 .env.*
+.neon
 !.env.example
 !.env.test
 !deploy/.env.production.example
