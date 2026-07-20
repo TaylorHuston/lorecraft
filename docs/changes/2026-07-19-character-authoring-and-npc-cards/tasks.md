@@ -6,11 +6,11 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: mapped the NPC Debug autosave's structured validation errors to visible field-level errors rather than a generic status-only message; focused component, type, and lint verification pass.
-- Latest manual feedback: the Debug editor reported “Correct the highlighted fields” after autosave but did not identify or visually mark any field. The editor now preserves recognized API field errors, marks the matching input, and clears the stale error when that input is edited.
+- Last completed action: gave the starter seed complete initial NPC state and gave already-frozen legacy Adventures a display-only Memory fallback, so editing another field can persist a valid Adventure-owned Memory without changing source canon.
+- Latest manual feedback: Mira's initial Adventure Memory was blank, so it was easy to encounter a save error after editing other fields. The starter source now supplies complete initial state, while existing frozen Adventures display a safe default until their next Debug save persists it locally.
 - Next action: obtain owner manual confirmation, then complete or explicitly defer the remaining rendered failure/recovery matrix rows before requesting the final independent review.
 - Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; current review began from `e04cc3c` and the latest applied evidence commit is `ae4a80a`.
-- Expected dirty files: `apps/frontend/src/adventures/AdventureWorkbench.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.module.css`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `docs/epics/lc-003-adventure-play/epic.md`, and this task ledger pending the focused defect-fix commit.
+- Expected dirty files: `apps/backend/app/services/stormbound_chapel_seed.ts`, `apps/backend/tests/functional/world_catalog.spec.ts`, `apps/frontend/src/adventures/AdventureWorkbench.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `docs/epics/lc-003-adventure-play/epic.md`, and this task ledger pending the focused defect-fix commit.
 - Known blocker: the external database and provider operations were explicitly approved and completed. Owner manual acceptance and the rendered error/recovery matrix rows remain. Scoped validation has no errors; LC-003's two large-story warnings are intentional primary-path compatibility warnings.
 
 ## Task Checklist
@@ -144,6 +144,7 @@ status: in_progress
 | 2026-07-20 | Live opening/Act/Guide/Pass matrix | live provider + protected local Debug trace | A dedicated local account completed an opening then Act, private Guide, and Pass with two present NPCs. Each narration was non-empty and retained current-Scene grounding; Guide text did not enter visible narration. | passed: opening, three narration calls, and three extraction calls each reached input/provider/outcome trace stages; provider statuses succeeded, raw request/response capture was enabled, and protected trace mode was `0600`. The compatible provider returned no token-usage metadata, so cost remains an estimate rather than measured usage. |
 | 2026-07-20 | E2E and live-matrix evidence commit | `sdd-apply` | Focused deterministic browser coverage, fixture support, Epic verification maps, and active task evidence. | committed after frontend tests (139), Storybook tests (84), lint, typecheck, contract verification, diff hygiene, and scoped SDD validation (0 errors; 2 intentional large-story warnings). | `ae4a80a` |
 | 2026-07-20 | NPC Debug validation feedback | focused frontend regression | Structured validation errors from autosave are retained per editable NPC field, render with an explicit message and invalid border, and clear when that field changes. Unknown validation payloads no longer falsely claim a field was highlighted. | passed: 17 Workbench tests, frontend typecheck, and frontend lint. |
+| 2026-07-20 | Starter NPC-state completion | focused frontend regression + backend typecheck | The starter source now publishes non-empty initial mood/status/memory values. Existing frozen Adventures retain their source, but the Debug editor presents a neutral Memory fallback and sends it only when the owner next saves an edit. | passed: 18 Workbench tests, frontend lint/typecheck, and backend typecheck. The guarded seed integration test is configured but needs a disposable `TEST_DATABASE_URL`; no database write occurred. |
 
 ## Manual Feedback
 
@@ -168,6 +169,7 @@ status: in_progress
 | 2026-07-20 | Apply the proposed live-configuration acceptance gate. | requirement refinement | Added a shared runtime resolver, effective worker startup logging, a bounded synthetic opening command, and a truncation-failing unit/live acceptance path. | resolved; the configured local-provider smoke completed at 500 tokens without truncation |
 | 2026-07-20 | Approve the isolated E2E database write and live provider playtest. | external-operation approval | Used a fresh disposable schema only, dropped it afterward, and used a dedicated local account for the live opening/Act/Guide/Pass matrix. | resolved; no raw prompt, Guide, narration, or provider body was copied into this ledger |
 | 2026-07-20 | NPC Debug save error said a field was highlighted when none was visible. | usability defect | Preserve structured autosave field errors in the NPC editor, render an invalid border and per-field message, and clear stale feedback when the field changes. | resolved; focused regression passes |
+| 2026-07-20 | Mira's default Adventure Memory was blank and blocked an otherwise valid Debug save. | seed/default defect | Add complete starter NPC initial state; retain frozen source semantics for existing Adventures while rendering a neutral local Memory fallback that persists only with the next Debug save. | resolved in code; guarded seed integration test needs disposable database configuration |
 
 ## Planning Updates
 

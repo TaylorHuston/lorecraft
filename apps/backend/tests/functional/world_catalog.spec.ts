@@ -485,6 +485,12 @@ test.group('World catalog API', (group) => {
       ]
     )
     assert.equal(version.snapshot.world.adventureGuidance, world.adventureGuidance)
+    assert.deepInclude(version.snapshot.characters, {
+      key: 'mira',
+      initialMood: 'Uneasy and alert.',
+      initialStatus: 'Watching the chapel doors.',
+      initialMemory: 'Mira has not yet spoken with the player.',
+    })
     assert.deepEqual(version.snapshot.startingPoints, [
       {
         key: 'chapel-midnight',

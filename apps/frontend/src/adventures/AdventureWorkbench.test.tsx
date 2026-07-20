@@ -130,6 +130,40 @@ describe('AdventureWorkbench', () => {
     )
   })
 
+  it('LC-003/S3/R3-S1 gives a frozen legacy NPC a usable memory default without changing its source', async () => {
+    const user = userEvent.setup()
+    const saveNpcState = vi.fn().mockResolvedValue(undefined)
+    render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          scene: {
+            ...readyAdventure.scene,
+            npcs: [{ ...readyAdventure.scene.npcs[0], memory: '' }],
+          },
+        }}
+        onSaveNpcState={saveNpcState}
+      />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Mira the Restless' }))
+    expect(screen.getByLabelText('Memory')).toHaveValue(
+      'No interactions with the player have been recorded yet.'
+    )
+
+    await user.clear(screen.getByLabelText('Mood'))
+    await user.type(screen.getByLabelText('Mood'), 'Curious')
+    await waitFor(() =>
+      expect(saveNpcState).toHaveBeenCalledWith(
+        'mira',
+        expect.objectContaining({
+          mood: 'Curious',
+          memory: 'No interactions with the player have been recorded yet.',
+        })
+      )
+    )
+  })
+
   it('LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure', async () => {
     const user = userEvent.setup()
     const saveNpcState = vi.fn().mockRejectedValue(

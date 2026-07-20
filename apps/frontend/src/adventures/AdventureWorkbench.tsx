@@ -31,6 +31,8 @@ const paneLabels: Record<AdventurePane, string> = {
   scene: 'Scene',
 }
 
+const emptyNpcMemoryFallback = 'No interactions with the player have been recorded yet.'
+
 function NpcFieldError({ error, id }: { error?: string; id: string }) {
   return error ? (
     <span className={styles.npcEditorFieldError} id={id} role="alert">
@@ -448,6 +450,7 @@ function NpcDebugEditor({
   npc: AdventureView['scene']['npcs'][number]
   onSave: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
 }) {
+  const initialMemory = npc.memory.trim() || emptyNpcMemoryFallback
   const [draft, setDraft] = useState<UpdateAdventureNpcStateInput>({
     name: npc.name,
     currentLocationKey: npc.currentLocation.key,
@@ -458,7 +461,7 @@ function NpcDebugEditor({
     privateKnowledge: npc.privateKnowledge,
     mood: npc.mood,
     status: npc.status,
-    memory: npc.memory,
+    memory: initialMemory,
   })
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -473,7 +476,7 @@ function NpcDebugEditor({
     privateKnowledge: npc.privateKnowledge,
     mood: npc.mood,
     status: npc.status,
-    memory: npc.memory,
+    memory: initialMemory,
   })
   const draftSignature = JSON.stringify(draft)
   const [lastSubmittedSignature, setLastSubmittedSignature] = useState(sourceSignature)
