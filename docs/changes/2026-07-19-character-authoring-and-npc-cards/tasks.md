@@ -6,11 +6,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: committed strict-schema normalization (`260f52e`), committed its evidence record (`bc6d9cc`), and returned the Change to `in_review`.
+- Last completed action: committed strict-schema normalization (`260f52e`), its evidence record (`bc6d9cc`), and the guarded `in_review` transition (`c55463c`).
 - Current technical state: scoped Change validation passes with zero errors; both Epic-scoped reverse-traceability audits report zero missing references; the committed candidate merges cleanly with `develop`. The two LC-003 large-story warnings are accepted compatibility warnings for the existing integrated Adventure primary paths, not new scope or implementation findings.
-- Next action: commit the guarded status transition, then request a fresh independent `/sdd-review`. Owner manual acceptance remains separately pending before merge.
+- Next action: request a fresh independent `/sdd-review`. Owner manual acceptance remains separately pending before merge.
 - Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `a087974`.
-- Expected dirty files: this task ledger only until the guarded status-transition commit.
+- Expected dirty files: none after this ledger checkpoint.
 - Known blocker: no technical blocker. Owner manual acceptance and a fresh independent review remain required before merge/closeout.
 
 ## Task Checklist
@@ -227,8 +227,8 @@ status: in_review
 
 ## Review Handoff
 
-- Immutable artifact-remediation commits: `260f52e` (`docs: normalize epic traceability`) and `bc6d9cc` (`docs: record epic normalization evidence`), based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
-- Candidate content: only LC-002/LC-003 v2 traceability maps and matching Change/review records; no application code, tests, configuration, generated contracts, or runtime behavior changed. The final status-transition commit is ledger-only.
+- Immutable candidate range: `260f52e..HEAD` on `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Candidate content: only LC-002/LC-003 v2 traceability maps and matching Change/review records; no application code, tests, configuration, generated contracts, or runtime behavior changed. The evidence and status-transition commits are ledger-only.
 - Required committed-candidate checks: scoped `sdd validate`, both affected-Epic reverse-traceability audits, `git diff --check`, and `git merge-tree --write-tree develop HEAD`.
 - Next gate: fresh independent `/sdd-review`; owner manual acceptance remains `pending user` before merge/closeout.
 
