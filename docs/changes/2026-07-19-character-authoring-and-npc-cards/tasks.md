@@ -1,17 +1,17 @@
 ---
-status: in_review
+status: in_progress
 ---
 
 # Tasks: Character Authoring And NPC Cards
 
 ## Resume Here
 
-- Last completed action: remediated the independent review's failed-autosave recovery finding with an explicit retry control and regression test.
-- Current independent review: application behavior and supporting gates pass after retry remediation, but the current strict SDD validator exposes affected-Epic anchor drift that must be reconciled before technical readiness.
-- Next action: reconcile LC-002/LC-003 to the current strict SDD validation contract, rerun review validation, then obtain owner manual acceptance before requesting merge authorization.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final code watermark is `a087974`.
-- Expected dirty files: review artifacts only until the review-record commit.
-- Known blocker: strict affected-Epic SDD validation fails before a current clean result can be recorded; owner manual acceptance remains separately pending. LC-003's two large-story warnings are intentional primary-path compatibility warnings.
+- Last completed action: normalized the affected LC-002 and LC-003 `sdd-epic-v2` maps to the current `path#anchor` traceability contract.
+- Current technical state: scoped Change validation passes with zero errors. The two LC-003 large-story warnings are accepted compatibility warnings for the existing integrated Adventure primary paths, not new scope or implementation findings.
+- Next action: commit this artifact-only remediation, run the committed-candidate checks, transition back to `in_review`, and request a fresh independent `/sdd-review`. Owner manual acceptance remains separately pending before merge.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `a087974`.
+- Expected dirty files: the two affected Epic files, this task ledger, and the review remediation record until the artifact commit.
+- Known blocker: no technical blocker. Owner manual acceptance and a fresh independent review remain required before merge/closeout.
 
 ## Task Checklist
 
@@ -81,6 +81,7 @@ status: in_review
 - [x] 6.2 Run `sdd-review` as the independent local gate for Requirements, Scenarios, Epic truth, migrations, authorization, disclosure, prompt privacy/cost, UI, docs, and branch readiness. (2026-07-20: changes-requested; all safe code/artifact findings remediated.)
 - [x] 6.3 Record the review outcome and remediate the complete safe finding set before one regression-focused rerun. (Focused backend/frontend tests, broad gates, validation, reverse traceability, and direct Storybook inspection reran.)
 - [x] 6.4 Transition to `in_review` for the final owner acceptance gate after deterministic E2E, live-provider, rendered, and independent-review technical evidence passes.
+- [x] 6.8 Normalize affected `sdd-epic-v2` maps to current strict `path#anchor` evidence requirements; classify remaining validator warnings and record the historical-review remediation.
 - [ ] 6.5 Merge into `develop` only after review, manual acceptance, and explicit user authorization under repository policy.
 - [ ] 6.6 Use `/sdd-release` for an explicitly authorized production handoff; do not run production migrations or deploy from apply/review.
 - [ ] 6.7 Close through `sdd change close` only after Epic truth, review, merge, acceptance, release communication, deferred gaps, and folder state agree.
@@ -103,6 +104,7 @@ status: in_review
 | 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | `d4fda8f` |
 | 2026-07-20 | Live provider configuration gate | `sdd-apply`; direct configuration acceptance | Shared worker/smoke runtime configuration; synthetic opening command; unit coverage; README and LC-003 evidence | Added one bounded synthetic provider request that reuses the actual worker model/token/timeout settings and exits non-zero for truncated narration; worker startup now logs the effective model and token cap. | `54b645f` |
 | 2026-07-20 | `LC-003/S1/R4-S2`, `LC-003/S3/R3` bound reconciliation | `sdd-apply`; focused backend/frontend/database verification | Shared Character/NPC limits, Debug validator/mutation/extractor, legacy-state migration, non-mutating legacy frozen-snapshot fallback, creation/reset/seed regressions, and editor controls | Preflight found no over-limit values, only legacy blanks. The migration preserved nonblank content, filled only whitespace-only legacy values with neutral state, set complete defaults for legacy direct writes, and applied `120/320/500` database checks. | committed `91a2387`; fresh direct schema run passed 32 focused tests and dropped the temporary schema. |
+| 2026-07-21 | Strict Epic schema normalization | `sdd-apply`; independent artifact-map passes | LC-002 and LC-003 Epic implementation/evidence maps; active task and review records | Replaced legacy class/file aggregates with current searchable primary anchors, scenario-specific automated evidence, and explicit gaps where scenario-specific proof does not exist. No application behavior, tests, or generated contracts changed. | commit pending |
 
 ## Verification Ledger
 
@@ -153,6 +155,8 @@ status: in_review
 | 2026-07-20 | Bounded Debug editor UI and broad gates | rendered UI + supporting gates | Mood/Status/Memory controls expose `120/320/500`; client messages match; desktop/mobile editor stays usable. | passed: 34 focused frontend tests, 84 Storybook tests, lint, typecheck, contract verification, build; direct desktop/mobile screenshots inspected with no overlay, console errors, or horizontal overflow. |
 | 2026-07-20 | Final committed-tree gate | whole-repository lint/typecheck/build + diff hygiene | The corrected legacy-snapshot test fixtures compile with the immutable source shape; both applications still build after the committed reconciliation. | passed: root lint, backend typecheck, root build, and `git diff --check`; test-fixture type follow-up committed `77b30c7`. |
 | 2026-07-20 | Independent review retry remediation | focused frontend regression | A recoverable Debug NPC autosave failure retains the unchanged draft and presents an explicit Retry save control; a retry resubmits the same full card without requiring an arbitrary field change. | passed: 19 focused Workbench tests, frontend typecheck, and frontend lint; committed `a087974`. |
+| 2026-07-21 | Scoped `sdd validate lorecraft --change 2026-07-19-character-authoring-and-npc-cards --repo /Users/taylor/src/my-life/spaces/lorecraft --workspace /Users/taylor --json` | current strict SDD gate | Both affected Epic maps satisfy the current v2 path/anchor and scenario-evidence contract. | passed: 0 errors; two accepted LC-003 large-story compatibility warnings. |
+| 2026-07-21 | Epic-scoped `sdd_orphan_audit.py --changed-from 1d3b5fd --epic LC-002` and `--epic LC-003` | reverse traceability | The normalized anchor maps resolve every cited implementation and verification path. The remaining cross-Epic, generated, adapter, support, and broad-suite candidates remain classified in the prior review inventory rather than being claimed as primary evidence. | passed: both Epics report 0 missing implementation references and 0 missing verification references. |
 
 ## Manual Feedback
 
@@ -219,19 +223,19 @@ status: in_review
 
 ## Blockers / Open Questions
 
-- Owner manual confirmation of author/non-author behavior and rendered save/delete/stale-selection recovery remains outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it.
+- Owner manual confirmation of author/non-author behavior and rendered save/delete/stale-selection recovery remains outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it. LC-003/S1 and S2 retain two accepted large-story compatibility warnings; splitting those existing integrated primary paths is not part of this artifact-only remediation.
 
 ## Closeout
 
-- Change status: `in_review`; deterministic E2E, live-provider, rendered, data, and independent-review technical gates pass. Owner manual acceptance remains pending before merge.
+- Change status: `in_progress` while strict-schema remediation is committed and committed-candidate checks run; then return to `in_review` for a fresh independent review. Owner manual acceptance remains pending before merge.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
-- Implemented By maps current: yes; the self-check resolved no missing anchors.
+- Implemented By maps current: yes; current strict validation resolves all missing-anchor errors.
 - Scenario-mapped Verified By maps current: focused, frontend, Storybook, contract, rendered, direct database, deterministic E2E, and live-provider evidence are current; owner manual recovery evidence remains pending.
 - Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical only; current supporting docs now describe Character authoring and default-on local Debug capture.
 - ADR status: accepted provider-boundary ADR and checked-in defaults agree; focused behavior evidence passes.
 - Release communication current: `CHANGELOG.md` contains only the user-facing Character/NPC capability.
-- `sdd-review` verdict: `changes-requested`; the retryable-autosave and stale-evidence findings are remediated, but current strict SDD validation exposes affected-Epic anchor drift that must be reconciled. Owner manual acceptance separately blocks merge/closeout.
+- `sdd-review` verdict: historical `changes-requested`; its required strict-schema finding is remediated and must be reassessed by a fresh independent `/sdd-review`. Owner manual acceptance separately blocks merge/closeout.
 - Review record: `docs/changes/2026-07-19-character-authoring-and-npc-cards/review.md`
 - `review.md` safe findings resolved: yes; exact frozen-version E2E, live-provider matrix, and failed-autosave recovery are remediated. Owner manual acceptance remains pending.
 - Planning updates resolved: yes; execution is in verification.

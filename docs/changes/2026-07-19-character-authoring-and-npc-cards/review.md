@@ -4,9 +4,9 @@
 
 changes-requested
 
-## Current Review (2026-07-20)
+## Historical Review (2026-07-20)
 
-Reviewed code through `90b1328` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The current safe remediation is uncommitted while this record is written. Earlier review sections are historical.
+Reviewed code through `90b1328` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The strict-schema remediation described below was uncommitted when this historical record was written; see the 2026-07-21 remediation section for current artifact state.
 
 ### Gate Scorecard
 
@@ -71,6 +71,14 @@ Reviewed code through `90b1328` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2
 - Safe batch: added explicit Retry save for an unchanged recoverable NPC draft; added its focused regression test; formatted the earlier NPC-state reconciliation files; reconciled stale task/Epic evidence.
 - Regression verification: frontend focused/full suite, Storybook, lint, typecheck, build, contracts, diff hygiene, and merge tree pass.
 - Residual required work: strict affected-Epic validation repair. Owner manual confirmation remains `pending user` and separately blocks merge/closeout.
+
+## Artifact Remediation (2026-07-21)
+
+The sole required artifact finding from the historical 2026-07-20 review is resolved without changing application behavior:
+
+- LC-002 and LC-003 now use current `sdd-epic-v2` primary implementation anchors and scenario-mapped evidence anchors.
+- Scoped Change validation now passes with zero errors. The only warnings are the two existing LC-003 large-story compatibility warnings for integrated Adventure primary paths; they do not represent a new behavior or scope defect.
+- The current review verdict remains historical `changes-requested` until a fresh independent `/sdd-review` assesses this committed artifact candidate. Owner manual acceptance remains `pending user` and still blocks merge/closeout.
 
 ### Review Bundle
 

@@ -162,13 +162,10 @@ The system SHALL identify the World catalog destination through its document tit
 
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
 | --- | --- | --- | --- |
-| S1/R1 | `apps/backend/app/services/world_catalog_service.ts#WorldCatalogService.listFor` | primary | Enforces World visibility and returns catalog DTOs. |
-| S1/R1 | `apps/backend/app/controllers/worlds_controller.ts#WorldsController.index` and `apps/backend/start/routes.ts` | adapter | Expose authenticated catalog reads. |
-| S1/R2 | `apps/frontend/src/workspace/WorkspacePage.tsx#WorkspacePage` | primary | Presents loading, failure, empty, and populated catalog states. |
-| S1/R2 | `apps/frontend/src/workspace/WorkspacePage.module.css` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | presentation | Define and expose the responsive catalog hierarchy and deterministic state matrix. |
-| S1/R1, S1/R2 | `apps/frontend/src/worlds/worldApi.ts` and `apps/frontend/src/worlds/tuyauWorldApi.ts` | adapter | Define and implement the validated typed client boundary. |
-| S1/R1, S1/R2 | `apps/frontend/src/auth/accountQueryKeys.ts` and `apps/frontend/src/auth/AuthProvider.tsx` | support | Scope account-owned data and clear it when the session changes. |
-| S1/R3 | `apps/frontend/src/app/AppRoutes.tsx#RoutePresentation` | primary | Sets catalog title and destination focus while preserving background-refresh focus. |
+| S1/R1 | `apps/backend/app/services/world_catalog_service.ts#async listFor` | primary | Applies public-or-owner visibility filtering and projects catalog DTOs. |
+| S1/R1 | `apps/backend/app/controllers/worlds_controller.ts#async index` | adapter | Exposes the authenticated catalog read boundary. |
+| S1/R2 | `apps/frontend/src/workspace/WorkspacePage.tsx#export function WorkspacePage` | primary | Presents the catalog's loading, failure, empty, and populated states. |
+| S1/R3 | `apps/frontend/src/app/AppRoutes.tsx#function RoutePresentation` | primary | Sets catalog title and destination focus without stealing focus during non-route updates. |
 
 #### Implementation Gaps
 
@@ -178,13 +175,18 @@ The system SHALL identify the World catalog destination through its document tit
 
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
-| S1/R1-S1, S1/R1-S2, S1/R1-S4 | `apps/backend/tests/functional/world_catalog.spec.ts` | Public catalog visibility, anonymous denial, and owner-private visibility/non-disclosure. | Passing 2026-07-17 |
-| S1/R1-S1, S1/R1-S3 | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/worlds/WorldRoutes.test.tsx`, and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated and empty catalog states, including the authenticated empty-catalog route. | Passing 2026-07-17 |
-| S1/R1-S1 | `apps/frontend/src/worlds/tuyauWorldApi.test.ts` | Catalog contract validation and API error mapping. | Passing 2026-07-17 |
-| S1/R1-S1 | `apps/frontend/e2e/starter-world.setup.ts` and `apps/frontend/e2e/starter-world.spec.ts` | Real seed command and populated catalog path at desktop and mobile sizes. | Passing 2026-07-17 |
-| S1/R2-S1, S1/R2-S2, S1/R2-S3, S1/R2-S4 | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/workspace/WorkspacePage.stories.tsx`, `apps/frontend/src/comparison/Workbench.stories.tsx`, and `apps/frontend/e2e/account-workspace.spec.ts` | Catalog states, retry, account context, responsive controls, comparison fixtures, touch targets, and overflow-free behavior. | Passing 2026-07-17 |
-| S1/R3-S1, S1/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | Catalog navigation title/heading focus and refresh focus preservation. | Passing 2026-07-18 |
+| S1/R1-S1 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S1: another signed-in account can list a public World` | A signed-in non-author receives the public World catalog item. | Passing 2026-07-20 |
+| S1/R1-S2 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S2: anonymous catalog access is denied without World data` | Anonymous catalog access returns 401 without World data. | Passing 2026-07-20 |
+| S1/R1-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R1-S3 + R2-S2 explains when no Worlds are available without creation` | An authenticated empty catalog is explicit and exposes no unavailable creation control. | Passing 2026-07-20 |
+| S1/R1-S4 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S4: an owner sees a private World without disclosing it to another account` | An owner can read a private World while another account receives neither catalog disclosure nor distinguishable detail. | Passing 2026-07-20 |
 | S1/R1-S5 | Private production acceptance | A clean migrated target received one normal HTTPS-created account and one idempotently seeded starter World with no copied development accounts or Adventures. | Passing 2026-07-18 |
+| S1/R2-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World` | The populated catalog remains readable with a named World link, public access label, touch target, and no horizontal overflow. | Passing 2026-07-20 |
+| S1/R2-S2 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S2 shows catalog loading while Worlds are unresolved` | The loading catalog exposes a stable status state. | Passing 2026-07-20 |
+| S1/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S3 recovers from a catalog load failure` | A recoverable catalog failure presents a named retry that restores the catalog. | Passing 2026-07-20 |
+| S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 preserves catalog context while retry is pending` | Retry pending leaves the catalog heading and account context visible and disables the retry control. | Passing 2026-07-20 |
+| S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 keeps the catalog visible while named sign-out is pending` | Pending sign-out preserves catalog context and exposes a disabled, busy control. | Passing 2026-07-20 |
+| S1/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context applies after an authenticated redirect` | The authenticated Worlds destination sets its document title and focuses its heading. | Passing 2026-07-20 |
+| S1/R3-S2 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context preserves focus chosen while a destination is loading` | A data transition at the Worlds destination preserves deliberately chosen focus. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
@@ -278,12 +280,10 @@ The system SHALL identify an accessible World detail destination through its doc
 
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
 | --- | --- | --- | --- |
-| S2/R1, S2/R2 | `apps/backend/app/services/world_catalog_service.ts#WorldCatalogService.findFor` | primary | Authorized World-detail read and deterministic complete-card projection. |
-| S2/R1-S2 | `apps/backend/app/controllers/worlds_controller.ts#WorldsController.show` and `apps/backend/start/routes.ts` | adapter | Expose authenticated detail reads and non-disclosing errors. |
-| S2/R1, S2/R2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#WorldDetailPage` | primary | Detail presentation, complete Character Cards, and explicit development/debug disclosure. |
-| S2/R2 | `apps/frontend/src/worlds/WorldDetailPage.module.css` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | presentation | Responsive complete-card, authoring, empty-collection, missing, and recovery states. |
-| S2/R3 | `apps/frontend/src/app/AppRoutes.tsx#RoutePresentation` | primary | Sets World-detail title and destination focus while preserving refresh focus. |
-| S2/R1 | `apps/backend/database/migrations/1784416800000_add_character_initial_state.ts` and `apps/backend/app/models/character.ts#Character` | persistence | Persist complete initial-state card fields alongside relational Character and same-World Location integrity. |
+| S2/R1 | `apps/backend/app/services/world_catalog_service.ts#async findFor` | primary | Applies authorized detail lookup and projects ordered Locations and complete debug Character Cards. |
+| S2/R1-S2 | `apps/backend/app/controllers/worlds_controller.ts#async show` | adapter | Converts inaccessible detail reads into the non-disclosing not-found response. |
+| S2/R2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#export function WorldDetailPage` | primary | Presents readable World detail, complete debug cards, collection states, and recovery controls. |
+| S2/R3 | `apps/frontend/src/app/AppRoutes.tsx#function RoutePresentation` | primary | Owns title and destination-focus behavior for World-detail routes. |
 
 #### Implementation Gaps
 
@@ -293,19 +293,20 @@ The system SHALL identify an accessible World detail destination through its doc
 
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
-| S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts` | Current structured detail authorization, complete debug-card projection, safe not-found behavior, immutable seed provenance, and exact reconciliation. | Passing 2026-07-20 against a guarded isolated schema |
-| S2/R1-S3 | `apps/backend/tests/database/world_seed_identity_migration.spec.ts` | Existing rows survive upgrade and starter provenance remains unique. | Passing 2026-07-15 |
-| S2/R1 | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Same-World Character Location integrity and upgrade safety. | Passing 2026-07-15 |
-| S2/R1-S1, S2/R2-S1, S2/R2-S2, S2/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Complete-card fields, debug disclosure, author/non-author visibility, and detail loading/error/empty/recovery states. | Passing 2026-07-19 |
-| S2/R1-S1 | `apps/backend/tests/database/character_initial_state_migration.spec.ts` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts` | Upgrade and rollback safety for persisted initial mood, status, and memory; whitespace-only legacy values receive neutral defaults without replacing authored content. | Passing 2026-07-20 against a guarded isolated schema |
-| S2/R1-S1, S2/R2-S1 | Storybook `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Directly inspected complete-card authoring form and populated card with no horizontal overflow or browser errors. | Passing 2026-07-19 |
-| S2/R3-S1, S2/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | World-detail and unavailable-destination title/heading focus without refresh focus theft. | Passing 2026-07-18 |
-| S2/R1-S1, S2/R2-S1, S2/R2-S2 | `apps/frontend/e2e/starter-world.spec.ts` | Complete-card authoring, current loaded detail, Adventure actions, return navigation, touch access, and overflow-free layout. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R1-S1 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S1 + R1-S2: detail exposes complete debug cards and is safely missing` | An accessible detail response contains Locations and private debug-card fields while omitting author account data. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R1-S2 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S1 + R1-S2: detail exposes complete debug cards and is safely missing` | Unknown and inaccessible detail requests return the same non-disclosing not-found response. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R1-S3 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S3: repeated starter seed reconciles one exact graph` | Repeated starter installation reconciles one exact World graph. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R2-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World` | Loaded detail exposes complete cards, return navigation, touch targets, and no horizontal overflow. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R2-S1 | Direct Storybook inspection: `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Complete-card authoring and populated cards were directly inspected without horizontal overflow or browser errors. | Passing 2026-07-19 |
+| S2/R2-S2 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S2 retries unavailable World detail with visible pending and recovery` | Unavailable detail has named return/retry controls and exposes pending retry behavior before recovery. | Passing 2026-07-20 |
+| S2/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S3 communicates empty Locations while preserving Character hierarchy` | An empty Location collection is explicit while Character hierarchy remains stable. | Passing 2026-07-20 |
+| S2/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy` | An empty Character collection is explicit while Location hierarchy remains stable. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
 - `S2/R1-S1`, `S2/R2-S1`: Owner manual confirmation of complete-card authoring and non-author access remains pending; deterministic database, E2E, and rendered read-only fixture evidence now pass.
 - `S2/R1-S4`: Fresh browser credential submission and restored structured-canon inspection remain an accepted prior closeout gap.
+- `S2/R3-S1`, `S2/R3-S2`: World-detail-specific document-title and focus behavior have no current scenario-specific proof; generic route-presentation tests are insufficient evidence.
 
 #### Story Notes
 
@@ -424,15 +425,11 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
 | --- | --- | --- | --- |
-| S3/R1 | `apps/backend/app/services/world_character_service.ts#WorldCharacterService.create`, `#update`, and `#destroy` | primary | Owner-scoped Character mutation. |
-| S3/R2 | `apps/backend/app/services/world_character_service.ts#WorldCharacterService.create` | primary | Creates validated complete Character Cards with stable keys and same-World Locations. |
-| S3/R3 | `apps/backend/app/services/world_character_service.ts#WorldCharacterService.update` | primary | Updates every mutable card field while preserving its stable key. |
-| S3/R4 | `apps/backend/app/services/world_character_service.ts#WorldCharacterService.destroy` | primary | Removes current canon after UI confirmation without touching frozen Adventure rows. |
-| S3/R5 | `apps/backend/app/services/world_character_service.ts#WorldCharacterService.create`, `#update`, and `#destroy` | primary | Couples each mutation to immutable WorldVersion publication in one transaction. |
-| S3/R1-R5 | `apps/backend/app/controllers/worlds_controller.ts#WorldsController.createCharacter`, `#updateCharacter`, and `#destroyCharacter` with `apps/backend/start/routes.ts` | adapter | Expose authenticated, typed Character mutation routes and error mapping. |
-| S3/R2-R3 | `apps/backend/app/validators/character.ts#characterCreateValidator` and `#characterUpdateValidator` | support | Enforce required compact fields and immutable-key edit shape. |
-| S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#CharacterEditorForm` and `#WorldDetailPage` | primary | Provides author-only create/edit/delete controls, validation presentation, pending state, confirmation, and focus return. |
-| S3/R6 | `apps/frontend/src/worlds/worldApi.ts#createTuyauWorldApi` and `apps/frontend/src/worlds/tuyauWorldApi.ts#createTuyauWorldApi` | adapter | Carries full-card typed contracts and mutations to the client. |
+| S3/R1, S3/R2, S3/R5 | `apps/backend/app/services/world_character_service.ts#async create` | primary | Author-scoped creation validates the complete card and publishes a WorldVersion in the transaction. |
+| S3/R1, S3/R3, S3/R5 | `apps/backend/app/services/world_character_service.ts#async update` | primary | Author-scoped edits preserve the stable key and publish a WorldVersion in the transaction. |
+| S3/R1, S3/R4, S3/R5 | `apps/backend/app/services/world_character_service.ts#async destroy` | primary | Author-scoped deletion publishes a WorldVersion without touching frozen Adventure rows. |
+| S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Presents complete-card inputs with field feedback and pending submission state. |
+| S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#const deleteCharacter` | primary | Presents author-only mutation controls and confirmed deletion state. |
 
 #### Implementation Gaps
 
@@ -442,14 +439,19 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1, S3/R4-S1, S3/R6-S1 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` | Author-only full-card creation flow, mutation payload, focus return, and non-author absence of mutation controls. | Passing 2026-07-19 |
-| S3/R1-S1, S3/R1-S2, S3/R2-S1, S3/R2-S2, S3/R3-S1, S3/R3-S2, S3/R4-S1, S3/R4-S2, S3/R5-S1, S3/R5-S2 | `apps/backend/tests/functional/world_character_authoring.spec.ts` | Owner/non-author mutation, complete-card validation, immutable keys, delete isolation, publication, and rollback scenarios. | Passing 2026-07-20 against a guarded direct disposable schema. |
-| S3/R1-S1, S3/R3-S1, S3/R4-S1, S3/R5-S1, S3/R6-S1 | `apps/frontend/e2e/starter-world.spec.ts` | Creator-visible complete-card create, edit, delete, and publication behavior, including an existing Adventure retaining its frozen NPC while a newly created Adventure uses the renamed published NPC. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema. |
-| S3/R6-S1 | `apps/frontend/src/worlds/tuyauWorldApi.test.ts` | Typed create, update, and delete Character request/response adaptation. | Passing 2026-07-19 |
-| S3/R6-S1, S3/R6-S2 | `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` and direct Storybook inspection of `Authoring` desktop/mobile | Required fields, card hierarchy, delete confirmation fixture, responsive layout, and no horizontal overflow. | Passing 2026-07-19 |
+| S3/R1-S1, S3/R2-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S1 + R2-S1 + R5-S1: an author creates a complete card and publishes it atomically` | A valid author create returns a complete card and atomically publishes the updated WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R1-S2, S3/R2-S2 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S2 + R2-S2: a non-author and invalid input cannot mutate or publish canon` | Non-author and invalid create requests do not mutate Character canon or publish a WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R3-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R3-S1 + R5-S1: an edit preserves stable key and leaves the prior immutable version unchanged` | A valid edit preserves the stable key, publishes current canon, and leaves the prior immutable version unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R4-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R4-S1 + R5-S1: an author deletes current canon and publishes a new source without touching prior versions` | A confirmed deletion publishes current canon without mutating prior immutable versions. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 exposes complete debug cards but only author controls to the World author` | The author can submit a complete card while the complete debug disclosure remains visible. | Passing 2026-07-20 |
+| S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 keeps mutation controls out of a non-author World detail` | A non-author can inspect complete debug cards without mutation controls. | Passing 2026-07-20 |
+| S3/R6-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3 author creates, edits, and deletes a complete Character Card` | The creator completes the visible create, edit, and confirmed-delete journey. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+| S3/R5-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3/R5-S1 + LC-003/S1/R2-S2 freezes existing NPC cards while new Adventures use published canon` | An existing Adventure retains its frozen NPC while a later Adventure uses published Character canon. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+| S3/R6-S1 | Direct Storybook inspection: `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Required fields, card hierarchy, delete-confirmation fixture, responsive layout, and no horizontal overflow were directly inspected. | Passing 2026-07-19 |
 
 #### Verification Gaps
 
+- `S3/R3-S2`, `S3/R4-S2`, `S3/R5-S2`: Invalid/stale edit, failed/cancelled delete, and no-op-or-failed publication recovery lack current scenario-specific proof.
 - `S3/R6-S2`: Validation, failed-save, failed-delete, long-content, and live routed author/non-author confirmation remain pending.
 
 #### Story Notes
