@@ -77,7 +77,7 @@ Reviewed code through `90b1328` against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2
 The sole required artifact finding from the historical 2026-07-20 review is resolved without changing application behavior:
 
 - LC-002 and LC-003 now use current `sdd-epic-v2` primary implementation anchors and scenario-mapped evidence anchors.
-- Scoped Change validation now passes with zero errors. The only warnings are the two existing LC-003 large-story compatibility warnings for integrated Adventure primary paths; they do not represent a new behavior or scope defect.
+- Scoped Change validation now passes with zero errors. The only warnings are the two existing LC-003 large-story compatibility warnings for integrated Adventure primary paths; they do not represent a new behavior or scope defect. The remediation is committed in `260f52e`.
 - The current review verdict remains historical `changes-requested` until a fresh independent `/sdd-review` assesses this committed artifact candidate. Owner manual acceptance remains `pending user` and still blocks merge/closeout.
 
 ### Review Bundle

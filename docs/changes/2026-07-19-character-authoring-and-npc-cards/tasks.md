@@ -104,7 +104,7 @@ status: in_progress
 | 2026-07-20 | Opening truncation recovery | `sdd-apply`; protected local Debug inspection | Ignored local backend settings; Adventure opening failure copy; Workbench test and Storybook failure fixtures | Diagnosed two completed responses ending at the 250-token cap, raised the ignored local cap to 500, restarted API/workers, and renamed the generic failure state from “interrupted” to “failed”. The actual retry remains owner-controlled. | `d4fda8f` |
 | 2026-07-20 | Live provider configuration gate | `sdd-apply`; direct configuration acceptance | Shared worker/smoke runtime configuration; synthetic opening command; unit coverage; README and LC-003 evidence | Added one bounded synthetic provider request that reuses the actual worker model/token/timeout settings and exits non-zero for truncated narration; worker startup now logs the effective model and token cap. | `54b645f` |
 | 2026-07-20 | `LC-003/S1/R4-S2`, `LC-003/S3/R3` bound reconciliation | `sdd-apply`; focused backend/frontend/database verification | Shared Character/NPC limits, Debug validator/mutation/extractor, legacy-state migration, non-mutating legacy frozen-snapshot fallback, creation/reset/seed regressions, and editor controls | Preflight found no over-limit values, only legacy blanks. The migration preserved nonblank content, filled only whitespace-only legacy values with neutral state, set complete defaults for legacy direct writes, and applied `120/320/500` database checks. | committed `91a2387`; fresh direct schema run passed 32 focused tests and dropped the temporary schema. |
-| 2026-07-21 | Strict Epic schema normalization | `sdd-apply`; independent artifact-map passes | LC-002 and LC-003 Epic implementation/evidence maps; active task and review records | Replaced legacy class/file aggregates with current searchable primary anchors, scenario-specific automated evidence, and explicit gaps where scenario-specific proof does not exist. No application behavior, tests, or generated contracts changed. | commit pending |
+| 2026-07-21 | Strict Epic schema normalization | `sdd-apply`; independent artifact-map passes | LC-002 and LC-003 Epic implementation/evidence maps; active task and review records | Replaced legacy class/file aggregates with current searchable primary anchors, scenario-specific automated evidence, and explicit gaps where scenario-specific proof does not exist. No application behavior, tests, or generated contracts changed. | `260f52e` |
 
 ## Verification Ledger
 
@@ -224,6 +224,13 @@ status: in_progress
 ## Blockers / Open Questions
 
 - Owner manual confirmation of author/non-author behavior and rendered save/delete/stale-selection recovery remains outstanding. Provider cost has no measured usage metadata because this compatible local provider omits it. LC-003/S1 and S2 retain two accepted large-story compatibility warnings; splitting those existing integrated primary paths is not part of this artifact-only remediation.
+
+## Review Handoff
+
+- Immutable artifact-remediation commit: `260f52e` (`docs: normalize epic traceability`), based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Candidate content: only LC-002/LC-003 v2 traceability maps and the matching Change/review records; no application code, tests, configuration, generated contracts, or runtime behavior changed.
+- Required committed-candidate checks: scoped `sdd validate`, both affected-Epic reverse-traceability audits, `git diff --check`, and `git merge-tree --write-tree develop HEAD`.
+- Next gate: fresh independent `/sdd-review`; owner manual acceptance remains `pending user` before merge/closeout.
 
 ## Closeout
 
