@@ -5,10 +5,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: the committed `fbc09cf` candidate passed the fresh guarded `ci:required` aggregate gate.
-- Next action: commit the README/repository-guidance and evidence reconciliation, rerun the exact final candidate, then complete implementation self-check and transition to `in_review`.
+- Last completed action: fixed the self-check's concise-Guide substring false positive in `31bb167`; focused worker/context proof is green.
+- Next action: commit the corrected gate example and artifact reconciliation, rerun the exact final implementation candidate, then transition to `in_review`.
 - Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
-- Expected dirty files: README, repository guidance, LC-003 evidence, and this Change's final reconciliation.
+- Expected dirty files: README, LC-003 evidence, and this Change's final reconciliation.
 - Known blockers: none
 
 ## Task Checklist
@@ -149,6 +149,7 @@ status: in_progress
 | 2026-07-22 | LC-003/S1 R2/R4; S2 R1-S3/R2-S2/R2-S5/R2-S6 | BDD/TDD worker safety phase | owner projection, Guide guard, production stale claims, retry/discard | Owner debug cards remain complete; punctuation/common-token Guides do not over-reject; stale claims terminally fail without provider/publication and remain discardable. | `4372aa8` |
 | 2026-07-22 | Required aggregate gate | CI parity phase | root script/tests, package command, GitHub workflow | Shared caller-env guarded, sequential cache-bypassed gate; fail-closed tests prove later stages do not run after failure. | `4372aa8` |
 | 2026-07-22 | Fresh aggregate verification | `/sdd-apply` final-candidate gate | committed `fbc09cf`, all aggregate stages | Build, contract check, guarded migration, lint, typecheck, full tests, Storybook build/test, and deterministic E2E passed with cache bypass. | `fbc09cf` |
+| 2026-07-22 | LC-003/S2/R1-S3 boundary remediation | fresh-context implementation self-check | `turn_prompt`, unit context, and production worker test | Concise Guide literals match normalized words/phrases, not substrings inside ordinary narration; direct reflection still blocks extraction/publication. | `31bb167` |
 
 ## Verification Ledger
 
@@ -160,10 +161,10 @@ status: in_progress
 | 2026-07-22 | `tests/functional/adventure_api.spec.ts#LC-003/S1/R3-S5: generation-queuing mutations share an account burst limit` | focused database-backed test | Restored ten-request cap returns 429 before controller busy conflict. | passed; its containing file still has the separately tracked stale owner-minimization failure |
 | 2026-07-22 | `tests/functional/world_character_authoring.spec.ts` | focused database-backed test | All author create/edit/delete and non-author/validation Character scenarios execute without leaked 429. | passed 6/6 |
 | 2026-07-22 | `tests/database/frozen_world_source_migration.spec.ts`; `tests/functional/world_version_publication.spec.ts` | focused database-backed tests | Historical migration constraints, composed current publisher concurrency, fallback snapshot/hash, and reuse. | passed 3/3; 4/4 |
-| 2026-07-22 | `tests/unit/story_generation/adventure_turn_context.spec.ts`; `tests/functional/adventure_turn_worker.spec.ts` | focused database-backed worker proof | Direct short Guide rejection, punctuation/common-token allowance, production-port stale terminal failure, retry/discard, and rollback. | passed 16/16 plus 20 database-safety checks |
+| 2026-07-22 | `tests/unit/story_generation/adventure_turn_context.spec.ts`; `tests/functional/adventure_turn_worker.spec.ts` | focused database-backed worker proof | Direct short Guide rejection, whole-word boundary allowance, punctuation/common-token allowance, production-port stale terminal failure, retry/discard, and rollback. | passed 18/18 plus 20 database-safety checks |
 | 2026-07-22 | `npm run test:ci-required` | aggregate-gate orchestration proof | Missing environment refuses; injected failure stops subsequent stages; workflow delegates after Chromium installation. | passed 3/3 |
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend`; `npm run typecheck --workspace @lorecraft/backend` | broad supporting gates | Limiter lifecycle hook and config type/lint cleanly. | passed |
-| 2026-07-22 | `NODE_ENV=test APP_KEY=<test-only> npm run ci:required` with acknowledged disposable database environment | fresh local release gate | Cache-bypassed application build, generated-contract cleanliness, guarded migration, lint, typecheck, full backend/frontend tests, Storybook build/test, and deterministic E2E all ran sequentially. | passed against committed `fbc09cf`; exact final candidate rerun pending docs commit |
+| 2026-07-22 | `NODE_ENV=test APP_KEY=<test-only> npm run ci:required` with acknowledged disposable database environment | fresh local release gate | Cache-bypassed application build, generated-contract cleanliness, guarded migration, lint, typecheck, full backend/frontend tests, Storybook build/test, and deterministic E2E all ran sequentially. | passed against `fbc09cf` and `01a5cda`; rerun after `31bb167` docs reconciliation remains mandatory |
 
 ## Manual Feedback
 
@@ -186,7 +187,7 @@ status: in_progress
 | Frozen-source migration | A migration runs against exactly its supported predecessor schema. | Current serializer queries columns not yet created. | Isolated historical migration plus composed-current-schema test where appropriate. | Exact predecessor migration and separate current-schema publisher proof pass. | resolved pending final candidate |
 | LC-003/S1/S3 projection | Authorized debug cards are complete; inaccessible/cross-owner responses disclose nothing. | Removing debug data breaks accepted behavior; broadening it leaks private content. | Audience-specific service/API tests and generated-contract check. | Owner/debug and non-owner boundaries pass in the fresh aggregate; generated client remains clean. | resolved pending final candidate |
 | LC-003/S1 generation budget | Generation-queuing requests share one per-account burst limit and conflicts remain distinct. | Test-only capacity can mask quota with controller conflict. | Deterministic queueable requests, over-quota 429, independent-account proof. | Removed `NODE_ENV=test` 100-request override; exact burst scenario now reaches 429. | resolved pending final aggregate |
-| LC-003/S2 private narration | Raw Guide/private card values do not appear directly in published narration or retained evidence. | Short-value normalization misses reflection or over-rejects ordinary prose. | Focused short/long/direct/non-match cases plus DB/log inspection. | Direct concise reflection is rejected before extraction/publication; punctuation/common-token cases remain ordinary narration. | resolved pending final candidate |
+| LC-003/S2 private narration | Raw Guide/private card values do not appear directly in published narration or retained evidence. | Short-value normalization misses reflection or over-rejects ordinary prose. | Focused short/long/direct/non-match cases plus DB/log inspection. | Direct concise reflection is rejected before extraction/publication; punctuation/common-token and larger-word cases remain ordinary narration. | resolved pending final candidate |
 | LC-003/S2 turn lifecycle | Retry/discard and expired leases preserve last committed head/count. | Reclaim or discard publishes/removes committed work. | Injected expired claim and lifecycle DB assertions. | Expired recovery, retry/pending/discard, and stale terminal handling pass. | resolved pending final candidate |
 | LC-003/S2 atomic completion | Stale/throwing work publishes nothing partial. | Transaction or staged state leaks a revision/mutation/state/result. | Stale-head race and injected commit throw with full DB absence assertions. | Production-port stale claims terminate without generator/extractor calls; staged throws leave no partial result. | resolved pending final candidate |
 | Required aggregate gate | Every required check executes freshly on the committed candidate and any failure blocks readiness. | Cache hits, workflow drift, or focused substitutions create false green. | Cache-bypassed run, fail-closed proof, local/CI parity review. | `ci:required` shares CI stages, requires caller-supplied guarded env, and passed against `fbc09cf`. | resolved pending final candidate |
