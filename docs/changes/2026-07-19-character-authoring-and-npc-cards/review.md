@@ -2,7 +2,60 @@
 
 ## Verdict
 
-changes-requested
+ready
+
+## Current Independent Review (2026-07-22)
+
+Reviewed `246ba25e374d298f4fc0d2334d9daf9c757e8452` plus the safe working-tree remediation below against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical sections that follow remain evidence of earlier reviews; this section is the current verdict.
+
+### Gate Scorecard
+
+| Gate | Result | Notes |
+| --- | --- | --- |
+| Change artifacts and status | pass | Active Change is `in_review`; scoped validation has 0 errors and two accepted LC-003 large-story warnings. |
+| Epic truth and traceability | pass | LC-002/S2-S3 and LC-003/S1-S3 maps are current; both affected-Epic reverse audits report zero missing implementation or verification references. |
+| Requirements and scenarios | pass | Complete authorable Character cards, Adventure-owned mutable NPC state, frozen canon isolation, and current-Scene prompt selection remain aligned. |
+| Code and state transitions | pass after remediation | NPC autosave `unauthorized` errors now end the shared session like the other protected Adventure mutations. A route regression proves the stale Adventure surface is removed. |
+| Tests and contracts | pass | Frontend suite: 144 tests; Storybook: 84 interaction tests; focused backend unit suite: 18 tests; lint, typecheck, build, and generated-contract check pass. Previously recorded disposable-schema E2E/database and live-provider evidence remains applicable because this review changed no persistence or provider behavior. |
+| Rendered UI | pass | Direct Storybook inspection covered the mobile read-only World detail and Debug NPC editor; independent fresh inspection also covered desktop/mobile authoring and Debug cards. No Vite overlay, console error, or horizontal overflow was observed. |
+| Security and privacy | pass | Owner scope, production Debug refusal, active-turn conflict, bounded fields, trace permissions/redaction, raw-payload exclusion from artifacts, and frozen-source isolation were independently inspected. |
+| Documentation and release truth | pass after remediation | Proposal/design now identify their planning-era assumptions as historical rather than describing already implemented work as future scope. README, CHANGELOG, ADR, and Idea-side current-state guidance remain aligned. |
+| Branch and merge readiness | review-ready | Candidate has a clean `develop` merge tree. Owner manual acceptance is still pending, so no merge, release, or Change closeout is authorized. |
+
+### Findings And Remediation
+
+No unresolved BLOCKING, REQUIRED, or SUGGESTION findings remain.
+
+The review found and safely corrected two required issues:
+
+- `apps/frontend/src/adventures/AdventurePage.tsx`: an unauthorized NPC autosave was absent from the shared protected-mutation error chain, leaving a stale authenticated Adventure surface. The chain now includes `updateNpcState.error`.
+- `proposal.md` and `design.md`: several planning-era statements still described completed behavior as current/future work. They now explicitly distinguish historical baseline and realized scope.
+
+`AdventureRoutes.test.tsx` now proves that an unauthorized NPC autosave routes to sign-in and removes the Adventure UI. The focused/full frontend and Storybook suites were rerun after the fixes.
+
+### Verification Evidence
+
+| Check | Result |
+| --- | --- |
+| `npm run lint && npm run typecheck && npm run build && npm run verify:contracts` | pass |
+| `npm run test --workspace @lorecraft/frontend` | pass: 144 tests |
+| `npm run test:storybook --workspace @lorecraft/frontend` | pass: 84 tests |
+| focused backend story-generation/NPC validation suite | pass: 18 tests |
+| scoped `sdd validate lorecraft --repo …/lorecraft --change 2026-07-19-character-authoring-and-npc-cards --json` | pass: 0 errors; 2 accepted LC-003 large-story warnings |
+| LC-002 and LC-003 changed-surface orphan audits | pass: 0 missing implementation and verification references |
+| `git diff --check`; `git merge-tree --write-tree develop HEAD` | pass; clean merge tree `54393748b431749efcf6fb0e933115db5c37eb7b` |
+
+### Rendered UI Verification
+
+| Surface | State | Result |
+| --- | --- | --- |
+| World detail, mobile fixture | read-only World with Locations, Characters, and no author controls | pass |
+| Adventure Debug NPC editor | selected Mira card exposes all ten editable fields and immutable key | pass |
+| World authoring and Debug editor | independent desktop/mobile inspection, responsive Story-first layout | pass |
+
+### Remaining Owner Acceptance
+
+Manual confirmation remains `pending user`: author/non-author World mutation boundaries, save/delete/stale-selection recovery, and the live Adventure experience. It is an acceptance gate, not an unresolved technical review finding.
 
 ## Historical Review (2026-07-20)
 

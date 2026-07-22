@@ -2,11 +2,11 @@
 
 ## Why
 
-Lorecraft already stores structured Characters in authoritative World canon and copies their stable identity into immutable WorldVersions, but creators cannot create, edit, or delete them. The World detail route is read-only, private knowledge is withheld, and Adventures reduce present NPCs to name and physical description even though the backend now owns mutable NPC location, mood, status, and memory.
+Historical planning baseline: before this Change, Lorecraft stored structured Characters in authoritative World canon and copied their stable identity into immutable WorldVersions, but creators could not create, edit, or delete them. World detail was read-only, private knowledge was withheld, and Adventures reduced present NPCs to name and physical description even though the backend already owned mutable NPC location, mood, status, and memory.
 
 The archived Lorecraft MVP demonstrated a useful NPC Card pattern: stable authored fields ground description, dialogue, behavior, and secrets, while a small Adventure-owned state surface carries durable changes. This Change brings that pattern into the production architecture without restoring the spike's generic fact system, exposing off-scene NPCs to the model, or adding goals, relationships, schedules, autonomous simulation, or other unproven complexity.
 
-The first version must also be token-conscious. Every field is required so a Character Card is intentional and complete, but values may be concise. Lorecraft will send complete cards only for NPCs in the current Scene, enforce compact field limits, and record bounded context-size metadata so later optimization is driven by playtesting rather than speculative retrieval machinery.
+The planned first version was token-conscious: every field is required so a Character Card is intentional and complete, but values may be concise. The implemented result sends complete cards only for NPCs in the current Scene, enforces compact field limits, and records bounded context-size metadata so later optimization is driven by playtesting rather than speculative retrieval machinery.
 
 ## What Changes
 
@@ -76,8 +76,8 @@ The first version must also be token-conscious. Every field is required so a Cha
   - Knowledge visibility, spoiler filtering, player-known facts, selective disclosure, and removing the permanent-debug full-card view.
   - Draft/publish workflows, version-management UI, bulk editing/import, Character ordering controls, and applying a newer WorldVersion to an existing Adventure.
   - Dynamic prompt targeting, relevance ranking, retrieval, summarization, or truncation.
-- Assumptions:
-  - The active `2026-07-18-interactive-adventure-turns` Change will complete its acceptance, integration, and closeout before this Change is promoted or applied.
+- Historical assumptions:
+  - `2026-07-18-interactive-adventure-turns` completed acceptance, integration, and closeout before this Change was promoted and applied.
   - Stable Character keys are generated once at creation and remain immutable; changing display name does not change identity.
   - Character authoring uses the existing World detail route rather than introducing a separate World Builder navigation system in this phase.
   - The existing provider-neutral narration/extraction split and Adventure mutation allowlist remain authoritative.

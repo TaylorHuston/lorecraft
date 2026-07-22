@@ -166,7 +166,8 @@ export function AdventurePage({
       reset.error ??
       submitTurn.error ??
       retryTurn.error ??
-      discardTurn.error
+      discardTurn.error ??
+      updateNpcState.error
     if (error instanceof AdventureApiError && error.code === 'unauthorized') {
       endSession()
     }

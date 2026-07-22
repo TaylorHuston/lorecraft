@@ -2,9 +2,9 @@
 
 ## Context
 
-Lorecraft currently has a normalized relational World aggregate with Characters containing stable key, name, canonical Location, physical description, background, personality, voice, and private knowledge. The authenticated World detail route reads those Characters but omits private knowledge and is always presented as read-only. WorldVersion publication already serializes the stable fields into an immutable JSONB snapshot and uses content identity to publish or reuse a version.
+Historical planning baseline: Lorecraft had a normalized relational World aggregate with Characters containing stable key, name, canonical Location, physical description, background, personality, voice, and private knowledge. The authenticated World detail route omitted private knowledge and was read-only. WorldVersion publication already serialized the stable fields into an immutable JSONB snapshot and used content identity to publish or reuse a version.
 
-The active Interactive Adventure Turns Change adds Adventure-owned NPC location, mood, status, and summarized memory. Adventure creation currently initializes those mutable values without authored source content, the Scene API exposes only name and physical description, and prompt assembly does not yet have a product contract requiring complete current-Scene cards or measurable card size.
+The preceding Interactive Adventure Turns Change added Adventure-owned NPC location, mood, status, and summarized memory. Before this Change, Adventure creation initialized those mutable values without authored source content, the Scene API exposed only name and physical description, and prompt assembly had no contract requiring complete current-Scene cards or measurable card size.
 
 The archived MVP is useful interaction evidence. It showed a current-room NPC list with drill-down cards, full developer editing cards, stable background/personality/voice/private knowledge, mutable mood/status/memory/location, and a separate post-narration mutation extractor. Its generic facts, local debug permissions, and Next.js/Convex architecture are not implementation targets.
 
@@ -36,7 +36,7 @@ This Change makes the existing official Character model authorable, adds the min
 
 - Scope boundary reviewed: one coordinated phase owns Character CRUD, complete card presentation, initial Adventure state, and current-Scene prompt use; it does not become a universal Character schema or simulation system.
 - User decisions: use the spike for inspiration; expose complete cards as permanent debug; keep existing semantic fields; fold enduring motivations into background and immediate goals into status; require every field but allow sparse content; support full CRUD; auto-publish on save; include every current-Scene card and optimize later from playtesting.
-- Assumptions: Character stable keys remain explicit and immutable after creation; the active interactive-turn Change lands first; World detail remains the authoring entry point.
+- Historical assumptions: Character stable keys remain explicit and immutable after creation; the interactive-turn Change landed first; World detail remains the authoring entry point.
 - Deferred scope: custom fields, relationships, visibility filtering, retrieval, version UI, offscreen behavior, and broader World authoring.
 - Story boundaries challenged: `LC-002/S3` keeps create/edit/delete together because they form one creator management path over the same validation, authorization, publication, and UI. `LC-003/S3` remains separate because inspecting an NPC card is independently useful and is not merely a turn-submission detail.
 - Requirements refined: complete required cards, owner-only mutation, stable keys, same-World Location integrity, transactional publication, frozen Adventure behavior, current-Scene context, metadata-only normal evidence, local Debug capture, full debug disclosure, responsive drill-down, validation/recovery, and destructive confirmation.
@@ -58,8 +58,8 @@ This Change makes the existing official Character model authorable, adds the min
 
 #### Modify Story S2: Inspect Structured World Canon
 
-- `S2/R1-S1` will expose key, name, canonical Location, physical description, background, personality, voice, private knowledge, initial mood, initial status, and initial memory for every accessible Character during the debug stage.
-- `S2/R2` will present complete cards and explicit debug disclosure without losing the existing loaded, missing, error, empty, responsive, or route-context behavior.
+- `S2/R1-S1` now exposes key, name, canonical Location, physical description, background, personality, voice, private knowledge, initial mood, initial status, and initial memory for every accessible Character during the debug stage.
+- `S2/R2` now presents complete cards and explicit debug disclosure without losing loaded, missing, error, empty, responsive, or route-context behavior.
 - Existing verification for minimized disclosure remains historical evidence but must no longer claim private-knowledge omission proves current behavior.
 
 #### Add Story S3: Manage World Characters
@@ -183,7 +183,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 - Replace LC-002's read-only outcome and deferred Character authoring/private-knowledge boundary with the accepted debug-stage authoring/disclosure contract.
 - Normalize all of LC-002 from its legacy combined `Status` shape to independent implementation and verification state derived from current evidence.
 - Preserve S1 behavior while converting its implementation and verification maps to the v2 format.
-- Reclassify S2 evidence that currently treats private-knowledge omission as proof; it becomes superseded historical behavior after implementation.
+- S2 evidence that had treated private-knowledge omission as proof is superseded historical behavior after implementation.
 - No closed Change needs rewriting unless it makes a non-historical current-state claim that conflicts with the new Epic truth.
 
 ### Update Epic: LC-003 Adventure Play
@@ -200,10 +200,10 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 #### Modify Story S1: Start And Resume A Private Adventure
 
-- `S1/R2-S1` will require WorldVersion Characters to contain the complete stable card plus initial mood, status, and memory.
-- `S1/R4-S1` will project complete current-Scene cards through the owner-only Adventure detail API.
-- `S1/R4-S2` will restore NPC location, mood, status, and memory from the same frozen WorldVersion on reset.
-- `S1/R3-S1` will send complete starting-Scene NPC Cards to opening generation and exclude off-scene Characters.
+- `S1/R2-S1` requires WorldVersion Characters to contain the complete stable card plus initial mood, status, and memory.
+- `S1/R4-S1` projects complete current-Scene cards through the owner-only Adventure detail API.
+- `S1/R4-S2` restores NPC location, mood, status, and memory from the same frozen WorldVersion on reset.
+- `S1/R3-S1` sends complete starting-Scene NPC Cards to opening generation and excludes off-scene Characters.
 
 #### Modify Story S2: Resolve A Structured Game Master Turn
 
@@ -306,7 +306,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 
 - Replace the current minimized `scene.npcs` projection and the S2 implementation note saying internal NPC mutation fields are intentionally hidden.
 - Preserve Adventure owner-only access even though the card intentionally exposes private knowledge to that owner during the debug stage.
-- Reconcile S1/S2 implementation/evidence maps after the active Interactive Adventure Turns Change is integrated; do not plan against uncommitted intermediate symbols.
+- S1/S2 implementation/evidence maps were reconciled after the Interactive Adventure Turns Change integrated; no planning relied on uncommitted intermediate symbols.
 - Remove NPC inspection from the `shape-and-inspect-story` candidate without promoting Story inserts or utilities.
 
 ## Epic File Rules
@@ -358,7 +358,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 - Client surfaces: Adventure workbench only.
 - API / contract shape: Owner-only Adventure debug mutations.
 - Frontend/backend boundary: Adventure runtime becomes an accidental World Builder.
-- Data / schema impact: Adventure overrides for stable fields currently protected as frozen.
+- Data / schema impact: Adventure overrides for stable fields are intentionally Adventure-owned Debug state; frozen World canon remains immutable.
 - Auth / security impact: Risks widening the mutation allowlist and canon boundary.
 - Testability: Can prove local edits but not creator-authoritative source behavior.
 - Operational risk: High conceptual drift.
@@ -462,7 +462,7 @@ It adds the smallest coherent creator capability on top of existing first-class 
 
 ## Implementation Constraints
 
-- Do not begin promotion or implementation until `2026-07-18-interactive-adventure-turns` is integrated/closed and the target branch is based on current `develop`.
+- Historical promotion constraint met: `2026-07-18-interactive-adventure-turns` integrated/closed before this Change began on current `develop`.
 - Use centralized validation constants initially capped at: key 100, name 100, physical description 320, background 700, personality 320, voice 240, private knowledge 700, mood 120, status 320, and memory 500 characters. Every value must be non-blank after trimming. These are deliberate first-playtest ceilings, not permanent product promises.
 - Preflight existing Character and Adventure data before tightening mutable-field policy. Do not truncate stored user content silently; replan if safe reconciliation cannot preserve data.
 - Character stable key is required at create time, lowercase kebab-case, unique within the World, and immutable after creation.

@@ -388,6 +388,29 @@ describe('Adventure routes', () => {
     expect(screen.queryByText('Elara Vance')).not.toBeInTheDocument()
   })
 
+  it('LC-001/S3/R1-S4 ends the shared session when NPC autosave reports unauthorized', async () => {
+    const user = userEvent.setup()
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        updateNpcState: async () => {
+          throw new AdventureApiError('unauthorized', 'Session ended')
+        },
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Mira the Restless' }))
+    const name = screen.getByRole('textbox', { name: 'Name' })
+    await user.clear(name)
+    await user.type(name, 'Mira the Watchful')
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByText('Elara Vance')).not.toBeInTheDocument()
+  })
+
   it('LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure', async () => {
     const user = userEvent.setup()
     const resetAdventure = vi.fn().mockResolvedValue({
