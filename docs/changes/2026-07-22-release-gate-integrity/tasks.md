@@ -143,7 +143,7 @@ status: in_progress
 | Date | Slice | Agent / Guidance | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|---|
 | 2026-07-22 | Planning | `/sdd-change --plan` | private proposal/design/tasks | Contract-first remediation plan drafted | baseline `998d7af` |
-| 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | commit pending |
+| 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
 
 ## Verification Ledger
 
