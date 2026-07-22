@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: in_review
 ---
 # Tasks: Epic Audit Remediation
 
@@ -8,7 +8,7 @@ status: in_progress
 - Last completed action: reconciled LC-003/S1-S2 evidence to narrow scenario anchors, added deterministic rendered error/session-loss fixtures, and directly inspected their desktop/mobile states.
 - Next action: run independent `/sdd-review`; use an explicitly acknowledged disposable database only if the remaining functional/E2E proof is to be rerun.
 - Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
-- Expected dirty files: none after the final evidence/ledger commit; the LC-002/LC-003 audit reports are tracked historical inputs.
+- Expected dirty files: none after the in-review ledger commit; the LC-002/LC-003 audit reports are tracked historical inputs.
 - Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. Backend functional tests require an explicitly acknowledged disposable `TEST_DATABASE_URL`; the local guard refused writes without it on 2026-07-22.
 
 ## Task Checklist
@@ -62,7 +62,7 @@ status: in_progress
 | 2026-07-22 | LC-001/S3/R1-S4 and LC-003 label/ownership reconciliation | `sdd-apply`; focused route evidence | New Adventure route tests, route-presentation titles, LC-003 stale labels and source/ADR paths | Both New Adventure 401 boundaries end the shared session; exact test labels and LC-003 owner maps corrected | `4e3ce8f` |
 | 2026-07-22 | LC-001/S1-S3 | `sdd-epic-v2` normalization | LC-001 Epic and audit report | Independent implementation/verification states, requirement anchors, exact evidence, requested-route behavior, and honest operational gaps reconciled | `fe46ade` |
 | 2026-07-22 | Rendered recovery fixtures | `sdd-apply`; Storybook and browser inspection | Character editor and New Adventure route | Controlled 422 field recovery and both controlled 401 boundaries render through production route/provider seams without console errors or mobile overflow | `454ec94`, `099033c` |
-| 2026-07-22 | LC-003/S1-S2 evidence reconciliation | `sdd-apply`; scenario-by-scenario anchor review | LC-003 Epic, route/unit test labels | Replaced aggregate/historical proof claims with narrow inspected anchors and explicit operational/manual gaps | pending final evidence commit |
+| 2026-07-22 | LC-003/S1-S2 evidence reconciliation | `sdd-apply`; scenario-by-scenario anchor review | LC-003 Epic, route/unit test labels | Replaced aggregate/historical proof claims with narrow inspected anchors and explicit operational/manual gaps | `cb3bf09` |
 
 ## Verification Ledger
 
@@ -150,15 +150,15 @@ status: in_progress
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at Apply start.
-- Candidate source commit: pending the final evidence/ledger commit.
+- Candidate source commit: current `change/epic-audit-remediation` in-review branch head after this ledger commit.
 - Source differs from target when implementation changed: yes.
-- Intended implementation fully committed: pending the final evidence/ledger commit.
+- Intended implementation fully committed: yes.
 - Unrelated dirty state preserved: none expected after the review-safe batch commit.
 - Required risk, fan-out, and evidence rows: rendered and LC-003 exact evidence are complete; guarded database/live-provider gaps remain explicit.
 
 ## Closeout
 
-- Change status: in_progress; transition to `in_review` follows final validation and ledger commit.
+- Change status: in_review.
 - Epic files updated: LC-001 normalized with controlled 401 rendering proof; LC-002 field recovery evidence includes controlled rendering; LC-003/S1-S2 evidence is scenario-mapped with explicit gaps.
 - Manual UI confirmation status: pending user.
 - Rendered UI verification status: complete for controlled Storybook 422/401 fixtures; live authenticated API proof remains environment-gated.
