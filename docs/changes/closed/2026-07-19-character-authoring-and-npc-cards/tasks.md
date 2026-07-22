@@ -236,7 +236,7 @@ status: in_review
 
 ## Closeout
 
-- Change status: `in_review`; fresh independent review is `ready` and committed-candidate checks pass. Owner manual acceptance remains pending before merge.
+- Change status: closed by folder location after local merge `0de50e1`; owner manual acceptance remains an accepted gap rather than a pre-merge condition.
 - Epic files updated: `docs/epics/lc-002-world-bible-catalog/epic.md` and `docs/epics/lc-003-adventure-play/epic.md` reconcile implementation anchors, current default-on Debug behavior, and the concise-value limitation.
 - Story labels/references and Requirement/Scenario IDs current: `LC-002/S2-S3` and `LC-003/S1-S3`.
 - Implemented By maps current: yes; current strict validation resolves all missing-anchor errors.
@@ -244,12 +244,12 @@ status: in_review
 - Superseded earlier Epic truth reconciled: read-only/minimized/private-knowledge omission claims are historical only; current supporting docs now describe Character authoring and default-on local Debug capture.
 - ADR status: accepted provider-boundary ADR and checked-in defaults agree; focused behavior evidence passes.
 - Release communication current: `CHANGELOG.md` contains only the user-facing Character/NPC capability.
-- `sdd-review` verdict: `ready` (2026-07-22). Owner manual acceptance separately blocks merge/closeout.
+- `sdd-review` verdict: `ready` (2026-07-22); the local integration completed at `0de50e1` and closeout committed at `00be089`.
 - Review record: `docs/changes/2026-07-19-character-authoring-and-npc-cards/review.md`
 - `review.md` safe findings resolved: yes; exact frozen-version E2E, live-provider matrix, and failed-autosave recovery are remediated. Owner manual acceptance remains pending.
 - Planning updates resolved: yes; execution is in verification.
-- Manual UI confirmation status: pending user after implementation
+- Manual UI confirmation status: accepted gap after closeout; no user-confirmed walkthrough is recorded.
 - Rendered UI verification status: technically passing for all implemented fixtures; World authoring desktop/mobile, non-author read-only, World-unavailable, failed-turn recovery, and the bounded Debug NPC editor were directly inspected. Owner manual confirmation remains the final recovery/acceptance evidence.
-- PR / merge state: not started
+- PR / merge state: locally merged into `develop` at `0de50e1`; no PR was used.
 - Deferred scope accepted: yes in proposal/design
-- Change moved to `docs/changes/closed/`: no
+- Change moved to `docs/changes/closed/`: yes, closed by `00be089`.

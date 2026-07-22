@@ -198,7 +198,7 @@ test.group('World Character authoring API', (group) => {
     assert.isNull(owned.world.currentVersionId)
   })
 
-  test('LC-002/S3/R1-S2: anonymous and non-author create, edit, and delete requests cannot mutate or publish canon', async ({
+  test('LC-002/S3/R1-S2: anonymous create and non-author edit/delete requests cannot mutate or publish canon', async ({
     client,
     assert,
   }) => {
