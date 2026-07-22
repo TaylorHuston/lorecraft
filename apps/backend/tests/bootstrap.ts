@@ -5,6 +5,7 @@ import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import { dbAssertions } from '@adonisjs/lucid/plugins/db'
 import testUtils from '@adonisjs/core/services/test_utils'
+import limiter from '@adonisjs/limiter/services/main'
 import type { Registry } from '../.adonisjs/client/registry/schema.d.ts'
 
 /**
@@ -47,6 +48,14 @@ export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
  */
 export const configureSuite: Config['configureSuite'] = (suite) => {
   if (['browser', 'functional', 'e2e'].includes(suite.name)) {
-    return suite.setup(() => testUtils.httpServer().start())
+    suite.setup(() => testUtils.httpServer().start())
+  }
+
+  if (suite.name === 'functional') {
+    suite.onGroup((group) => {
+      group.each.setup(async () => {
+        await limiter.clear(['memory'])
+      })
+    })
   }
 }

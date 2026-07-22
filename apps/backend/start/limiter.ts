@@ -1,6 +1,6 @@
 import limiter from '@adonisjs/limiter/services/main'
 
-const adventureGenerationLimit = process.env.NODE_ENV === 'test' ? 100 : 10
+const adventureGenerationLimit = 10
 
 export const csrfBootstrapThrottle = limiter.define('csrf-bootstrap', (ctx) => {
   return limiter.allowRequests(60).every('1 minute').usingKey(ctx.request.ip())

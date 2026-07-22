@@ -6,7 +6,7 @@ status: in_progress
 ## Resume Here
 
 - Last completed action: promoted, validated, and transitioned the Change to `in_progress`; completed contract-first failure classification.
-- Next action: implement and prove LC-001 limiter isolation and the restored ten-request functional generation boundary.
+- Next action: align LC-002 publication default evidence and split the historical migration fixture from current-publisher concurrency proof.
 - Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
 - Expected dirty files: `docs/changes/2026-07-22-release-gate-integrity/`
 - Known blockers: none
@@ -67,11 +67,11 @@ status: in_progress
 
 ### 3. LC-001 Rate-Limit Isolation
 
-- [ ] 3.1 Identify every process-global/public-auth/generation limiter and its lifecycle, key derivation, test configuration, and reset seam.
-- [ ] 3.2 Add focused tests that separately prove same-client/account exhaustion, independent client/account budgets, recovery after the defined window, and no cross-test budget consumption.
-- [ ] 3.3 Refactor test lifecycle or injected limiter ownership so suites are deterministic without disabling, globally raising, or weakening production limits.
-- [ ] 3.4 Prove Character mutation requests are not accidentally charged to an unrelated auth or generation budget.
-- [ ] 3.5 Reconcile LC-001/S1 R4-S3 and LC-001/S2 R4-S3 exact `Verified By` evidence and any affected cross-story notes.
+- [x] 3.1 Identify every process-global/public-auth/generation limiter and its lifecycle, key derivation, test configuration, and reset seam.
+- [x] 3.2 Add focused tests that separately prove same-client/account exhaustion, independent client/account budgets, recovery after the defined window, and no cross-test budget consumption.
+- [x] 3.3 Refactor test lifecycle or injected limiter ownership so suites are deterministic without disabling, globally raising, or weakening production limits.
+- [x] 3.4 Prove Character mutation requests are not accidentally charged to an unrelated auth or generation budget.
+- [x] 3.5 Reconcile LC-001/S1 R4-S3 and LC-001/S2 R4-S3 exact `Verified By` evidence and any affected cross-story notes.
 - [ ] 3.6 Commit the verified rate-limit phase before beginning another implementation phase.
 
 ### 4. LC-002 WorldVersion And Character Publication
@@ -144,6 +144,7 @@ status: in_progress
 |---|---|---|---|---|---|
 | 2026-07-22 | Planning | `/sdd-change --plan` | private proposal/design/tasks | Contract-first remediation plan drafted | baseline `998d7af` |
 | 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
+| 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | commit pending |
 
 ## Verification Ledger
 
@@ -151,6 +152,10 @@ status: in_progress
 |---|---|---|---|---|
 | 2026-07-22 | Release preflight `npm run test -- --force` | broad supporting gate | Frontend passed 149/149; backend exposed 12 failures after 159 passes | failed; this Change owns remediation |
 | 2026-07-22 | Fresh guarded `migrate:ci` and backend suite | database/migration baseline | Fresh test schema migration passed; focused discovery reproduced the projection, worker, publication, and limiter boundaries in their owning suites. | baseline remains failing; final aggregate count pending remediation |
+| 2026-07-22 | `tests/functional/limiter_isolation.spec.ts` | focused database-backed test | Same forwarded client is throttled on request 11 in one test, then starts fresh in the next test. | passed 2/2 |
+| 2026-07-22 | `tests/functional/adventure_api.spec.ts#LC-003/S1/R3-S5: generation-queuing mutations share an account burst limit` | focused database-backed test | Restored ten-request cap returns 429 before controller busy conflict. | passed; its containing file still has the separately tracked stale owner-minimization failure |
+| 2026-07-22 | `tests/functional/world_character_authoring.spec.ts` | focused database-backed test | All author create/edit/delete and non-author/validation Character scenarios execute without leaked 429. | passed 6/6 |
+| 2026-07-22 | `npm run lint --workspace @lorecraft/backend`; `npm run typecheck --workspace @lorecraft/backend` | broad supporting gates | Limiter lifecycle hook and config type/lint cleanly. | passed |
 
 ## Manual Feedback
 
@@ -168,11 +173,11 @@ status: in_progress
 
 | Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
 |---|---|---|---|---|---|
-| LC-001/S1-S2 rate limits | Real same-client requests throttle; independent clients and unrelated tests do not share budget. | A test reset weakens production semantics or global state makes aggregate tests order-dependent. | Separate exhaustion, independence, recovery, and aggregate-order tests. | Pending implementation. | known |
+| LC-001/S1-S2 rate limits | Real same-client requests throttle; independent clients and unrelated tests do not share budget. | A test reset weakens production semantics or global state makes aggregate tests order-dependent. | Separate exhaustion, independence, recovery, and aggregate-order tests. | Functional-only `limiter.clear(['memory'])` runs before each test; same-test request 11 is 429 and next-test request is 422. | resolved pending final aggregate |
 | LC-002/S3 + LC-003/S1 publication defaults | Current Character rows serialize nonblank fallback initial state; immutable historical snapshots remain unchanged and derive fallback only for Adventure state. | Current/default and historical snapshot contracts are conflated. | Current-row hash/reuse test plus exact historical migration and composed-current-schema proof. | Classification complete; implementation pending. | known |
 | Frozen-source migration | A migration runs against exactly its supported predecessor schema. | Current serializer queries columns not yet created. | Isolated historical migration plus composed-current-schema test where appropriate. | Missing `initial_mood` observed. | known |
 | LC-003/S1/S3 projection | Authorized debug cards are complete; inaccessible/cross-owner responses disclose nothing. | Removing debug data breaks accepted behavior; broadening it leaks private content. | Audience-specific service/API tests and generated-contract check. | Current Epic intentionally allows owner-only complete cards. | known |
-| LC-003/S1 generation budget | Generation-queuing requests share one per-account burst limit and conflicts remain distinct. | 409 paths never consume/reach quota; global state leaks. | Deterministic queueable requests, over-quota 429, independent-account proof. | Current aggregate expected 429, received 409. | investigating |
+| LC-003/S1 generation budget | Generation-queuing requests share one per-account burst limit and conflicts remain distinct. | Test-only capacity can mask quota with controller conflict. | Deterministic queueable requests, over-quota 429, independent-account proof. | Removed `NODE_ENV=test` 100-request override; exact burst scenario now reaches 429. | resolved pending final aggregate |
 | LC-003/S2 private narration | Raw Guide/private card values do not appear directly in published narration or retained evidence. | Short-value normalization misses reflection or over-rejects ordinary prose. | Focused short/long/direct/non-match cases plus DB/log inspection. | `<12` exemption allows `OK`; implementation fix pending. | known |
 | LC-003/S2 turn lifecycle | Retry/discard and expired leases preserve last committed head/count. | Reclaim or discard publishes/removes committed work. | Injected expired claim and lifecycle DB assertions. | Aggregate scenario failed. | investigating |
 | LC-003/S2 atomic completion | Stale/throwing work publishes nothing partial. | Transaction or staged state leaks a revision/mutation/result. | Stale-head race and injected commit throw with full DB absence assertions. | Aggregate scenario failed. | investigating |
@@ -184,7 +189,7 @@ status: in_progress
 |---|---|---|---|---|---|
 | Local/remote required gates | `.github/workflows/ci.yml` required job | root `ci:required` command/shared script | constituent list parity and fail-closed command test/inspection | CI-only install/service setup may remain workflow-owned and documented | pending |
 | Migration historical fixture | sibling isolated migration tests | frozen-source concurrency fixture | exact predecessor-schema migration run | current-schema publication proof may be a separate test | pending |
-| Rate limiter lifecycle | production request middleware/service | test setup/reset seam | exhaustion plus independence and order tests | test reset only; production lifetime unchanged | pending |
+| Rate limiter lifecycle | `apps/backend/start/limiter.ts` per-client in-memory definitions | `apps/backend/tests/bootstrap.ts#configureSuite` functional test hook | `limiter_isolation.spec.ts` plus account/Adventure functional suites | Reset is functional-test-only; production and E2E lifetimes remain unchanged. | resolved pending final aggregate |
 
 ## Stateful Transition Matrix
 

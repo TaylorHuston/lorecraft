@@ -3,7 +3,6 @@ import testUtils from '@adonisjs/core/services/test_utils'
 import hash from '@adonisjs/core/services/hash'
 import User from '#models/user'
 import db from '@adonisjs/lucid/services/db'
-import limiter from '@adonisjs/limiter/services/main'
 import {
   bootstrapBrowserSession,
   continueBrowserSession,
@@ -11,9 +10,6 @@ import {
 } from '#tests/helpers/browser_session'
 
 test.group('Account browser authentication', (group) => {
-  group.each.setup(async () => {
-    await limiter.clear(['memory'])
-  })
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
   test('LC-001/S1/R1-S1 + R2-S1: valid signup creates a normalized account and session', async ({

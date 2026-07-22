@@ -2,7 +2,6 @@ import { test } from '@japa/runner'
 import { request as sendHttpRequest } from 'node:http'
 import db from '@adonisjs/lucid/services/db'
 import testUtils from '@adonisjs/core/services/test_utils'
-import limiter from '@adonisjs/limiter/services/main'
 import { sessionCookieName } from '#config/session'
 import User from '#models/user'
 import {
@@ -79,9 +78,6 @@ async function authStateCounts() {
 }
 
 test.group('Account API security', (group) => {
-  group.each.setup(async () => {
-    await limiter.clear(['memory'])
-  })
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
   test('LC-001/S3/R1-S2: anonymous safe requests do not create browser session state', async ({
