@@ -1,9 +1,10 @@
 ---
+schema: sdd-epic-v2
 id: LC-001
 status: implemented
 created: 2026-07-12
-modified: 2026-07-18
-last_verified: 2026-07-18
+modified: 2026-07-22
+last_verified: 2026-07-22
 stories:
   - S1
   - S2
@@ -17,6 +18,7 @@ stories:
 - Related changes:
   - `docs/changes/closed/2026-07-12-account-workspace-entry/`
   - `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation/`
+  - `docs/changes/2026-07-22-epic-audit-remediation/`
 - Related ADRs:
   - `docs/adrs/2026-07-12-adonisjs-api-first-backend.md`
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
@@ -24,50 +26,49 @@ stories:
   - `docs/adrs/2026-07-12-react-web-client-and-typed-api-contract.md`
   - `docs/adrs/2026-07-14-disposable-database-automation.md`
 
-Lorecraft needs a secure private account boundary before an individual can create and maintain authoritative Worlds. Accounts are not divided into creator, player, or other types; client surfaces may support different activities without changing the account model.
+Lorecraft needs a private account boundary before an individual can create and maintain authoritative Worlds. Accounts do not have creator/player types; clients can support different activities without changing the account model.
 
 ## Outcome
 
-A user can create an account, return through a secure browser session, reach a protected World workspace, and end that session safely.
+A user can create an account, restore or re-establish a browser session, use the protected World workspace, and invalidate that session safely.
 
 ## Current Scope
 
-- Email and password account creation with confirmation and duplicate protection.
-- Automatic authenticated workspace entry after signup.
-- Returning sign-in and session restoration.
-- Protected browser and API access.
-- Server-side session invalidation on sign-out.
+- Email/password account creation with confirmation and duplicate protection.
+- Same-origin, HTTP-only browser sessions with CSRF protection and no browser-stored bearer credential.
+- Returning sign-in, session restoration, requested protected-route resumption, and public-auth recovery.
+- Protected browser and API access, loss-of-session recovery, and server-side session invalidation on sign-out.
 
 ## Deferred Scope
 
-- World creation and editing.
-- Account roles or creator/player account types.
-- Display names, profiles, email verification, password recovery, social login, and multi-factor authentication.
-- Public API documentation, mobile clients, and collaboration permissions.
+- Display names, profiles, email verification, password recovery, social login, multi-factor authentication, and account types.
+- Native/mobile token clients, public API documentation, and collaboration permissions.
+- Production/private HTTPS and recovery-target validation until an intentionally provisioned, reproducible operational check is recorded.
 
 ## Candidate Stories
 
-| Candidate            | Status   | Story Shape                                                                                                    | Acceptance Signals                                        |
-| -------------------- | -------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Account recovery     | deferred | As an account holder, I want to recover access, so that a forgotten password does not permanently lock me out. | Email delivery and recovery security enter product scope. |
-| Account verification | deferred | As an account holder, I want to verify my email, so that Lorecraft can trust account contact ownership.        | Verification-dependent features enter product scope.      |
+| Candidate | Status | Story Shape | Acceptance Signals |
+| --- | --- | --- | --- |
+| Account recovery | deferred | As an account holder, I want to recover access, so that a forgotten password does not permanently lock me out. | Email delivery and recovery security enter product scope. |
+| Account verification | deferred | As an account holder, I want to verify my email, so that Lorecraft can trust account contact ownership. | Verification-dependent features enter product scope. |
 
 ## Story Index
 
-| Story | Status      | Capability                                             | Last Verified | Notes                                                                       |
-| ----- | ----------- | ------------------------------------------------------ | ------------- | --------------------------------------------------------------------------- |
-| S1    | implemented | New account creation and automatic workspace entry.    | 2026-07-17    | Focused backend and frontend proof passes; deployment gaps remain explicit. |
-| S2    | implemented | Returning sign-in and session restoration.             | 2026-07-17    | Focused backend and frontend proof passes; deployment gaps remain explicit. |
-| S3    | implemented | Protected access, session-loss handling, and sign-out. | 2026-07-17    | Focused backend and frontend proof passes.                                  |
+| Story | Implementation | Verification | Capability | Last Verified | Notes |
+| --- | --- | --- | --- | --- | --- |
+| S1 | implemented | partial | Create a private account and enter the World workspace. | 2026-07-22 | Local signup/security/UI evidence is current; private production HTTPS remains an operational gap. |
+| S2 | implemented | partial | Sign in, restore a session, and preserve public auth recovery. | 2026-07-22 | Requested-route resumption is implemented and proven; recovery and production proof remain gaps. |
+| S3 | implemented | partial | Protect workspace access and invalidate sessions. | 2026-07-22 | Current client/API evidence includes New Adventure session loss; private reachability remains an operational gap. |
 
 ## Stories
 
 ### Story S1: New User Enters Their Workspace
 
-Status: implemented
+Implementation: implemented
+Verification: partial
 Created: 2026-07-12
-Modified: 2026-07-18
-Last verified: 2026-07-17
+Modified: 2026-07-22
+Last verified: 2026-07-22
 
 As a new user, I want to create an account and enter my private workspace, so that I can begin using Lorecraft.
 
@@ -81,7 +82,7 @@ The system SHALL create an account only when the submitted email and password co
 
 - WHEN a visitor submits a valid email, password, and matching password confirmation
 - THEN the system creates exactly one account for that normalized email address
-- AND the password is stored only as a secure hash.
+- AND stores the password only as a secure hash.
 
 ###### Scenario R1-S2: Invalid Signup Input
 
@@ -102,18 +103,18 @@ The system SHALL establish an authenticated browser session after successful acc
 ###### Scenario R2-S1: Signup Completes
 
 - WHEN account creation succeeds
-- THEN the browser receives a secure session without receiving a reusable bearer token in client-accessible storage
+- THEN the browser receives a session without a reusable bearer token in client-accessible storage
 - AND the user sees the authenticated World workspace.
 
 ###### Scenario R2-S2: Private Production Signup
 
 - WHEN a visitor creates the first production account through the private HTTPS origin
-- THEN the same-origin `/api` path establishes an HTTP-only session cookie with the `Secure` attribute
+- THEN the same-origin `/api` path establishes an HTTP-only `Secure` session cookie
 - AND the authenticated workspace opens without exposing an application listener on the LAN or public Internet.
 
 ##### Requirement R3: Accessible Account Creation Presentation
 
-The system SHALL present account creation as a focused, responsive Lorecraft form with persistent field labels, independently controllable password disclosure, visible password confirmation, clear validation and pending states, and keyboard-visible focus.
+The system SHALL present account creation as a focused, responsive Lorecraft form with persistent labels, independent password disclosure, visible confirmation, clear validation/pending states, and keyboard-visible focus.
 
 ###### Scenario R3-S1: Account Creation At Supported Viewports
 
@@ -125,18 +126,17 @@ The system SHALL present account creation as a focused, responsive Lorecraft for
 
 - WHEN sign-up validation fails or submission is pending
 - THEN field and form feedback remains associated with the relevant controls
-- AND the current form values and layout remain stable enough to recover without re-entry caused by presentation changes.
+- AND current form values and layout remain stable enough to recover without re-entry caused by presentation changes.
 
 ###### Scenario R3-S3: Control Account-Creation Password Disclosure
 
 - WHEN a visitor uses the disclosure action for Password or Confirm password
 - THEN only the selected field changes between concealed and readable presentation
-- AND its value, focus, autocomplete purpose, validation association, and submission behavior remain unchanged
-- AND the action is operable by keyboard and touch with a clear accessible name for its current action.
+- AND its value, focus, autocomplete purpose, validation association, and submission behavior remain unchanged.
 
 ##### Requirement R4: Secure And Recoverable Signup Boundary
 
-The system SHALL protect signup from cross-site mutation, unsupported or oversized request bodies, and repeated attempts while preserving actionable recovery for the visitor.
+The system SHALL protect signup from cross-site mutation, unsupported or oversized request bodies, and repeated attempts while preserving actionable recovery.
 
 ###### Scenario R4-S1: Invalid CSRF Does Not Mutate Signup State
 
@@ -146,7 +146,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 ###### Scenario R4-S2: Signup Accepts Only Bounded JSON
 
-- WHEN signup uses an unsupported content type or a JSON body larger than 16 KB, including an unknown-length stream
+- WHEN signup uses unsupported content, JSON larger than 16 KB, or an unknown-length oversized stream
 - THEN the request is rejected before account or session mutation
 - AND the response identifies the supported JSON boundary without echoing credentials.
 
@@ -158,47 +158,40 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 #### Implemented By
 
-| Path                                                                                                         | Role                                                                                                                                  | Recheck Trigger                                                   |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `apps/backend/app/controllers/new_account_controller.ts`                                                     | Creates a normalized account transactionally and establishes its web session.                                                         | Recheck when signup or transaction behavior changes.              |
-| `apps/backend/app/validators/user.ts`                                                                        | Defines the email, password, and confirmation trust boundary.                                                                         | Recheck when account input policy changes.                        |
-| `apps/backend/app/models/user.ts`                                                                            | Persists and hashes account credentials.                                                                                              | Recheck when account identity or hashing changes.                 |
-| `apps/backend/database/migrations/1761885935168_create_users_table.ts`                                       | Preserves the immutable historical account schema, including the unused nullable `full_name` compatibility column.                    | Never edit after application; recheck through forward migrations. |
-| `apps/backend/database/migrations/1784049600000_normalize_users_email.ts`                                    | Transactionally normalizes existing emails and adds the normalized-email constraint.                                                  | Recheck when account identity normalization changes.              |
-| `apps/frontend/src/auth/SignUpPage.tsx`                                                                      | Presents signup, local validation, errors, and automatic workspace entry.                                                             | Recheck when the signup journey changes.                          |
-| `apps/frontend/src/auth/PasswordField.tsx`, `apps/frontend/src/components/TextField/TextField.tsx`, `apps/frontend/src/components/IconButton/IconButton.tsx`, and `apps/frontend/src/components/Button/Button.tsx` | Provide app-owned labeled fields, independent password disclosure, and pending action behavior without changing credential semantics. | Recheck when account controls or disclosure behavior changes. |
-| `apps/frontend/src/auth/AuthForm.module.css`, `apps/frontend/src/components/Button/Button.module.css`, `apps/frontend/src/components/IconButton/IconButton.module.css`, `apps/frontend/src/components/TextField/TextField.module.css`, and `apps/frontend/src/components/Textarea/Textarea.module.css` | Define app-owned account and control focus, pending, disabled, validation, and layout presentation. | Recheck when shared account/control styling changes. |
-| `apps/frontend/src/components/Controls.stories.tsx` and `apps/frontend/src/components/Controls.stories.module.css` | Expose deterministic control states independently of feature routes. | Recheck when control APIs or preview states change. |
-| `apps/frontend/src/auth/AuthLayout.tsx` and `apps/frontend/src/auth/AuthLayout.module.css`                   | Define the shared centered, cardless, responsive account-access composition.                                                          | Recheck when account presentation changes.                        |
-| `apps/frontend/src/auth/SignUpPage.stories.tsx`                                                              | Exposes deterministic default, mobile, validation, and pending signup states.                                                         | Recheck when signup states or presentation change.                |
-| `apps/frontend/src/auth/tuyauAuthApi.ts`                                                                     | Uses the generated Tuyau contract with credentialed session requests.                                                                 | Recheck when account routes or client transport changes.          |
-| `apps/backend/app/middleware/auth_request_boundary_middleware.ts`                                            | Rejects unsupported and declared-oversized signup payloads before body parsing.                                                       | Recheck when signup request formats or limits change.             |
-| `apps/backend/app/exceptions/handler.ts`                                                                     | Normalizes unknown-length oversized auth streams to the auth 413 contract.                                                            | Recheck when parser errors or auth limits change.                 |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S1/R1, S1/R2 | `apps/backend/app/controllers/new_account_controller.ts#async store` | primary | Validates, creates the normalized account transactionally, maps duplicate email, and establishes the web session. |
+| S1/R1 | `apps/backend/app/validators/user.ts#signupValidator` | support | Defines normalized email, password, and confirmation constraints. |
+| S1/R1 | `apps/backend/app/models/user.ts#User` | persistence | Persists account credentials using the model hash contract. |
+| S1/R2 | `apps/frontend/src/auth/SignUpPage.tsx#SignUpPage` | primary | Submits signup, publishes the authoritative account, and navigates to Worlds. |
+| S1/R3 | `apps/frontend/src/auth/SignUpPage.tsx#SignUpPage` | primary | Owns signup validation, field association, pending state, and focus recovery. |
+| S1/R3 | `apps/frontend/src/auth/PasswordField.tsx#PasswordField` | support | Provides independently controllable password disclosure. |
+| S1/R4 | `apps/backend/app/middleware/browser_csrf_middleware.ts#async handle` | primary | Enforces browser CSRF validation before state-changing auth mutations. |
+| S1/R4 | `apps/backend/app/middleware/auth_request_boundary_middleware.ts#handle` | support | Rejects unsupported and declared-oversized auth request bodies before parsing. |
+| S1/R4 | `apps/backend/app/exceptions/handler.ts#async handle` | support | Normalizes unknown-length oversized request failures to the auth error contract. |
+
+#### Implementation Gaps
+
+- None.
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                                                                                               | Proves                                                                                                                                                                         | Status                    |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
-| S1/R1-S1, S1/R1-S2, S1/R1-S3, S1/R2-S1 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts`                                                                 | Client normalization, validation, duplicate presentation, and workspace transition.                                                                                            | Passing 2026-07-17        |
-| S1/R1-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                                                                                               | Server validation omits credentials and does not create an invalid account.                                                                                                    | Passing 2026-07-17        |
-| S1/R1-S1, S1/R1-S3, S1/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                                                                                   | Account normalization, hashing, uniqueness, and database-backed session state.                                                                                                 | Passing 2026-07-13        |
-| S1/R1-S1 through S1/R2-S1              | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Same-origin browser signup, HTTP-only cookie behavior, empty bearer storage, and workspace entry.                                                                              | Passing 2026-07-13        |
-| S1/R4-S1                               | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts`      | Missing and forged CSRF tokens do not create an account or authenticate the browser, and the client presents recovery guidance.                                                | Passing 2026-07-17        |
-| S1/R4-S2                               | `apps/backend/tests/functional/account_security.spec.ts`                                                                                               | Signup rejects unsupported content before parsing and applies one 16 KB contract to declared and streamed JSON payloads without allocating session state.                      | Passing 2026-07-17        |
-| S1/R4-S3                               | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts`      | Signup and CSRF limits reject excess attempts while the client preserves actionable recovery.                                                                                  | Passing 2026-07-17        |
-| S1/R2-S1                               | `apps/frontend/src/app/App.test.tsx`                                                                                                                   | Successful signup cancels an older anonymous session read before publishing the authenticated account.                                                                         | Passing 2026-07-14        |
-| S1/R1-S1, S1/R1-S3                     | `apps/backend/tests/database/users_email_normalization_migration.spec.ts` and `apps/backend/tests/unit/migration_database.spec.ts`                     | Existing historical schemas upgrade transactionally, preserve compatibility data, reject collisions without partial writes, and use a guarded disposable harness.              | Passing 2026-07-14        |
-| S1/R1-S1 through S1/R2-S1              | User-confirmed local walkthrough                                                                                                                       | Validation clarity, responsive layout, signup, and automatic workspace transition behave as intended.                                                                          | User confirmed 2026-07-14 |
-| S1/R3-S1, S1/R3-S2                     | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/SignUpPage.stories.tsx`                                                               | Persistent labels, validation association, pending stability, responsive composition, and Storybook accessibility.                                                             | Passing 2026-07-15        |
-| S1/R3-S1, S1/R3-S2                     | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Signup remains operable without horizontal overflow and keeps a representative 44 px mobile action target.                                                                     | Passing 2026-07-15        |
-| S1/R3-S1, S1/R3-S2                     | User-confirmed desktop/mobile UI walkthrough                                                                                                           | Current signup hierarchy, validation, pending presentation, focus, and responsive behavior are accepted.                                                                       | user confirmed 2026-07-15 |
-| S1/R3-S3                               | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/components/TextField/TextField.test.tsx`, and `apps/frontend/src/auth/SignUpPage.stories.tsx` | Password and confirmation disclosure remain independent while preserving values, autocomplete purpose, field identity, validation association, keyboard focus, and submission. | Passing 2026-07-17        |
-| S1/R3-S3                               | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Independent disclosure remains value-preserving and overflow-free through the real sign-up route at desktop and mobile widths.                                                  | Passing 2026-07-17        |
-| S1/R3-S1..R3-S3                       | `apps/frontend/src/components/Button/Button.test.tsx`, `apps/frontend/src/components/IconButton/IconButton.test.tsx`, `apps/frontend/src/components/TextField/TextField.test.tsx`, and `apps/frontend/src/components/Textarea/Textarea.test.tsx` | Shared account controls retain accessible names, labels, pending/disabled semantics, and validation association. | Passing 2026-07-17 |
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S1/R1-S1, S1/R2-S1 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S1/R1-S1 + R2-S1: valid signup creates a normalized account and session` | Normalized account creation establishes a database-backed web session. | Passing 2026-07-22 |
+| S1/R1-S1 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S1/R1-S1: signup persists only a password hash` | A saved account contains a hash rather than the submitted password. | Passing 2026-07-22 |
+| S1/R1-S2 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R1-S2: invalid signup identifies fields without echoing credentials` | Invalid signup reports safe field errors without persisting an account or echoing credentials. | Passing 2026-07-22 |
+| S1/R1-S3 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S1/R1-S3: a normalized duplicate email returns a safe conflict` | Normalized duplicate signup is rejected with the safe conflict contract. | Passing 2026-07-22 |
+| S1/R2-S1 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S1/R1-S1 + R2-S1 submits a normalized account and enters Worlds without bearer storage` | The browser publishes the account, enters Worlds, and retains no bearer token. | Passing 2026-07-22 |
+| S1/R3-S1, S1/R3-S2 | Deterministic Storybook preview `apps/frontend/src/auth/SignUpPage.stories.tsx` | Default, mobile, validation, and pending signup presentations remain available for component-state inspection. | Passing 2026-07-18 |
+| S1/R3-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S1/R3-S3 independently discloses signup passwords without changing their values or purpose` | Each disclosure control preserves its field value and purpose independently. | Passing 2026-07-22 |
+| S1/R4-S1 | Automated test `apps/backend/tests/functional/account_security.spec.ts#csrfMutationCases` | The signup mutation case verifies missing and forged CSRF tokens do not create an account or session. | Passing 2026-07-22 |
+| S1/R4-S2 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R4-S2 + S2/R4-S2: auth routes reject oversized JSON before session and CSRF processing` | Unsupported and oversized auth input fails before session mutation. | Passing 2026-07-22 |
+| S1/R4-S3 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R4-S3: repeated signup attempts are throttled before validation` | Rate limiting rejects excess signup attempts before validation. | Passing 2026-07-22 |
 
 #### Verification Gaps
 
-- `S1/R2-S2` passed in private production on 2026-07-18 through normal HTTPS signup, same-origin API traffic, browser confirmation of `Secure` and HTTP-only session attributes, and listener inspection proving tailnet-only HTTPS plus a loopback-only gateway.
+- `S1/R2-S2`: The accepted browser-session ADR explicitly defers reproducible production HTTPS proof of the `Secure` cookie and private listener topology. Historical walkthrough assertions are not current automated or operational evidence.
 
 #### Story Notes
 
@@ -206,10 +199,11 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 
 ### Story S2: Returning User Resumes Their Workspace
 
-Status: implemented
+Implementation: implemented
+Verification: partial
 Created: 2026-07-12
-Modified: 2026-07-18
-Last verified: 2026-07-17
+Modified: 2026-07-22
+Last verified: 2026-07-22
 
 As a returning user, I want Lorecraft to recognize or re-authenticate me, so that I can resume my private workspace without unnecessary friction.
 
@@ -219,11 +213,11 @@ As a returning user, I want Lorecraft to recognize or re-authenticate me, so tha
 
 The system SHALL establish a browser session for valid credentials and reject invalid credentials without revealing which credential was wrong.
 
-###### Scenario R1-S1: Valid Credentials
+###### Scenario R1-S1: Valid Credentials And Requested Route Resumption
 
 - WHEN a visitor submits an existing account email and its correct password
 - THEN the system establishes an authenticated session
-- AND the user sees the authenticated World workspace.
+- AND the client resumes the protected route, including its query and hash, that requested sign-in when one exists, otherwise opens the World workspace.
 
 ###### Scenario R1-S2: Invalid Credentials
 
@@ -243,15 +237,13 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 ###### Scenario R2-S2: Authenticated User Opens An Auth Route
 
 - WHEN an authenticated user opens the signup or sign-in route
-- THEN the client returns them to the authenticated World workspace.
+- THEN the client returns them to the requested protected route when present, otherwise the authenticated World workspace.
 
 ###### Scenario R2-S3: Public Auth Draft Survives Session Revalidation
 
-- WHEN an unauthenticated visitor partially completes signup or sign-in
-- AND returning window focus triggers background session revalidation
+- WHEN an unauthenticated visitor partially completes signup or sign-in and focus triggers background session revalidation
 - THEN the public form remains mounted while the session check is pending
-- AND the visitor's unfinished input remains available when the server still reports no authenticated session
-- AND a failed background check leaves the draft mounted with a non-destructive retry action.
+- AND its unfinished input remains available when the server remains unauthenticated or the check fails.
 
 ###### Scenario R2-S4: Restored Production Session Data
 
@@ -261,7 +253,7 @@ The system SHALL restore a valid existing session across page refreshes, keep au
 
 ##### Requirement R3: Focused Sign-In And Session Recovery
 
-The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with independently controllable password disclosure, actionable feedback, and visible keyboard focus.
+The system SHALL present sign-in and public session-refresh recovery as focused, responsive states with independent password disclosure, actionable feedback, and visible keyboard focus.
 
 ###### Scenario R3-S1: Sign-In At Supported Viewports
 
@@ -271,14 +263,13 @@ The system SHALL present sign-in and public session-refresh recovery as focused,
 ###### Scenario R3-S2: Background Session Check Fails
 
 - WHEN a background session check fails while an unfinished public form remains mounted
-- THEN a visually distinct but non-destructive recovery notice is presented
-- AND its retry action is keyboard and touch accessible without obscuring the form.
+- THEN a non-destructive recovery notice is presented
+- AND its retry action remains keyboard and touch accessible without obscuring the form.
 
 ###### Scenario R3-S3: Control Sign-In Password Disclosure
 
 - WHEN a visitor uses the disclosure action for Password
-- THEN the field changes between concealed and readable presentation without changing its value, focus, autocomplete purpose, validation association, or submission behavior
-- AND the action is operable by keyboard and touch with a clear accessible name for its current action.
+- THEN the field changes between concealed and readable presentation without changing its value, focus, autocomplete purpose, validation association, or submission behavior.
 
 ##### Requirement R4: Secure And Recoverable Sign-In Boundary
 
@@ -292,7 +283,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 ###### Scenario R4-S2: Sign-In Accepts Only Bounded Valid JSON
 
-- WHEN sign-in uses an unsupported content type, a JSON body larger than 16 KB, an unknown-length oversized stream, or malformed credential fields
+- WHEN sign-in uses unsupported content, JSON larger than 16 KB, an unknown-length oversized stream, or malformed credential fields
 - THEN the request is rejected before authentication or session mutation
 - AND validation identifies safe field corrections without echoing credentials.
 
@@ -310,52 +301,54 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 
 #### Implemented By
 
-| Path                                                                                                         | Role                                                                                                                      | Recheck Trigger                                               |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `apps/backend/app/controllers/sessions_controller.ts`                                                        | Verifies credentials, establishes the web session, and invalidates it on logout.                                          | Recheck when session behavior changes.                        |
-| `apps/backend/app/controllers/profile_controller.ts`                                                         | Returns the authenticated account for session restoration.                                                                | Recheck when account serialization changes.                   |
-| `apps/backend/config/auth.ts`                                                                                | Defines web sessions as the browser authentication guard while retaining future token capability.                         | Recheck when guards change.                                   |
-| `apps/frontend/src/auth/SignInPage.tsx`                                                                      | Presents generic credential errors and resumes the attempted protected route.                                             | Recheck when sign-in changes.                                 |
-| `apps/frontend/src/auth/PasswordField.tsx`, `apps/frontend/src/components/TextField/TextField.tsx`, `apps/frontend/src/components/IconButton/IconButton.tsx`, and `apps/frontend/src/components/Button/Button.tsx` | Provide app-owned labeled fields, password disclosure, and pending action behavior without changing credential semantics. | Recheck when account controls or disclosure behavior changes. |
-| `apps/frontend/src/auth/AuthProvider.tsx`                                                                    | Separates initial session loading from background revalidation through TanStack Query.                                    | Recheck when session restoration changes.                     |
-| `apps/frontend/src/app/AppRoutes.tsx`                                                                        | Protects private routes while preserving public auth forms during anonymous background checks.                            | Recheck when routing changes.                                 |
-| `apps/frontend/src/auth/SignInPage.stories.tsx` and `apps/frontend/src/auth/SessionStates.stories.tsx`       | Expose deterministic sign-in, session loading, failure, refresh, and recovery states.                                     | Recheck when account or session presentation changes.         |
-| `apps/backend/app/middleware/auth_request_boundary_middleware.ts`                                            | Rejects unsupported and declared-oversized login payloads before body parsing.                                            | Recheck when login request formats or limits change.          |
-| `apps/backend/app/exceptions/handler.ts`                                                                     | Normalizes unknown-length oversized auth streams to the auth 413 contract.                                                | Recheck when parser errors or auth limits change.             |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S2/R1 | `apps/backend/app/controllers/sessions_controller.ts#async store` | primary | Validates credentials, maps generic credential failure, and establishes the web session. |
+| S2/R1 | `apps/frontend/src/auth/SignInPage.tsx#SignInPage` | primary | Publishes the successful account and resumes `location.state.from` with pathname, query, and hash. |
+| S2/R2 | `apps/backend/app/controllers/profile_controller.ts#async show` | primary | Returns the authenticated account for a restorable browser session. |
+| S2/R2 | `apps/frontend/src/auth/AuthProvider.tsx#AuthProvider` | primary | Separates initial loading from background revalidation and clears account-owned caches when identity changes. |
+| S2/R2 | `apps/frontend/src/app/AppRoutes.tsx#function PublicOnlyRoute` | support | Redirects an authenticated visitor away from auth routes to a requested protected destination or Worlds. |
+| S2/R3 | `apps/frontend/src/auth/SignInPage.tsx#SignInPage` | primary | Presents generic credential, validation, throttle, and CSRF recovery states. |
+| S2/R3 | `apps/frontend/src/auth/PasswordField.tsx#PasswordField` | support | Provides the sign-in password disclosure control. |
+| S2/R4 | `apps/backend/app/middleware/browser_csrf_middleware.ts#async handle` | primary | Enforces CSRF protection for state-changing sign-in. |
+| S2/R4 | `apps/backend/app/middleware/auth_request_boundary_middleware.ts#handle` | support | Applies content-type and pre-parse body-size limits. |
+
+#### Implementation Gaps
+
+- None.
 
 #### Verified By
 
-| Requirement / Scenario                 | Evidence                                                                                                                                               | Proves                                                                                                                                                        | Status                    |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1, S2/R2-S2 | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts`                                                                 | Sign-in success, generic credential error presentation, session restoration, and auth-route redirection.                                                      | Passing 2026-07-17        |
-| S2/R1-S1, S2/R1-S2, S2/R2-S1           | `apps/backend/tests/functional/account_auth.spec.ts`                                                                                                   | Generic credential failure and database-backed session behavior.                                                                                              | Passing 2026-07-13        |
-| S2/R1-S1 through S2/R2-S2              | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Same-origin return login, generic unknown/wrong-password errors, refresh, and auth-route bypass.                                                              | Passing 2026-07-13        |
-| S2/R4-S1                               | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts`      | Missing and forged CSRF tokens do not change session ownership, and the client presents recovery guidance.                                                    | Passing 2026-07-17        |
-| S2/R4-S2                               | `apps/backend/tests/functional/account_security.spec.ts` and `apps/frontend/src/app/App.test.tsx`                                                      | Login rejects unsupported or oversized JSON before session mutation and presents field-safe validation for malformed credentials.                             | Passing 2026-07-17        |
-| S2/R4-S3                               | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts`      | Login and CSRF limits isolate clients while the UI presents generic recovery without credential disclosure.                                                   | Passing 2026-07-17        |
-| S2/R2-S3                               | `apps/frontend/src/app/App.test.tsx`                                                                                                                   | Real window focus keeps signup and sign-in drafts mounted during pending, successful, and failed anonymous revalidation and exposes retry without remounting. | Passing 2026-07-14        |
-| S2/R1-S1                               | `apps/frontend/src/app/App.test.tsx`                                                                                                                   | Successful sign-in cancels an older anonymous session read before publishing the authenticated account.                                                       | Passing 2026-07-14        |
-| S2/R1-S1 through S2/R2-S3              | User-confirmed local walkthrough                                                                                                                       | Sign-in, refresh, focus revalidation, draft preservation, and recovery behavior work as intended.                                                             | User confirmed 2026-07-14 |
-| S2/R3-S1, S2/R3-S2                     | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/auth/SignInPage.stories.tsx`, and `apps/frontend/src/auth/SessionStates.stories.tsx`          | Responsive sign-in, pending/error states, non-destructive refresh recovery, focus restoration without ID dependence, and Storybook accessibility.             | Passing 2026-07-15        |
-| S2/R3-S1, S2/R3-S2                     | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Sign-in remains operable without horizontal overflow and keeps a representative 44 px mobile action target.                                                   | Passing 2026-07-15        |
-| S2/R3-S1, S2/R3-S2                     | User-confirmed desktop/mobile UI walkthrough                                                                                                           | Current sign-in and background session-recovery presentation are accepted.                                                                                    | user confirmed 2026-07-15 |
-| S2/R3-S3                               | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/components/TextField/TextField.test.tsx`, and `apps/frontend/src/auth/SignInPage.stories.tsx` | Sign-in disclosure preserves the submitted password, autocomplete purpose, field identity, validation association, and keyboard focus.                        | Passing 2026-07-17        |
-| S2/R3-S3                               | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                          | Sign-in disclosure preserves the entered password and remains overflow-free through the real route at desktop and mobile widths.                              | Passing 2026-07-17        |
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S2/R1-S1 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S2/R1-S1 + R2-S1: valid credentials establish a restorable web session` | Valid credentials establish a persisted web session that profile restoration can read. | Passing 2026-07-22 |
+| S2/R1-S1 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R1-S1 returns sign-in to the protected route that requested authentication` | Sign-in resumes the protected destination including its query and hash. | Passing 2026-07-22 |
+| S2/R1-S2 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S2/R1-S2: unknown email and wrong password return the same generic error` | Unknown email and wrong password share the generic credential failure contract. | Passing 2026-07-22 |
+| S2/R2-S1 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R2-S1 restores a valid session when the workspace loads` | Restored account state returns an authenticated user to Worlds. | Passing 2026-07-22 |
+| S2/R2-S2 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R2-S2 returns an authenticated account from auth routes to Worlds` | An authenticated visitor opening an auth route is redirected to their authenticated workspace. | Passing 2026-07-22 |
+| S2/R2-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R2-S3 preserves an unfinished %s draft during anonymous focus revalidation` | Auth drafts remain mounted while anonymous focus revalidation completes. | Passing 2026-07-22 |
+| S2/R3-S1, S2/R3-S2 | Deterministic Storybook preview `apps/frontend/src/auth/SignInPage.stories.tsx` and `apps/frontend/src/auth/SessionStates.stories.tsx` | Sign-in, loading, failure, refresh, and recovery states are available for direct component-state inspection. | Passing 2026-07-18 |
+| S2/R3-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R3-S3 discloses the sign-in password without changing submission` | Disclosure preserves the submitted password and control behavior. | Passing 2026-07-22 |
+| S2/R4-S1 | Automated test `apps/backend/tests/functional/account_security.spec.ts#csrfMutationCases` | The login mutation case verifies missing and invalid CSRF tokens do not alter sign-in session ownership. | Passing 2026-07-22 |
+| S2/R4-S2 | Automated test `apps/frontend/src/auth/tuyauAuthApi.test.ts#LC-001/S2/R4-S2 translates server sign-in validation into field guidance` | Safe server validation errors are translated to affected sign-in fields. | Passing 2026-07-22 |
+| S2/R4-S3 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S2/R4-S3: repeated login attempts are throttled per forwarded client` | Login attempts are rate limited per forwarded client. | Passing 2026-07-22 |
 
 #### Verification Gaps
 
-- `S2/R2-S4` and `S2/R4-S4` have private-production sign-in/session/CSRF and HTTPS cookie proof plus isolated restored account/session rows and current-image readiness. Fresh credential submission against a separately exposed restored UI is an accepted closeout gap.
+- `S2/R2-S4`: No current reproducible, isolated recovery-target browser test proves restored production data can sign in and refresh safely.
+- `S2/R4-S4`: The accepted browser-session ADR defers production HTTPS `Secure` cookie proof; local source and automated tests do not substitute for it.
 
 #### Story Notes
 
-- Successful signup and sign-in cancel older session reads before publishing the authenticated account, so a late anonymous focus response cannot overwrite the completed mutation.
+- Successful signup and sign-in cancel older session reads before publishing the authenticated account, preventing a late anonymous response from overwriting the completed mutation.
 
 ### Story S3: User Controls Protected Workspace Access
 
-Status: implemented
+Implementation: implemented
+Verification: partial
 Created: 2026-07-12
-Modified: 2026-07-18
-Last verified: 2026-07-17
+Modified: 2026-07-22
+Last verified: 2026-07-22
 
 As an account holder, I want my workspace protected and my session terminable, so that only I can access my private Lorecraft data.
 
@@ -378,10 +371,8 @@ The system SHALL deny unauthenticated access to both the workspace UI and protec
 
 ###### Scenario R1-S3: Open Workspace Session Ends
 
-- WHEN an authenticated user leaves the workspace open and the server session later expires or is revoked elsewhere
-- AND the user returns focus to the workspace
-- THEN the client revalidates the session
-- AND the workspace returns to sign-in without continuing to render private account state
+- WHEN an authenticated user leaves the workspace open, the server session expires or is revoked, and the user returns focus
+- THEN the client revalidates the session and returns to sign-in without continuing to render private state
 - AND keyboard focus moves to sign-in, or returns to the previously focused workspace control when the session remains valid.
 
 ###### Scenario R1-S4: Protected Request Detects Session Loss
@@ -430,91 +421,75 @@ The system SHALL identify each account or workspace destination through its docu
 ###### Scenario R3-S2: Background Refresh Preserves Focus
 
 - WHEN session or route data refreshes without changing the current destination
-- THEN the document title remains accurate
-- AND the currently focused control or reading position is not displaced.
+- THEN the document title remains stable
+- AND focus the user selected is not replaced by automatic route focus.
 
 #### Implemented By
 
-| Path                                                                                                                                                  | Role                                                                                                   | Recheck Trigger                                          |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| `apps/backend/start/routes.ts`                                                                                                                        | Applies the web guard to protected account, World, and Adventure routes.                               | Recheck when API routes or guards change.                |
-| `apps/backend/config/shield.ts`                                                                                                                       | Enforces CSRF protection and exposes the XSRF cookie.                                                  | Recheck when browser security changes.                   |
-| `apps/backend/config/cors.ts`                                                                                                                         | Restricts credentialed browser requests to the configured frontend origin.                             | Recheck when deployment origins change.                  |
-| `apps/backend/database/migrations/1768620764697_create_sessions_table.ts`                                                                             | Defines durable server-side session storage.                                                           | Recheck when session persistence changes.                |
-| `apps/frontend/src/app/AppRoutes.tsx`                                                                                                                 | Prevents anonymous private-content rendering and moves route context to the destination heading without displacing focus the user selects while data is loading. | Recheck when protected routing or route presentation changes. |
-| `apps/frontend/src/auth/AuthProvider.tsx`                                                                                                             | Revalidates the server session whenever an open workspace regains focus.                               | Recheck when session query behavior changes.             |
-| `apps/frontend/src/auth/authContext.ts`                                                                                                               | Exposes the shared session-ending boundary used by protected feature routes.                           | Recheck when account-owned client session state changes. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`, `apps/frontend/src/worlds/WorldDetailPage.tsx`, and `apps/frontend/src/adventures/AdventurePage.tsx` | End shared client session state when protected World or Adventure requests report authentication loss. | Recheck when protected feature error handling changes.   |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                                                                                                       | Presents account identity and logout within the protected workspace.                                   | Recheck when workspace behavior changes.                 |
-| `apps/frontend/vite.config.ts`                                                                                                                        | Keeps browser API traffic on the same origin through the development proxy.                            | Recheck when browser/API deployment topology changes.    |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S3/R1 | `apps/frontend/src/app/AppRoutes.tsx#ProtectedRoute` | primary | Suppresses protected content until restoration completes and redirects anonymous sessions to sign-in with the requested location. |
+| S3/R1 | `apps/backend/app/middleware/auth_middleware.ts#async handle` | primary | Requires authenticated browser state on protected API routes. |
+| S3/R1 | `apps/backend/app/middleware/require_session_cookie_middleware.ts#async handle` | support | Rejects protected browser requests without the session cookie. |
+| S3/R1-S3 | `apps/frontend/src/auth/AuthProvider.tsx#AuthProvider` | primary | Revalidates on focus and clears the account-owned cache when the session changes. |
+| S3/R1-S4 | `apps/frontend/src/worlds/WorldDetailPage.tsx#WorldDetailPage` | primary | Ends shared session when protected World detail requests are unauthorized. |
+| S3/R1-S4 | `apps/frontend/src/adventures/NewAdventurePage.tsx#NewAdventurePage` | primary | Ends shared session when setup World loading or Adventure creation is unauthorized. |
+| S3/R1-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Ends shared session when Adventure reads or NPC autosave are unauthorized. |
+| S3/R2 | `apps/backend/app/controllers/sessions_controller.ts#async destroy` | primary | Invalidates the active server-side web session. |
+| S3/R2 | `apps/frontend/src/workspace/WorkspacePage.tsx#WorkspacePage` | primary | Invokes sign-out and returns the client to the public sign-in path. |
+| S3/R3 | `apps/frontend/src/app/AppRoutes.tsx#RoutePresentation` | primary | Sets destination title and heading focus without stealing deliberate focus during non-route updates. |
+
+#### Implementation Gaps
+
+- None.
 
 #### Verified By
 
-| Requirement / Scenario       | Evidence                                                                                                                                          | Proves                                                                                                                                                          | Status                    |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| S3/R1-S1, S3/R2-S1           | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/tuyauAuthApi.test.ts`                                                            | Deferred-session observation proves no private-content flash and successful logout returns to sign-in.                                                          | Passing 2026-07-17        |
-| S3/R1-S2                     | `apps/backend/tests/functional/account_security.spec.ts`                                                                                          | Anonymous API denial, no persisted session allocation for safe anonymous reads, and untrusted-origin rejection.                                                 | Passing 2026-07-13        |
-| S3/R2-S1                     | `apps/backend/tests/functional/account_auth.spec.ts`                                                                                              | Logout removes authentication from the active database-backed test session.                                                                                     | Passing 2026-07-13        |
-| S3/R1-S2, S3/R2-S1, S3/R2-S2 | `apps/frontend/e2e/account-workspace.spec.ts`                                                                                                     | Same-origin anonymous API denial, protected workspace, logout, and invalidated-cookie replay.                                                                   | Passing 2026-07-13        |
-| S3/R1-S3                     | `apps/frontend/src/app/App.test.tsx` and `apps/frontend/src/auth/SessionStates.stories.tsx`                                                       | Focus revalidation suppresses private UI, restores controls with or without IDs, focuses sign-in or retry after failure, and exposes accessible session states. | Passing 2026-07-15        |
-| S3/R1-S4                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx`                                       | Catalog, World-detail, and Adventure-detail authentication failures end shared session state and return to sign-in.                                             | Passing 2026-07-17        |
-| S3/R2-S3                     | `apps/backend/tests/functional/account_security.spec.ts`, `apps/frontend/src/app/App.test.tsx`, and `apps/frontend/src/auth/tuyauAuthApi.test.ts` | CSRF and throttle failures preserve the authenticated session while presenting actionable recovery.                                                             | Passing 2026-07-17        |
-| S3/R1-S1 through S3/R2-S2    | User-confirmed local walkthrough                                                                                                                  | Protected transitions, session restoration, and logout behaved as intended.                                                                                     | user confirmed 2026-07-14 |
-| S3/R1-S3, S3/R2-S1           | User-confirmed desktop/mobile UI walkthrough                                                                                                      | Current protected-session recovery and sign-out presentation are accepted.                                                                                      | user confirmed 2026-07-15 |
-| S3/R3-S1 and S3/R3-S2        | `apps/frontend/src/app/RoutePresentation.test.tsx`                                                                                                | Account/workspace destinations receive stable titles and heading focus on navigation while preserving focus the user selects before delayed route data appears.  | Passing 2026-07-18        |
-| S3/R1-S2 supporting same-origin boundary | `apps/frontend/vite.config.test.ts`                                                                                                      | The development browser/API proxy remains same-origin and pinned to the reserved backend target.                                                                 | Passing 2026-07-18        |
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S3/R1-S1 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S3/R1-S1 redirects an anonymous workspace visit without rendering private content` | Anonymous navigation redirects before private workspace content renders. | Passing 2026-07-22 |
+| S3/R1-S2 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S3/R1-S2: an anonymous protected API request returns no account data` | An anonymous protected request returns denial without account data. | Passing 2026-07-22 |
+| S3/R1-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S3/R1-S3 returns an open workspace to sign in when its session ends` | Focus revalidation clears protected state and routes the browser to sign-in after session loss. | Passing 2026-07-22 |
+| S3/R1-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-001/S3/R1-S4 ends the shared session when World detail reports unauthorized` | An unauthorized World-detail request ends the shared session. | Passing 2026-07-22 |
+| S3/R1-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-001/S3/R1-S4 ends the shared session when New Adventure setup World load reports unauthorized` | An unauthorized New Adventure setup World load returns the browser to sign-in. | Passing 2026-07-22 |
+| S3/R1-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-001/S3/R1-S4 ends the shared session when New Adventure creation reports unauthorized` | An unauthorized New Adventure creation returns the browser to sign-in. | Passing 2026-07-22 |
+| S3/R2-S1 | Automated test `apps/backend/tests/functional/account_auth.spec.ts#LC-001/S3/R2-S1: logout removes authentication from the persisted browser session` | Logout clears the active persisted browser session. | Passing 2026-07-22 |
+| S3/R2-S2 | Automated E2E `apps/frontend/e2e/account-workspace.spec.ts#LC-001 completes the account and protected workspace journey` | The browser cannot reuse a captured session after sign-out. | Historical passing 2026-07-13 |
+| S3/R2-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S3/R2-S3 gives actionable recovery guidance when sign-out is throttled` | Rate-limited sign-out preserves protected context and gives actionable recovery. | Passing 2026-07-22 |
+| S3/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3/R3-S1 sets the title and focuses the destination heading` | A destination sets its title and focuses the primary heading. | Passing 2026-07-22 |
+| S3/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3/R3-S1 applies after an authenticated redirect` | Authenticated redirect applies the Worlds title and heading focus. | Passing 2026-07-22 |
+| S3/R3-S2 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3/R3-S2 preserves focus chosen while a destination is loading` | Deliberately chosen focus survives a delayed destination data transition. | Passing 2026-07-22 |
 
 #### Verification Gaps
 
-- `S3/R1-S5` passed on 2026-07-18: Tailscale Serve exposed private HTTPS, Docker published only the gateway on host loopback, API/worker remained unpublished, and LAN listener probes failed as intended.
+- `S3/R1-S5`: No current reproducible private-deployment evidence proves same-origin HTTPS traffic and unavailable LAN/public listeners. The accepted session ADR continues to require production `Secure` cookie verification before deployment.
 
 #### Story Notes
 
-- Background session revalidation preserves public auth forms but continues to suppress protected workspace content until the server session is confirmed.
-- World-catalog content and empty-state behavior are owned and verified by `LC-002/S1`.
+- Background session revalidation preserves public auth forms but suppresses protected workspace content until the server session is confirmed.
+- World-catalog content and empty-state behavior are owned by `LC-002/S1`.
 
 ## Cross-Story Concerns
 
-- AdonisJS is authoritative for validation, authentication, authorization, and session state.
-- The browser uses HTTP-only session cookies with CSRF protection and does not store bearer tokens.
-- PostgreSQL migrations and integration tests must use explicitly acknowledged, identifiable disposable databases or schemas, require explicit host/database components and the application target for comparison, reject equivalent application targets after host/schema normalization, neutralize inherited PostgreSQL connection overrides, and never bypass production migration protection. Schema-isolated Neon runs use a direct endpoint and PostgreSQL `options=-csearch_path=...`.
-- Public auth and CSRF bootstrap routes are rate-limited in-process; a shared ingress or distributed limit remains a deployment requirement before horizontal scaling.
-- Signup and login accept only JSON; unsupported and declared-oversized requests fail before parsing, while unknown-length streams use the same parser limit and normalized 413 contract. Multipart auto-processing remains disabled until an explicit upload route is designed.
-- Browser API traffic stays on the frontend origin and reaches AdonisJS through the `/api` proxy; split-host browser deployment is not supported by this session/CSRF contract.
-- The React client consumes the typed Tuyau contract while keeping presentation and form state client-specific.
-
-### Cross-Story Implementation And Evidence
-
-| Path / Evidence                                                                                | Role / Proof                                                                                                                                                                                                        |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/backend/scripts/database-safety.mjs`                                                     | Centralizes acknowledgement, explicit target components, effective application-target comparison, disposable identifiers, PostgreSQL host/schema normalization, selector rejection, and guarded child environments. |
-| `apps/backend/scripts/run-tests.mjs` and `run-migrations.mjs`                                  | Enforce the disposable-target boundary and neutralize inherited PostgreSQL overrides before backend tests or migrations execute.                                                                                    |
-| `apps/frontend/playwright.config.ts`                                                           | Applies the same database guard and sanitized backend environment before Playwright starts isolated services.                                                                                                       |
-| `apps/backend/scripts/database-safety.test.mjs`                                                | Proves target-component, acknowledgement, effective same-target, selector, environment-override, loopback/Neon normalization, schema casing, valid-target, and child-environment behavior.                          |
-| `apps/backend/tests/helpers/migration_database.ts` and `tests/unit/migration_database.spec.ts` | Guard per-test PostgreSQL schemas before any write and prove cleanup across setup and callback failures.                                                                                                            |
-| `apps/backend/tests/functional/account_security.spec.ts`                                       | Proves exact missing/forged CSRF rejection and unchanged account/session state for signup, login, and logout.                                                                                                       |
-| `apps/frontend/src/styles/fonts.css`, `styles/tokens.css`, and `main.tsx`                      | Load the bundled type system and shared semantic presentation foundation used across account and workspace routes.                                                                                                  |
-| `apps/frontend/.storybook/preview.tsx`                                                         | Applies the same shared foundation to deterministic component-state and accessibility evidence.                                                                                                                     |
-
-### Cross-Story Verification Gaps
-
-- Dedicated Lorecraft production, development, disposable validation, and isolated recovery targets are provisioned and verified.
-- Private HTTPS signup/sign-in, `Secure` and HTTP-only cookie behavior, same-origin production `/api`, and private-only reachability passed. Isolated restore preserved account/session/content state and current-image readiness; only fresh credential submission against a separately exposed restored UI remains an accepted gap.
+- AdonisJS remains authoritative for validation, authentication, authorization, and session state.
+- Browser API traffic stays on the frontend origin and reaches AdonisJS through `/api`; split-host browser deployment is not supported by the current session/CSRF boundary.
+- Public auth and CSRF bootstrap routes are rate limited in-process; a shared ingress or distributed limit is required before horizontal scaling.
+- PostgreSQL migration tests require an explicitly acknowledged, identifiable disposable target. A guard refusing an unacknowledged target proves that guard, not a production migration or recovery flow.
 
 ## Open Decisions
 
-- None blocking implementation. Exact password-policy tuning may evolve without introducing account types or changing the account journey.
+- No blocking product decision. Production/private HTTPS and recovery validation require a deliberately provisioned operational environment rather than inferred local proof.
 
 ## Completion Criteria
 
 This Epic is healthy when:
 
-- All three Stories match running account and workspace behavior.
-- Every Scenario has focused automated or explicit gap evidence.
-- Implementation and verification maps identify the current backend, client, migration, and test starting points.
-- Manual UI confirmation covers the complete browser journey.
-- Related change artifacts, ADRs, README, and release communication do not contradict this Epic.
+- Embedded Stories and their implementation/verification states match the running account boundary.
+- Every implemented Requirement has a concrete primary governing anchor.
+- Every Scenario has focused evidence or an explicit current verification gap.
+- Local account/session behavior remains covered by backend and frontend tests, while production/recovery assertions are proved through reproducible operational records before their gaps are removed.
+- Related changes, ADRs, and support documentation do not contradict this Epic.
 
 ## Notes
 
-- The closed account-workspace Change accepted the account and session capability. LC-002 owns review and manual confirmation for the later World-catalog presentation.
+- The closed account-workspace Change accepted the account/session capability. Later World and Adventure feature behavior remains owned by `LC-002` and `LC-003`.

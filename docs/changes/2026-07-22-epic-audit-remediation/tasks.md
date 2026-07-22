@@ -5,8 +5,8 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: added LC-001 New Adventure session-loss coverage and corrected the first LC-003 scenario-label/owner-map set.
-- Next action: finish LC-001 v2 normalization, then complete the LC-003 evidence/manual-status and closed-artifact reconciliation.
+- Last completed action: normalized LC-001 to `sdd-epic-v2` and verified requested-route, New Adventure session-loss, and route-context evidence.
+- Next action: complete the remaining LC-003 evidence/manual-status and closed-artifact reconciliation, then run self-check/reverse traceability.
 - Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
 - Expected dirty files: this Change's implementation/tests/artifacts plus the three pre-existing untracked Epic audit reports, which remain inputs for the later reconciliation phase.
 - Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. Backend functional tests require an explicitly acknowledged disposable `TEST_DATABASE_URL`; the local guard refused writes without it on 2026-07-22.
@@ -27,8 +27,8 @@ status: in_progress
 
 ### 2. Epic Artifacts
 
-- [ ] 2.1 Normalize LC-001 completely to `sdd-epic-v2`, including independent states, requirement-level primary anchors, exact evidence types, and current gaps.
-- [ ] 2.2 Reconcile LC-001/S2 requested-route resumption and S3 New Adventure/route-presentation maps.
+- [x] 2.1 Normalize LC-001 completely to `sdd-epic-v2`, including independent states, requirement-level primary anchors, exact evidence types, and current gaps.
+- [x] 2.2 Reconcile LC-001/S2 requested-route resumption and S3 New Adventure/route-presentation maps.
 - [ ] 2.3 Reconcile LC-002/S2/S3 and LC-003/S1-S3 evidence, forward maps, status/manual claims, and related ADR/closed-Change paths.
 - [ ] 2.4 Update all active-Epic `Implemented By`, `Verified By`, and gaps only from inspected current code/proof; rerun validation and reverse inventory.
 
@@ -60,6 +60,7 @@ status: in_progress
 | 2026-07-22 | Planning | `sdd-change --plan` | LC-001, LC-002, LC-003 audit findings | planned | not applicable |
 | 2026-07-22 | LC-002/S3/R1-S2, R2-S2, R6-S2 | `sdd-apply`; risk closure and rendered-route recovery test | Character service/controller, adapter, editor, focused tests, LC-002 Epic | Added fielded author-owned validation errors; retained 401/404 non-disclosure; fixed rejected-editor mutation rejection; backend functional run awaits a safe database target | `3096172` |
 | 2026-07-22 | LC-001/S3/R1-S4 and LC-003 label/ownership reconciliation | `sdd-apply`; focused route evidence | New Adventure route tests, route-presentation titles, LC-003 stale labels and source/ADR paths | Both New Adventure 401 boundaries end the shared session; exact test labels and LC-003 owner maps corrected | `4e3ce8f` |
+| 2026-07-22 | LC-001/S1-S3 | `sdd-epic-v2` normalization | LC-001 Epic and audit report | Independent implementation/verification states, requirement anchors, exact evidence, requested-route behavior, and honest operational gaps reconciled | commit pending |
 
 ## Verification Ledger
 
@@ -69,6 +70,8 @@ status: in_progress
 | 2026-07-22 | LC-001 focused frontend + Storybook suites | focused automated / component state | Account/session and route evidence baseline | 96 frontend, 84 Storybook assertions passed |
 | 2026-07-22 | `npm run test --workspace @lorecraft/frontend -- WorldRoutes.test.tsx tuyauWorldApi.test.ts` | focused automated / rendered route | LC-002 fielded adapter mapping, inline error association, stable draft, and no unhandled rejection | 34 passed |
 | 2026-07-22 | `npm run test --workspace @lorecraft/frontend -- AdventureRoutes.test.tsx RoutePresentation.test.tsx creationRequestId.test.ts` | focused automated route/UI | New Adventure World-load/create 401 session loss; LC-001 route context and LC-003 UUID fallback labels | 23 passed |
+| 2026-07-22 | `npm run test --workspace @lorecraft/frontend -- App.test.tsx AdventureRoutes.test.tsx RoutePresentation.test.tsx` | focused automated route/UI | LC-001 requested protected-route resumption, session loss, and route title/focus evidence | 59 passed |
+| 2026-07-22 | `sdd validate lorecraft --epic LC-001 --repo …/lorecraft --workspace /Users/taylor --json` | structural Epic validation | LC-001 v2 schema and traceability shape | passed: 0 errors; one accepted `LARGE_STORY_SCOPE` warning for S2's 4 requirements / 13 scenarios |
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend` and backend/frontend typechecks | supporting static gates | Character service/controller and editor compile/lint cleanly | passed |
 | 2026-07-22 | `npm run verify:contracts` | generated contract | Controller response-shape change does not leave generated Tuyau artifacts dirty | passed |
 | 2026-07-22 | `npm run test --workspace @lorecraft/backend -- tests/functional/world_character_authoring.spec.ts` | guarded environment check | Database safety suite runs; functional assertions do not run without an acknowledged disposable target | blocked safely: `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` absent |
