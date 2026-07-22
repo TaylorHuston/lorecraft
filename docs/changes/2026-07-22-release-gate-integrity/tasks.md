@@ -1,0 +1,277 @@
+---
+status: in_progress
+---
+# Tasks: Restore Release Gate Integrity
+
+## Resume Here
+
+- Last completed action: promoted, validated, and transitioned the Change to `in_progress`; completed contract-first failure classification.
+- Next action: implement and prove LC-001 limiter isolation and the restored ten-request functional generation boundary.
+- Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
+- Expected dirty files: `docs/changes/2026-07-22-release-gate-integrity/`
+- Known blockers: none
+
+## Task Checklist
+
+### 1. Planning Quality
+
+- [x] 1.1 Confirm scope: twelve backend release failures plus the missing aggregate local gate.
+- [x] 1.2 Confirm existing Epic ownership: LC-001/S1-S2, LC-002/S3, and LC-003/S1-S3; no new Epic or Story.
+- [x] 1.3 Preserve accepted owner-only complete debug-card disclosure while keeping cross-owner, Guide, narration, model-evidence, and log privacy boundaries distinct.
+- [x] 1.4 Compare symptom patching, contract-first remediation, and remote-CI-only enforcement; select contract-first remediation plus a fresh local gate.
+- [x] 1.5 Record no-UI/no-new-capability boundaries and the replan trigger for any product-contract conflict.
+- [x] 1.6 Seed risks, decision fan-out, state transitions, command parity, and verification environment obligations.
+- [x] 1.7 Run scoped `sdd validate`, resolve findings, and set `status: planned`.
+
+### 2. Failure Classification And Evidence Baseline
+
+- [x] 2.1 Create a twelve-row root-cause ledger in this Change before modifying code or assertions. For every row, record isolated reproduction, aggregate reproduction, accepted Epic Scenario, owning boundary, classification, and intended remedy.
+- [x] 2.2 Classify each row as one of: implementation regression, stale test/evidence, test-isolation defect, migration-fixture incompatibility, or blocking product contradiction.
+- [ ] 2.3 Reproduce the implicated suites on a freshly migrated guarded disposable database with cache bypass; record commands and actual discovered test counts.
+- [ ] 2.4 When aggregate-only behavior is suspected, run the affected suite alone and after its likely state-producing predecessor; prove the order dependency before resetting state.
+- [ ] 2.5 If any row contradicts current accepted Epic behavior, stop implementation and run `/sdd-change --replan` rather than choosing product behavior locally.
+
+#### Initial Failure Inventory
+
+| # | Current failure | Expected owning contract | Initial hypothesis; must be proved |
+|---|---|---|---|
+| 1 | `frozen_world_source_migration.spec.ts` concurrent publication reads missing `initial_mood` | LC-003/S1/R2-S1 | Current publication code is running against an intentionally older migration fixture schema. |
+| 2 | `adventure_api.spec.ts` minimized projection contains `He knows who rang the bell.` | LC-003/S1/R4-S1 and LC-003/S3/R1-S1 | Older minimization assertion conflicts with accepted owner-only complete debug cards; non-owner privacy still requires proof. |
+| 3 | `adventure_api.spec.ts` generation burst limit returns 409 instead of expected 429 | LC-003/S1/R3-S5 | State/action ordering or limiter accounting prevents the final request from reaching the expected quota boundary. |
+| 4 | `adventure_query_service.spec.ts` frozen Adventure projection mismatch | LC-003/S1/R2-S2 and R4-S1 | Projection expectation drift after complete NPC-card/current-state work. |
+| 5 | `adventure_turn_worker.spec.ts` short reflected Guide rejection fails | LC-003/S2/R1-S3 and R3-S5 | Genuine private narration guard regression or incomplete short-value rule. |
+| 6 | `adventure_turn_worker.spec.ts` expired claim/retry/discard fails | LC-003/S2/R2-S2 and R2-S5 | Claim lifecycle state or aggregate fixture interference violates recovery invariants. |
+| 7 | `adventure_turn_worker.spec.ts` stale-head/throwing-commit atomicity fails | LC-003/S2/R2-S4 and R2-S6 | Genuine stale/transaction rollback regression or leaked test state. |
+| 8 | `world_character_authoring.spec.ts` valid create gets 429 | LC-002/S3/R1-S1, R2-S1, R5-S1 | Process-global request limiter state leaks into unrelated functional tests. |
+| 9 | `world_character_authoring.spec.ts` valid edit gets 429 | LC-002/S3/R3-S1 and R5-S1 | Same shared limiter hypothesis. |
+| 10 | `world_character_authoring.spec.ts` valid delete gets 429 | LC-002/S3/R4-S1 and R5-S1 | Same shared limiter hypothesis. |
+| 11 | `world_character_authoring.spec.ts` authorization/validation path gets 429 | LC-002/S3/R1-S2 and R2-S2 | Same shared limiter hypothesis, with security semantics preserved. |
+| 12 | `world_version_publication.spec.ts` expects blank initial state but gets fallback prose | LC-003/S1/R2-S1 and LC-002/S3/R5 | Test/default serialization drift; accepted current fallback semantics must be located and made consistent. |
+
+#### Classified Failure Ledger
+
+| # | Reproduction / Aggregate Evidence | Accepted Scenario | Owner | Classification | Remedy |
+|---|---|---|---|---|---|
+| 1 | Isolated historical fixture installs through `1784233200000`; current publisher selects later `initial_*` fields. | LC-003/S1/R2-S1 | migration fixture | migration-fixture incompatibility | Keep exact historical migration proof; move publisher concurrency proof to a schema composed through `1784416800000`. |
+| 2 | Owner API intentionally returns current-scene card `privateKnowledge`; prior minimization assertion fails. | LC-003/S1/R4-S1, LC-003/S3/R1-S1 | owner projection test | stale test/evidence | Assert complete owner-debug card; retain non-owner, model-evidence, and frozen-source privacy assertions. |
+| 3 | Test-only limiter capacity is 100, so the expected eleventh request reaches busy-controller conflict and receives 409. | LC-003/S1/R3-S5 | limiter configuration/test | implementation regression | Restore ten-request functional quota; preserve a narrowly documented E2E-only capacity fixture if browser flow requires more requests. |
+| 4 | `AdventureQueryService#findForOwner` deliberately projects complete frozen/current card data; minimized DTO expectation fails. | LC-003/S1/R2-S2, R4-S1; LC-003/S3/R1 | query-service test | stale test/evidence | Update the authorized owner DTO expectation while preserving filtering/isolation assertions. |
+| 5 | Short Guide `OK` is exempted by the `<12` reflection filter and reaches extraction. | LC-003/S2/R1-S3, R3-S5 | `turn_prompt` | implementation regression | Remove short-value exemption; prove normalized direct match rejects without publication and ordinary prose remains allowed. |
+| 6 | Retry changes uncommitted failed work to pending; discard only accepts failed and returns 409. | LC-003/S2/R2-S2, R2-S5 | turn submission lifecycle | implementation regression | Permit owner discard of uncommitted pending work; retain refusal for processing and committed work. |
+| 7 | Stale head returns `stale` while leaving the claimed job/turn processing; retry then cannot reclaim it. Throwing staged commit rolls back but first attempt correctly schedules retry. | LC-003/S2/R2-S4, R2-S6 | turn worker/lifecycle test | mixed: implementation regression + stale test/evidence | Terminally fail stale exact claims without publishing; change injected-throw expectation to retry-first then terminal-failure proof. |
+| 8 | Earlier functional signup traffic consumes shared default-IP in-memory quota before valid Character create. | LC-002/S3/R1-S1, R2-S1, R5-S1 | functional test lifecycle | test-isolation defect | Clear in-memory limiter before every functional test; retain same-test exhaustion proof. |
+| 9 | Same suite-order leak before valid Character edit. | LC-002/S3/R3-S1, R5-S1 | functional test lifecycle | test-isolation defect | Same lifecycle reset; prove mutation traffic is not cross-charged. |
+| 10 | Same suite-order leak before valid Character delete. | LC-002/S3/R4-S1, R5-S1 | functional test lifecycle | test-isolation defect | Same lifecycle reset; prove mutation traffic is not cross-charged. |
+| 11 | Same suite-order leak masks authorization/validation scenarios with 429. | LC-002/S3/R1-S2, R2-S2 | functional test lifecycle | test-isolation defect | Same lifecycle reset; retain rate-limit security scenarios in their owning account tests. |
+| 12 | `1784424000000` intentionally backfills/defaults nonblank initial state; publication correctly hashes those values. | LC-002/S3/R2, R5; LC-003/S1/R2-S1 | publication test | stale test/evidence | Update current-row snapshot/hash expectation to fallback values; keep historical snapshots immutable and derive fallback only for Adventure state. |
+
+### 3. LC-001 Rate-Limit Isolation
+
+- [ ] 3.1 Identify every process-global/public-auth/generation limiter and its lifecycle, key derivation, test configuration, and reset seam.
+- [ ] 3.2 Add focused tests that separately prove same-client/account exhaustion, independent client/account budgets, recovery after the defined window, and no cross-test budget consumption.
+- [ ] 3.3 Refactor test lifecycle or injected limiter ownership so suites are deterministic without disabling, globally raising, or weakening production limits.
+- [ ] 3.4 Prove Character mutation requests are not accidentally charged to an unrelated auth or generation budget.
+- [ ] 3.5 Reconcile LC-001/S1 R4-S3 and LC-001/S2 R4-S3 exact `Verified By` evidence and any affected cross-story notes.
+- [ ] 3.6 Commit the verified rate-limit phase before beginning another implementation phase.
+
+### 4. LC-002 WorldVersion And Character Publication
+
+- [ ] 4.1 Decide from existing Epic/code history whether blank Character initial state or deterministic fallback prose is the accepted canonical snapshot behavior; record that decision in the failure ledger.
+- [ ] 4.2 Make Character model defaults, publication serialization, immutable content hashing/reuse, seed fixtures, and tests use that one accepted behavior.
+- [ ] 4.3 Keep current publication atomic with Character create/edit/delete, including no-op reuse and rollback on injected serialization/persistence failure.
+- [ ] 4.4 Make the frozen-source migration test exercise only columns available at that migration boundary, or explicitly compose later migrations when current publication behavior is what the test intends to prove.
+- [ ] 4.5 Prove concurrent publication still reuses one immutable version without weakening the unique/content-hash or insert-only constraints.
+- [ ] 4.6 Rerun all LC-002/S3 author, non-author, anonymous, validation, edit, delete, and frozen-Adventure publication scenarios together after limiter isolation.
+- [ ] 4.7 Reconcile LC-002/S3 and affected LC-003/S1 WorldVersion implementation/evidence maps and Verification Gaps.
+- [ ] 4.8 Commit each completed, verified publication/migration phase before the next phase.
+
+### 5. LC-003 Projection And Generation-Limit Contracts
+
+- [ ] 5.1 Separate projections and assertions by audience and purpose: authorized owner debug UI, non-owner/unknown access, generation context, visible narration, model-call evidence, and logs.
+- [ ] 5.2 Update obsolete minimized-owner assertions only after exact LC-003/S3 contract confirmation; add/retain focused proof that another owner receives no Adventure or private-card content.
+- [ ] 5.3 Reconcile `AdventureQueryService` expected projection with the accepted frozen identity plus Adventure-owned current state, including current-Scene filtering.
+- [ ] 5.4 Make the generation burst-limit scenario deterministic: requests that should consume budget must reach the queuing boundary, conflicts must not accidentally substitute for quota proof, and another account must retain an independent budget.
+- [ ] 5.5 Verify generated API contracts and frontend consumers if any serialized projection type changes.
+- [ ] 5.6 Reconcile LC-003/S1 and S3 exact evidence, cross-story disclosure notes, and any superseded minimization language.
+- [ ] 5.7 Commit the verified projection/generation-limit phase.
+
+### 6. LC-003 Turn Safety And Recovery
+
+- [ ] 6.1 Restore deterministic rejection of visible narration that directly reflects the current raw Guide or bounded current-Scene private knowledge under the accepted normalization/short-value rules.
+- [ ] 6.2 Prove rejected narration never reaches extraction and publishes no story entry, result revision, state mutation, turn count, raw Guide model-call evidence, or standard log content.
+- [ ] 6.3 Restore expired-claim reclamation, terminal failure, owner retry, and discard behavior while leaving the last committed Adventure head/count intact.
+- [ ] 6.4 Restore stale-head refusal and injected staged-commit rollback so no partial narration, revision, mutation, current state, or result pointer survives.
+- [ ] 6.5 Run worker tests both focused and inside the full backend suite on a fresh disposable schema; add a second ordering/stress pass if shared state contributed.
+- [ ] 6.6 Reconcile LC-003/S2 `Implemented By`, exact scenario-mapped `Verified By`, and reopened/resolved Verification Gaps.
+- [ ] 6.7 Commit each completed, verified turn-safety phase.
+
+### 7. Canonical Aggregate Gate
+
+- [ ] 7.1 Add one root command, named `ci:required` unless implementation evidence supports a clearer project convention, that runs the deterministic required gates from the committed candidate.
+- [ ] 7.2 Include generated-contract verification, guarded migration verification, lint, typecheck, unit/functional tests, production build, Storybook build/tests, and full deterministic E2E; make actual execution and test counts visible.
+- [ ] 7.3 Bypass Turborepo/task caches for candidate evidence or otherwise prove every required constituent executed freshly.
+- [ ] 7.4 Keep local command and `.github/workflows/ci.yml` in parity through a shared script/command where practical; document any environment-only CI setup difference.
+- [ ] 7.5 Prove fail-closed orchestration by injecting or selecting a known failing constituent and confirming the aggregate command exits non-zero without reporting readiness.
+- [ ] 7.6 Update `README.md`, repository guidance, and Change/review handoff rules so:
+  - focused tests remain required during implementation;
+  - the full fresh gate runs after the final implementation commit and before `in_review`/ready;
+  - a bundled `develop` candidate reruns it after all accumulated Changes and before `/sdd-release`;
+  - remote CI corroborates a pushed branch but is not the first integrated proof.
+- [ ] 7.7 Commit the verified gate/docs phase.
+
+### 8. Final Verification And Reconciliation
+
+- [ ] 8.1 From a freshly migrated guarded disposable database, run every previously failing test and record all twelve resolutions.
+- [ ] 8.2 Run the full backend suite with actual discovered/passed counts and zero failures.
+- [ ] 8.3 Run the canonical fresh aggregate gate on the final committed candidate.
+- [ ] 8.4 Run full Storybook and full deterministic E2E; do not substitute filtered Character/Adventure specs.
+- [ ] 8.5 Run scoped and full `sdd validate`; resolve deterministic artifact, traceability, and evidence-anchor errors.
+- [ ] 8.6 Inspect each cited Epic test source and assertion before recording new passing evidence.
+- [ ] 8.7 Update the changelog only if implementation changed user-facing or public security/operational behavior.
+- [ ] 8.8 Confirm manual UI is still not applicable; if a visible UI contract changed, stop and add proportional rendered/manual verification through replanning.
+
+### 9. Review And Closeout
+
+- [ ] 9.1 Record the immutable candidate commit and prove intended implementation is fully committed before review.
+- [ ] 9.2 Run `/sdd-review` with the fresh aggregate result as a mandatory gate, not broad supporting evidence that can be omitted.
+- [ ] 9.3 Resolve all review findings and rerun the aggregate gate after the final fix commit.
+- [ ] 9.4 Confirm LC-001/002/003 Epic maps, active Change claims, README guidance, CI workflow, and release handoff all describe the same current truth.
+- [ ] 9.5 Keep `status: in_review` until review and user-authorized integration are complete, then use `sdd change close`.
+
+## Implementation Ledger
+
+| Date | Slice | Agent / Guidance | Files / Areas | Result | Commit / Ref |
+|---|---|---|---|---|---|
+| 2026-07-22 | Planning | `/sdd-change --plan` | private proposal/design/tasks | Contract-first remediation plan drafted | baseline `998d7af` |
+| 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | commit pending |
+
+## Verification Ledger
+
+| Date | Check | Evidence Type | What It Proves | Result |
+|---|---|---|---|---|
+| 2026-07-22 | Release preflight `npm run test -- --force` | broad supporting gate | Frontend passed 149/149; backend exposed 12 failures after 159 passes | failed; this Change owns remediation |
+| 2026-07-22 | Fresh guarded `migrate:ci` and backend suite | database/migration baseline | Fresh test schema migration passed; focused discovery reproduced the projection, worker, publication, and limiter boundaries in their owning suites. | baseline remains failing; final aggregate count pending remediation |
+
+## Manual Feedback
+
+| Date | Feedback | Classification | Action / Artifact Updates | Status |
+|---|---|---|---|---|
+| 2026-07-22 | Fix the failures and the workflow gap that missed them. | in-scope refinement | Combined behavior remediation and mandatory aggregate gate in one Change. | incorporated |
+
+## Planning Updates
+
+| Date | Discovery | Classification | Planning Updates | Next Apply Starting Point |
+|---|---|---|---|---|
+| 2026-07-22 | LC-003/S3 intentionally exposes complete owner-only NPC debug cards. | product contract clarification | Separate authorized debug projection from non-owner/narration/evidence privacy in proposal/design/tasks. | Build failure classification ledger first. |
+
+## Implementation Risk And Confirmation Matrix
+
+| Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
+|---|---|---|---|---|---|
+| LC-001/S1-S2 rate limits | Real same-client requests throttle; independent clients and unrelated tests do not share budget. | A test reset weakens production semantics or global state makes aggregate tests order-dependent. | Separate exhaustion, independence, recovery, and aggregate-order tests. | Pending implementation. | known |
+| LC-002/S3 + LC-003/S1 publication defaults | Current Character rows serialize nonblank fallback initial state; immutable historical snapshots remain unchanged and derive fallback only for Adventure state. | Current/default and historical snapshot contracts are conflated. | Current-row hash/reuse test plus exact historical migration and composed-current-schema proof. | Classification complete; implementation pending. | known |
+| Frozen-source migration | A migration runs against exactly its supported predecessor schema. | Current serializer queries columns not yet created. | Isolated historical migration plus composed-current-schema test where appropriate. | Missing `initial_mood` observed. | known |
+| LC-003/S1/S3 projection | Authorized debug cards are complete; inaccessible/cross-owner responses disclose nothing. | Removing debug data breaks accepted behavior; broadening it leaks private content. | Audience-specific service/API tests and generated-contract check. | Current Epic intentionally allows owner-only complete cards. | known |
+| LC-003/S1 generation budget | Generation-queuing requests share one per-account burst limit and conflicts remain distinct. | 409 paths never consume/reach quota; global state leaks. | Deterministic queueable requests, over-quota 429, independent-account proof. | Current aggregate expected 429, received 409. | investigating |
+| LC-003/S2 private narration | Raw Guide/private card values do not appear directly in published narration or retained evidence. | Short-value normalization misses reflection or over-rejects ordinary prose. | Focused short/long/direct/non-match cases plus DB/log inspection. | `<12` exemption allows `OK`; implementation fix pending. | known |
+| LC-003/S2 turn lifecycle | Retry/discard and expired leases preserve last committed head/count. | Reclaim or discard publishes/removes committed work. | Injected expired claim and lifecycle DB assertions. | Aggregate scenario failed. | investigating |
+| LC-003/S2 atomic completion | Stale/throwing work publishes nothing partial. | Transaction or staged state leaks a revision/mutation/result. | Stale-head race and injected commit throw with full DB absence assertions. | Aggregate scenario failed. | investigating |
+| Required aggregate gate | Every required check executes freshly on the committed candidate and any failure blocks readiness. | Cache hits, workflow drift, or focused substitutions create false green. | Cache-bypassed run, fail-closed proof, local/CI parity review. | No canonical local command exists. | known |
+
+## Pattern Parity Matrix
+
+| Concern | Reference Location / Contract | New Location / Contract | Focused Proof | Intentional Divergence / Gap | Status |
+|---|---|---|---|---|---|
+| Local/remote required gates | `.github/workflows/ci.yml` required job | root `ci:required` command/shared script | constituent list parity and fail-closed command test/inspection | CI-only install/service setup may remain workflow-owned and documented | pending |
+| Migration historical fixture | sibling isolated migration tests | frozen-source concurrency fixture | exact predecessor-schema migration run | current-schema publication proof may be a separate test | pending |
+| Rate limiter lifecycle | production request middleware/service | test setup/reset seam | exhaustion plus independence and order tests | test reset only; production lifetime unchanged | pending |
+
+## Stateful Transition Matrix
+
+| Start State | Trigger / Transition | Expected Invariant | Focused Test Or Runtime Observation | Result |
+|---|---|---|---|---|
+| Ready Adventure | Guide narration directly reflects raw Guide | resolution retries/fails; no extraction or publication; evidence omits Guide | exact short-reflection worker test plus DB/model-call inspection | pending |
+| Processing turn with expired lease | replacement worker reclaims final/non-final attempt | bounded retry/failure; committed head/count unchanged | expired-claim worker and lifecycle tests | pending |
+| Failed uncommitted turn | owner retries then discards | retry is pending; discard removes only uncommitted turn/job | lifecycle service DB assertions | pending |
+| Claimed turn | Adventure head changes before finish | stale work cannot publish over new head | stale-head race test | pending |
+| Claimed turn | staged commit throws | transaction rolls back story/revision/mutation/state/result | injected commit-failure test | pending |
+| Account below quota | conflicting and queueable generation requests accumulate | only accepted budget semantics produce 429; another account remains independent | API burst-limit test | pending |
+
+## Decision Fan-Out Ledger
+
+| Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
+|---|---|---|---|---|---|
+| 2026-07-22 | Owner-only complete debug NPC cards are accepted. | Do not restore old blanket minimization; preserve audience-specific privacy. | LC-003/S1/S3, query/API tests, DTO/client, README/current docs | plan records explicit boundary | open until implementation evidence |
+| 2026-07-22 | Local-first `develop` may be unpushed. | Local aggregate proof is mandatory before review/release handoff. | package scripts, CI workflow, README/AGENTS or SDD review guidance, review/release records | plan selects shared fresh gate | open |
+| 2026-07-22 | Current Character initial state is deterministic fallback prose; historical persisted WorldVersion snapshots retain their original values. | Snapshot/hash behavior must distinguish current rows from historical immutable snapshots without serializer compatibility hacks. | LC-002/S3, LC-003/S1, publisher, migrations, fixtures, tests | classified ledger and implementation plan updated | open until tests/Epics reconcile |
+
+## Verification Environment
+
+| Evidence Obligation | Required Setup / Safety Boundary | Needed For | Current Readiness | Result / Resolution |
+|---|---|---|---|---|
+| Backend functional/database suite | explicit acknowledged disposable Neon `TEST_DATABASE_URL`; never application/production DB | all 12 failures and aggregate backend proof | available from release preflight; recreate fresh at apply time | pending |
+| Historical migration tests | isolated disposable database and exact predecessor schema | frozen-source migration compatibility | ready in repository harness | pending |
+| Generated contracts | committed candidate and clean diff-sensitive comparison | API projection/type changes | ready | pending |
+| Storybook | checked-in Storybook config, port 4312 if served | full component-state regression | ready | pending |
+| E2E | acknowledged isolated `E2E_DATABASE_URL`, ports 4313/4314 | full creator workflow regression | ready; must not reuse production/application DB | pending |
+| Provider | deterministic injected generator/extractor | Guide reflection and worker failure paths | ready; live provider not required | pending |
+| Remote CI | user-authorized pushed branch | corroborating branch evidence | not required for local implementation gate | not applicable until push authorized |
+
+## Manual UI Confirmation
+
+- Status: not applicable unless implementation changes visible UI behavior.
+- App URL / route: not applicable.
+- Required setup or test data: not applicable.
+- Steps for the user: none planned.
+- Expected result: existing owner-only debug surfaces and workbench behavior remain unchanged under full Storybook/E2E proof.
+- Feedback that would change artifacts: any visible projection or interaction change requires replanning and a proportional visual/manual matrix.
+
+## Visual Verification Matrix
+
+Not applicable: this is a backend contract, test-isolation, persistence, worker-safety, and verification-workflow remediation. Full existing Storybook/E2E remain regression gates; any intentional UI change triggers replanning.
+
+## Blockers / Open Questions
+
+- None. Contract contradictions are an explicit replan condition.
+
+## Review Handoff Candidate
+
+- Integration target / merge base: `develop`; implementation branch to be created from current `develop` at promotion/apply time.
+- Candidate source commit: pending implementation.
+- Source differs from target when implementation changed: pending.
+- Intended implementation fully committed: required before aggregate gate and review.
+- Unrelated dirty state preserved: required.
+- Commit-sensitive generated-contract / diff / integration checks: required through canonical gate.
+- Required risk, fan-out, environment, or verification rows still pending or blocked: all implementation rows currently pending.
+- Pattern parity and stateful transition matrices reconciled or not applicable with reason: required before review.
+- Evidence claims falsified against exact tests, assertions, routes, or observations: required before Epic updates.
+- Fresh-context failure-seeking passes completed: pending `/sdd-review`.
+
+## Closeout
+
+- Change status: in_progress after promotion and scoped validation.
+- Epic files updated: pending implementation/evidence reconciliation.
+- Story labels/references and Requirement/Scenario IDs current: existing labels retained.
+- Implemented By maps current: pending final reconciliation.
+- One canonical implementation and verification map per Story: required.
+- Primary anchors inspected as behavior-owning definitions/registrations rather than incidental occurrences: required.
+- Scenario-mapped Verified By maps current: pending fresh proof.
+- Superseded earlier Epic truth reconciled: pending.
+- README/current-state docs and active/closed Change claims reconciled: pending.
+- ADR status: not applicable unless diagnosis changes architecture.
+- Release communication current: conditional on user-facing/security behavior change.
+- `sdd-review` verdict: pending.
+- Review record: pending.
+- `review.md` findings resolved: pending.
+- Planning updates resolved: current plan coherent; future contradictions require replan.
+- Implementation risk and confirmation rows resolved: pending.
+- Pattern parity and stateful transition rows resolved: pending.
+- Evidence-claim integrity checked: pending.
+- Decision fan-out reconciled: pending.
+- Verification environment obligations resolved: pending.
+- Immutable review handoff candidate: pending.
+- Manual UI confirmation status: not applicable unless visible behavior changes.
+- Rendered UI verification status: full existing Storybook/E2E required; no new visual matrix.
+- PR / merge state: not started; remote/integration mutation requires user authorization.
+- Deferred scope accepted: recorded in proposal/design.
+- Change moved to `docs/changes/closed/`: no; private planned Change must first be promoted.
