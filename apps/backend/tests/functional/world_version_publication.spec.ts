@@ -11,7 +11,7 @@ import { createHash } from 'node:crypto'
 test.group('WorldVersion publication', (group) => {
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
-  test('LC-003/S1/R2-S1: publication creates a deterministic ordered snapshot and content hash', async ({
+  test('LC-002/S3/R5-S2 + LC-003/S1/R2-S1: publication snapshots current Character defaults and reuses its hash', async ({
     assert,
   }) => {
     const author = await User.create({
@@ -121,9 +121,9 @@ test.group('WorldVersion publication', (group) => {
           personality: 'Alert.',
           voice: 'Direct.',
           privateKnowledge: 'First secret.',
-          initialMood: '',
-          initialStatus: '',
-          initialMemory: '',
+          initialMood: 'No current mood has been recorded yet.',
+          initialStatus: 'No current status has been recorded yet.',
+          initialMemory: 'No interactions with the player have been recorded yet.',
           sortOrder: 10,
         },
         {
@@ -135,9 +135,9 @@ test.group('WorldVersion publication', (group) => {
           personality: 'Patient.',
           voice: 'Measured.',
           privateKnowledge: 'Later secret.',
-          initialMood: '',
-          initialStatus: '',
-          initialMemory: '',
+          initialMood: 'No current mood has been recorded yet.',
+          initialStatus: 'No current status has been recorded yet.',
+          initialMemory: 'No interactions with the player have been recorded yet.',
           sortOrder: 20,
         },
       ],
@@ -170,6 +170,10 @@ test.group('WorldVersion publication', (group) => {
     assert.equal(version.ordinal, 1)
     await world.refresh()
     assert.equal(world.currentVersionId, version.id)
+
+    const reusedVersion = await publishWorldVersion(world.id)
+    assert.equal(reusedVersion.id, version.id)
+    assert.equal(reusedVersion.contentHash, version.contentHash)
   })
 
   test('LC-003/S1/R2-S1: publication rejects invalid stable keys before inserting a version', async ({

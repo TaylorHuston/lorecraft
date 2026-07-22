@@ -6,7 +6,7 @@ status: in_progress
 ## Resume Here
 
 - Last completed action: promoted, validated, and transitioned the Change to `in_progress`; completed contract-first failure classification.
-- Next action: align LC-002 publication default evidence and split the historical migration fixture from current-publisher concurrency proof.
+- Next action: reconcile LC-003 owner projection assertions and restore turn safety/recovery invariants.
 - Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
 - Expected dirty files: `docs/changes/2026-07-22-release-gate-integrity/`
 - Known blockers: none
@@ -76,11 +76,11 @@ status: in_progress
 
 ### 4. LC-002 WorldVersion And Character Publication
 
-- [ ] 4.1 Decide from existing Epic/code history whether blank Character initial state or deterministic fallback prose is the accepted canonical snapshot behavior; record that decision in the failure ledger.
-- [ ] 4.2 Make Character model defaults, publication serialization, immutable content hashing/reuse, seed fixtures, and tests use that one accepted behavior.
-- [ ] 4.3 Keep current publication atomic with Character create/edit/delete, including no-op reuse and rollback on injected serialization/persistence failure.
-- [ ] 4.4 Make the frozen-source migration test exercise only columns available at that migration boundary, or explicitly compose later migrations when current publication behavior is what the test intends to prove.
-- [ ] 4.5 Prove concurrent publication still reuses one immutable version without weakening the unique/content-hash or insert-only constraints.
+- [x] 4.1 Decide from existing Epic/code history whether blank Character initial state or deterministic fallback prose is the accepted canonical snapshot behavior; record that decision in the failure ledger.
+- [x] 4.2 Make Character model defaults, publication serialization, immutable content hashing/reuse, seed fixtures, and tests use that one accepted behavior.
+- [x] 4.3 Keep current publication atomic with Character create/edit/delete, including no-op reuse and rollback on injected serialization/persistence failure.
+- [x] 4.4 Make the frozen-source migration test exercise only columns available at that migration boundary, or explicitly compose later migrations when current publication behavior is what the test intends to prove.
+- [x] 4.5 Prove concurrent publication still reuses one immutable version without weakening the unique/content-hash or insert-only constraints.
 - [ ] 4.6 Rerun all LC-002/S3 author, non-author, anonymous, validation, edit, delete, and frozen-Adventure publication scenarios together after limiter isolation.
 - [ ] 4.7 Reconcile LC-002/S3 and affected LC-003/S1 WorldVersion implementation/evidence maps and Verification Gaps.
 - [ ] 4.8 Commit each completed, verified publication/migration phase before the next phase.
@@ -145,6 +145,7 @@ status: in_progress
 | 2026-07-22 | Planning | `/sdd-change --plan` | private proposal/design/tasks | Contract-first remediation plan drafted | baseline `998d7af` |
 | 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
 | 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | `8f87ebd` |
+| 2026-07-22 | LC-002/S3 R5-S2; LC-003/S1 R2 | BDD/TDD publication/migration phase | WorldVersion publication and frozen-source migration tests | Current fallback-state snapshot/hash reuse and composed-current-schema concurrency pass; predecessor migration remains exact-boundary only. | commit pending |
 
 ## Verification Ledger
 
@@ -155,6 +156,7 @@ status: in_progress
 | 2026-07-22 | `tests/functional/limiter_isolation.spec.ts` | focused database-backed test | Same forwarded client is throttled on request 11 in one test, then starts fresh in the next test. | passed 2/2 |
 | 2026-07-22 | `tests/functional/adventure_api.spec.ts#LC-003/S1/R3-S5: generation-queuing mutations share an account burst limit` | focused database-backed test | Restored ten-request cap returns 429 before controller busy conflict. | passed; its containing file still has the separately tracked stale owner-minimization failure |
 | 2026-07-22 | `tests/functional/world_character_authoring.spec.ts` | focused database-backed test | All author create/edit/delete and non-author/validation Character scenarios execute without leaked 429. | passed 6/6 |
+| 2026-07-22 | `tests/database/frozen_world_source_migration.spec.ts`; `tests/functional/world_version_publication.spec.ts` | focused database-backed tests | Historical migration constraints, composed current publisher concurrency, fallback snapshot/hash, and reuse. | passed 3/3; 4/4 |
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend`; `npm run typecheck --workspace @lorecraft/backend` | broad supporting gates | Limiter lifecycle hook and config type/lint cleanly. | passed |
 
 ## Manual Feedback
