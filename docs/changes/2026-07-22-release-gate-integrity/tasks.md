@@ -5,10 +5,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: promoted, validated, and transitioned the Change to `in_progress`; completed contract-first failure classification.
-- Next action: reconcile LC-003 owner projection assertions and restore turn safety/recovery invariants.
+- Last completed action: completed LC-003 projection/turn-safety remediation and aggregate-gate implementation; focused proof is green.
+- Next action: commit reconciled LC-003 and gate slices, then run the committed fresh aggregate gate and final artifact reconciliation.
 - Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
-- Expected dirty files: `docs/changes/2026-07-22-release-gate-integrity/`
+- Expected dirty files: LC-003 backend/services/tests, aggregate-gate workflow/scripts/package, Epic and task artifacts pending phase commits.
 - Known blockers: none
 
 ## Task Checklist
@@ -146,6 +146,8 @@ status: in_progress
 | 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
 | 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | `8f87ebd` |
 | 2026-07-22 | LC-002/S3 R5-S2; LC-003/S1 R2 | BDD/TDD publication/migration phase | WorldVersion publication and frozen-source migration tests | Current fallback-state snapshot/hash reuse and composed-current-schema concurrency pass; predecessor migration remains exact-boundary only. | `ed33de5` |
+| 2026-07-22 | LC-003/S1 R2/R4; S2 R1-S3/R2-S2/R2-S5/R2-S6 | BDD/TDD worker safety phase | owner projection, Guide guard, production stale claims, retry/discard | Owner debug cards remain complete; punctuation/common-token Guides do not over-reject; stale claims terminally fail without provider/publication and remain discardable. | commit pending |
+| 2026-07-22 | Required aggregate gate | CI parity phase | root script/tests, package command, GitHub workflow | Shared caller-env guarded, sequential cache-bypassed gate; fail-closed tests prove later stages do not run after failure. | commit pending |
 
 ## Verification Ledger
 
@@ -157,6 +159,8 @@ status: in_progress
 | 2026-07-22 | `tests/functional/adventure_api.spec.ts#LC-003/S1/R3-S5: generation-queuing mutations share an account burst limit` | focused database-backed test | Restored ten-request cap returns 429 before controller busy conflict. | passed; its containing file still has the separately tracked stale owner-minimization failure |
 | 2026-07-22 | `tests/functional/world_character_authoring.spec.ts` | focused database-backed test | All author create/edit/delete and non-author/validation Character scenarios execute without leaked 429. | passed 6/6 |
 | 2026-07-22 | `tests/database/frozen_world_source_migration.spec.ts`; `tests/functional/world_version_publication.spec.ts` | focused database-backed tests | Historical migration constraints, composed current publisher concurrency, fallback snapshot/hash, and reuse. | passed 3/3; 4/4 |
+| 2026-07-22 | `tests/unit/story_generation/adventure_turn_context.spec.ts`; `tests/functional/adventure_turn_worker.spec.ts` | focused database-backed worker proof | Direct short Guide rejection, punctuation/common-token allowance, production-port stale terminal failure, retry/discard, and rollback. | passed 16/16 plus 20 database-safety checks |
+| 2026-07-22 | `npm run test:ci-required` | aggregate-gate orchestration proof | Missing environment refuses; injected failure stops subsequent stages; workflow delegates after Chromium installation. | passed 3/3 |
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend`; `npm run typecheck --workspace @lorecraft/backend` | broad supporting gates | Limiter lifecycle hook and config type/lint cleanly. | passed |
 
 ## Manual Feedback

@@ -125,7 +125,7 @@ test.group('AdventureQueryService', (group) => {
     assert.deepEqual(grouped.get(inaccessible.world.id), [])
   })
 
-  test('LC-003/S1/R2-S2 + R4-S1: reads visible Adventure state from its frozen source projection', async ({
+  test('LC-003/S1/R2-S2 + R4-S1: reads complete owner-only Adventure debug state from its frozen source projection', async ({
     assert,
   }) => {
     const author = await createUser('query-read-author@example.com')
@@ -257,6 +257,17 @@ test.group('AdventureQueryService', (group) => {
             key: 'warden-hale',
             name: 'Warden Hale',
             physicalDescription: 'A weathered keeper in a salt-stained coat.',
+            background: 'He has guarded the chapel for decades.',
+            personality: 'Reserved and watchful.',
+            voice: 'Low and deliberate.',
+            privateKnowledge: 'He knows who rang the bell.',
+            currentLocation: {
+              key: 'chapel-threshold',
+              name: 'Chapel Threshold',
+            },
+            mood: '',
+            status: '',
+            memory: '',
           },
         ],
       },

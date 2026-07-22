@@ -57,32 +57,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build applications and generate backend artifacts
-        run: npm run build
-
-      - name: Verify generated Tuyau client is current
-        run: npm run check:contracts
-
-      - name: Apply test migrations
-        run: npm run migrate:ci --workspace @lorecraft/backend
-
-      - name: Run lint
-        run: npm run lint
-
-      - name: Run typecheck
-        run: npm run typecheck
-
-      - name: Run tests
-        run: npm run test
-
-      - name: Build Storybook
-        run: npm run build:storybook
-
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run Storybook browser tests
-        run: npm run test:storybook
-
-      - name: Run account journey E2E
-        run: npm run test:e2e
+      - name: Run required fresh verification gate
+        run: npm run ci:required

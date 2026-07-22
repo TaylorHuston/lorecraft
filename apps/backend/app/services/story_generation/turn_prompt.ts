@@ -52,6 +52,30 @@ function normalizedForDisclosureCheck(value: string): string {
     .trim()
 }
 
+const nonDisclosingGuideValues = new Set([
+  'a',
+  'an',
+  'and',
+  'as',
+  'at',
+  'by',
+  'for',
+  'from',
+  'in',
+  'is',
+  'it',
+  'of',
+  'on',
+  'or',
+  'the',
+  'to',
+  'with',
+])
+
+function isDisclosiveGuideValue(value: string): boolean {
+  return value.length > 0 && !nonDisclosingGuideValues.has(value)
+}
+
 function containsDirectReflection(narration: string, protectedValue: string): boolean {
   // Card validation permits very concise private knowledge. Short literals
   // occur naturally in ordinary prose, so a deterministic substring guard
@@ -90,10 +114,19 @@ export function assertNarrationSafeForPublication(
   narration: string,
   context: AdventureTurnContext
 ): void {
-  assertNarrationDoesNotReflectPrivateValues(narration, [
-    context.trigger === 'guide' ? context.input : null,
-    ...context.frozenCanon.characters.map((character) => character.privateKnowledge),
-  ])
+  const guide = context.trigger === 'guide' ? context.input : null
+  const normalizedGuide = guide ? normalizedForDisclosureCheck(guide) : ''
+  if (
+    isDisclosiveGuideValue(normalizedGuide) &&
+    normalizedForDisclosureCheck(narration).includes(normalizedGuide)
+  ) {
+    throw new UnsafeNarrationPublicationError()
+  }
+
+  assertNarrationDoesNotReflectPrivateValues(
+    narration,
+    context.frozenCanon.characters.map((character) => character.privateKnowledge)
+  )
 }
 
 /** Assembles a bounded, data-delimited prompt for one turn's narration. */
