@@ -146,8 +146,8 @@ status: in_progress
 | 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
 | 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | `8f87ebd` |
 | 2026-07-22 | LC-002/S3 R5-S2; LC-003/S1 R2 | BDD/TDD publication/migration phase | WorldVersion publication and frozen-source migration tests | Current fallback-state snapshot/hash reuse and composed-current-schema concurrency pass; predecessor migration remains exact-boundary only. | `ed33de5` |
-| 2026-07-22 | LC-003/S1 R2/R4; S2 R1-S3/R2-S2/R2-S5/R2-S6 | BDD/TDD worker safety phase | owner projection, Guide guard, production stale claims, retry/discard | Owner debug cards remain complete; punctuation/common-token Guides do not over-reject; stale claims terminally fail without provider/publication and remain discardable. | commit pending |
-| 2026-07-22 | Required aggregate gate | CI parity phase | root script/tests, package command, GitHub workflow | Shared caller-env guarded, sequential cache-bypassed gate; fail-closed tests prove later stages do not run after failure. | commit pending |
+| 2026-07-22 | LC-003/S1 R2/R4; S2 R1-S3/R2-S2/R2-S5/R2-S6 | BDD/TDD worker safety phase | owner projection, Guide guard, production stale claims, retry/discard | Owner debug cards remain complete; punctuation/common-token Guides do not over-reject; stale claims terminally fail without provider/publication and remain discardable. | `4372aa8` |
+| 2026-07-22 | Required aggregate gate | CI parity phase | root script/tests, package command, GitHub workflow | Shared caller-env guarded, sequential cache-bypassed gate; fail-closed tests prove later stages do not run after failure. | `4372aa8` |
 
 ## Verification Ledger
 
