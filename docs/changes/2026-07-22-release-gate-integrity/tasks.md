@@ -72,7 +72,7 @@ status: in_progress
 - [x] 3.3 Refactor test lifecycle or injected limiter ownership so suites are deterministic without disabling, globally raising, or weakening production limits.
 - [x] 3.4 Prove Character mutation requests are not accidentally charged to an unrelated auth or generation budget.
 - [x] 3.5 Reconcile LC-001/S1 R4-S3 and LC-001/S2 R4-S3 exact `Verified By` evidence and any affected cross-story notes.
-- [ ] 3.6 Commit the verified rate-limit phase before beginning another implementation phase.
+- [x] 3.6 Commit the verified rate-limit phase before beginning another implementation phase.
 
 ### 4. LC-002 WorldVersion And Character Publication
 
@@ -144,7 +144,7 @@ status: in_progress
 |---|---|---|---|---|---|
 | 2026-07-22 | Planning | `/sdd-change --plan` | private proposal/design/tasks | Contract-first remediation plan drafted | baseline `998d7af` |
 | 2026-07-22 | Failure classification | `/sdd-apply` discovery wave | Change artifacts, LC-001/002/003 Epics, limiter, publication, projection, worker tests | Twelve rows classified; no product contradiction or replan trigger | `9b8a0aa` |
-| 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | commit pending |
+| 2026-07-22 | LC-001/S1 R4-S3 + S2 R4-S3; LC-003/S1 R3-S5 | BDD/TDD limiter phase | functional test bootstrap, limiter config, auth tests, isolation test | Functional tests clear only in-memory limiter between scenarios; same-test signup exhaustion and ten-request Adventure quota remain enforced. | `8f87ebd` |
 
 ## Verification Ledger
 
