@@ -94,5 +94,6 @@ Use the checked-in Vite, Storybook, Playwright, and environment defaults. Do not
 - Add boundary and integration tests for persistence, API contracts, authorization, and external adapters where those concerns become real.
 - Add focused E2E and Storybook coverage for critical creator workflows and shared UI states.
 - Run the smallest relevant lint, test, typecheck, build, and manual checks before declaring work complete.
+- Run focused checks during implementation. After the final implementation commit, run `npm run ci:required` with an explicitly supplied acknowledged disposable-test environment before moving a Change to `in_review`; rerun it for the accumulated `develop` candidate before `/sdd-release`. Remote CI corroborates rather than replaces that local integrated proof.
 - Update affected Epic `Implemented By`, scenario-mapped `Verified By`, and `Verification Gaps`; record chronological command results in the active `tasks.md`.
 - Report honestly when a command succeeds without executing meaningful tests; verification must identify which backend, frontend, or browser behavior actually ran.

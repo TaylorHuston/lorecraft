@@ -234,6 +234,14 @@ npm run test:storybook
 npm run test:e2e
 ```
 
+For an implementation-review or release candidate, run the required fresh aggregate gate from a committed tree:
+
+```bash
+NODE_ENV=test APP_KEY='<test-only-key>' npm run ci:required
+```
+
+The command requires caller-supplied acknowledged disposable-database settings; it does not construct or source an environment. It bypasses Turborepo caches while building the applications, checking generated contracts, applying guarded test migrations, running lint/typecheck and the full test suite, then running Storybook and deterministic E2E. Run focused tests while implementing, then run this aggregate gate after the final implementation commit and before moving a Change to `in_review`. Before `/sdd-release`, rerun it against the fully accumulated `develop` candidate. A pushed-branch CI run corroborates this local proof; it does not replace it.
+
 `npm run test` includes PostgreSQL-backed backend tests, and `npm run test:e2e` starts isolated frontend and backend services for desktop and mobile Playwright projects. Both require the guarded database configuration below. A successful command should be interpreted together with the suites it actually executed.
 
 For a quick browser-level smoke check of a running local app, use the root development dependency:
