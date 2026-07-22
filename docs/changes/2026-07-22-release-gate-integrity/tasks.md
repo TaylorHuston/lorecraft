@@ -5,8 +5,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: `9f67af0` passed the fresh guarded `ci:required` aggregate gate after the concise-Guide boundary fix; fresh code and artifact self-checks found no remaining defects.
-- Next action: run independent `/sdd-review` against this immutable `in_review` handoff; do not merge, push, or release without user authorization.
+- Last completed action: independent `/sdd-review` remediated all required findings and `f46fdf5` passed the fresh guarded `ci:required` aggregate gate.
+- Next action: request user authorization before merging into `develop`, closing the Change, pushing, or releasing.
 - Active branch/ref: `fix/release-gate-integrity` from `develop` at `998d7af`
 - Expected dirty files: none after committing this status/handoff reconciliation.
 - Known blockers: none
@@ -133,8 +133,8 @@ status: in_review
 ### 9. Review And Closeout
 
 - [x] 9.1 Record the immutable candidate commit and prove intended implementation is fully committed before review.
-- [ ] 9.2 Run `/sdd-review` with the fresh aggregate result as a mandatory gate, not broad supporting evidence that can be omitted.
-- [ ] 9.3 Resolve all review findings and rerun the aggregate gate after the final fix commit.
+- [x] 9.2 Run `/sdd-review` with the fresh aggregate result as a mandatory gate, not broad supporting evidence that can be omitted.
+- [x] 9.3 Resolve all review findings and rerun the aggregate gate after the final fix commit.
 - [x] 9.4 Confirm LC-001/002/003 Epic maps, active Change claims, README guidance, CI workflow, and release handoff all describe the same current truth.
 - [x] 9.5 Keep `status: in_review` until review and user-authorized integration are complete, then use `sdd change close`.
 
@@ -151,6 +151,7 @@ status: in_review
 | 2026-07-22 | Fresh aggregate verification | `/sdd-apply` final-candidate gate | committed `fbc09cf`, all aggregate stages | Build, contract check, guarded migration, lint, typecheck, full tests, Storybook build/test, and deterministic E2E passed with cache bypass. | `fbc09cf` |
 | 2026-07-22 | LC-003/S2/R1-S3 boundary remediation | fresh-context implementation self-check | `turn_prompt`, unit context, and production worker test | Concise Guide literals match normalized words/phrases, not substrings inside ordinary narration; direct reflection still blocks extraction/publication. | `31bb167` |
 | 2026-07-22 | Final implementation gate and self-check | `/sdd-apply` closeout readiness | `9f67af0`, full aggregate and fresh code/artifact checks | All required stages passed; reviewers found no remaining actionable code or traceability defect. | `9f67af0` |
+| 2026-07-22 | Independent review remediation | `/sdd-review --until-ready` | changelog, owner projection expectation, E2E limiter fixture, account-route test | Public security communication, stale expectations, E2E-only capacity, and routed assertion synchronization reconciled. | `757d10d`, `7cbc261`, `f46fdf5` |
 
 ## Verification Ledger
 
@@ -167,6 +168,7 @@ status: in_review
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend`; `npm run typecheck --workspace @lorecraft/backend` | broad supporting gates | Limiter lifecycle hook and config type/lint cleanly. | passed |
 | 2026-07-22 | `NODE_ENV=test APP_KEY=<test-only> npm run ci:required` with acknowledged disposable database environment | fresh local release gate | Cache-bypassed application build, generated-contract cleanliness, guarded migration, lint, typecheck, full backend/frontend tests, Storybook build/test, and deterministic E2E all ran sequentially. | passed against final implementation candidate `9f67af0` |
 | 2026-07-22 | Fresh code and artifact self-checks | failure-seeking review | Whole-word/phrase Guide boundary, production publication path, README caller environment, Epic anchors, tasks handoff, and CI parity. | no remaining actionable findings |
+| 2026-07-22 | Final review aggregate | fresh local release gate | `f46fdf5`: all aggregate stages | Build/contracts/migrations/lint/typecheck; backend 177/177; frontend 149/149; Storybook 88/88; desktop/mobile E2E 11/11. | passed |
 
 ## Manual Feedback
 
@@ -275,17 +277,17 @@ Not applicable: this is a backend contract, test-isolation, persistence, worker-
 - Superseded earlier Epic truth reconciled: confirmed.
 - README/current-state docs and active/closed Change claims reconciled: confirmed for active Change; this Change remains active in review.
 - ADR status: not applicable unless diagnosis changes architecture.
-- Release communication current: conditional on user-facing/security behavior change.
-- `sdd-review` verdict: pending.
-- Review record: pending independent `/sdd-review`.
-- `review.md` findings resolved: not applicable until that review exists.
+- Release communication current: Unreleased Security note records the restored private-Guide reflection boundary without private detail.
+- `sdd-review` verdict: ready.
+- Review record: `review.md`, immutable reviewed source `f46fdf56074a9504a6c6377d92f2c75c84e96d78`.
+- `review.md` findings resolved: all four required findings resolved and rerun through the final aggregate gate.
 - Planning updates resolved: current plan coherent; future contradictions require replan.
 - Implementation risk and confirmation rows resolved: yes.
 - Pattern parity and stateful transition rows resolved: yes.
 - Evidence-claim integrity checked: yes.
 - Decision fan-out reconciled: yes.
 - Verification environment obligations resolved: yes.
-- Immutable review handoff candidate: `9f67af0`.
+- Immutable review handoff candidate: `f46fdf5`.
 - Manual UI confirmation status: not applicable unless visible behavior changes.
 - Rendered UI verification status: full existing Storybook/E2E required; no new visual matrix.
 - PR / merge state: not started; remote/integration mutation requires user authorization.
