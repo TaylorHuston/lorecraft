@@ -6,7 +6,7 @@ ready
 
 ## Current Independent Review (2026-07-22)
 
-Reviewed `246ba25e374d298f4fc0d2334d9daf9c757e8452` plus the safe working-tree remediation below against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical sections that follow remain evidence of earlier reviews; this section is the current verdict.
+Reviewed `9d325d9e70bf63167c6ea342780f804041c83f2b` (the `246ba25` candidate plus the safe remediation below) against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical sections that follow remain evidence of earlier reviews; this section is the current verdict.
 
 ### Gate Scorecard
 

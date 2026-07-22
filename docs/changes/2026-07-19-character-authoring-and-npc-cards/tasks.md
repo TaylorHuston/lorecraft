@@ -9,7 +9,7 @@ status: in_review
 - Last completed action: fresh independent review remediated the unauthorized NPC-autosave session path and reconciled the historical planning language in proposal/design. The focused/full frontend and Storybook regressions pass.
 - Current technical state: scoped Change validation passes with zero errors; both Epic-scoped reverse-traceability audits report zero missing references; the candidate merges cleanly with `develop`. The two LC-003 large-story warnings are accepted compatibility warnings for the existing integrated Adventure primary paths, not new scope or implementation findings.
 - Next action: owner manual acceptance. Do not merge, release, or close the Change without explicit authorization.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `a087974`.
+- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `9d325d9`.
 - Expected dirty files: none after this ledger checkpoint.
 - Known blocker: no technical blocker. Owner manual acceptance remains required before merge/closeout.
 
@@ -105,7 +105,7 @@ status: in_review
 | 2026-07-20 | Live provider configuration gate | `sdd-apply`; direct configuration acceptance | Shared worker/smoke runtime configuration; synthetic opening command; unit coverage; README and LC-003 evidence | Added one bounded synthetic provider request that reuses the actual worker model/token/timeout settings and exits non-zero for truncated narration; worker startup now logs the effective model and token cap. | `54b645f` |
 | 2026-07-20 | `LC-003/S1/R4-S2`, `LC-003/S3/R3` bound reconciliation | `sdd-apply`; focused backend/frontend/database verification | Shared Character/NPC limits, Debug validator/mutation/extractor, legacy-state migration, non-mutating legacy frozen-snapshot fallback, creation/reset/seed regressions, and editor controls | Preflight found no over-limit values, only legacy blanks. The migration preserved nonblank content, filled only whitespace-only legacy values with neutral state, set complete defaults for legacy direct writes, and applied `120/320/500` database checks. | committed `91a2387`; fresh direct schema run passed 32 focused tests and dropped the temporary schema. |
 | 2026-07-21 | Strict Epic schema normalization | `sdd-apply`; independent artifact-map passes | LC-002 and LC-003 Epic implementation/evidence maps; active task and review records | Replaced legacy class/file aggregates with current searchable primary anchors, scenario-specific automated evidence, and explicit gaps where scenario-specific proof does not exist. No application behavior, tests, or generated contracts changed. | `260f52e` |
-| 2026-07-22 | Independent review remediation | `sdd-review`; route regression and artifact review | Adventure shared protected-mutation error chain; route regression; proposal/design historical framing; current review record | Unauthorized NPC autosave now ends the shared session instead of leaving a stale authenticated Adventure surface. Planning artifacts now distinguish historical baseline from implemented scope. | commit pending |
+| 2026-07-22 | Independent review remediation | `sdd-review`; route regression and artifact review | Adventure shared protected-mutation error chain; route regression; proposal/design historical framing; current review record | Unauthorized NPC autosave now ends the shared session instead of leaving a stale authenticated Adventure surface. Planning artifacts now distinguish historical baseline from implemented scope. | `9d325d9` |
 
 ## Verification Ledger
 
@@ -229,7 +229,7 @@ status: in_review
 
 ## Review Handoff
 
-- Reviewed candidate: `246ba25` plus the pending safe review batch on `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
+- Reviewed candidate: `9d325d9` on `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`.
 - Candidate content: full Change implementation and evidence history, plus one protected-session regression and historical-artifact clarification. No schema, provider, configuration, or generated-contract behavior changed in the final review batch.
 - Completed checks: scoped `sdd validate`, both affected-Epic reverse-traceability audits, frontend/full Storybook regression, focused backend units, lint, typecheck, build, contract verification, `git diff --check`, direct Storybook inspection, and `git merge-tree --write-tree develop HEAD`.
 - Current gate: technical review is `ready`; owner manual acceptance remains `pending user` before merge/closeout.
