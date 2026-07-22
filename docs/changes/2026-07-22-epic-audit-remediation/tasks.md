@@ -5,8 +5,8 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: reconciled LC-003/S1-S2 evidence to narrow scenario anchors, added deterministic rendered error/session-loss fixtures, and directly inspected their desktop/mobile states.
-- Next action: run independent `/sdd-review`; use an explicitly acknowledged disposable database only if the remaining functional/E2E proof is to be rerun.
+- Last completed action: independent review corrected LC-003 test-label/overview drift and independently rendered the controlled Character 422 and New Adventure 401 states.
+- Next action: provide an explicitly acknowledged disposable `TEST_DATABASE_URL` with `ALLOW_TEST_DATABASE_WRITES=1`, or explicitly accept the remaining required database/E2E verification gap before integration can be reconsidered.
 - Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
 - Expected dirty files: none after the in-review ledger commit; the LC-002/LC-003 audit reports are tracked historical inputs.
 - Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. Backend functional tests require an explicitly acknowledged disposable `TEST_DATABASE_URL`; the local guard refused writes without it on 2026-07-22.
@@ -49,7 +49,7 @@ status: in_review
 
 ### 5. Review And Closeout
 
-- [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (prior verdict: changes requested; this Apply resolves its findings and requires a fresh independent review).
+- [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (current verdict: blocked only on guarded database/E2E evidence; review record refreshed at `636045d`).
 - [x] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap` (current: pending user).
 - [x] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification. No such operation was requested or performed.
 
@@ -85,6 +85,7 @@ status: in_review
 | 2026-07-22 | Focused frontend suite `AdventureRoutes`, `creationRequestId`, `AdventureWorkbench`, `WorldRoutes`, `tuyauWorldApi` | focused automated route/UI | Exact LC-001/002/003 labels and evidence anchors | 73 passed |
 | 2026-07-22 | Backend guarded test command | environment safety | Database-backed unit/functional evidence is never run without acknowledgement | blocked safely: `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` absent |
 | 2026-07-22 | Current-tree reverse inventory for LC-001, LC-002, and LC-003 changed from `develop` | structural / reverse traceability | Every cited implementation/evidence path resolves | no missing implementation or verification references; cross-Epic changed-surface candidates are expected ownership intersections, not deletion candidates |
+| 2026-07-22 | Independent review regression pass | independent review | LC-003 evidence-label and current-scope correction | 19 workbench tests, 28 Storybook tests, LC-003 validation, and diff check passed; review record refreshed |
 
 ## Implementation Risk And Confirmation Matrix
 
@@ -145,23 +146,23 @@ status: in_review
 
 ## Blockers / Open Questions
 
-- A fresh independent review is required. Database-backed functional/E2E and live-provider proof remain blocked until an explicitly acknowledged disposable `TEST_DATABASE_URL` is supplied. Production/recovery checks remain explicit out-of-scope gaps.
+- Independent review is complete and blocked only on required database-backed functional/no-publication and deterministic E2E evidence. Provide an explicitly acknowledged disposable `TEST_DATABASE_URL` and `ALLOW_TEST_DATABASE_WRITES=1`, or explicitly accept this non-manual verification gap. Production/recovery checks remain separate accepted out-of-scope gaps.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at Apply start.
-- Candidate source commit: current `change/epic-audit-remediation` in-review branch head after this ledger commit.
+- Candidate source commit: `636045d` reviewed for behavior; the branch is not an integration candidate until the database/E2E blocker is resolved or accepted.
 - Source differs from target when implementation changed: yes.
 - Intended implementation fully committed: yes.
 - Unrelated dirty state preserved: none expected after the review-safe batch commit.
-- Required risk, fan-out, and evidence rows: rendered and LC-003 exact evidence are complete; guarded database/live-provider gaps remain explicit.
+- Required risk, fan-out, and evidence rows: rendered and LC-003 exact evidence are complete; guarded database/E2E proof is required and unresolved; live-provider/production recovery remain explicit gaps.
 
 ## Closeout
 
 - Change status: in_review.
 - Epic files updated: LC-001 normalized with controlled 401 rendering proof; LC-002 field recovery evidence includes controlled rendering; LC-003/S1-S2 evidence is scenario-mapped with explicit gaps.
 - Manual UI confirmation status: pending user.
-- Rendered UI verification status: complete for controlled Storybook 422/401 fixtures; live authenticated API proof remains environment-gated.
+- Rendered UI verification status: independently complete for controlled Storybook 422/401 fixtures; live authenticated API proof remains environment-gated.
 - PR / merge state: not started.
-- Deferred scope accepted: production/recovery checks only.
+- Deferred scope accepted: production/recovery checks only. Database/E2E proof is not accepted.
 - Change moved to `docs/changes/closed/`: no.
