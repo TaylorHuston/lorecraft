@@ -384,7 +384,7 @@ describe('AdventureWorkbench', () => {
     expect(retried).toBe(true)
   })
 
-  it('LC-003/S1/R5-S2 uses Story-first keyboard-operable tabs on mobile', async () => {
+  it('LC-003/S1/R5-S4 uses Story-first keyboard-operable tabs on mobile', async () => {
     const user = userEvent.setup()
     render(<AdventureWorkbench adventure={readyAdventure} layout="mobile" />)
 
@@ -465,7 +465,7 @@ describe('AdventureWorkbench', () => {
     expect(submitTurn.mock.calls[0][0]).not.toHaveProperty('input')
   })
 
-  it('LC-003/S2/R5-S2..R5-S4 preserves story during progress and offers failed-turn recovery', async () => {
+  it('LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery', async () => {
     const user = userEvent.setup()
     const retryTurn = vi.fn()
     const discardTurn = vi.fn()

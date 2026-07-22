@@ -4,7 +4,7 @@ id: LC-003
 status: in_progress
 created: 2026-07-16
 modified: 2026-07-22
-last_verified: 2026-07-20
+last_verified: 2026-07-22
 stories:
   - S1
   - S2
@@ -28,7 +28,7 @@ Lorecraft's creator-owned Worlds are authoritative canon. Adventure play lets an
 
 ## Outcome
 
-Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The closed Character-authoring Change extended frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards; guarded schema, synthetic smoke, deterministic E2E refresh, and the live-provider Act/Guide/Pass matrix pass, while owner acceptance remains pending.
+Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The closed Character-authoring Change extended frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards. Historical guarded-schema, synthetic-smoke, deterministic-E2E, and live-provider evidence is retained in the scenario maps; current database/live-provider reruns and owner acceptance remain explicit verification gaps.
 
 ## Current Scope
 
@@ -326,7 +326,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R4-S3 | Automated tests `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts#LC-003/S1/R1-S3 + R4-S3: delete removes` and `apps/frontend/src/worlds/WorldRoutes.test.tsx#deletes only the confirmed Adventure` | Deletes only the selected owner aggregate without changing its World or siblings. | Passing 2026-07-20; backend rerun pending disposable database |
 | S1/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx#preserves input and one idempotency key` | Pending context remains visible and retry preserves the draft/request key. | Passing 2026-07-20 |
 | S1/R5-S2 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S2 renders the ready opening as primary content with filtered context` | Ready Story, Player, and Scene rendering is story-first. | Passing 2026-07-20 |
-| S1/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S2 uses Story-first keyboard-operable tabs on mobile` | Mobile tab interaction remains keyboard-operable. | Passing 2026-07-20 |
+| S1/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S4 uses Story-first keyboard-operable tabs on mobile` | Mobile tab interaction remains keyboard-operable. | Passing 2026-07-22 |
 | S1/R5-S3 | Automated tests `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R5-S3` reset-unavailable, duplicate-confirmation, and conflict cases | Reset and delete controls disclose recovery/conflict states safely. | Passing 2026-07-20 |
 | S1/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R3-S2 + R5-S6 polls pending work until the ready opening is authoritative` | Announces readiness while preserving current focus. | Passing 2026-07-22 |
 
@@ -584,7 +584,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R4-S4 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S4` | Ordered proposal application keeps deterministic prior/result values. | Passing 2026-07-20 |
 | S2/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break`, and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 confirms Pass before submitting an empty turn` | Act, Guide, and Pass interaction semantics. | Passing 2026-07-20 |
 | S2/R5-S2, S2/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S2 + R5-S3 polls one active turn` | Polls to completed narration, announces once, and preserves focus. | Passing 2026-07-20 |
-| S2/R5-S2, S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2..R5-S4 preserves story during progress and offers failed-turn recovery` | Pending state retains Story/replaces the composer; failure supports Retry/Discard. | Passing 2026-07-20 |
+| S2/R5-S2, S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery` | Pending state retains Story/replaces the composer; failure supports Retry/Discard. | Passing 2026-07-22 |
 | S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S4 renders a concurrent-turn conflict` | UI reports an actionable conflict rather than a transport code. | Passing 2026-07-20 |
 
 #### Verification Gaps
