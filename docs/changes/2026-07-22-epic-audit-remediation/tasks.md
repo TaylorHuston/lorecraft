@@ -49,8 +49,8 @@ status: in_progress
 
 ### 5. Review And Closeout
 
-- [ ] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed.
-- [ ] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap`.
+- [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (verdict: changes requested; review record added).
+- [x] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap` (current: pending user).
 - [ ] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification.
 
 ## Implementation Ledger
