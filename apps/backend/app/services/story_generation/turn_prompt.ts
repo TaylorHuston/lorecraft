@@ -76,6 +76,10 @@ function isDisclosiveGuideValue(value: string): boolean {
   return value.length > 0 && !nonDisclosingGuideValues.has(value)
 }
 
+function containsWholeNormalizedValue(narration: string, protectedValue: string): boolean {
+  return ` ${narration} `.includes(` ${protectedValue} `)
+}
+
 function containsDirectReflection(narration: string, protectedValue: string): boolean {
   // Card validation permits very concise private knowledge. Short literals
   // occur naturally in ordinary prose, so a deterministic substring guard
@@ -118,7 +122,7 @@ export function assertNarrationSafeForPublication(
   const normalizedGuide = guide ? normalizedForDisclosureCheck(guide) : ''
   if (
     isDisclosiveGuideValue(normalizedGuide) &&
-    normalizedForDisclosureCheck(narration).includes(normalizedGuide)
+    containsWholeNormalizedValue(normalizedForDisclosureCheck(narration), normalizedGuide)
   ) {
     throw new UnsafeNarrationPublicationError()
   }

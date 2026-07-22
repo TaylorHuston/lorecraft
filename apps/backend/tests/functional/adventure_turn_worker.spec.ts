@@ -274,6 +274,68 @@ test.group('AdventureTurnWorker', (group) => {
     assert.notInclude(JSON.stringify(calls), 'Mira beckons')
   })
 
+  test('LC-003/S2/R1-S3 + R3-S4: publishes ordinary narration containing a concise Guide as a larger word', async ({
+    assert,
+  }) => {
+    const fixture = await createReadyAdventure('guide-substring')
+    const turn = await submitTurn(
+      fixture.owner.id,
+      fixture.adventureId,
+      crypto.randomUUID(),
+      'guide',
+      'OK'
+    )
+    let extractorCalled = false
+    const worker = new AdventureTurnWorker({
+      completion: new AdventureTurnProductionCompletionPort({
+        storyGenerator: {
+          async generateTurn(input) {
+            assert.equal(input.context.trigger, 'guide')
+            assert.equal(input.context.input, 'OK')
+            return {
+              narration: 'The lookout waves from the archway.',
+              provider: 'test-provider',
+              model: 'test-model',
+              settings: { temperature: 0, maxTokens: 10 },
+              request: { byteCount: 10, timeoutMs: 1 },
+              response: { byteCount: 10, statusCode: 200 },
+            }
+          },
+        },
+        stateExtractor: {
+          async extract(input) {
+            extractorCalled = true
+            assert.equal(input.narration, 'The lookout waves from the archway.')
+            return {
+              extraction: { proposals: [] },
+              provider: 'test-provider',
+              model: 'test-model',
+              settings: { temperature: 0, maxTokens: 10 },
+              request: { byteCount: 10, timeoutMs: 1 },
+              response: { byteCount: 10, statusCode: 200 },
+            }
+          },
+        },
+      }),
+      workerId: 'turn-worker-guide-substring',
+      now: () => new Date(now),
+    })
+
+    assert.deepInclude(await worker.runOnce(), { status: 'succeeded', turnId: turn.id })
+    assert.isTrue(extractorCalled)
+    assert.deepInclude(await db.from('adventure_turns').where('id', turn.id).firstOrFail(), {
+      status: 'succeeded',
+    })
+    assert.deepInclude(
+      await db
+        .from('adventure_story_entries')
+        .where('adventure_id', fixture.adventureId)
+        .where('kind', 'narration')
+        .firstOrFail(),
+      { content: 'The lookout waves from the archway.' }
+    )
+  })
+
   test('LC-003/S2/R1-S3 + R3-S4: rejects even short reflected Guide text before narration publication', async ({
     assert,
   }) => {
