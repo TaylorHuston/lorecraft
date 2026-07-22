@@ -2,7 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
-import type { WorldDetail } from '../worlds/worldApi'
+import { WorldApiError, type WorldDetail } from '../worlds/worldApi'
 import { AdventureApiError, adventureQueryKeys, type AdventureDetail } from './adventureApi'
 
 const playableWorld: WorldDetail = {
@@ -65,6 +65,42 @@ const pendingAdventure: AdventureDetail = {
 }
 
 describe('Adventure routes', () => {
+  it('LC-001/S3/R1-S4 ends the shared session when New Adventure setup World load reports unauthorized', async () => {
+    renderTestApp({
+      route: '/worlds/stormbound-chapel/adventures/new',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: {
+        getWorld: async () => {
+          throw new WorldApiError('unauthorized', 'Session ended')
+        },
+      },
+    })
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByText('Loading Adventure setup…')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'World unavailable' })).not.toBeInTheDocument()
+  })
+
+  it('LC-001/S3/R1-S4 ends the shared session when New Adventure creation reports unauthorized', async () => {
+    const user = userEvent.setup()
+    const createAdventure = vi
+      .fn()
+      .mockRejectedValue(new AdventureApiError('unauthorized', 'Session ended'))
+    renderTestApp({
+      route: '/worlds/stormbound-chapel/adventures/new',
+      session: { id: 4, email: 'member@example.com' },
+      worldApi: { getWorld: async () => playableWorld },
+      adventureApi: { createAdventure },
+    })
+
+    await user.type(await screen.findByLabelText('Player name (required)'), 'Elara Vance')
+    await user.click(screen.getByRole('button', { name: 'Start Adventure' }))
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Start an Adventure' })).not.toBeInTheDocument()
+    expect(createAdventure).toHaveBeenCalledTimes(1)
+  })
+
   it('LC-003/S1/R1-S2 presents associated creation validation and preserves World navigation', async () => {
     const user = userEvent.setup()
     const createAdventure = vi.fn()

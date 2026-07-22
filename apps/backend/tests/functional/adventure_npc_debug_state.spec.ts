@@ -186,7 +186,7 @@ test.group('Adventure NPC Debug state API', (group) => {
     assert.equal(adventure.turn_count, 0)
   })
 
-  test('LC-003/S3/R3-S4: hides Debug editing from a different Adventure owner', async ({
+  test('LC-003/S3/R3-S2: hides Debug editing from a different Adventure owner', async ({
     client,
   }) => {
     const ownerBrowser = await createAuthenticatedBrowser(client, 'npc-debug-owner-two@example.com')
@@ -210,7 +210,7 @@ test.group('Adventure NPC Debug state API', (group) => {
     ownerResponse.assertOk()
   })
 
-  test('LC-003/S3/R3-S4: rejects invalid frozen Locations and edits while a turn is active', async ({
+  test('LC-003/S3/R3-S2: rejects invalid frozen Locations and edits while a turn is active', async ({
     client,
   }) => {
     const browser = await createAuthenticatedBrowser(client, 'npc-debug-bounds@example.com')

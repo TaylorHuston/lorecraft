@@ -5,8 +5,8 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: promoted the Change, moved it to `in_progress`, and completed the LC-002 Character validation/recovery implementation slice.
-- Next action: add and verify LC-001 New Adventure session-loss coverage and exact route labels, then reconcile LC-001/LC-003 Epic truth.
+- Last completed action: added LC-001 New Adventure session-loss coverage and corrected the first LC-003 scenario-label/owner-map set.
+- Next action: finish LC-001 v2 normalization, then complete the LC-003 evidence/manual-status and closed-artifact reconciliation.
 - Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
 - Expected dirty files: this Change's implementation/tests/artifacts plus the three pre-existing untracked Epic audit reports, which remain inputs for the later reconciliation phase.
 - Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. Backend functional tests require an explicitly acknowledged disposable `TEST_DATABASE_URL`; the local guard refused writes without it on 2026-07-22.
@@ -36,7 +36,7 @@ status: in_progress
 
 - [x] 3.1 Implement `LC-002/S3/R2-S2` structured duplicate-key and invalid-Location field errors without weakening not-found/non-disclosure behavior.
 - [x] 3.2 Add Character mutation permission/validation/no-publication regression coverage for `LC-002/S3/R1-S2` and `R2-S2`.
-- [ ] 3.3 Add `LC-001/S3/R1-S4` direct New Adventure World-load and creation 401 coverage; rename route-presentation and LC-003 stale test anchors to exact current scenarios.
+- [x] 3.3 Add `LC-001/S3/R1-S4` direct New Adventure World-load and creation 401 coverage; rename route-presentation and LC-003 stale test anchors to exact current scenarios.
 - [ ] 3.4 Reconcile generated contracts if the error shape changes their output; commit each coherent, verified phase.
 
 ### 4. Verification
@@ -59,6 +59,7 @@ status: in_progress
 |---|---|---|---|---|---|
 | 2026-07-22 | Planning | `sdd-change --plan` | LC-001, LC-002, LC-003 audit findings | planned | not applicable |
 | 2026-07-22 | LC-002/S3/R1-S2, R2-S2, R6-S2 | `sdd-apply`; risk closure and rendered-route recovery test | Character service/controller, adapter, editor, focused tests, LC-002 Epic | Added fielded author-owned validation errors; retained 401/404 non-disclosure; fixed rejected-editor mutation rejection; backend functional run awaits a safe database target | `3096172` |
+| 2026-07-22 | LC-001/S3/R1-S4 and LC-003 label/ownership reconciliation | `sdd-apply`; focused route evidence | New Adventure route tests, route-presentation titles, LC-003 stale labels and source/ADR paths | Both New Adventure 401 boundaries end the shared session; exact test labels and LC-003 owner maps corrected | commit pending |
 
 ## Verification Ledger
 
@@ -67,6 +68,7 @@ status: in_progress
 | 2026-07-22 | Three `sdd-epic-verify` reports | independent audit | Current Epic drift, implementation defect, and exact remediation obligations | findings recorded |
 | 2026-07-22 | LC-001 focused frontend + Storybook suites | focused automated / component state | Account/session and route evidence baseline | 96 frontend, 84 Storybook assertions passed |
 | 2026-07-22 | `npm run test --workspace @lorecraft/frontend -- WorldRoutes.test.tsx tuyauWorldApi.test.ts` | focused automated / rendered route | LC-002 fielded adapter mapping, inline error association, stable draft, and no unhandled rejection | 34 passed |
+| 2026-07-22 | `npm run test --workspace @lorecraft/frontend -- AdventureRoutes.test.tsx RoutePresentation.test.tsx creationRequestId.test.ts` | focused automated route/UI | New Adventure World-load/create 401 session loss; LC-001 route context and LC-003 UUID fallback labels | 23 passed |
 | 2026-07-22 | `npm run lint --workspace @lorecraft/backend` and backend/frontend typechecks | supporting static gates | Character service/controller and editor compile/lint cleanly | passed |
 | 2026-07-22 | `npm run verify:contracts` | generated contract | Controller response-shape change does not leave generated Tuyau artifacts dirty | passed |
 | 2026-07-22 | `npm run test --workspace @lorecraft/backend -- tests/functional/world_character_authoring.spec.ts` | guarded environment check | Database safety suite runs; functional assertions do not run without an acknowledged disposable target | blocked safely: `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` absent |
@@ -76,7 +78,7 @@ status: in_progress
 | Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
 |---|---|---|---|---|---|
 | LC-002/S3/R2-S2 Character validation | Only the invalid editor field is marked; rejected writes publish no WorldVersion | Field error leaks ownership/existence or maps to no field | Backend response/no-mutation tests; frontend field-error test and rendered inspection | Frontend adapter/route proof passed; backend functional proof awaits safe disposable target | partial |
-| LC-001/S3/R1-S4 New Adventure 401 | Session ends on both initial World load and creation rejection | Protected data/error UI remains after session loss | Direct route tests plus rendered session-loss check | 2026-07-22 LC-001 audit | known |
+| LC-001/S3/R1-S4 New Adventure 401 | Session ends on both initial World load and creation rejection | Protected data/error UI remains after session loss | Direct route tests plus rendered session-loss check | Both direct route tests pass; rendered route still pending | partial |
 | LC-001/002/003 evidence maps | Every durable claim has exact current code/test evidence or an explicit gap | Broad/stale evidence overstates coverage | Inspect title/assertion before mapping; scoped validation and inventory | 2026-07-22 audits | known |
 | Private production/recovery | No local artifact states unperformed deployment behavior as verified | False security confidence | Preserve explicit operational gap unless authorized evidence exists | LC-001 ADR contradiction | accepted gap |
 
@@ -85,14 +87,14 @@ status: in_progress
 | Concern | Reference Location / Contract | New Location / Contract | Focused Proof | Intentional Divergence / Gap | Status |
 |---|---|---|---|---|---|
 | Field error serialization | Existing validator errors with `field` | Character duplicate-key/Location service error via controller | Adapter and routed-editor assertions pass; backend JSON assertion is present but unrun pending a disposable target | Only author-owned validation cases receive field detail | partial |
-| Session-loss handling | World detail/Adventure page 401 end-session behavior | New Adventure World-load/create 401 behavior | Exact New Adventure route tests | None expected | pending |
+| Session-loss handling | World detail/Adventure page 401 end-session behavior | New Adventure World-load/create 401 behavior | Exact New Adventure route tests pass | None expected | complete in focused tests; rendered check pending |
 
 ## Stateful Transition Matrix
 
 | Start State | Trigger / Transition | Expected Invariant | Focused Test Or Runtime Observation | Result |
 |---|---|---|---|---|
 | Complete Character draft | Duplicate key or invalid Location save | Field error appears; draft remains editable; no canon publication | Frontend form/API proof passed; backend mutation test awaits a disposable target | partial |
-| New Adventure route | World load or create returns 401 | Shared session ends and protected route is replaced by sign-in | New Adventure route tests | pending |
+| New Adventure route | World load or create returns 401 | Shared session ends and protected route is replaced by sign-in | `AdventureRoutes.test.tsx` named load/create 401 tests | passed |
 
 ## Decision Fan-Out Ledger
 

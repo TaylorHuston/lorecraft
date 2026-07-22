@@ -15,7 +15,7 @@ const validNpcState = {
 }
 
 test.group('Adventure validation', () => {
-  test('LC-003/S3/R3-S1: accepts only complete bounded Debug NPC state', async ({ assert }) => {
+  test('LC-003/S3/R3-S2: accepts only complete bounded Debug NPC state', async ({ assert }) => {
     const [validError, output] = await updateAdventureNpcStateValidator.tryValidate(validNpcState)
     assert.isNull(validError)
     assert.deepEqual(output, validNpcState)

@@ -8,7 +8,7 @@ afterEach(() => {
   if (randomUuidDescriptor) Object.defineProperty(crypto, 'randomUUID', randomUuidDescriptor)
 })
 
-it('LC-003/S1/R1-S1 creates a valid UUID v4 when randomUUID is unavailable', () => {
+it('LC-003/S1/R1-S5 creates a valid UUID v4 when randomUUID is unavailable', () => {
   Object.defineProperty(crypto, 'randomUUID', { configurable: true, value: undefined })
   vi.spyOn(crypto, 'getRandomValues').mockImplementation((array) => {
     ;(array as Uint8Array).fill(0xab)

@@ -3,7 +3,7 @@ schema: sdd-epic-v2
 id: LC-003
 status: in_progress
 created: 2026-07-16
-modified: 2026-07-21
+modified: 2026-07-22
 last_verified: 2026-07-20
 stories:
   - S1
@@ -15,7 +15,7 @@ stories:
 
 ## Product Context
 
-- Related change: `docs/changes/closed/2026-07-16-private-adventure-foundation/`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
 - Related ADRs:
   - `docs/adrs/2026-07-14-world-canon-and-adventure-isolation.md`
   - `docs/adrs/2026-07-16-immutable-world-version-snapshots.md`
@@ -287,9 +287,11 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
 | --- | --- | --- | --- |
 | S1/R1 | `apps/backend/app/services/adventure_creation_service.ts#async create` | primary | Creates the owner-scoped Adventure, player, and opening job atomically. |
-| S1/R2 | `apps/backend/app/services/world_version_publication_service.ts#publishWorldVersionInTransaction` | primary | Publishes the immutable, playable source snapshot. |
+| S1/R2 | `apps/backend/app/services/adventure_creation_service.ts#async create` | primary | Selects the current playable WorldVersion and persists its immutable identifier and default Starting Point on the new Adventure. |
+| S1/R2 | `apps/backend/app/services/world_version_publication_service.ts#publishWorldVersionInTransaction` | support | Publishes the immutable, playable source snapshot consumed by Adventure creation. |
 | S1/R3 | `apps/backend/app/services/adventure_opening_worker.ts#async runOnce` | primary | Claims opening work and publishes only a complete opening. |
-| S1/R4 | `apps/backend/app/services/adventure_lifecycle_service.ts#async reset` | primary | Resets Adventure-owned state from the frozen source. |
+| S1/R4 | `apps/backend/app/services/adventure_query_service.ts#async listForWorld` and `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Lists and resumes only the owner's Adventures from their frozen source context. |
+| S1/R4 | `apps/backend/app/services/adventure_lifecycle_service.ts#async reset` and `apps/backend/app/services/adventure_lifecycle_service.ts#async delete` | primary | Resets from the frozen source and deletes only the selected owner Adventure. |
 | S1/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Renders the responsive story-first Adventure experience. |
 
 #### Implementation Gaps
@@ -665,8 +667,8 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 | S3/R1-S2, S3/R1-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it` | An authoritative Scene refresh with no present NPCs shows the empty-state message and removes the stale selected card. | Passing 2026-07-20 |
 | S3/R2-S1 | Storybook `Application/Adventures/Workbench/ReadyDesktop`, `ReadyMobile`, and `DebugNpcEditor` | Directly inspected desktop NPC list and selected complete editor plus mobile Story-first Scene-to-card selection; all bounded editable fields render without horizontal overflow. | Passing 2026-07-20 |
 | S3/R3-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S1 autosaves every editable Adventure-owned NPC card field` and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S1: autosaves bounded NPC card overrides without changing frozen canon or seed Character` | Every editable card field is sent as a bounded Adventure-owned override; the persisted update leaves frozen canon, seed Character, story revision, and turn count unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
-| S3/R3-S2 | `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S3/R3-S1: accepts only complete bounded Debug NPC state` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts#LC-003/S1/R4-S2 + S3/R3-S2: preserves authored values, backfills legacy blanks, and enforces complete bounded state` | Invalid or legacy Debug state is subject to whitespace-aware nonblank bounds, while reconciliation preserves nonblank authored values. | Passing 2026-07-20 against a guarded isolated schema |
-| S3/R3-S2 | `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#production refuses the NPC Debug editor boundary`, `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#hides Debug editing from a different Adventure owner`, and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#rejects invalid frozen Locations and edits while a turn is active` | Production disables the editor boundary; another owner receives non-disclosing not-found, and invalid frozen Locations or active turns are refused. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R3-S2 | `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S3/R3-S2: accepts only complete bounded Debug NPC state` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts#LC-003/S1/R4-S2 + S3/R3-S2: preserves authored values, backfills legacy blanks, and enforces complete bounded state` | Invalid or legacy Debug state is subject to whitespace-aware nonblank bounds, while reconciliation preserves nonblank authored values. | Passing 2026-07-20 against a guarded isolated schema |
+| S3/R3-S2 | `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S3/R3-S2: production refuses the NPC Debug editor boundary`, `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: hides Debug editing from a different Adventure owner`, and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: rejects invalid frozen Locations and edits while a turn is active` | Production disables the editor boundary; another owner receives non-disclosing not-found, and invalid frozen Locations or active turns are refused. | Existing guarded database proof last passed 2026-07-20; labels reconciled 2026-07-22 |
 | S3/R3-S2 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure` and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 retries an unchanged NPC draft after a recoverable autosave failure` | Validation marks the rejected field with actionable guidance; a recoverable failure preserves the unchanged draft for an explicit retry. | Passing 2026-07-20 |
 | S3/R3-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S3 keeps the Debug editor usable after moving its selected NPC out of Scene` | Moving the selected NPC out of Scene keeps that editor usable; Back returns focus to the current Scene region when the original entry is absent. | Passing 2026-07-20 |
 | S3/R1-S3 | `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | A fixture-controlled completed Act refreshes the selected current-Scene NPC's authoritative Mood, Status, and Memory values on desktop and mobile. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |

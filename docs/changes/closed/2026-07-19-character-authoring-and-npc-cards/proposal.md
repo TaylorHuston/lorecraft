@@ -94,8 +94,8 @@ The planned first version was token-conscious: every field is required so a Char
 ## Change Folder
 
 - Planned location: promoted; private draft removed
-- Active location: `docs/changes/2026-07-19-character-authoring-and-npc-cards/`
-- Closed location: `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
+- Historical active location: `docs/changes/2026-07-19-character-authoring-and-npc-cards/`
+- Current closed location: `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
 
 ## Impact
 
