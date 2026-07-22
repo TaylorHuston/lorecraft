@@ -5,10 +5,10 @@ status: in_progress
 
 ## Resume Here
 
-- Last completed action: review-safe remediation corrected LC-002/LC-003 lifecycle claims, exact LC-002 evidence anchors, and `locationKey` routed recovery coverage.
-- Next action: use `/sdd-apply` to complete LC-003/S1-S2 exact scenario evidence reconciliation and its required rendered/live/guarded-database verification gaps.
+- Last completed action: reconciled LC-003/S1-S2 evidence to narrow scenario anchors, added deterministic rendered error/session-loss fixtures, and directly inspected their desktop/mobile states.
+- Next action: run independent `/sdd-review`; use an explicitly acknowledged disposable database only if the remaining functional/E2E proof is to be rerun.
 - Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
-- Expected dirty files: none after the review-safe batch commits; the LC-002/LC-003 audit reports are tracked historical inputs.
+- Expected dirty files: none after the final evidence/ledger commit; the LC-002/LC-003 audit reports are tracked historical inputs.
 - Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. Backend functional tests require an explicitly acknowledged disposable `TEST_DATABASE_URL`; the local guard refused writes without it on 2026-07-22.
 
 ## Task Checklist
@@ -29,8 +29,8 @@ status: in_progress
 
 - [x] 2.1 Normalize LC-001 completely to `sdd-epic-v2`, including independent states, requirement-level primary anchors, exact evidence types, and current gaps.
 - [x] 2.2 Reconcile LC-001/S2 requested-route resumption and S3 New Adventure/route-presentation maps.
-- [ ] 2.3 Reconcile LC-002/S2/S3 and LC-003/S1-S3 evidence, forward maps, status/manual claims, and related ADR/closed-Change paths.
-- [ ] 2.4 Update all active-Epic `Implemented By`, `Verified By`, and gaps only from inspected current code/proof; rerun validation and reverse inventory.
+- [x] 2.3 Reconcile LC-002/S2/S3 and LC-003/S1-S3 evidence, forward maps, status/manual claims, and related ADR/closed-Change paths.
+- [x] 2.4 Update all active-Epic `Implemented By`, `Verified By`, and gaps only from inspected current code/proof; rerun validation and reverse inventory.
 
 ### 3. Implementation
 
@@ -41,17 +41,17 @@ status: in_progress
 
 ### 4. Verification
 
-- [ ] 4.1 Run focused backend Character and Adventure/auth suites plus focused frontend Character, New Adventure, route, and Adventure suites.
-- [ ] 4.2 Run Storybook and directly inspect Character error/recovery and session-loss rendering at representative desktop/mobile widths.
-- [ ] 4.3 Run guarded deterministic E2E only against an explicitly acknowledged disposable environment; otherwise retain the exact gap.
+- [x] 4.1 Run focused backend Character and Adventure/auth suites plus focused frontend Character, New Adventure, route, and Adventure suites. Backend database suites remain explicitly blocked by the guard because no disposable target was supplied.
+- [x] 4.2 Run Storybook and directly inspect Character error/recovery and session-loss rendering at representative desktop/mobile widths.
+- [x] 4.3 Run guarded deterministic E2E only against an explicitly acknowledged disposable environment; otherwise retain the exact gap. No disposable `TEST_DATABASE_URL` or `ALLOW_TEST_DATABASE_WRITES=1` acknowledgement was supplied, so no database or E2E mutation ran.
 - [x] 4.4 Run scoped `sdd validate` for the Change and all three Epics, then rerun full current-tree Epic orphan inventories.
-- [ ] 4.5 Record only repeatable exact evidence in Epic tables; retain production/recovery evidence as an accepted gap when not rerun.
+- [x] 4.5 Record only repeatable exact evidence in Epic tables; retain production/recovery evidence as an accepted gap when not rerun.
 
 ### 5. Review And Closeout
 
-- [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (verdict: changes requested; review record added).
+- [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (prior verdict: changes requested; this Apply resolves its findings and requires a fresh independent review).
 - [x] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap` (current: pending user).
-- [ ] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification.
+- [x] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification. No such operation was requested or performed.
 
 ## Implementation Ledger
 
@@ -61,6 +61,8 @@ status: in_progress
 | 2026-07-22 | LC-002/S3/R1-S2, R2-S2, R6-S2 | `sdd-apply`; risk closure and rendered-route recovery test | Character service/controller, adapter, editor, focused tests, LC-002 Epic | Added fielded author-owned validation errors; retained 401/404 non-disclosure; fixed rejected-editor mutation rejection; backend functional run awaits a safe database target | `3096172` |
 | 2026-07-22 | LC-001/S3/R1-S4 and LC-003 label/ownership reconciliation | `sdd-apply`; focused route evidence | New Adventure route tests, route-presentation titles, LC-003 stale labels and source/ADR paths | Both New Adventure 401 boundaries end the shared session; exact test labels and LC-003 owner maps corrected | `4e3ce8f` |
 | 2026-07-22 | LC-001/S1-S3 | `sdd-epic-v2` normalization | LC-001 Epic and audit report | Independent implementation/verification states, requirement anchors, exact evidence, requested-route behavior, and honest operational gaps reconciled | `fe46ade` |
+| 2026-07-22 | Rendered recovery fixtures | `sdd-apply`; Storybook and browser inspection | Character editor and New Adventure route | Controlled 422 field recovery and both controlled 401 boundaries render through production route/provider seams without console errors or mobile overflow | `454ec94`, `099033c` |
+| 2026-07-22 | LC-003/S1-S2 evidence reconciliation | `sdd-apply`; scenario-by-scenario anchor review | LC-003 Epic, route/unit test labels | Replaced aggregate/historical proof claims with narrow inspected anchors and explicit operational/manual gaps | pending final evidence commit |
 
 ## Verification Ledger
 
@@ -77,29 +79,35 @@ status: in_progress
 | 2026-07-22 | `npm run test --workspace @lorecraft/backend -- tests/functional/world_character_authoring.spec.ts` | guarded environment check | Database safety suite runs; functional assertions do not run without an acknowledged disposable target | blocked safely: `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` absent |
 | 2026-07-22 | Review rerun: focused frontend routes/adapter plus World-detail Storybook | focused automated / component state | `key` and `locationKey` field recovery, retained drafts, normal authoring fixture | 35 frontend and 19 Storybook tests passed |
 | 2026-07-22 | Review rerun: Change plus LC-001, LC-002, LC-003 scoped validation; changed-from reverse inventories | structural / reverse traceability | Current Change schema, all active Epic anchors, and changed-surface ownership | Change/LC-002 passed without warnings; LC-001 and LC-003 retain accepted large-story warnings only |
+| 2026-07-22 | `npm run test:storybook --workspace @lorecraft/frontend -- WorldDetailPage.stories.tsx` | rendered component fixture | Controlled duplicate-key and invalid-Location recovery | 21 passed |
+| 2026-07-22 | `npm run test:storybook --workspace @lorecraft/frontend -- NewAdventurePage.stories.tsx` | rendered routed fixture | Controlled New Adventure World-load/create 401 session loss | 7 passed |
+| 2026-07-22 | Direct Storybook browser inspection | rendered desktop/mobile | Duplicate-key desktop, invalid-Location at 390px, World-load 401 desktop, creation 401 at 390px | Field-local errors or Sign in replacement, retained Character draft, no console errors, 390px width has no overflow |
+| 2026-07-22 | Focused frontend suite `AdventureRoutes`, `creationRequestId`, `AdventureWorkbench`, `WorldRoutes`, `tuyauWorldApi` | focused automated route/UI | Exact LC-001/002/003 labels and evidence anchors | 73 passed |
+| 2026-07-22 | Backend guarded test command | environment safety | Database-backed unit/functional evidence is never run without acknowledgement | blocked safely: `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` absent |
+| 2026-07-22 | Current-tree reverse inventory for LC-001, LC-002, and LC-003 changed from `develop` | structural / reverse traceability | Every cited implementation/evidence path resolves | no missing implementation or verification references; cross-Epic changed-surface candidates are expected ownership intersections, not deletion candidates |
 
 ## Implementation Risk And Confirmation Matrix
 
 | Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
 |---|---|---|---|---|---|
-| LC-002/S3/R2-S2 Character validation | Only the invalid editor field is marked; rejected writes publish no WorldVersion | Field error leaks ownership/existence or maps to no field | Backend response/no-mutation tests; frontend field-error test and rendered inspection | Frontend adapter/route proof passed; backend functional proof awaits safe disposable target | partial |
-| LC-001/S3/R1-S4 New Adventure 401 | Session ends on both initial World load and creation rejection | Protected data/error UI remains after session loss | Direct route tests plus rendered session-loss check | Both direct route tests pass; rendered route still pending | partial |
-| LC-001/002/003 evidence maps | Every durable claim has exact current code/test evidence or an explicit gap | Broad/stale evidence overstates coverage | Inspect title/assertion before mapping; scoped validation and inventory | 2026-07-22 audits | known |
+| LC-002/S3/R2-S2 Character validation | Only the invalid editor field is marked; rejected writes publish no WorldVersion | Field error leaks ownership/existence or maps to no field | Backend response/no-mutation tests; frontend field-error test and rendered inspection | Fielded adapter/route plus controlled Storybook desktop/mobile states pass; backend functional proof awaits safe disposable target | partial |
+| LC-001/S3/R1-S4 New Adventure 401 | Session ends on both initial World load and creation rejection | Protected data/error UI remains after session loss | Direct route tests plus rendered session-loss check | Both direct route tests and controlled Storybook desktop/mobile session-loss fixtures pass | complete in controlled proof |
+| LC-001/002/003 evidence maps | Every durable claim has exact current code/test evidence or an explicit gap | Broad/stale evidence overstates coverage | Inspect title/assertion before mapping; scoped validation and inventory | LC-003/S1-S2 tables now use narrow current anchors; production/manual gaps remain explicit | complete |
 | Private production/recovery | No local artifact states unperformed deployment behavior as verified | False security confidence | Preserve explicit operational gap unless authorized evidence exists | LC-001 ADR contradiction | accepted gap |
 
 ## Pattern Parity Matrix
 
 | Concern | Reference Location / Contract | New Location / Contract | Focused Proof | Intentional Divergence / Gap | Status |
 |---|---|---|---|---|---|
-| Field error serialization | Existing validator errors with `field` | Character duplicate-key/Location service error via controller | Adapter and routed-editor assertions pass; backend JSON assertion is present but unrun pending a disposable target | Only author-owned validation cases receive field detail | partial |
-| Session-loss handling | World detail/Adventure page 401 end-session behavior | New Adventure World-load/create 401 behavior | Exact New Adventure route tests pass | None expected | complete in focused tests; rendered check pending |
+| Field error serialization | Existing validator errors with `field` | Character duplicate-key/Location service error via controller | Adapter, routed-editor, and controlled Storybook assertions pass; backend JSON assertion is present but unrun pending a disposable target | Only author-owned validation cases receive field detail | partial |
+| Session-loss handling | World detail/Adventure page 401 end-session behavior | New Adventure World-load/create 401 behavior | Exact route tests plus real AuthProvider/AppRoutes Storybook fixture pass | None expected | complete in controlled proof |
 
 ## Stateful Transition Matrix
 
 | Start State | Trigger / Transition | Expected Invariant | Focused Test Or Runtime Observation | Result |
 |---|---|---|---|---|
-| Complete Character draft | Duplicate key or invalid Location save | Field error appears; draft remains editable; no canon publication | Frontend form/API proof passed; backend mutation test awaits a disposable target | partial |
-| New Adventure route | World load or create returns 401 | Shared session ends and protected route is replaced by sign-in | `AdventureRoutes.test.tsx` named load/create 401 tests | passed |
+| Complete Character draft | Duplicate key or invalid Location save | Field error appears; draft remains editable; no canon publication | Frontend form/API and controlled Storybook proof passed; backend mutation test awaits a disposable target | partial |
+| New Adventure route | World load or create returns 401 | Shared session ends and protected route is replaced by sign-in | Named route tests plus controlled routed Storybook states | passed |
 
 ## Decision Fan-Out Ledger
 
@@ -114,7 +122,7 @@ status: in_progress
 | Evidence Obligation | Required Setup / Safety Boundary | Needed For | Current Readiness | Result / Resolution |
 |---|---|---|---|---|
 | Character service/functional tests | Existing guarded test harness with `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` | LC-002 validation and no-publication proof | blocked safely; no target configured | test is present; retain explicit verification gap |
-| Browser/rendered route tests | Local web/API dev stack and browser automation | Character recovery and New Adventure session loss | normal authoring plus anonymous redirect directly inspected | authenticated 422 and 401 responses remain unrendered without a controlled fixture/account |
+| Browser/rendered route tests | Local web/API dev stack and browser automation | Character recovery and New Adventure session loss | deterministic fixtures and direct desktop/390px browser inspection complete | controlled 422 and both controlled 401 states pass; this is not a live API exercise |
 | Deterministic E2E/migration checks | Explicitly acknowledged disposable database | Cross-layer browser/migration proof | pending | retain gap if not authorized/configured |
 | Production/recovery checks | Private deployment/recovery target and explicit authorization | LC-001 operational evidence | out of scope | accepted gap |
 
@@ -132,28 +140,28 @@ status: in_progress
 | Surface / Route or Fixture | Viewport | State / Interaction | Expected Rendered Behavior | Tool / Setup | Inspected Evidence | Console / Network | Result |
 |---|---|---|---|---|---|---|---|
 | Character editor | desktop and 390px mobile | normal authoring form | required fields remain readable with no overflow | Storybook `Application/Worlds/Detail/Authoring` plus browser automation | directly inspected current authoring form | no overlay or console errors; no horizontal overflow | pass |
-| Character editor | desktop and mobile | duplicate key / invalid Location save | actual field is visibly invalid; existing draft remains stable | focused mocked route tests | both `key` and `locationKey` states pass in the route suite | no unhandled rejection; controlled browser 422 fixture remains absent | blocked rendered state |
-| New Adventure route | desktop | unauthenticated entry and mocked World-load/create 401 | protected surface yields to existing sign-in route | browser automation plus focused route tests | anonymous route redirected to Sign in with no private content; both mocked 401 tests pass | no overlay or console errors; authenticated runtime 401 remains unrendered | partial |
+| Character editor | desktop duplicate key; 390px invalid Location | duplicate key / invalid Location save | actual field is visibly invalid; existing draft remains stable | controlled Storybook plus browser automation | duplicate Key and invalid Canonical Location are field-local; complete draft remains present | no console errors; mobile `scrollWidth === clientWidth === 390` | pass (controlled fixture) |
+| New Adventure route | desktop World-load 401; 390px creation 401 | controlled World-load/create 401 | protected surface yields to existing sign-in route | real AuthProvider/AppRoutes Storybook fixture plus browser automation | Sign in replaces New Adventure and document title is `Sign in | Lorecraft` | no console errors; mobile `scrollWidth === clientWidth === 390` | pass (controlled fixture) |
 
 ## Blockers / Open Questions
 
-- Review requires LC-003 exact scenario evidence reconciliation plus rendered authenticated 422/401 and guarded database/live-provider proof before integration readiness. Production/recovery checks remain explicit out-of-scope gaps.
+- A fresh independent review is required. Database-backed functional/E2E and live-provider proof remain blocked until an explicitly acknowledged disposable `TEST_DATABASE_URL` is supplied. Production/recovery checks remain explicit out-of-scope gaps.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at Apply start.
-- Candidate source commit: pending the review-safe batch commit.
+- Candidate source commit: pending the final evidence/ledger commit.
 - Source differs from target when implementation changed: yes.
-- Intended implementation fully committed: no; LC-003 evidence remediation remains.
+- Intended implementation fully committed: pending the final evidence/ledger commit.
 - Unrelated dirty state preserved: none expected after the review-safe batch commit.
-- Required risk, fan-out, and evidence rows: LC-003 and rendered/guarded verification remain.
+- Required risk, fan-out, and evidence rows: rendered and LC-003 exact evidence are complete; guarded database/live-provider gaps remain explicit.
 
 ## Closeout
 
-- Change status: in_progress.
-- Epic files updated: LC-001 normalized; LC-002 lifecycle/evidence corrected; LC-003 lifecycle wording corrected but evidence reconciliation remains.
+- Change status: in_progress; transition to `in_review` follows final validation and ledger commit.
+- Epic files updated: LC-001 normalized with controlled 401 rendering proof; LC-002 field recovery evidence includes controlled rendering; LC-003/S1-S2 evidence is scenario-mapped with explicit gaps.
 - Manual UI confirmation status: pending user.
-- Rendered UI verification status: pending.
+- Rendered UI verification status: complete for controlled Storybook 422/401 fixtures; live authenticated API proof remains environment-gated.
 - PR / merge state: not started.
 - Deferred scope accepted: production/recovery checks only.
 - Change moved to `docs/changes/closed/`: no.

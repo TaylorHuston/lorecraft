@@ -101,7 +101,7 @@ describe('Adventure routes', () => {
     expect(createAdventure).toHaveBeenCalledTimes(1)
   })
 
-  it('LC-003/S1/R1-S2 presents associated creation validation and preserves World navigation', async () => {
+  it('LC-003/S1/R1-S2 + R1-S4 presents creation validation, provider disclosure, and preserves World navigation', async () => {
     const user = userEvent.setup()
     const createAdventure = vi.fn()
     renderTestApp({
@@ -227,7 +227,7 @@ describe('Adventure routes', () => {
     expect(screen.getByLabelText('Physical description (optional)')).toHaveFocus()
   })
 
-  it('LC-003/S1/R3-S2 polls pending work until the ready opening is authoritative', async () => {
+  it('LC-003/S1/R3-S2 + R5-S6 polls pending work until the ready opening is authoritative', async () => {
     const readyAdventure: AdventureDetail = {
       ...pendingAdventure,
       status: 'ready',
