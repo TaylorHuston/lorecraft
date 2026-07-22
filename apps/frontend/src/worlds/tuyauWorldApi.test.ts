@@ -241,7 +241,9 @@ describe('Tuyau World adapter', () => {
       },
     })
 
-    await expect(createTuyauWorldApi('http://frontend.example.test').getWorld('stormbound-chapel')).rejects.toMatchObject({
+    await expect(
+      createTuyauWorldApi('http://frontend.example.test').getWorld('stormbound-chapel')
+    ).rejects.toMatchObject({
       code: 'network',
     })
   })
@@ -272,13 +274,52 @@ describe('Tuyau World adapter', () => {
     await api.deleteCharacter('stormbound-chapel', key)
 
     expect(tuyau.csrf).toHaveBeenCalledTimes(3)
-    expect(tuyau.createCharacter).toHaveBeenCalledWith({ params: { slug: 'stormbound-chapel' }, body: input })
+    expect(tuyau.createCharacter).toHaveBeenCalledWith({
+      params: { slug: 'stormbound-chapel' },
+      body: input,
+    })
     expect(tuyau.updateCharacter).toHaveBeenCalledWith({
       params: { slug: 'stormbound-chapel', key },
       body: update,
     })
     expect(tuyau.deleteCharacter).toHaveBeenCalledWith({
       params: { slug: 'stormbound-chapel', key },
+    })
+  })
+
+  it('LC-002/S3/R2-S2 maps a structured Character validation response to its exact editor field', async () => {
+    tuyau.csrf.mockResolvedValue(undefined)
+    tuyau.createCharacter.mockRejectedValue({
+      status: 422,
+      response: {
+        errors: [
+          {
+            code: 'CHARACTER_VALIDATION_ERROR',
+            field: 'key',
+            message: 'Character key is already used in this World.',
+          },
+        ],
+      },
+    })
+    const api = createTuyauWorldApi('http://frontend.example.test')
+
+    await expect(
+      api.createCharacter('stormbound-chapel', {
+        key: 'mira',
+        name: 'Mira',
+        locationKey: 'chapel',
+        physicalDescription: 'A local woman with watchful eyes.',
+        background: 'Mira grew up around the chapel.',
+        personality: 'Cautious and observant.',
+        voice: 'Plain-spoken and restrained.',
+        privateKnowledge: 'Mira rang the bell.',
+        initialMood: 'Watchful',
+        initialStatus: 'Sheltering in the chapel.',
+        initialMemory: 'She has not yet met the player.',
+      })
+    ).rejects.toMatchObject({
+      code: 'validation',
+      fieldErrors: { key: 'Use a unique lowercase key with letters, numbers, and hyphens only.' },
     })
   })
 })

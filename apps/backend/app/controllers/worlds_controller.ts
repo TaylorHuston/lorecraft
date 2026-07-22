@@ -12,6 +12,14 @@ export type WorldDetailResponseDto = {
   }
 }
 
+function characterErrorResponse(error: WorldCharacterError) {
+  return {
+    code: error.code,
+    ...(error.field ? { field: error.field } : {}),
+    message: error.message,
+  }
+}
+
 export default class WorldsController {
   async index({ auth }: HttpContext) {
     const worlds = await new WorldCatalogService().listFor(auth.user!.id)
@@ -53,9 +61,7 @@ export default class WorldsController {
       })
     } catch (error) {
       if (error instanceof WorldCharacterError)
-        return response
-          .status(error.status)
-          .send({ errors: [{ code: error.code, message: error.message }] })
+        return response.status(error.status).send({ errors: [characterErrorResponse(error)] })
       throw error
     }
   }
@@ -73,9 +79,7 @@ export default class WorldsController {
       }
     } catch (error) {
       if (error instanceof WorldCharacterError)
-        return response
-          .status(error.status)
-          .send({ errors: [{ code: error.code, message: error.message }] })
+        return response.status(error.status).send({ errors: [characterErrorResponse(error)] })
       throw error
     }
   }
@@ -86,9 +90,7 @@ export default class WorldsController {
       return response.noContent()
     } catch (error) {
       if (error instanceof WorldCharacterError)
-        return response
-          .status(error.status)
-          .send({ errors: [{ code: error.code, message: error.message }] })
+        return response.status(error.status).send({ errors: [characterErrorResponse(error)] })
       throw error
     }
   }

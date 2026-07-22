@@ -16,11 +16,13 @@ export type CharacterCardInput = {
   initialMemory: string
 }
 export type CharacterCardDto = Required<CharacterCardInput>
+export type WorldCharacterValidationField = 'key' | 'locationKey'
 export class WorldCharacterError extends Error {
   constructor(
-    readonly code: 'WORLD_NOT_FOUND' | 'CHARACTER_NOT_FOUND',
+    readonly code: 'WORLD_NOT_FOUND' | 'CHARACTER_NOT_FOUND' | 'CHARACTER_VALIDATION_ERROR',
     readonly status: number,
-    message: string
+    message: string,
+    readonly field?: WorldCharacterValidationField
   ) {
     super(message)
   }
@@ -57,7 +59,13 @@ export default class WorldCharacterService {
         .where('key', input.locationKey)
         .select('id', 'key')
         .first()
-      if (!location) throw new WorldCharacterError('WORLD_NOT_FOUND', 404, 'World not found.')
+      if (!location)
+        throw new WorldCharacterError(
+          'CHARACTER_VALIDATION_ERROR',
+          422,
+          'Character Location is not valid for this World.',
+          'locationKey'
+        )
       const exists = await trx
         .from('characters')
         .where('world_id', world.id)
@@ -65,9 +73,10 @@ export default class WorldCharacterService {
         .first()
       if (exists)
         throw new WorldCharacterError(
-          'CHARACTER_NOT_FOUND',
+          'CHARACTER_VALIDATION_ERROR',
           422,
-          'Character key is already used in this World.'
+          'Character key is already used in this World.',
+          'key'
         )
       const last = await trx
         .from('characters')
@@ -128,9 +137,10 @@ export default class WorldCharacterService {
         .first()
       if (!location)
         throw new WorldCharacterError(
-          'CHARACTER_NOT_FOUND',
+          'CHARACTER_VALIDATION_ERROR',
           422,
-          'Character Location is not valid for this World.'
+          'Character Location is not valid for this World.',
+          'locationKey'
         )
       await trx.from('characters').where('id', character.id).update({
         location_id: location.id,

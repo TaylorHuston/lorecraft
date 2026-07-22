@@ -66,9 +66,7 @@ const characterLimits = {
   initialMemory: 500,
 } as const
 
-type CharacterEditor =
-  | { mode: 'create' }
-  | { mode: 'edit'; character: WorldCharacter }
+type CharacterEditor = { mode: 'create' } | { mode: 'edit'; character: WorldCharacter }
 
 function draftFor(character?: WorldCharacter): WorldCharacterInput {
   return {
@@ -101,7 +99,9 @@ function CharacterEditorForm({
   onCancel: () => void
   onSubmit: (input: WorldCharacterInput | WorldCharacterUpdateInput) => Promise<void>
 }) {
-  const [draft, setDraft] = useState(() => draftFor(editor.mode === 'edit' ? editor.character : undefined))
+  const [draft, setDraft] = useState(() =>
+    draftFor(editor.mode === 'edit' ? editor.character : undefined)
+  )
   const fieldErrors = error?.code === 'validation' ? error.fieldErrors : {}
   const editing = editor.mode === 'edit'
 
@@ -123,7 +123,11 @@ function CharacterEditorForm({
       initialStatus: draft.initialStatus,
       initialMemory: draft.initialMemory,
     }
-    await onSubmit(editing ? updateInput : draft)
+    try {
+      await onSubmit(editing ? updateInput : draft)
+    } catch {
+      // The mutation retains its error so the editor can present inline recovery.
+    }
   }
 
   return (
@@ -148,7 +152,9 @@ function CharacterEditorForm({
           maxLength={characterLimits.key}
           onChange={(event) => update('key', event.target.value)}
           required
-          supportingText={editing ? 'Character keys cannot change.' : 'Lowercase letters, numbers, and hyphens.'}
+          supportingText={
+            editing ? 'Character keys cannot change.' : 'Lowercase letters, numbers, and hyphens.'
+          }
           value={draft.key}
         />
         <TextField
@@ -258,7 +264,12 @@ function CharacterEditorForm({
         />
       </div>
       <div className={styles.characterEditorActions}>
-        <Button pending={pending} pendingLabel={editing ? 'Saving Character…' : 'Creating Character…'} size="touch" type="submit">
+        <Button
+          pending={pending}
+          pendingLabel={editing ? 'Saving Character…' : 'Creating Character…'}
+          size="touch"
+          type="submit"
+        >
           {editing ? 'Save Character' : 'Create Character'}
         </Button>
         <Button disabled={pending} onClick={onCancel} size="touch" variant="secondary">
