@@ -156,4 +156,4 @@ status: in_review
 - Manual UI confirmation status: accepted by owner for local integration on 2026-07-19; walkthrough was not separately performed in this closeout
 - PR / merge state: locally merged into `develop` with `78033ab` on 2026-07-19; no PR or push was requested
 - Deferred scope accepted: Story, `/look`, `/help`, successful-turn history revision, streaming, rules, model controls, and multiplayer
-- Change moved to `docs/changes/closed/`: yes, after local `develop` merge `78033ab`; closeout commit pending
+- Change moved to `docs/changes/closed/`: yes, after local `develop` merge `78033ab`; closeout is complete and folder location is the authoritative closed state.

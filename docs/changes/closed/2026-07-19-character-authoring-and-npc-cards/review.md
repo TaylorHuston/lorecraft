@@ -8,11 +8,13 @@ ready
 
 Reviewed `9d325d9e70bf63167c6ea342780f804041c83f2b` (the `246ba25` candidate plus the safe remediation below) against `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`. The historical sections that follow remain evidence of earlier reviews; this section is the current verdict.
 
+This is a pre-close review snapshot. The Change was subsequently merged locally and moved to closed history; its current closeout state is recorded in `tasks.md` rather than the review-time branch and acceptance language below.
+
 ### Gate Scorecard
 
 | Gate | Result | Notes |
 | --- | --- | --- |
-| Change artifacts and status | pass | Active Change is `in_review`; scoped validation has 0 errors and two accepted LC-003 large-story warnings. |
+| Change artifacts and status | pass | At review time the active Change was `in_review`; scoped validation had 0 errors and two accepted LC-003 large-story warnings. |
 | Epic truth and traceability | pass | LC-002/S2-S3 and LC-003/S1-S3 maps are current; both affected-Epic reverse audits report zero missing implementation or verification references. |
 | Requirements and scenarios | pass | Complete authorable Character cards, Adventure-owned mutable NPC state, frozen canon isolation, and current-Scene prompt selection remain aligned. |
 | Code and state transitions | pass after remediation | NPC autosave `unauthorized` errors now end the shared session like the other protected Adventure mutations. A route regression proves the stale Adventure surface is removed. |
@@ -20,7 +22,7 @@ Reviewed `9d325d9e70bf63167c6ea342780f804041c83f2b` (the `246ba25` candidate plu
 | Rendered UI | pass | Direct Storybook inspection covered the mobile read-only World detail and Debug NPC editor; independent fresh inspection also covered desktop/mobile authoring and Debug cards. No Vite overlay, console error, or horizontal overflow was observed. |
 | Security and privacy | pass | Owner scope, production Debug refusal, active-turn conflict, bounded fields, trace permissions/redaction, raw-payload exclusion from artifacts, and frozen-source isolation were independently inspected. |
 | Documentation and release truth | pass after remediation | Proposal/design now identify their planning-era assumptions as historical rather than describing already implemented work as future scope. README, CHANGELOG, ADR, and Idea-side current-state guidance remain aligned. |
-| Branch and merge readiness | review-ready | Candidate has a clean `develop` merge tree. Owner manual acceptance is still pending, so no merge, release, or Change closeout is authorized. |
+| Branch and merge readiness | review-ready | At review time the candidate had a clean `develop` merge tree and owner manual acceptance was pending; later local merge/closure is recorded in `tasks.md`. |
 
 ### Findings And Remediation
 

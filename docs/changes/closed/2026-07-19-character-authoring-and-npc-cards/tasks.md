@@ -8,10 +8,10 @@ status: in_review
 
 - Last completed action: fresh independent review remediated the unauthorized NPC-autosave session path and reconciled the historical planning language in proposal/design. The focused/full frontend and Storybook regressions pass.
 - Current technical state: scoped Change validation passes with zero errors; both Epic-scoped reverse-traceability audits report zero missing references; the candidate merges cleanly with `develop`. The two LC-003 large-story warnings are accepted compatibility warnings for the existing integrated Adventure primary paths, not new scope or implementation findings.
-- Next action: owner manual acceptance. Do not merge, release, or close the Change without explicit authorization.
-- Active branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `9d325d9`.
+- Historical review handoff: owner manual acceptance was pending before local integration. The Change later merged locally and moved to closed history with acceptance retained as an explicit accepted gap.
+- Historical branch: `change/character-authoring-and-npc-cards`, based on `develop` at `1d3b5fd2e4474a6fd61fe6d5f2d224b058f349dc`; final application-code watermark is `9d325d9`.
 - Expected dirty files: none after this ledger checkpoint.
-- Known blocker: no technical blocker. Owner manual acceptance remains required before merge/closeout.
+- Historical gate: no technical blocker remained; owner manual acceptance was pending before merge/closeout and is recorded as an accepted gap in the Closeout section.
 
 ## Task Checklist
 

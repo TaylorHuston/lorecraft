@@ -281,6 +281,7 @@ The system SHALL identify an accessible World detail destination through its doc
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
 | --- | --- | --- | --- |
 | S2/R1 | `apps/backend/app/services/world_catalog_service.ts#async findFor` | primary | Applies authorized detail lookup and projects ordered Locations and complete debug Character Cards. |
+| S2/R1-S3 | `apps/backend/app/services/stormbound_chapel_seed.ts#seedStormboundChapel` | primary | Reconciles the explicit starter World, Locations, Characters, and seed identity idempotently for its configured author. |
 | S2/R1-S2 | `apps/backend/app/controllers/worlds_controller.ts#async show` | adapter | Converts inaccessible detail reads into the non-disclosing not-found response. |
 | S2/R2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#export function WorldDetailPage` | primary | Presents readable World detail, complete debug cards, collection states, and recovery controls. |
 | S2/R3 | `apps/frontend/src/app/AppRoutes.tsx#function RoutePresentation` | primary | Owns title and destination-focus behavior for World-detail routes. |
@@ -428,6 +429,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 | S3/R1, S3/R2, S3/R5 | `apps/backend/app/services/world_character_service.ts#async create` | primary | Author-scoped creation validates the complete card and publishes a WorldVersion in the transaction. |
 | S3/R1, S3/R3, S3/R5 | `apps/backend/app/services/world_character_service.ts#async update` | primary | Author-scoped edits preserve the stable key and publish a WorldVersion in the transaction. |
 | S3/R1, S3/R4, S3/R5 | `apps/backend/app/services/world_character_service.ts#async destroy` | primary | Author-scoped deletion publishes a WorldVersion without touching frozen Adventure rows. |
+| S3/R5 | `apps/backend/app/services/world_version_publication_service.ts#publishWorldVersionInTransaction` | primary | Publishes the atomically derived immutable current WorldVersion inside each successful Character mutation transaction. |
 | S3/R2-S2, S3/R3-S2 | `apps/backend/app/services/world_character_service.ts#WorldCharacterError` and `apps/backend/app/controllers/worlds_controller.ts#characterErrorResponse` | primary | Returns `key` or `locationKey` only for author-authorized duplicate-key or invalid same-World Location validation; ownership and missing-resource paths remain non-disclosing. |
 | S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Presents complete-card inputs with field feedback and pending submission state. |
 | S3/R6-S2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Retains a rejected mutation in local editor state for inline recovery without an unhandled browser rejection. |

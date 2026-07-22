@@ -4,13 +4,13 @@
 
 ready
 
-The committed turn implementation and current UI/remediation work pass review. The refreshed review remediated the missing turn-submission provider disclosure, incomplete composer tab semantics, and one stale Ember secondary control. A live-provider and owner manual walkthrough remains required before merge or Change closeout; that is acceptance evidence, not an unresolved code-review finding.
+This review preserves the pre-close assessment of the committed turn implementation and UI/remediation work. The refreshed review remediated the missing turn-submission provider disclosure, incomplete composer tab semantics, and one stale Ember secondary control. The owner accepted the remaining live-provider/manual walkthrough risk before the later authorized local merge and folder closeout; it is not a claim that the walkthrough occurred.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
-| Change artifacts and status | pass | The Change remains `in_review`; the reviewed UI/remediation batch is committed as `0ed8f90`. |
+| Change artifacts and status | pass | At review time the Change was `in_review` and the reviewed UI/remediation batch was committed as `0ed8f90`; it later moved to closed history. |
 | Requirements and scenarios | pass | Automated evidence covers reset, recovery, concurrency, disclosure, and current composer semantics. |
 | Story and reverse traceability | pass | Orphan audit reports zero missing implementation or verification references; generated Tuyau registry output is the only expected ownership exclusion. |
 | Code and security | pass | Narrator context excludes private Character knowledge and mutable state. A direct reflection of private Guide text is rejected before extraction, metadata recording, or publication. |

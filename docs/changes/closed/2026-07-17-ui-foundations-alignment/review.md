@@ -4,14 +4,14 @@
 
 ready
 
-The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. The original walkthrough, integration, and closeout are complete; focused manual confirmation of the post-close sign-in label correction remains pending. The previously invalid workspace configuration was repaired externally, and fresh scoped SDD validation passes.
+The Lorecraft application, supporting product truth, Epic evidence, and shared comparison branch are technically clean after review remediation. The original walkthrough, integration, and closeout are complete; the focused post-close sign-in label confirmation was later recorded as user confirmed on 2026-07-18. The previously invalid workspace configuration was repaired externally, and fresh scoped SDD validation passes.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
 | Change artifacts | Pass | Proposal, design, tasks, and review record agree with implemented scope inside this repository. |
-| Change status | Pass | `in_review`; manual and integration closeout gates remain explicit. |
+| Change status | Pass | At this review snapshot the Change was `in_review`; it subsequently completed local integration and moved to closed history. |
 | Epic truth | Pass | LC-001, LC-002, and LC-003 reflect current implementation and evidence. |
 | Requirements and Scenarios | Pass | Password disclosure, World state/action presentation, Adventure composition, and dialog behavior are scenario-backed. |
 | Story reference traceability | Pass | Existing Story ownership remains stable across the three affected Epics. |
