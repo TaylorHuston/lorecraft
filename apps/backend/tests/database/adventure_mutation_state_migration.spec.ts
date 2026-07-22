@@ -252,7 +252,7 @@ test.group('Adventure mutation state database migration', () => {
     })
   })
 
-  test('LC-003/S3/R3-S4: NPC debug overrides upgrade existing state and refuse data-bearing rollback', async ({
+  test('LC-003/S3/R3-S2: NPC debug overrides upgrade existing state and refuse data-bearing rollback', async ({
     assert,
   }) => {
     await withIsolatedMigrationDatabase(async (client) => {

@@ -442,7 +442,11 @@ describe('World catalog and detail routes', () => {
       worldApi: { getWorld: async () => authorWorld, createCharacter },
     })
 
-    expect(await screen.findByText('Development / debug information: complete Character Cards include private knowledge and initial Adventure state.')).toBeVisible()
+    expect(
+      await screen.findByText(
+        'Development / debug information: complete Character Cards include private knowledge and initial Adventure state.'
+      )
+    ).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Add Character' }))
     await user.type(screen.getByLabelText('Key'), 'alden')
     await user.type(screen.getByLabelText('Name'), 'Brother Alden')
@@ -485,6 +489,116 @@ describe('World catalog and detail routes', () => {
     expect(await screen.findByText('Private knowledge')).toBeVisible()
     expect(screen.queryByRole('button', { name: 'Add Character' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument()
+  })
+
+  it('LC-002/S3/R2-S2 keeps a rejected Character draft and highlights its supplied field', async () => {
+    const user = userEvent.setup()
+    const createCharacter = vi.fn().mockRejectedValue(
+      new WorldApiError('validation', 'Correct the highlighted fields.', {
+        key: 'Use a unique lowercase key with letters, numbers, and hyphens only.',
+      })
+    )
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'author@example.com' },
+      worldApi: {
+        getWorld: async () => ({ ...stormboundDetail, readOnly: false }),
+        createCharacter,
+      },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Add Character' }))
+    await user.type(screen.getByLabelText('Key'), 'mira')
+    await user.type(screen.getByLabelText('Name'), 'Mira Vale')
+    await user.selectOptions(screen.getByLabelText('Canonical Location'), 'chapel')
+    await user.type(
+      screen.getByLabelText('Physical description'),
+      'A watchful woman in rain-dark clothes.'
+    )
+    await user.type(
+      screen.getByLabelText('Background'),
+      'Mira has served the chapel through every storm.'
+    )
+    await user.type(screen.getByLabelText('Personality'), 'Cautious and observant.')
+    await user.type(screen.getByLabelText('Voice'), 'Plain and restrained.')
+    await user.type(
+      screen.getByLabelText('Private knowledge'),
+      'Mira heard the bell ring before midnight.'
+    )
+    await user.type(screen.getByLabelText('Initial mood'), 'Uneasy.')
+    await user.type(screen.getByLabelText('Initial status'), 'Watching the chapel door.')
+    await user.type(
+      screen.getByLabelText('Initial memory'),
+      'The player has not spoken with Mira yet.'
+    )
+    await user.click(screen.getByRole('button', { name: 'Create Character' }))
+
+    expect(
+      await screen.findByText('Use a unique lowercase key with letters, numbers, and hyphens only.')
+    ).toBeVisible()
+    expect(screen.getByLabelText('Key')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Key')).toHaveValue('mira')
+    expect(screen.getByLabelText('Initial memory')).toHaveValue(
+      'The player has not spoken with Mira yet.'
+    )
+    expect(createCharacter).toHaveBeenCalledTimes(1)
+  })
+
+  it('LC-002/S3/R2-S2 highlights an invalid Character Location and retains the draft', async () => {
+    const user = userEvent.setup()
+    const createCharacter = vi.fn().mockRejectedValue(
+      new WorldApiError('validation', 'Correct the highlighted fields.', {
+        locationKey: 'Character Location is not valid for this World.',
+      })
+    )
+
+    renderTestApp({
+      route: '/worlds/stormbound-chapel',
+      session: { id: 4, email: 'author@example.com' },
+      worldApi: {
+        getWorld: async () => ({ ...stormboundDetail, readOnly: false }),
+        createCharacter,
+      },
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Add Character' }))
+    await user.type(screen.getByLabelText('Key'), 'mira')
+    await user.type(screen.getByLabelText('Name'), 'Mira Vale')
+    await user.selectOptions(screen.getByLabelText('Canonical Location'), 'chapel')
+    await user.type(
+      screen.getByLabelText('Physical description'),
+      'A watchful woman in rain-dark clothes.'
+    )
+    await user.type(
+      screen.getByLabelText('Background'),
+      'Mira has served the chapel through every storm.'
+    )
+    await user.type(screen.getByLabelText('Personality'), 'Cautious and observant.')
+    await user.type(screen.getByLabelText('Voice'), 'Plain and restrained.')
+    await user.type(
+      screen.getByLabelText('Private knowledge'),
+      'Mira heard the bell ring before midnight.'
+    )
+    await user.type(screen.getByLabelText('Initial mood'), 'Uneasy.')
+    await user.type(screen.getByLabelText('Initial status'), 'Watching the chapel door.')
+    await user.type(
+      screen.getByLabelText('Initial memory'),
+      'The player has not spoken with Mira yet.'
+    )
+    await user.click(screen.getByRole('button', { name: 'Create Character' }))
+
+    expect(await screen.findByText('Character Location is not valid for this World.')).toBeVisible()
+    expect(screen.getByLabelText('Canonical Location')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Canonical Location')).toHaveAttribute(
+      'aria-describedby',
+      'character-location-error'
+    )
+    expect(screen.getByLabelText('Canonical Location')).toHaveValue('chapel')
+    expect(screen.getByLabelText('Initial memory')).toHaveValue(
+      'The player has not spoken with Mira yet.'
+    )
+    expect(createCharacter).toHaveBeenCalledTimes(1)
   })
 
   it('LC-002/S2/R2-S2 keeps return navigation available while World detail is loading', async () => {

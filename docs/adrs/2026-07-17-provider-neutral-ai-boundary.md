@@ -3,7 +3,7 @@
 - Status: Accepted
 - Date: 2026-07-17
 - Updated: 2026-07-19
-- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/`, `docs/changes/2026-07-18-audit-hardening/`, `docs/changes/2026-07-18-interactive-adventure-turns/`, and `docs/changes/2026-07-19-character-authoring-and-npc-cards/`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/`, `docs/changes/closed/2026-07-18-audit-hardening/`, `docs/changes/closed/2026-07-18-interactive-adventure-turns/`, and `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
 - Related Epics / Stories: `LC-003/S1/R3` and `LC-003/S2/R3`
 
 ## Context

@@ -197,4 +197,111 @@ test.group('World Character authoring API', (group) => {
     await owned.world.refresh()
     assert.isNull(owned.world.currentVersionId)
   })
+
+  test('LC-002/S3/R1-S2: anonymous create and non-author edit/delete requests cannot mutate or publish canon', async ({
+    client,
+    assert,
+  }) => {
+    const author = await createAuthenticatedBrowser(client, 'character-mutation-owner@example.com')
+    const authorAccount = await User.findByOrFail('email', 'character-mutation-owner@example.com')
+    const { world } = await createWorld(authorAccount.id, 'character-mutation-authorization-world')
+
+    const anonymous = await client
+      .post(`/api/v1/worlds/${world.slug}/characters`)
+      .json(completeCard)
+    anonymous.assertStatus(401)
+    assert.lengthOf(await Character.query().where('worldId', world.id), 0)
+    await world.refresh()
+    assert.isNull(world.currentVersionId)
+
+    const created = await withBrowserSession(
+      client.post(`/api/v1/worlds/${world.slug}/characters`),
+      author,
+      { csrf: true }
+    ).json(completeCard)
+    created.assertCreated()
+    await world.refresh()
+    const publishedVersionId = world.currentVersionId
+
+    const other = await createAuthenticatedBrowser(
+      client,
+      'character-mutation-non-author@example.com'
+    )
+    const deniedUpdate = await withBrowserSession(
+      client.patch(`/api/v1/worlds/${world.slug}/characters/${completeCard.key}`),
+      other,
+      { csrf: true }
+    ).json({ ...completeCard, name: 'Mira Altered' })
+    deniedUpdate.assertStatus(404)
+
+    const deniedDelete = await withBrowserSession(
+      client.delete(`/api/v1/worlds/${world.slug}/characters/${completeCard.key}`),
+      other,
+      { csrf: true }
+    )
+    deniedDelete.assertStatus(404)
+
+    const character = await Character.findByOrFail('key', completeCard.key)
+    assert.equal(character.name, completeCard.name)
+    await world.refresh()
+    assert.equal(world.currentVersionId, publishedVersionId)
+  })
+
+  test('LC-002/S3/R2-S2: author-owned duplicate keys and invalid Locations return field errors without publication', async ({
+    client,
+    assert,
+  }) => {
+    const author = await createAuthenticatedBrowser(
+      client,
+      'character-field-validation-owner@example.com'
+    )
+    const account = await User.findByOrFail('email', 'character-field-validation-owner@example.com')
+    const { world } = await createWorld(account.id, 'character-field-validation-world')
+    const created = await withBrowserSession(
+      client.post(`/api/v1/worlds/${world.slug}/characters`),
+      author,
+      { csrf: true }
+    ).json(completeCard)
+    created.assertCreated()
+    await world.refresh()
+    const publishedVersionId = world.currentVersionId
+
+    const duplicate = await withBrowserSession(
+      client.post(`/api/v1/worlds/${world.slug}/characters`),
+      author,
+      { csrf: true }
+    ).json(completeCard)
+    duplicate.assertStatus(422)
+    assert.deepEqual(duplicate.body(), {
+      errors: [
+        {
+          code: 'CHARACTER_VALIDATION_ERROR',
+          field: 'key',
+          message: 'Character key is already used in this World.',
+        },
+      ],
+    })
+
+    const invalidLocation = await withBrowserSession(
+      client.patch(`/api/v1/worlds/${world.slug}/characters/${completeCard.key}`),
+      author,
+      { csrf: true }
+    ).json({ ...completeCard, locationKey: 'outside-this-world' })
+    invalidLocation.assertStatus(422)
+    assert.deepEqual(invalidLocation.body(), {
+      errors: [
+        {
+          code: 'CHARACTER_VALIDATION_ERROR',
+          field: 'locationKey',
+          message: 'Character Location is not valid for this World.',
+        },
+      ],
+    })
+
+    const character = await Character.findByOrFail('key', completeCard.key)
+    const chapel = await Location.findByOrFail('key', completeCard.locationKey)
+    assert.equal(character.locationId, chapel.id)
+    await world.refresh()
+    assert.equal(world.currentVersionId, publishedVersionId)
+  })
 })

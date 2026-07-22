@@ -71,7 +71,7 @@ export default defineConfig({
       env: {
         ...databaseChildEnvironment(process.env),
         CORS_ORIGIN: frontendUrl,
-        NODE_ENV: 'development',
+        NODE_ENV: 'test',
         PORT: '4314',
         SESSION_DRIVER: 'database',
         LLM_BASE_URL: `${fakeStoryProviderUrl}/v1`,

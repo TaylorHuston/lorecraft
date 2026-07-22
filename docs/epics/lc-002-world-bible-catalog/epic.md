@@ -3,8 +3,8 @@ schema: sdd-epic-v2
 id: LC-002
 status: in_progress
 created: 2026-07-14
-modified: 2026-07-20
-last_verified: 2026-07-20
+modified: 2026-07-22
+last_verified: 2026-07-22
 stories:
   - S1
   - S2
@@ -19,7 +19,7 @@ stories:
   - `docs/changes/closed/2026-07-14-public-starter-world/`
   - `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation/`
   - `docs/changes/closed/2026-07-16-private-adventure-foundation/`
-  - `docs/changes/2026-07-19-character-authoring-and-npc-cards/`
+  - `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
 - Related ADRs:
   - `docs/adrs/2026-07-12-adonisjs-api-first-backend.md`
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
@@ -64,7 +64,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | --- | --- | --- | --- | --- | --- |
 | S1 | implemented | verified | Browse accessible Worlds. | 2026-07-19 | Public and owner-private catalog. |
 | S2 | implemented | partial | Inspect structured World canon and complete debug cards. | 2026-07-19 | Full-card API and rendered Storybook evidence exist; database and routed E2E proof remain pending. |
-| S3 | implemented | partial | Manage World Characters. | 2026-07-20 | Guarded database and deterministic creator CRUD E2E evidence pass; recovery and owner manual confirmation remain pending. |
+| S3 | implemented | partial | Manage World Characters. | 2026-07-22 | Guarded database and deterministic creator CRUD E2E evidence pass; fielded validation now has focused adapter and route evidence; recovery and owner manual confirmation remain pending. |
 
 ## Stories
 
@@ -185,8 +185,8 @@ The system SHALL identify the World catalog destination through its document tit
 | S1/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S3 recovers from a catalog load failure` | A recoverable catalog failure presents a named retry that restores the catalog. | Passing 2026-07-20 |
 | S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 preserves catalog context while retry is pending` | Retry pending leaves the catalog heading and account context visible and disables the retry control. | Passing 2026-07-20 |
 | S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 keeps the catalog visible while named sign-out is pending` | Pending sign-out preserves catalog context and exposes a disabled, busy control. | Passing 2026-07-20 |
-| S1/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context applies after an authenticated redirect` | The authenticated Worlds destination sets its document title and focuses its heading. | Passing 2026-07-20 |
-| S1/R3-S2 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context preserves focus chosen while a destination is loading` | A data transition at the Worlds destination preserves deliberately chosen focus. | Passing 2026-07-20 |
+| S1/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3/R3-S1 applies after an authenticated redirect` | The authenticated Worlds destination sets its document title and focuses its heading. | Passing 2026-07-20 |
+| S1/R3-S2 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3/R3-S2 preserves focus chosen while a destination is loading` | A data transition at the Worlds destination preserves deliberately chosen focus. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
@@ -203,7 +203,7 @@ The system SHALL identify the World catalog destination through its document tit
 Implementation: implemented
 Verification: partial
 Created: 2026-07-14
-Modified: 2026-07-19
+Modified: 2026-07-22
 Last verified: 2026-07-19
 
 As a signed-in account holder, I want to inspect a World's structured Locations and Characters, so that I can understand its established canon.
@@ -319,8 +319,8 @@ The system SHALL identify an accessible World detail destination through its doc
 Implementation: implemented
 Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-19
-Last verified: 2026-07-20
+Modified: 2026-07-22
+Last verified: 2026-07-22
 
 As a World creator, I want to create, edit, and delete complete Character Cards, so that my current canon and future Adventures use the Characters I intend.
 
@@ -428,7 +428,9 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 | S3/R1, S3/R2, S3/R5 | `apps/backend/app/services/world_character_service.ts#async create` | primary | Author-scoped creation validates the complete card and publishes a WorldVersion in the transaction. |
 | S3/R1, S3/R3, S3/R5 | `apps/backend/app/services/world_character_service.ts#async update` | primary | Author-scoped edits preserve the stable key and publish a WorldVersion in the transaction. |
 | S3/R1, S3/R4, S3/R5 | `apps/backend/app/services/world_character_service.ts#async destroy` | primary | Author-scoped deletion publishes a WorldVersion without touching frozen Adventure rows. |
+| S3/R2-S2, S3/R3-S2 | `apps/backend/app/services/world_character_service.ts#WorldCharacterError` and `apps/backend/app/controllers/worlds_controller.ts#characterErrorResponse` | primary | Returns `key` or `locationKey` only for author-authorized duplicate-key or invalid same-World Location validation; ownership and missing-resource paths remain non-disclosing. |
 | S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Presents complete-card inputs with field feedback and pending submission state. |
+| S3/R6-S2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Retains a rejected mutation in local editor state for inline recovery without an unhandled browser rejection. |
 | S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#const deleteCharacter` | primary | Presents author-only mutation controls and confirmed deletion state. |
 
 #### Implementation Gaps
@@ -439,20 +441,24 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 | Requirement / Scenario | Evidence | Proves | Status |
 | --- | --- | --- | --- |
-| S3/R1-S1, S3/R2-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S1 + R2-S1 + R5-S1: an author creates a complete card and publishes it atomically` | A valid author create returns a complete card and atomically publishes the updated WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
-| S3/R1-S2, S3/R2-S2 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S2 + R2-S2: a non-author and invalid input cannot mutate or publish canon` | Non-author and invalid create requests do not mutate Character canon or publish a WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
-| S3/R3-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R3-S1 + R5-S1: an edit preserves stable key and leaves the prior immutable version unchanged` | A valid edit preserves the stable key, publishes current canon, and leaves the prior immutable version unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
-| S3/R4-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R4-S1 + R5-S1: an author deletes current canon and publishes a new source without touching prior versions` | A confirmed deletion publishes current canon without mutating prior immutable versions. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R1-S1, S3/R2-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S1 + R2-S1 + R5-S1: an author creates a complete card and publishes it atomically` | A valid author create returns a complete card and atomically publishes the updated WorldVersion. | Passing 2026-07-22 against an acknowledged guarded disposable schema |
+| S3/R1-S2, S3/R2-S2 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S2 + R2-S2: a non-author and invalid input cannot mutate or publish canon` | Non-author and invalid create requests do not mutate Character canon or publish a WorldVersion. | Passing 2026-07-22 against an acknowledged guarded disposable schema |
+| S3/R3-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R3-S1 + R5-S1: an edit preserves stable key and leaves the prior immutable version unchanged` | A valid edit preserves the stable key, publishes current canon, and leaves the prior immutable version unchanged. | Passing 2026-07-22 against an acknowledged guarded disposable schema |
+| S3/R4-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R4-S1 + R5-S1: an author deletes current canon and publishes a new source without touching prior versions` | A confirmed deletion publishes current canon without mutating prior immutable versions. | Passing 2026-07-22 against an acknowledged guarded disposable schema |
 | S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 exposes complete debug cards but only author controls to the World author` | The author can submit a complete card while the complete debug disclosure remains visible. | Passing 2026-07-20 |
 | S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 keeps mutation controls out of a non-author World detail` | A non-author can inspect complete debug cards without mutation controls. | Passing 2026-07-20 |
-| S3/R6-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3 author creates, edits, and deletes a complete Character Card` | The creator completes the visible create, edit, and confirmed-delete journey. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
-| S3/R5-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3/R5-S1 + LC-003/S1/R2-S2 freezes existing NPC cards while new Adventures use published canon` | An existing Adventure retains its frozen NPC while a later Adventure uses published Character canon. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+| S3/R2-S2 | Automated test `apps/frontend/src/worlds/tuyauWorldApi.test.ts#LC-002/S3/R2-S2 maps a structured Character validation response to its exact editor field` | A 422 error entry with `field: key` becomes the existing key-specific editor message. | Passing 2026-07-22 |
+| S3/R2-S2, S3/R6-S2 | Automated tests `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R2-S2 keeps a rejected Character draft and highlights its supplied field` and `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R2-S2 highlights an invalid Character Location and retains the draft` | Rejected creates keep entered values and expose accessible `key` and `locationKey` errors without an unhandled rejection. | Passing 2026-07-22 |
+| S3/R2-S2, S3/R6-S2 | Direct Storybook inspection: `Application/Worlds/Detail/DuplicateCharacterKey` desktop and `InvalidCharacterLocation` at 390px mobile | The failing Key or Canonical Location is visibly field-local, the complete draft remains present, no console errors occur, and the mobile state has no horizontal overflow. | Passing 2026-07-22 |
+| S3/R6-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3 author creates, edits, and deletes a complete Character Card` | The creator completes the visible create, edit, and confirmed-delete journey. | Passing 2026-07-22 on desktop and mobile against an acknowledged guarded isolated schema |
+| S3/R5-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3/R5-S1 + LC-003/S1/R2-S2 freezes existing NPC cards while new Adventures use published canon` | An existing Adventure retains its frozen NPC while a later Adventure uses published Character canon. | Passing 2026-07-22 on desktop against an acknowledged guarded isolated schema |
 | S3/R6-S1 | Direct Storybook inspection: `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Required fields, card hierarchy, delete-confirmation fixture, responsive layout, and no horizontal overflow were directly inspected. | Passing 2026-07-19 |
 
 #### Verification Gaps
 
-- `S3/R3-S2`, `S3/R4-S2`, `S3/R5-S2`: Invalid/stale edit, failed/cancelled delete, and no-op-or-failed publication recovery lack current scenario-specific proof.
-- `S3/R6-S2`: Validation, failed-save, failed-delete, long-content, and live routed author/non-author confirmation remain pending.
+- `S3/R3-S2`: Missing-Character and stale-edit recovery lack current scenario-specific proof. Guarded functional coverage now passes for anonymous create, non-author edit/delete, duplicate-key, and invalid-Location no-publication cases.
+- `S3/R4-S2`, `S3/R5-S2`: Failed/cancelled delete and no-op-or-failed publication recovery lack current scenario-specific proof.
+- `S3/R6-S2`: Failed-delete, long-content, and live routed author/non-author confirmation remain pending. Field-specific rejected-create recovery has focused rendered-route and controlled Storybook coverage.
 
 #### Story Notes
 
@@ -471,7 +477,7 @@ The system SHALL integrate full cards, create/edit controls, validation, pending
 
 ## Open Decisions
 
-- None block the active Character-authoring implementation. Selective disclosure, World/Location authoring, draft publication, version-management UI, and custom concepts remain deferred.
+- No current Character-authoring Change is active. Selective disclosure, World/Location authoring, draft publication, version-management UI, and custom concepts remain deferred.
 
 ## Completion Criteria
 

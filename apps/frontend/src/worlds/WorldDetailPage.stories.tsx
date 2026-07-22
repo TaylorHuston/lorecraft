@@ -183,6 +183,112 @@ export const Authoring: Story = {
   },
 }
 
+async function completeCharacterDraft(
+  canvas: ReturnType<typeof within>,
+  key: string,
+  name = 'Mira Vale'
+) {
+  await userEvent.type(canvas.getByLabelText('Key'), key)
+  await userEvent.type(canvas.getByLabelText('Name'), name)
+  await userEvent.selectOptions(canvas.getByLabelText('Canonical Location'), 'chapel')
+  await userEvent.type(
+    canvas.getByLabelText('Physical description'),
+    'A watchful woman in rain-dark clothes.'
+  )
+  await userEvent.type(
+    canvas.getByLabelText('Background'),
+    'Mira has served the chapel through every storm.'
+  )
+  await userEvent.type(canvas.getByLabelText('Personality'), 'Cautious and observant.')
+  await userEvent.type(canvas.getByLabelText('Voice'), 'Plain and restrained.')
+  await userEvent.type(
+    canvas.getByLabelText('Private knowledge'),
+    'Mira heard the bell ring before midnight.'
+  )
+  await userEvent.type(canvas.getByLabelText('Initial mood'), 'Uneasy.')
+  await userEvent.type(canvas.getByLabelText('Initial status'), 'Watching the chapel door.')
+  await userEvent.type(
+    canvas.getByLabelText('Initial memory'),
+    'The player has not spoken with Mira yet.'
+  )
+}
+
+function validationErrorApi(fieldErrors: Record<string, string>): WorldApi {
+  return {
+    ...detailApi(authorDetail),
+    createCharacter: async () => {
+      throw new WorldApiError('validation', 'Correct the highlighted fields.', fieldErrors)
+    },
+  }
+}
+
+const authorAccount = { id: 1, email: 'keeper@lorecraft.test' }
+
+export const DuplicateCharacterKey: Story = {
+  args: {
+    worldApi: validationErrorApi({
+      key: 'Use a unique lowercase key with letters, numbers, and hyphens only.',
+    }),
+  },
+  render: () => {
+    const api = validationErrorApi({
+      key: 'Use a unique lowercase key with letters, numbers, and hyphens only.',
+    })
+    return renderDetail(api, '/worlds/stormbound-chapel', authorAccount)
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add Character' }))
+    await completeCharacterDraft(canvas, 'mira')
+    await userEvent.click(canvas.getByRole('button', { name: 'Create Character' }))
+
+    await expect(
+      canvas.findByText('Use a unique lowercase key with letters, numbers, and hyphens only.')
+    ).resolves.toBeVisible()
+    await expect(canvas.getByLabelText('Key')).toHaveAttribute('aria-invalid', 'true')
+    await expect(canvas.getByLabelText('Key')).toHaveValue('mira')
+    await expect(canvas.getByLabelText('Initial memory')).toHaveValue(
+      'The player has not spoken with Mira yet.'
+    )
+  },
+}
+
+export const InvalidCharacterLocation: Story = {
+  args: {
+    worldApi: validationErrorApi({
+      locationKey: 'Character Location is not valid for this World.',
+    }),
+  },
+  render: () => {
+    const api = validationErrorApi({
+      locationKey: 'Character Location is not valid for this World.',
+    })
+    return renderDetail(api, '/worlds/stormbound-chapel', authorAccount)
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Add Character' }))
+    await completeCharacterDraft(canvas, 'mira')
+    await userEvent.click(canvas.getByRole('button', { name: 'Create Character' }))
+
+    await expect(
+      canvas.findByText('Character Location is not valid for this World.')
+    ).resolves.toBeVisible()
+    await expect(canvas.getByLabelText('Canonical Location')).toHaveAttribute(
+      'aria-invalid',
+      'true'
+    )
+    await expect(canvas.getByLabelText('Canonical Location')).toHaveAttribute(
+      'aria-describedby',
+      'character-location-error'
+    )
+    await expect(canvas.getByLabelText('Canonical Location')).toHaveValue('chapel')
+    await expect(canvas.getByLabelText('Initial memory')).toHaveValue(
+      'The player has not spoken with Mira yet.'
+    )
+  },
+}
+
 export const CharacterDeleteConfirmation: Story = {
   ...Authoring,
   play: async ({ canvasElement }) => {

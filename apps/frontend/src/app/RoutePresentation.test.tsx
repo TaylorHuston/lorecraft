@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { expect, it } from 'vitest'
 import { renderTestApp } from '../test/renderTestApp'
 
-it('LC-001/S3 route context sets the title and focuses the destination heading', async () => {
+it('LC-001/S3/R3-S1 sets the title and focuses the destination heading', async () => {
   renderTestApp({ route: '/sign-in', session: null })
 
   const heading = await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })
@@ -11,7 +11,7 @@ it('LC-001/S3 route context sets the title and focuses the destination heading',
   expect(document.title).toBe('Sign in | Lorecraft')
 })
 
-it('LC-001/S3 route context follows link navigation without reacting to background rendering', async () => {
+it('LC-001/S3/R3-S1 follows link navigation without reacting to background rendering', async () => {
   const user = userEvent.setup()
   renderTestApp({ route: '/sign-in', session: null })
 
@@ -26,7 +26,7 @@ it('LC-001/S3 route context follows link navigation without reacting to backgrou
   expect(email).toHaveFocus()
 })
 
-it('LC-001/S3 route context applies after an authenticated redirect', async () => {
+it('LC-001/S3/R3-S1 applies after an authenticated redirect', async () => {
   renderTestApp({ route: '/sign-in', session: { id: 4, email: 'member@example.com' } })
 
   const heading = await screen.findByRole('heading', { name: 'Worlds' })
@@ -34,7 +34,7 @@ it('LC-001/S3 route context applies after an authenticated redirect', async () =
   expect(document.title).toBe('Worlds | Lorecraft')
 })
 
-it('LC-001/S3 route context preserves focus chosen while a destination is loading', async () => {
+it('LC-001/S3/R3-S2 preserves focus chosen while a destination is loading', async () => {
   const user = userEvent.setup()
   let resolveWorlds: (worlds: []) => void = () => undefined
   const worlds = new Promise<[]>((resolve) => {

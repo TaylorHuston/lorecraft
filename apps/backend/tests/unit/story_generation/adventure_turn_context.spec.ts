@@ -93,7 +93,7 @@ test.group('Adventure turn context', () => {
     )
   })
 
-  test('excludes prior raw actions, Guide text, Pass markers, and operational records from turn context', ({
+  test('LC-003/S2/R3-S2 excludes prior raw actions, Guide text, Pass markers, and operational records from turn context', ({
     assert,
   }) => {
     const priorGuide = 'private guide: put the real bell rope in Mira’s pocket'
