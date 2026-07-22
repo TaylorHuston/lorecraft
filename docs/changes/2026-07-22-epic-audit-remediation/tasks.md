@@ -58,7 +58,7 @@ status: in_progress
 | Date | Slice | Agent / Guidance | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|---|
 | 2026-07-22 | Planning | `sdd-change --plan` | LC-001, LC-002, LC-003 audit findings | planned | not applicable |
-| 2026-07-22 | LC-002/S3/R1-S2, R2-S2, R6-S2 | `sdd-apply`; risk closure and rendered-route recovery test | Character service/controller, adapter, editor, focused tests, LC-002 Epic | Added fielded author-owned validation errors; retained 401/404 non-disclosure; fixed rejected-editor mutation rejection; backend functional run awaits a safe database target | commit pending |
+| 2026-07-22 | LC-002/S3/R1-S2, R2-S2, R6-S2 | `sdd-apply`; risk closure and rendered-route recovery test | Character service/controller, adapter, editor, focused tests, LC-002 Epic | Added fielded author-owned validation errors; retained 401/404 non-disclosure; fixed rejected-editor mutation rejection; backend functional run awaits a safe database target | `3096172` |
 
 ## Verification Ledger
 
