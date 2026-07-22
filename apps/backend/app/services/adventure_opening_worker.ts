@@ -2,10 +2,16 @@ import type { WorldVersionSnapshot } from '#models/world_version'
 import type {
   OpeningStoryInput,
   StoryGenerationEvidence,
+  StoryGenerationDebugContext,
   StoryGenerationResult,
   StoryGenerator,
 } from '#services/story_generation/story_generator'
 import { StoryGenerationError } from '#services/story_generation/story_generator'
+import {
+  assertNarrationDoesNotReflectPrivateValues,
+  UnsafeNarrationPublicationError,
+} from '#services/story_generation/turn_prompt'
+import type { DevelopmentDebugTrace } from '#services/story_generation/development_debug_trace'
 import { retryDelayMs, retryDisposition } from '#services/adventure_opening_policy'
 import db from '@adonisjs/lucid/services/db'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
@@ -46,6 +52,7 @@ export type AdventureOpeningWorkerOptions = {
   retryDelayMs?: number
   jitter?: () => number
   platformInstructions?: string
+  debugTrace?: DevelopmentDebugTrace | null
 }
 
 export function leaseDurationForProviderTimeout(timeoutMs: number) {
@@ -98,6 +105,13 @@ function safeEvidence(evidence: StoryGenerationEvidence): StoryGenerationEvidenc
   }
 }
 
+function npcCardMetadata(characters: OpeningStoryInput['charactersPresent']) {
+  return {
+    npcCardCount: characters.length,
+    npcCardCharacterCount: JSON.stringify(characters).length,
+  }
+}
+
 function validatedResult(result: StoryGenerationResult): StoryGenerationResult {
   if (
     !result ||
@@ -134,6 +148,13 @@ function validatedResult(result: StoryGenerationResult): StoryGenerationResult {
 }
 
 function normalizedFailure(error: unknown): OpeningFailure {
+  if (error instanceof UnsafeNarrationPublicationError) {
+    return {
+      code: 'malformed_response',
+      message: 'Opening generation returned unsafe private material.',
+      evidence: unavailableEvidence,
+    }
+  }
   if (error instanceof StoryGenerationError) {
     if (error.code === 'cancelled') throw error
     return {
@@ -203,6 +224,9 @@ function openingInput(
         personality: character.personality,
         voice: character.voice,
         privateKnowledge: character.privateKnowledge,
+        initialMood: character.initialMood ?? '',
+        initialStatus: character.initialStatus ?? '',
+        initialMemory: character.initialMemory ?? '',
         sortOrder: character.sortOrder,
       })),
   }
@@ -523,7 +547,10 @@ export class LucidAdventureOpeningRepository implements AdventureOpeningReposito
           adventure_id: claim.adventureId,
           job_id: claim.jobId,
           operation: 'opening_generation',
-          request_metadata: result.request,
+          request_metadata: {
+            ...result.request,
+            ...npcCardMetadata(claim.input.charactersPresent),
+          },
           response_metadata: result.response,
           provider: result.provider,
           model: result.model,
@@ -617,7 +644,10 @@ export class LucidAdventureOpeningRepository implements AdventureOpeningReposito
         adventure_id: claim.adventureId,
         job_id: claim.jobId,
         operation: 'opening_generation',
-        request_metadata: evidence.request,
+        request_metadata: {
+          ...evidence.request,
+          ...npcCardMetadata(claim.input.charactersPresent),
+        },
         response_metadata: evidence.response,
         provider: evidence.provider,
         model: evidence.model,
@@ -676,12 +706,14 @@ export default class AdventureOpeningWorker {
   readonly #logger: AdventureOpeningLogger
   readonly #now: () => Date
   readonly #repository: AdventureOpeningRepository
+  readonly #debugTrace: DevelopmentDebugTrace | null
 
   constructor(options: AdventureOpeningWorkerOptions) {
     this.#generator = options.generator
     this.#logger = options.logger ?? silentLogger
     this.#now = options.now ?? (() => new Date())
     this.#repository = options.repository ?? new LucidAdventureOpeningRepository(options)
+    this.#debugTrace = options.debugTrace ?? null
   }
 
   async runOnce(signal?: AbortSignal): Promise<AdventureOpeningWorkerResult> {
@@ -713,7 +745,27 @@ export default class AdventureOpeningWorker {
     }
 
     try {
-      const result = validatedResult(await this.#generator.generateOpening(claim.input, signal))
+      const debug = this.#debugContext(claim)
+      await debug?.trace.capture({
+        ...debug,
+        stage: 'input',
+        input: claim.input,
+      })
+      const result = validatedResult(
+        await this.#generator.generateOpening(claim.input, signal, debug)
+      )
+      assertNarrationDoesNotReflectPrivateValues(
+        result.narration,
+        claim.input.charactersPresent.map((character) => character.privateKnowledge)
+      )
+      await debug?.trace.capture({
+        ...debug,
+        stage: 'outcome',
+        narration: result.narration,
+        provider: result.provider,
+        model: result.model,
+        status: 'succeeded',
+      })
       if (!(await this.#repository.finalizeSuccess(claim, result))) {
         this.#logCompletion('adventure_opening.stale', claim, 'stale')
         return this.#result('stale', claim)
@@ -721,6 +773,12 @@ export default class AdventureOpeningWorker {
       this.#logCompletion('adventure_opening.succeeded', claim, 'succeeded')
       return this.#result('succeeded', claim)
     } catch (error) {
+      const debug = this.#debugContext(claim)
+      await debug?.trace.capture({
+        ...debug,
+        stage: 'failure',
+        status: error instanceof StoryGenerationError ? error.code : 'provider_failure',
+      })
       if (error instanceof StoryGenerationError && error.code === 'cancelled') {
         const rescheduled = await this.#repository.rescheduleInterrupted(claim)
         const status = rescheduled ? 'retry_scheduled' : 'stale'
@@ -755,5 +813,16 @@ export default class AdventureOpeningWorker {
       status,
       durationMs: Math.max(0, this.#now().getTime() - claim.startedAt.getTime()),
     })
+  }
+
+  #debugContext(claim: ClaimedOpening): StoryGenerationDebugContext | undefined {
+    if (!this.#debugTrace) return undefined
+    return {
+      trace: this.#debugTrace,
+      traceId: `${claim.adventureId}:${claim.jobId}:opening:${claim.attempt}`,
+      operation: 'opening_generation',
+      adventureId: claim.adventureId,
+      jobId: claim.jobId,
+    }
   }
 }

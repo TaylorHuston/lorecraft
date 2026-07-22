@@ -36,6 +36,15 @@ export function renderTestApp({
     getWorld: async () => {
       throw new Error('World detail was not configured for this test.')
     },
+    createCharacter: async () => {
+      throw new Error('Character creation was not configured for this test.')
+    },
+    updateCharacter: async () => {
+      throw new Error('Character editing was not configured for this test.')
+    },
+    deleteCharacter: async () => {
+      throw new Error('Character deletion was not configured for this test.')
+    },
     ...worldApiOverrides,
   }
   const queryClient = new QueryClient({

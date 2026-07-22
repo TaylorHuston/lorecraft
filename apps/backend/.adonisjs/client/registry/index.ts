@@ -60,6 +60,24 @@ const routes = {
     tokens: [{"old":"/api/v1/worlds/:slug","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug","type":1,"val":"slug","end":""}],
     types: placeholder as Registry['worlds.show']['types'],
   },
+  'worlds.store_character': {
+    methods: ["POST"],
+    pattern: '/api/v1/worlds/:slug/characters',
+    tokens: [{"old":"/api/v1/worlds/:slug/characters","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug/characters","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug/characters","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug/characters","type":1,"val":"slug","end":""},{"old":"/api/v1/worlds/:slug/characters","type":0,"val":"characters","end":""}],
+    types: placeholder as Registry['worlds.store_character']['types'],
+  },
+  'worlds.update_character': {
+    methods: ["PATCH"],
+    pattern: '/api/v1/worlds/:slug/characters/:key',
+    tokens: [{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":1,"val":"slug","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"characters","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":1,"val":"key","end":""}],
+    types: placeholder as Registry['worlds.update_character']['types'],
+  },
+  'worlds.destroy_character': {
+    methods: ["DELETE"],
+    pattern: '/api/v1/worlds/:slug/characters/:key',
+    tokens: [{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"api","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"v1","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"worlds","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":1,"val":"slug","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":0,"val":"characters","end":""},{"old":"/api/v1/worlds/:slug/characters/:key","type":1,"val":"key","end":""}],
+    types: placeholder as Registry['worlds.destroy_character']['types'],
+  },
   'adventures.store': {
     methods: ["POST"],
     pattern: '/api/v1/worlds/:slug/adventures',
@@ -77,6 +95,12 @@ const routes = {
     pattern: '/api/v1/adventures/:id/turns',
     tokens: [{"old":"/api/v1/adventures/:id/turns","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/turns","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/turns","type":0,"val":"turns","end":""}],
     types: placeholder as Registry['adventures.submit_turn']['types'],
+  },
+  'adventures.update_npc_debug_state': {
+    methods: ["PATCH"],
+    pattern: '/api/v1/adventures/:id/npcs/:key/debug-state',
+    tokens: [{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"npcs","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":1,"val":"key","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"debug-state","end":""}],
+    types: placeholder as Registry['adventures.update_npc_debug_state']['types'],
   },
   'adventures.retry_turn': {
     methods: ["POST"],

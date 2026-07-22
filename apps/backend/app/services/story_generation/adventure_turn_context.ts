@@ -23,6 +23,9 @@ export type TurnFrozenCanon = {
     personality: string
     voice: string
     privateKnowledge: string
+    initialMood?: string
+    initialStatus?: string
+    initialMemory?: string
     sortOrder: number
   }>
 }
@@ -36,7 +39,13 @@ export type AdventureTurnState = {
   }
   characters: Array<{
     characterKey: string
+    name?: string | null
     currentLocationKey: string
+    physicalDescription?: string | null
+    background?: string | null
+    personality?: string | null
+    voice?: string | null
+    privateKnowledge?: string | null
     mood: string | null
     currentStatus: string | null
     summarizedMemory: string | null
@@ -84,6 +93,17 @@ export function assembleAdventureTurnContext(
       narration: boundedNarration(entry.narration),
     }))
 
+  const characterStateByKey = new Map(
+    input.currentState.characters.map((character) => [character.characterKey, character])
+  )
+  const presentCharacterKeys = new Set(
+    input.currentState.characters
+      .filter(
+        (character) => character.currentLocationKey === input.currentState.player.currentLocationKey
+      )
+      .map((character) => character.characterKey)
+  )
+
   return {
     frozenCanon: {
       world: { ...input.frozenCanon.world },
@@ -92,15 +112,31 @@ export function assembleAdventureTurnContext(
           (left, right) => left.sortOrder - right.sortOrder || left.key.localeCompare(right.key)
         )
         .map((location) => ({ ...location })),
-      characters: [...input.frozenCanon.characters]
+      characters: input.frozenCanon.characters
+        .filter((character) => presentCharacterKeys.has(character.key))
+        .map((character) => {
+          const state = characterStateByKey.get(character.key)
+          return {
+            ...character,
+            name: state?.name ?? character.name,
+            physicalDescription: state?.physicalDescription ?? character.physicalDescription,
+            background: state?.background ?? character.background,
+            personality: state?.personality ?? character.personality,
+            voice: state?.voice ?? character.voice,
+            privateKnowledge: state?.privateKnowledge ?? character.privateKnowledge,
+            initialMood: character.initialMood ?? '',
+            initialStatus: character.initialStatus ?? '',
+            initialMemory: character.initialMemory ?? '',
+          }
+        })
         .sort(
           (left, right) => left.sortOrder - right.sortOrder || left.key.localeCompare(right.key)
-        )
-        .map((character) => ({ ...character })),
+        ),
     },
     currentState: {
       player: { ...input.currentState.player },
-      characters: [...input.currentState.characters]
+      characters: [...characterStateByKey.values()]
+        .filter((character) => presentCharacterKeys.has(character.characterKey))
         .sort((left, right) => left.characterKey.localeCompare(right.characterKey))
         .map((character) => ({ ...character })),
     },

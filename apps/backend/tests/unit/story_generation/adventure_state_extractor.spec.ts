@@ -53,7 +53,22 @@ test.group('Adventure state extractor contract', () => {
       }),
       JSON.stringify({ proposals: [{ type: 'character_state', characterKey: 'mira' }] }),
       JSON.stringify({
-        proposals: [{ type: 'character_state', characterKey: 'mira', mood: 'x'.repeat(161) }],
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', locationKey: 'x'.repeat(101) },
+        ],
+      }),
+      JSON.stringify({
+        proposals: [{ type: 'character_state', characterKey: 'mira', mood: 'x'.repeat(121) }],
+      }),
+      JSON.stringify({
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', currentStatus: 'x'.repeat(321) },
+        ],
+      }),
+      JSON.stringify({
+        proposals: [
+          { type: 'character_state', characterKey: 'mira', summarizedMemory: 'x'.repeat(501) },
+        ],
       }),
       JSON.stringify({
         proposals: Array.from(
@@ -79,7 +94,9 @@ test.group('Adventure state extractor contract', () => {
     }
   })
 
-  test('gives the extraction operation staged narration and current state only', ({ assert }) => {
+  test('gives the extraction operation staged narration, current state, and complete current-Scene cards only', ({
+    assert,
+  }) => {
     const prompt = assembleAdventureStateExtractionPrompt({
       narration: 'Mira points toward the bell tower.',
       currentState: {
@@ -91,10 +108,27 @@ test.group('Adventure state extractor contract', () => {
         },
         characters: [],
       },
+      charactersPresent: [
+        {
+          key: 'mira',
+          name: 'Mira',
+          physicalDescription: 'Rain-dark clothes.',
+          background: 'Knows the chapel.',
+          personality: 'Watchful.',
+          voice: 'Quiet.',
+          privateKnowledge: 'Knows the bell secret.',
+          initialMood: 'Uneasy.',
+          initialStatus: 'Watching the nave.',
+          initialMemory: 'Taylor arrived in the storm.',
+          sortOrder: 1,
+        },
+      ],
     })
 
     assert.include(prompt.user, 'Mira points toward the bell tower.')
     assert.include(prompt.user, 'currentLocationKey')
+    assert.include(prompt.user, 'Knows the bell secret.')
+    assert.include(prompt.user, 'Taylor arrived in the storm.')
     assert.notInclude(prompt.user, 'PRIVATE_CURRENT_GUIDE')
     assert.notInclude(prompt.user, 'STORY_VISIBLE_HISTORY')
   })

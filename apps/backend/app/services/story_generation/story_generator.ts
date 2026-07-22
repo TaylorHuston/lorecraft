@@ -26,6 +26,9 @@ export type OpeningStoryInput = {
     personality: string
     voice: string
     privateKnowledge: string
+    initialMood: string
+    initialStatus: string
+    initialMemory: string
     sortOrder: number
   }>
 }
@@ -40,6 +43,8 @@ export type StoryGenerationSettings = {
 export type StoryGenerationRequestMetadata = {
   byteCount: number
   timeoutMs: number
+  npcCardCount?: number
+  npcCardCharacterCount?: number
 }
 
 export type StoryGenerationResponseMetadata = {
@@ -57,6 +62,16 @@ export type StoryGenerationEvidence = {
   settings: StoryGenerationSettings
   request: StoryGenerationRequestMetadata
   response: StoryGenerationResponseMetadata
+}
+
+/** Local-only trace context. It never becomes provider evidence or persisted model-call metadata. */
+export type StoryGenerationDebugContext = {
+  trace: DevelopmentDebugTrace
+  traceId: string
+  operation: DevelopmentDebugTraceOperation
+  adventureId: string
+  jobId: string
+  turnId?: string
 }
 
 export type StoryGenerationResult = StoryGenerationEvidence & {
@@ -80,5 +95,13 @@ export class StoryGenerationError extends Error {
 }
 
 export interface StoryGenerator {
-  generateOpening(input: OpeningStoryInput, signal?: AbortSignal): Promise<StoryGenerationResult>
+  generateOpening(
+    input: OpeningStoryInput,
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
+  ): Promise<StoryGenerationResult>
 }
+import type {
+  DevelopmentDebugTrace,
+  DevelopmentDebugTraceOperation,
+} from './development_debug_trace.js'

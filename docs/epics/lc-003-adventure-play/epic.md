@@ -3,11 +3,12 @@ schema: sdd-epic-v2
 id: LC-003
 status: in_progress
 created: 2026-07-16
-modified: 2026-07-19
-last_verified: 2026-07-19
+modified: 2026-07-21
+last_verified: 2026-07-20
 stories:
   - S1
   - S2
+  - S3
 ---
 
 # LC-003 Adventure Play
@@ -27,7 +28,7 @@ Lorecraft's creator-owned Worlds are authoritative canon. Adventure play lets an
 
 ## Outcome
 
-Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences.
+Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The active Character-authoring Change extends frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards; guarded schema, synthetic smoke, deterministic E2E refresh, and the live-provider Act/Guide/Pass matrix pass, while owner acceptance remains pending.
 
 ## Current Scope
 
@@ -40,6 +41,8 @@ Accounts can enter an authorized World through private Adventures, receive and r
 - Reset to the original source version and delete only the selected Adventure.
 - Keep authorization, source isolation, lifecycle, provider orchestration, and typed API behavior in the AdonisJS backend.
 - Present World-contained Adventure discovery and a responsive story-first Adventure route in the React client.
+- Complete frozen-and-current NPC Cards for all and only NPCs in the current Scene, bounded context-size metadata, local development Debug diagnostics, and owner debug inspection.
+- Provide a developer-run synthetic opening smoke command that uses the same effective provider configuration as the workers and fails when a response is truncated.
 
 ## Deferred Scope
 
@@ -54,27 +57,28 @@ Accounts can enter an authorized World through private Adventures, receive and r
 
 Candidate Stories are planning signals only. They are not accepted Epic/Story truth until promoted into `## Stories`, and they do not receive `S#` labels until promotion.
 
-| Candidate                  | Status   | Story Shape                                                                                                                                       | Acceptance Signals                                                                     |
-| -------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `shape-and-inspect-story`  | proposed | As a player, I want Story, `/look`, `/help`, and persistent context views, so that I can shape and understand the Adventure before ending a turn. | Utility persistence/context exclusion and Player/Scene knowledge filtering are proven. |
-| `revise-adventure-history` | deferred | As a player, I want to Retry, roll back, or branch from completed turns, so that I can revise my story safely.                                    | Complete state restoration and immutable history semantics are defined and proven.     |
+| Candidate                  | Status   | Story Shape                                                                                                                                       | Acceptance Signals                                                                                                                  |
+| -------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `shape-and-inspect-story`  | proposed | As a player, I want Story, `/look`, `/help`, and persistent context views, so that I can shape and understand the Adventure before ending a turn. | Utility persistence/context exclusion and Player/Scene knowledge filtering are proven. NPC card inspection is owned by accepted S3. |
+| `revise-adventure-history` | deferred | As a player, I want to Retry, roll back, or branch from completed turns, so that I can revise my story safely.                                    | Complete state restoration and immutable history semantics are defined and proven.                                                  |
 
 ## Story Index
 
-| Story | Implementation | Verification | Capability                             | Last Verified | Notes                                                                                                                                                   |
-| ----- | -------------- | ------------ | -------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| S1    | implemented    | verified     | Start and resume a private Adventure.  | 2026-07-18    | Opening, privacy, recovery, lifecycle, and responsive workbench foundation.                                                                             |
-| S2    | implemented    | verified     | Resolve a structured Game Master turn. | 2026-07-19    | Act, Pass, Guide, durable lifecycle, bounded consequences, and responsive turn workbench are verified; live-provider and owner manual confirmation remain explicit acceptance work. |
+| Story | Implementation | Verification | Capability                             | Last Verified | Notes                                                                                                                              |
+| ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-20    | Complete NPC-card source/init/query code and prompt tests exist; direct database, deterministic E2E, and live-opening evidence pass, while owner manual acceptance remains pending. |
+| S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-20    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; guarded schema and live trace evidence pass, while owner manual acceptance remains pending. |
+| S3    | implemented    | partial      | Inspect complete NPC Cards.            | 2026-07-20    | Current-Scene projection, Debug boundary database proof, interactive UI, and deterministic post-turn refresh evidence exist; rendered recovery and owner manual proof remain pending. |
 
 ## Stories
 
 ### Story S1: Start And Resume A Private Adventure
 
 Implementation: implemented
-Verification: verified
+Verification: partial
 Created: 2026-07-16
-Modified: 2026-07-18
-Last verified: 2026-07-18
+Modified: 2026-07-20
+Last verified: 2026-07-20
 
 As a signed-in account holder, I want to start and resume a private Adventure from an accessible World, so that I can enter stable canon as my own player character.
 
@@ -122,7 +126,7 @@ The system SHALL bind every Adventure to one immutable WorldVersion and one Star
 ###### Scenario R2-S1: Playable Published Version
 
 - WHEN Adventure creation succeeds
-- THEN its WorldVersion snapshot contains the source World metadata, Adventure guidance, Locations, Characters, and default Starting Point used for creation
+- THEN its WorldVersion snapshot contains the source World metadata, Adventure guidance, Locations, complete Character Cards with initial mood, status, and memory, and default Starting Point used for creation
 - AND the Adventure's initial player and Scene location are derived from that Starting Point.
 
 ###### Scenario R2-S2: Later Canon Change
@@ -144,7 +148,7 @@ The system SHALL durably generate and atomically publish one opening narration b
 ###### Scenario R3-S1: Successful Opening
 
 - WHEN a worker claims the pending opening job
-- THEN the Game Master receives non-editable platform instructions, frozen World guidance, the Starting Point premise, relevant starting canon, and the player profile
+- THEN the Game Master receives non-editable platform instructions, frozen World guidance, the Starting Point premise, the player profile, and complete NPC Cards for all and only NPCs in the starting Scene
 - AND successful prose is committed as the root story entry and root revision before the Adventure becomes ready.
 
 ###### Scenario R3-S2: Reload Or Worker Restart
@@ -204,6 +208,12 @@ The system SHALL durably generate and atomically publish one opening narration b
 - THEN shutdown does not consume a provider-failure attempt or publish partial narration
 - AND the restarted worker safely reclaims or resumes eligible work without duplicate publication.
 
+###### Scenario R3-S11: Local Provider Configuration Smoke
+
+- WHEN a developer changes the local configured model, token cap, timeout, or provider endpoint and runs the opening smoke command
+- THEN Lorecraft sends one bounded synthetic opening request using the same effective configuration as the opening and turn workers
+- AND it exits non-zero when the provider returns truncated or otherwise invalid narration while logging only bounded model, configuration, and response metadata.
+
 ##### Requirement R4: Resume And Lifecycle
 
 The system SHALL list and reopen the owner's Adventures under their source World and keep destructive lifecycle actions Adventure-scoped.
@@ -212,12 +222,12 @@ The system SHALL list and reopen the owner's Adventures under their source World
 
 - WHEN an owner returns to the source World or opens `/adventures/<id>`
 - THEN the World lists each owned Adventure with player identity, completed turn count, last-played time, and lifecycle state
-- AND a ready Adventure renders its opening story, Player context, and initial Scene context from its frozen source.
+- AND a ready Adventure renders its opening story, Player context, and complete current-Scene NPC Cards from its frozen source and Adventure-owned state.
 
 ###### Scenario R4-S2: Reset
 
 - WHEN the owner confirms reset while no opening job is active
-- THEN generated story and Adventure-owned runtime state are replaced with initial state from the same WorldVersion and Starting Point
+- THEN generated story and Adventure-owned runtime state, including each NPC's Location, mood, status, and memory, are replaced with initial state from the same WorldVersion and Starting Point
 - AND a new opening is queued using the original player profile without changing source canon.
 
 ###### Scenario R4-S3: Delete
@@ -274,23 +284,13 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 
 #### Implemented By
 
-| Requirement / Scenario                 | Location / Anchor                                                                                                                                                                                                         | Kind          | Responsibility                                                                                                                     |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| S1/R1                                  | `apps/backend/app/services/adventure_creation_service.ts#AdventureCreationService.create`                                                                                                                                 | primary       | Validates source access and request identity, then creates exactly one owner-scoped Adventure, player, and opening job atomically. |
-| S1/R1-S1, S1/R1-S2, S1/R1-S3           | `apps/backend/app/controllers/adventures_controller.ts#AdventuresController.store` and `apps/backend/app/validators/adventure.ts#createAdventureValidator`                                                                | adapter       | Applies authenticated, CSRF-protected creation validation and non-disclosing HTTP errors.                                          |
-| S1/R1-S4, S1/R1-S5                     | `apps/frontend/src/adventures/NewAdventurePage.tsx#NewAdventurePage` and `apps/frontend/src/adventures/creationRequestId.ts#createAdventureRequestId`                                                                     | presentation  | Discloses provider processing before submission and supplies portable UUID request identities.                                     |
-| S1/R2                                  | `apps/backend/app/services/world_version_publication_service.ts#publishWorldVersionInTransaction`                                                                                                                         | primary       | Publishes or reuses a complete immutable WorldVersion with a valid default Starting Point.                                         |
-| S1/R2-S1, S1/R2-S2, S1/R2-S3           | `apps/backend/database/migrations/1784233200000_add_frozen_world_source_foundation.ts` and `apps/backend/app/services/stormbound_chapel_seed.ts#seedStormboundChapel`                                                     | persistence   | Enforces frozen-source/default constraints and provides the repeatable playable starter World.                                     |
-| S1/R3                                  | `apps/backend/app/services/adventure_opening_worker.ts#AdventureOpeningWorker.runOnce`                                                                                                                                    | primary       | Claims durable opening work and atomically publishes the root revision, narration, sanitized evidence, and ready state.            |
-| S1/R3-S1, S1/R3-S3, S1/R3-S4           | `apps/backend/app/services/story_generation/opening_prompt.ts#assembleOpeningPrompt` and `apps/backend/app/services/story_generation/openai_compatible_story_generator.ts#OpenAICompatibleStoryGenerator.generateOpening` | adapter       | Builds bounded frozen context, validates provider prose, and normalizes sanitized failures.                                        |
-| S1/R3-S5, S1/R3-S6, S1/R3-S7, S1/R3-S8 | `apps/backend/app/services/adventure_opening_policy.ts#retryDisposition` and `apps/backend/database/migrations/1784323200000_minimize_model_call_evidence.ts`                                                             | support       | Enforces retry policy and metadata-only model evidence.                                                                            |
-| S1/R3-S9, S1/R3-S10                    | `apps/backend/commands/work_adventure_openings.ts`, `deploy/compose.yaml`, and `deploy/release-command.mjs`                                                                                                               | configuration | Runs the worker separately and coordinates safe deployment/restart behavior.                                                       |
-| S1/R4                                  | `apps/backend/app/services/adventure_lifecycle_service.ts#AdventureLifecycleService.reset`                                                                                                                                | primary       | Owns owner-filtered recovery, reset to the frozen source, and aggregate-scoped deletion.                                           |
-| S1/R4-S1                               | `apps/backend/app/services/adventure_query_service.ts#AdventureQueryService.findForOwner`                                                                                                                                 | adapter       | Projects owner-scoped Adventure summaries and detail without source snapshots or provider evidence.                                |
-| S1/R4-S1, S1/R4-S2, S1/R4-S3           | `apps/frontend/src/worlds/WorldDetailPage.tsx#WorldDetailPage` and `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`                                                                                         | presentation  | Presents create, resume, retry, reset, delete, and lifecycle feedback.                                                             |
-| S1/R5                                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventureWorkbench`                                                                                                                                                  | primary       | Owns the story-first Player/Story/Scene workbench, status presentation, responsive regions, and accessible navigation.             |
-| S1/R5-S1, S1/R5-S2, S1/R5-S3, S1/R5-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`, `apps/frontend/src/components/Dialog/Dialog.tsx#Dialog`, and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx#ConfirmDialog`                        | presentation  | Connects lifecycle actions and accessible destructive confirmations to the workbench.                                              |
-| S1/R5-S5, S1/R5-S6                     | `apps/frontend/src/app/AppRoutes.tsx#AppRoutes`                                                                                                                                                                           | presentation  | Sets route title and destination focus while preserving focus during background completion.                                        |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S1/R1 | `apps/backend/app/services/adventure_creation_service.ts#async create` | primary | Creates the owner-scoped Adventure, player, and opening job atomically. |
+| S1/R2 | `apps/backend/app/services/world_version_publication_service.ts#publishWorldVersionInTransaction` | primary | Publishes the immutable, playable source snapshot. |
+| S1/R3 | `apps/backend/app/services/adventure_opening_worker.ts#async runOnce` | primary | Claims opening work and publishes only a complete opening. |
+| S1/R4 | `apps/backend/app/services/adventure_lifecycle_service.ts#async reset` | primary | Resets Adventure-owned state from the frozen source. |
+| S1/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Renders the responsive story-first Adventure experience. |
 
 #### Implementation Gaps
 
@@ -300,22 +300,24 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 
 | Requirement / Scenario                                               | Evidence                                                                                                                                                                                                                                                                                   | Proves                                                                                                                                                                | Status                                |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| S1/R1-S1, S1/R1-S2, S1/R1-S3                                         | `apps/backend/tests/functional/adventure_creation_service.spec.ts` and `apps/backend/tests/functional/adventure_api.spec.ts`                                                                                                                                                               | Valid creation, owner idempotency, field validation, source access, authentication, CSRF, and non-disclosing errors.                                                  | Passing 2026-07-18                    |
-| S1/R1-S4, S1/R1-S5                                                   | `apps/frontend/src/adventures/AdventureRoutes.test.tsx` and `apps/frontend/src/adventures/creationRequestId.test.ts`                                                                                                                                                                       | Provider-processing disclosure appears before creation, and native/fallback request identity remains UUID v4 compliant.                                               | Passing 2026-07-18                    |
-| S1/R2-S1, S1/R2-S2, S1/R2-S3                                         | `apps/backend/tests/database/frozen_world_source_migration.spec.ts`, `apps/backend/tests/functional/world_version_publication.spec.ts`, `apps/backend/tests/functional/adventure_creation_service.spec.ts`, and `apps/backend/tests/functional/adventure_query_service.spec.ts`            | Immutable source/default constraints, stable snapshot publication, initial binding, playability conflicts, and existing-Adventure isolation from later canon.         | Passing 2026-07-18                    |
-| S1/R3-S1, S1/R3-S4                                                   | `apps/backend/tests/unit/story_generation/opening_prompt.spec.ts`, `apps/backend/tests/unit/story_generation/openai_compatible_story_generator.spec.ts`, and `apps/backend/tests/functional/adventure_opening_worker.spec.ts`                                                              | Frozen context, provider result validation, atomic root narration publication, and no partial prose after invalid generation.                                         | Passing 2026-07-18                    |
-| S1/R3-S2, S1/R3-S3, S1/R3-S7, S1/R3-S8                               | `apps/backend/tests/functional/adventure_opening_worker.spec.ts`, `apps/backend/tests/unit/adventure_opening_policy.spec.ts`, and `apps/backend/tests/unit/adventure_opening_worker_port.spec.ts`                                                                                          | Lease recovery, one bounded retry, delayed retry policy, interruption handling, and stale-work rejection.                                                             | Passing 2026-07-18                    |
-| S1/R3-S5                                                             | `apps/backend/tests/functional/adventure_api.spec.ts`                                                                                                                                                                                                                                      | Account-scoped creation, retry, and reset burst limiting rejects excess work before lifecycle mutation.                                                               | Passing 2026-07-18                    |
-| S1/R3-S6                                                             | `apps/backend/tests/unit/story_generation/openai_compatible_story_generator.spec.ts`, `apps/backend/tests/functional/adventure_opening_worker.spec.ts`, and `apps/backend/tests/database/adventure_aggregate_migration.spec.ts`                                                            | Model-call persistence and logs retain only bounded metadata; provider bodies, prompts, and credentials are absent.                                                   | Passing 2026-07-18                    |
-| S1/R3-S9, S1/R3-S10                                                  | `deploy/container-contract.test.mjs`, `deploy/release-command.test.mjs`, `scripts/image-workflow.test.mjs`, and the 2026-07-18 private-production acceptance                                                                                                                               | Separate worker supervision, five-second polling, tailnet-only ingress, restart recovery, one real opening, and deterministic application rollback.                   | Passing and user confirmed 2026-07-18 |
-| S1/R4-S1, S1/R4-S2, S1/R4-S3                                         | `apps/backend/tests/functional/adventure_query_service.spec.ts`, `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts`, `apps/backend/tests/functional/adventure_api.spec.ts`, and `apps/frontend/e2e/adventure-foundation.spec.ts`                                          | Owner-only list/detail, frozen-source reset, aggregate-only deletion, and desktop/mobile lifecycle journeys.                                                          | Passing 2026-07-18                    |
-| S1/R5-S1, S1/R5-S2, S1/R5-S3, S1/R5-S4                               | `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `apps/frontend/src/adventures/AdventurePage.stories.tsx`, `apps/frontend/src/components/Dialog/Dialog.test.tsx`, and `apps/frontend/e2e/adventure-foundation.spec.ts` | Creation, pending, failure, ready, reset/delete confirmation, accessible dialogs, responsive Player/Story/Scene composition, and overflow-free desktop/mobile states. | Passing 2026-07-18                    |
-| S1/R5-S5, S1/R5-S6                                                   | `apps/frontend/src/app/RoutePresentation.test.tsx` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx`                                                                                                                                                                             | Adventure destinations receive title/heading focus; background completion is announced without stealing focus.                                                        | Passing 2026-07-18                    |
+| S1/R1-S1, S1/R1-S2, S1/R1-S3 | Automated test `apps/backend/tests/functional/adventure_creation_service.spec.ts#LC-003/S1/R1-S1` | Covers creation, rollback, and owner-scoped source checks. | Passing 2026-07-20 |
+| S1/R1-S4, S1/R1-S5 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#player details and this frozen World context` | Covers pre-submit provider disclosure. | Passing 2026-07-20 |
+| S1/R2-S1, S1/R2-S2, S1/R2-S3 | Automated test `apps/backend/tests/functional/adventure_creation_service.spec.ts#LC-003/S1/R2-S3` | Covers playable-source binding and unavailable-source conflicts. | Passing 2026-07-20 |
+| S1/R3-S1, S1/R3-S4 | Automated test `apps/backend/tests/functional/adventure_opening_worker.spec.ts#LC-003/S1/R3-S1 + R3-S2` | Atomically publishes one complete opening. | Passing 2026-07-20 |
+| S1/R3-S2, S1/R3-S3, S1/R3-S7, S1/R3-S8 | Automated test `apps/backend/tests/functional/adventure_opening_worker.spec.ts#LC-003/S1/R3-S3 + R3-S4` | Covers retry, terminal failure, and no partial prose. | Passing 2026-07-20 |
+| S1/R3-S5 | Automated test `apps/backend/tests/functional/adventure_api.spec.ts#LC-003/S1/R3-S5` | Enforces the account generation burst limit before mutation. | Passing 2026-07-20 |
+| S1/R3-S6 | Automated test `apps/backend/tests/unit/story_generation/openai_compatible_story_generator.spec.ts#returns bounded metadata without retaining private request or provider prose` | Keeps evidence bounded and omits provider request/prose. | Passing 2026-07-20 |
+| S1/R3-S9, S1/R3-S10 | Manual production acceptance | Separate worker and coordinated restart were accepted on 2026-07-18. | User confirmed 2026-07-18 |
+| S1/R3-S11 | Automated test `apps/backend/tests/unit/story_generation/opening_smoke.spec.ts#fails the acceptance check when the configured provider truncates the opening` | Rejects a truncated provider opening. | Passing 2026-07-20 |
+| S1/R3-S1 | Protected local Debug trace | A provider-backed opening completed without publishing a prior truncated response. | Passing 2026-07-20 |
+| S1/R4-S1, S1/R4-S2, S1/R4-S3 | Automated test `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts#LC-003/S1/R4-S2` | Covers reset from frozen source and aggregate isolation. | Passing 2026-07-20 |
+| S1/R5-S1, S1/R5-S2, S1/R5-S3, S1/R5-S4 | Automated test `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | Exercises lifecycle across desktop/mobile fixtures. | Passing 2026-07-20 |
+| S1/R5-S5, S1/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R3-S2 polls pending work` | Announces readiness without stealing focus. | Passing 2026-07-20 |
 | S1/R1-S4, S1/R3-S1, S1/R3-S3, S1/R5-S1, S1/R5-S2, S1/R5-S3, S1/R5-S4 | Taylor's desktop/mobile Adventure walkthrough and provider-backed opening review                                                                                                                                                                                                           | The provider notice, pending-to-ready transition, story-first presentation, lifecycle controls, and responsive workbench are understandable and accepted.             | User confirmed 2026-07-18             |
 
 #### Verification Gaps
 
-- None.
+- `S1/R5-S1`, `S1/R5-S2`: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
 
@@ -327,10 +329,10 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 ### Story S2: Resolve A Structured Game Master Turn
 
 Implementation: implemented
-Verification: verified
+Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-19
-Last verified: 2026-07-19
+Modified: 2026-07-20
+Last verified: 2026-07-20
 
 As a player, I want Act, Pass, or Guide to resolve a durable Game Master turn, so that my private Adventure can progress through narration and bounded persistent consequences.
 
@@ -444,6 +446,19 @@ The system SHALL build each turn from current authoritative context and keep sto
 - THEN Lorecraft records bounded provider/model/settings/timing/status/token/hash/count and normalized failure metadata as available
 - AND it does not persist or log assembled prompts, request messages, raw provider responses, credentials, or authorization material.
 
+###### Scenario R3-S6: Development Debug Trace
+
+- WHEN a local development opening, narration, or extraction operation runs without an explicit Debug override
+- THEN Lorecraft writes correlated JSONL diagnostics beneath the protected, ignored backend temporary directory with normal metadata, prompt summaries, accepted/ignored extraction outcomes, and timings
+- AND sanitized raw provider requests and responses are captured by default, each capture mode can be explicitly disabled, sensitive fields are redacted, files are owner-only, traces older than seven days are purged, and no Debug content is copied to model-call rows, standard logs, browser APIs, or production environments.
+
+###### Scenario R3-S5: Complete Current-Scene NPC Context
+
+- WHEN narration or extraction context is assembled
+- THEN it contains the complete frozen-and-current card for every NPC whose Adventure-owned Location matches the current Scene
+- AND it contains no off-scene NPC card, no raw prompt persistence, and only bounded count/character-size metadata.
+- AND player-visible opening or turn narration that directly reflects a current-Scene card's private knowledge is rejected before publication; normalized private values shorter than three characters and semantic paraphrase remain live-provider evaluation limitations rather than implied deterministic guarantees.
+
 ##### Requirement R4: Bounded Adventure Consequences
 
 The system SHALL apply only allowlisted, validated Adventure-owned mutations and preserve their immutable revision provenance.
@@ -457,7 +472,7 @@ The system SHALL apply only allowlisted, validated Adventure-owned mutations and
 ###### Scenario R4-S2: NPC Movement And Mutable State
 
 - WHEN extraction proposes an existing frozen Character's Location, mood, current status, or summarized memory change within field bounds
-- THEN Lorecraft may update only that Adventure-owned Character state
+- THEN Lorecraft may update only that Adventure-owned Character state, seeded at Adventure creation and reset from the frozen initial card values
 - AND stable identity, description, background, personality, voice, and private knowledge remain frozen source material.
 
 ###### Scenario R4-S3: Unsupported Or Invalid Proposal
@@ -519,41 +534,151 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 
 #### Implemented By
 
-| Requirement / Scenario | Location / Anchor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Kind         | Responsibility                                                                                                         |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| S2/R1                  | `apps/backend/app/services/adventure_turn_submission_service.ts#AdventureTurnSubmissionService.submit`, `apps/backend/app/controllers/adventures_controller.ts#submitTurn`, and `apps/backend/app/validators/adventure.ts#submitAdventureTurnValidator`                                                                                                                                                                                                                                                                                       | primary      | Applies owner-scoped, idempotent Act/Pass/Guide validation and durable submission.                                     |
-| S2/R2                  | `apps/backend/app/services/adventure_turn_worker.ts#AdventureTurnWorker`, `apps/backend/app/services/adventure_turn_lifecycle_service.ts#AdventureTurnLifecycleService`, and `apps/backend/commands/work_adventure_turns.ts#WorkAdventureTurns`                                                                                                                                                                                                                                                                                               | primary      | Claims leased turn work, rejects stale publication, applies bounded recovery, and exposes owner retry/discard.         |
-| S2/R3                  | `apps/backend/app/services/adventure_turn_production_completion_port.ts#AdventureTurnProductionCompletionPort`, `apps/backend/app/services/story_generation/adventure_turn_context.ts#assembleAdventureTurnContext`, and the narrow turn/extraction adapters                                                                                                                                                                                                                                                                                  | primary      | Stages bounded context, narration, and separate structured extraction with metadata-only evidence.                     |
-| S2/R4                  | `apps/backend/app/services/adventure_mutation_policy.ts#resolveAdventureMutations`, `apps/backend/app/models/adventure_character_state.ts#AdventureCharacterState`, and `apps/backend/app/models/adventure_revision_mutation.ts#AdventureRevisionMutation`                                                                                                                                                                                                                                                                                    | primary      | Allows bounded Adventure-owned mutations and records immutable revision-linked outcomes.                               |
-| S2/R5                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventureWorkbench`, `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`, and `apps/frontend/src/adventures/tuyauAdventureApi.ts#createTuyauAdventureApi`                                                                                                                                                                                                                                                                                                                     | primary      | Presents resolving actions, recovery states, polling, announcements, and the responsive workbench.                     |
-| S2/R2                  | `apps/backend/app/models/adventure.ts#Adventure`, `apps/backend/app/models/adventure_job.ts#AdventureJob`, `apps/backend/app/models/adventure_turn.ts#AdventureTurn`, and `apps/backend/database/migrations/1784409600000_add_durable_adventure_turns.ts`                                                                                                                                                                                                                                                                                     | persistence  | Defines Adventure/turn/job relations, one-active-turn constraints, and durable turn-job ownership.                     |
-| S2/R3                  | `apps/backend/app/services/story_generation/turn_prompt.ts#assembleTurnPrompt`, `apps/backend/app/services/story_generation/adventure_state_extraction_prompt.ts#assembleAdventureStateExtractionPrompt`, `apps/backend/app/services/story_generation/turn_story_generator.ts#TurnStoryGenerator`, `apps/backend/app/services/story_generation/adventure_state_extractor.ts#AdventureStateExtractor`, and `apps/backend/app/services/story_generation/openai_compatible_adventure_state_extractor.ts#OpenAICompatibleAdventureStateExtractor` | adapter      | Defines the distinct narration/extraction contracts and bounded provider translation.                                  |
-| S2/R4                  | `apps/backend/database/migrations/1784413200000_add_adventure_mutation_state.ts`, `apps/backend/app/services/adventure_creation_service.ts#AdventureCreationService.create`, `apps/backend/app/services/adventure_lifecycle_service.ts#AdventureLifecycleService.reset`, and `apps/backend/app/services/adventure_query_service.ts#AdventureQueryService.findForOwner`                                                                                                                                                                        | persistence  | Initializes, resets, and projects Adventure-owned state without exposing internal NPC mutation fields.                 |
-| S2/R5                  | `apps/frontend/src/adventures/adventureApi.ts`, `apps/frontend/src/adventures/AdventureWorkbench.module.css`, and `apps/frontend/src/app/App.tsx`                                                                                                                                                                                                                                                                                                                                                                                             | presentation | Defines client API types, responsive turn presentation, and the injected API boundary used by application and stories. |
-| S2/R5                  | `apps/frontend/src/adventures/AdventurePage.stories.tsx`, `apps/frontend/src/adventures/NewAdventurePage.stories.tsx`, `apps/frontend/src/comparison/Workbench.stories.tsx`, `apps/frontend/src/workspace/WorkspacePage.stories.tsx`, and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`                                                                                                                                                                                                                                              | support      | Supplies shared Storybook states and mock API surfaces for the interactive workbench.                                  |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S2/R1 | `apps/backend/app/services/adventure_turn_submission_service.ts#async submit` | primary | Validates owner-scoped idempotent Act, Pass, and Guide submission. |
+| S2/R2 | `apps/backend/app/services/adventure_turn_worker.ts#async runOnce` | primary | Claims serialized turn work and prevents stale or partial publication. |
+| S2/R3 | `apps/backend/app/services/adventure_turn_production_completion_port.ts#AdventureTurnProductionCompletionPort` | primary | Stages grounded generation and extraction before publication. |
+| S2/R4 | `apps/backend/app/services/adventure_mutation_policy.ts#resolveAdventureMutations` | primary | Applies only allowlisted Adventure-owned changes with provenance. |
+| S2/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Presents resolving actions, recovery, polling, and responsive composition. |
 
 #### Implementation Gaps
 
-- None. Successful-turn Retry, rollback, branching, Story utilities, streaming, model controls, and multiplayer remain deferred rather than gaps in S2.
+- None.
+- Successful-turn Retry, rollback, branching, Story utilities, streaming, model controls, and multiplayer remain deferred rather than gaps in S2.
 
 #### Verified By
 
-| Requirement / Scenario                                                                                                                                                                                 | Evidence                                                                                                                                                                                                                                                                           | Proves                                                                                                                                                          | Status                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| S2/R1-S4, S2/R3-S1, S2/R3-S2, S2/R3-S3, S2/R3-S4, S2/R4-S1, S2/R4-S2, S2/R4-S3                                                                                                                         | `apps/backend/tests/unit/adventure_mutation_policy.spec.ts`, `apps/backend/tests/unit/story_generation/adventure_state_extractor.spec.ts`, and `apps/backend/tests/unit/story_generation/adventure_turn_context.spec.ts`                                                           | Allowlist/rejection behavior, bounded private context, Pass semantics, staged extraction, and metadata-safe malformed-output handling.                          | Passing 2026-07-19 (10 tests)                             |
-| S2/R5-S1, S2/R5-S2, S2/R5-S3, S2/R5-S4, S2/R5-S5                                                                                                                                                       | `apps/frontend/src/adventures/AdventureRoutes.test.tsx`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx`, `apps/frontend/src/adventures/tuyauAdventureApi.test.ts`, and `apps/frontend/src/test/renderTestApp.tsx`                                                      | Composer, Pass confirmation, private Guide messaging, polling, lifecycle states, completion announcement, responsive presentation, and typed client validation. | Passing 2026-07-19 (38 tests)                             |
-| S2/R5-S1, S2/R5-S2                                                                                                                                                                                     | Local development browser smoke at `/` plus frontend/backend lint and typechecks                                                                                                                                                                                                   | The normal API, both workers, and web client start together; the sign-in surface renders meaningful content with no framework overlay or console errors.        | Passing 2026-07-19                                        |
-| S2/R1-S1, S2/R1-S2, S2/R1-S3, S2/R1-S4, S2/R1-S5, S2/R1-S6, S2/R2-S1, S2/R2-S2, S2/R2-S3, S2/R2-S4, S2/R2-S5, S2/R2-S6, S2/R3-S3, S2/R3-S4, S2/R4-S1, S2/R4-S2, S2/R4-S3, S2/R4-S4, S2/R4-S5, S2/R4-S6 | `apps/backend/tests/functional/adventure_turn_api.spec.ts`, `apps/backend/tests/functional/adventure_turn_submission_service.spec.ts`, `apps/backend/tests/functional/adventure_turn_worker.spec.ts`, `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts`, `apps/backend/tests/database/adventure_aggregate_migration.spec.ts`, and `apps/backend/tests/database/adventure_mutation_state_migration.spec.ts` | API authorization/idempotency and retry/discard, worker lifecycle/finalization and non-publication on reflected Guide text, reset of player and every Adventure-owned NPC state after a completed turn, transactional state isolation, data-bearing rollback refusal, and migration invariants against a guarded disposable Neon schema. | Passing 2026-07-19 |
-| S2/R1-S1, S2/R1-S2, S2/R1-S3, S2/R2-S1, S2/R2-S2, S2/R2-S3, S2/R2-S5, S2/R3-S3, S2/R4-S1, S2/R4-S2, S2/R4-S4, S2/R5-S1, S2/R5-S2, S2/R5-S3, S2/R5-S4 | `apps/frontend/e2e/adventure-foundation.spec.ts` and `apps/frontend/e2e/fake-story-provider.mjs` | The seeded Adventure resolves Act, private Guide, and confirmed Pass through the real worker; reload while resolving and a same-owner concurrent tab preserve the one-active-turn invariant; failed turns retry or discard without changing Player/Scene; committed state updates, reset, owner isolation, and desktop/mobile layouts remain coherent. | Passing 2026-07-19 (3 projects) |
+| Requirement / Scenario                                                                                                                                                                                 | Evidence                                                                                                                                                                                                                                                                                                                                                                                                                     | Proves                                                                                                                                                                                                                                                                                                                                                 | Status                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| S2/R1-S4, S2/R3-S1, S2/R3-S2, S2/R3-S3, S2/R3-S4, S2/R3-S5, S2/R4-S1, S2/R4-S2, S2/R4-S3 | Automated test `apps/backend/tests/unit/story_generation/adventure_turn_context.spec.ts#excludes prior raw actions, Guide text, Pass markers, and operational records` and `apps/backend/tests/unit/adventure_opening_worker_port.spec.ts#LC-003/S2/R3-S5` | Covers context exclusions and private-card publication refusal; focused policy/extractor tests provide supporting evidence. | Passing 2026-07-20 |
+| S2/R3-S6 | Automated test `apps/backend/tests/unit/story_generation/development_debug_trace.spec.ts#LC-003/S2/R3-S6: defaults local capture on, permits explicit disablement, and refuses production capture` | Covers development defaults, explicit disablement, and production refusal. | Passing 2026-07-20 |
+| S2/R5-S1, S2/R5-S2, S2/R5-S3, S2/R5-S4, S2/R5-S5 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2..R5-S4 preserves story during progress and offers failed-turn recovery` | Covers composer, progress, completion, recovery, and keyboard-responsiveness in the workbench. | Passing 2026-07-20 |
+| S2/R5-S1, S2/R5-S2 | Local development browser smoke | The normal API, workers, and web client start together with a meaningful sign-in surface. | Passing 2026-07-19 |
+| S2/R1-S1, S2/R1-S2, S2/R1-S3, S2/R1-S4, S2/R1-S5, S2/R1-S6, S2/R2-S1, S2/R2-S2, S2/R2-S3, S2/R2-S4, S2/R2-S5, S2/R2-S6, S2/R3-S3, S2/R3-S4, S2/R4-S1, S2/R4-S2, S2/R4-S3, S2/R4-S4, S2/R4-S5, S2/R4-S6 | Automated test `apps/backend/tests/functional/adventure_turn_submission_service.spec.ts#LC-003/S2/R1-S1 + R1-S2 + R1-S3 + R1-S5` and `apps/backend/tests/functional/adventure_turn_worker.spec.ts#LC-003/S2/R2-S1 + R2-S2 + R2-S4` | Covers owner submission/idempotency, durable worker publication, and mutation lifecycle; API and migration tests are supporting evidence. | Passing 2026-07-20 |
+| S2/R1-S1, S2/R1-S2, S2/R1-S3, S2/R2-S1, S2/R2-S2, S2/R2-S3, S2/R2-S5, S2/R3-S3, S2/R3-S4, S2/R4-S1, S2/R4-S2, S2/R4-S4, S2/R5-S1, S2/R5-S2, S2/R5-S3, S2/R5-S4 | Automated test `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | Resolves Act, Guide, and Pass through the worker and refreshes authoritative Scene state. | Passing 2026-07-20 |
+| S2/R1-S1, S2/R3-S3, S2/R3-S6, S2/R5-S1, S2/R5-S2, S2/R5-S3 | Authorized live-provider opening/Act/Guide/Pass matrix with protected local Debug trace | With two present NPCs, the opening and each turn reached succeeded provider stages and produced non-empty grounded narration; raw trace capture was protected. The compatible provider omitted usage counters. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
-- All S2: live-provider Act/Guide quality and owner manual desktop/mobile confirmation remain intentionally pending; no raw prompt, Guide, or provider body will be retained as evidence.
+- `S2/R3-S5`: Direct literal reflection is covered. Short private values are intentionally prompt-only because a deterministic substring guard would reject ordinary prose; semantic paraphrase remains a live-provider evaluation limitation.
+- `S2/R3-S6`: Development trace inspection passes, but the compatible provider omitted usage counters; API-model cost remains an estimate rather than measured usage.
+- All S2: Owner manual desktop/mobile confirmation remains pending; no raw prompt, Guide, or provider body will be retained as normal operational evidence.
 
 #### Story Notes
 
 - Failed, uncommitted turns may be retried with the same input or discarded; successful-turn Retry, rollback, and branching remain deferred.
 - Raw Guide and prior action input remain private authoritative turn data; normal story context contains accepted narration and current structured state only.
+
+### Story S3: Inspect Complete NPC Cards
+
+Implementation: implemented
+Verification: partial
+Created: 2026-07-19
+Modified: 2026-07-21
+Last verified: 2026-07-20
+
+As an Adventure owner, I want to open complete cards for NPCs in my current Scene, so that I can inspect the exact canon and mutable state guiding the story during development.
+
+#### Requirements And Scenarios
+
+##### Requirement R1: Complete Current-Scene NPC Cards
+
+The system SHALL list every NPC in the current Scene and expose that NPC's complete frozen identity plus current Adventure-owned state.
+
+###### Scenario R1-S1: Open A Present NPC Card
+
+- WHEN one or more NPCs are present and the owner selects one
+- THEN the Scene region shows key, name, physical description, background, personality, voice, private knowledge, current Location, mood, status, and memory
+- AND clearly identifies the surface as development/debug information.
+
+###### Scenario R1-S2: Empty Scene
+
+- WHEN no NPC shares the player's current Location
+- THEN the Scene retains Location context and communicates that no one else is present
+- AND no off-scene card is exposed through the list.
+
+###### Scenario R1-S3: State Or Location Changes
+
+- WHEN a completed turn or reset changes NPC state or presence
+- THEN the list and any selected card refresh from authoritative Adventure state
+- AND an NPC that leaves the Scene is no longer selectable there.
+
+##### Requirement R2: Coherent NPC Card Interaction
+
+The system SHALL adapt the spike's list-to-card drill-down to the accepted Player/Story/Scene workbench without copying its prototype architecture or styling.
+
+###### Scenario R2-S1: Desktop And Mobile Drill-Down
+
+- WHEN the owner opens and closes an NPC card at supported desktop or mobile widths
+- THEN Scene context, selection, back navigation, scroll position, labels, and focus remain understandable and keyboard/touch operable
+- AND the Story remains the dominant reading surface.
+
+###### Scenario R2-S2: Long Sparse Cards And Refresh Recovery
+
+- WHEN required fields contain concise or long-but-valid values, data refreshes, or the request fails recoverably
+- THEN the card remains readable without horizontal overflow or clipped content
+- AND loading/error/retry behavior does not reveal another Adventure's data.
+
+##### Requirement R3: Debug NPC State Editing
+
+The system SHALL allow local Debug mode to autosave every bounded, displayable Adventure-owned NPC card field except its stable key: name, Location, physical description, background, personality, voice, private knowledge, mood, status, and memory.
+
+###### Scenario R3-S1: Autosave Adventure-Owned State
+
+- WHEN the owner changes a valid editable NPC card field while the Adventure is ready and no turn is pending or processing
+- THEN Lorecraft saves the full bounded card overrides and mutable state to that Adventure's `adventure_character_states` row, uses those local values in the next turn's current-Scene context, and refreshes the authoritative Scene projection
+- AND the frozen WorldVersion, World Character canon, starter seed, story history, and turn count remain unchanged.
+
+###### Scenario R3-S2: Debug, Ownership, And Concurrency Boundary
+
+- WHEN production, a non-owner, an unknown NPC, an invalid frozen Location or field value, or an Adventure with a pending or processing turn targets the Debug edit route
+- THEN Lorecraft refuses the mutation without disclosing another Adventure or changing any persisted state.
+
+###### Scenario R3-S3: Selected Editor Continuity After Location Move
+
+- WHEN the owner autosaves an already selected Debug NPC card to a different valid frozen Location
+- THEN that NPC is removed from fresh current-Scene selection but the existing editor remains usable to inspect, correct, or save its remaining card fields
+- AND Back returns to the current Scene list with focus on the original entry when it remains present, otherwise on the Scene region.
+
+#### Implemented By
+
+| Requirement / Scenario | Location / Anchor                                                                                                                                                                                          | Kind         | Responsibility                                                                                                                |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| S3/R1                  | `apps/backend/app/services/adventure_query_service.ts#findForOwner`                                                                                                                                        | primary      | Projects only NPCs whose current Adventure-owned Location matches the player's Scene, with frozen identity and mutable state. |
+| S3/R3                  | `apps/backend/app/services/adventure_npc_debug_state_service.ts#async update` and `apps/backend/app/controllers/adventures_controller.ts#updateNpcDebugState` | primary      | Refuses production, non-owner, invalid, and active-turn edits; persists only bounded Adventure NPC state.                     |
+| S3/R3                  | `apps/backend/app/services/character_field_limits.ts#characterFieldLimits`, `apps/backend/app/validators/adventure.ts#updateAdventureNpcStateValidator`, and `apps/backend/app/services/adventure_mutation_policy.ts#adventureMutationFieldLimits` | support | Governs shared 100/120/320/500 limits and rejects blank or oversize Debug/extracted mutable state before persistence. |
+| S3/R3-S3               | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Preserves an already selected Debug editor across its Location move without creating an off-scene selection, then returns appropriate Scene focus.                   |
+| S3/R3                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function NpcDebugEditor` and `apps/frontend/src/adventures/AdventurePage.tsx#export function AdventurePage` | presentation | Exposes local-development-only debounced autosave controls, preserves focus through the authoritative refresh, and refreshes Adventure detail.                  |
+| S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Keeps Scene drill-down, back navigation, focus return, and Story-first responsive interaction coherent.                       |
+| S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.module.css#sceneNpcs` and `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyMobile`                                                            | presentation | Defines desktop/mobile Scene composition, empty state, and Storybook fixtures.                                                |
+
+#### Implementation Gaps
+
+- None.
+
+#### Verified By
+
+| Requirement / Scenario                 | Evidence                                                                                                                               | Proves                                                                                                                                                                                  | Status                                            |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| S3/R1-S1, S3/R2-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S1 opens a complete NPC debug card and restores list focus on Back` | A present NPC opens a labelled complete Debug card and Back restores focus to its Scene-list entry. | Passing 2026-07-20 |
+| S3/R1-S2, S3/R1-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it` | An authoritative Scene refresh with no present NPCs shows the empty-state message and removes the stale selected card. | Passing 2026-07-20 |
+| S3/R2-S1 | Storybook `Application/Adventures/Workbench/ReadyDesktop`, `ReadyMobile`, and `DebugNpcEditor` | Directly inspected desktop NPC list and selected complete editor plus mobile Story-first Scene-to-card selection; all bounded editable fields render without horizontal overflow. | Passing 2026-07-20 |
+| S3/R3-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S1 autosaves every editable Adventure-owned NPC card field` and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S1: autosaves bounded NPC card overrides without changing frozen canon or seed Character` | Every editable card field is sent as a bounded Adventure-owned override; the persisted update leaves frozen canon, seed Character, story revision, and turn count unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R3-S2 | `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S3/R3-S1: accepts only complete bounded Debug NPC state` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts#LC-003/S1/R4-S2 + S3/R3-S2: preserves authored values, backfills legacy blanks, and enforces complete bounded state` | Invalid or legacy Debug state is subject to whitespace-aware nonblank bounds, while reconciliation preserves nonblank authored values. | Passing 2026-07-20 against a guarded isolated schema |
+| S3/R3-S2 | `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#production refuses the NPC Debug editor boundary`, `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#hides Debug editing from a different Adventure owner`, and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#rejects invalid frozen Locations and edits while a turn is active` | Production disables the editor boundary; another owner receives non-disclosing not-found, and invalid frozen Locations or active turns are refused. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R3-S2 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure` and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 retries an unchanged NPC draft after a recoverable autosave failure` | Validation marks the rejected field with actionable guidance; a recoverable failure preserves the unchanged draft for an explicit retry. | Passing 2026-07-20 |
+| S3/R3-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S3 keeps the Debug editor usable after moving its selected NPC out of Scene` | Moving the selected NPC out of Scene keeps that editor usable; Back returns focus to the current Scene region when the original entry is absent. | Passing 2026-07-20 |
+| S3/R1-S3 | `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | A fixture-controlled completed Act refreshes the selected current-Scene NPC's authoritative Mood, Status, and Memory values on desktop and mobile. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+
+#### Verification Gaps
+
+- `S3/R2-S2`, `S3/R3-S2`: Owner manual confirmation of long sparse cards and rendered save/delete/stale-selection recovery remains pending. Deterministic post-turn refresh, database-backed Debug-edit/owner-isolation, and retryable failed autosave behavior now pass.
+
+#### Story Notes
+
+- Complete cards are intentionally exposed only to the Adventure owner during this development/debug stage; no raw prompt or model evidence is exposed.
+- A selected NPC that leaves the Scene after an authoritative refresh is no longer selectable through the current-Scene list; its already open Debug editor remains available so the owner can correct or continue that local edit.
 
 ## Cross-Story Concerns
 
@@ -563,12 +688,14 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 - Completed narration and state transitions use immutable revision links so later Retry and rollback can be introduced coherently.
 - S2 enforces one pending or processing resolving turn per Adventure in PostgreSQL while current story and state remain readable during resolution.
 - S2 keeps accepted Player/NPC changes Adventure-owned, allowlisted, and recorded with immutable revision-linked outcomes; frozen WorldVersion canon remains unchanged.
-- Raw prompt/model bodies are not retained as operational evidence; bounded metadata remains backend-owned and never part of the normal player API.
+- Raw prompt/model bodies are not retained as operational evidence; bounded metadata remains backend-owned and never part of the normal player API. Default-on local development Debug capture is a protected, explicitly disableable exception governed by the provider-boundary ADR.
 - S2 treats raw Act/Guide input and Pass markers as private turn records, not normal story history or player-visible metadata.
+- The active Character-authoring Change keeps complete current-Scene card contents out of model-call evidence while recording only bounded count and serialized-character-size metadata; Debug trace content stays local, default-on for development, explicitly disableable, redacted, and outside the model-call store.
+- Complete debug-card disclosure is intentionally owner-only on Adventure surfaces; it does not change source-canon or cross-Adventure isolation.
 
 ## Open Decisions
 
-- None block `S1` or `S2`. Candidate Stories require their own promoted Changes before they become accepted Epic truth.
+- None block the active implementation. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
 
 ## Completion Criteria
 
@@ -579,6 +706,7 @@ This Epic is healthy when:
 - opening and resolving-turn work survives reloads and stale workers without duplicate publication;
 - one successful resolving turn atomically advances narration, revision lineage, current state, and turn count while rejected/failed work publishes none of them;
 - World discovery, creation, recovery, ready, reset, delete, and turn states have deterministic and manual evidence;
+- complete frozen-and-current NPC Cards are initialized/reset from their immutable WorldVersion, selected only for the current Scene, and inspected through owner-only debug UI with scenario-mapped evidence;
 - `Implemented By`, `Implementation Gaps`, `Verified By`, and `Verification Gaps` remain current; and
 - deferred Story/utilities and history revision controls are not represented as implemented.
 

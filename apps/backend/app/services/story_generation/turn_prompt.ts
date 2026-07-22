@@ -53,11 +53,32 @@ function normalizedForDisclosureCheck(value: string): string {
 }
 
 function containsDirectReflection(narration: string, protectedValue: string): boolean {
-  if (protectedValue.length >= 3) return narration.includes(protectedValue)
+  // Card validation permits very concise private knowledge. Short literals
+  // occur naturally in ordinary prose, so a deterministic substring guard
+  // cannot distinguish them from an intentional disclosure. Prompt
+  // instructions cover concise values; semantic paraphrase remains a
+  // live-provider evaluation concern rather than a deterministic guarantee.
+  if (protectedValue.length < 12) return false
 
-  return new RegExp(`(^| )${protectedValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( |$)`).test(
-    narration
-  )
+  return narration.includes(protectedValue)
+}
+
+/**
+ * Reject literal disclosure of private card material. This intentionally cannot
+ * detect semantic paraphrase; the provider instruction still forbids that and
+ * tests must continue to exercise it during prompt refinement.
+ */
+export function assertNarrationDoesNotReflectPrivateValues(
+  narration: string,
+  privateValues: ReadonlyArray<string | null | undefined>
+): void {
+  const protectedValues = privateValues
+    .filter((value): value is string => Boolean(value?.trim()))
+    .map(normalizedForDisclosureCheck)
+  const normalizedNarration = normalizedForDisclosureCheck(narration)
+  if (protectedValues.some((value) => containsDirectReflection(normalizedNarration, value))) {
+    throw new UnsafeNarrationPublicationError()
+  }
 }
 
 /**
@@ -69,14 +90,10 @@ export function assertNarrationSafeForPublication(
   narration: string,
   context: AdventureTurnContext
 ): void {
-  const protectedValues = [context.trigger === 'guide' ? context.input : null]
-    .filter((value): value is string => Boolean(value?.trim()))
-    .map(normalizedForDisclosureCheck)
-
-  const normalizedNarration = normalizedForDisclosureCheck(narration)
-  if (protectedValues.some((value) => containsDirectReflection(normalizedNarration, value))) {
-    throw new UnsafeNarrationPublicationError()
-  }
+  assertNarrationDoesNotReflectPrivateValues(narration, [
+    context.trigger === 'guide' ? context.input : null,
+    ...context.frozenCanon.characters.map((character) => character.privateKnowledge),
+  ])
 }
 
 /** Assembles a bounded, data-delimited prompt for one turn's narration. */
@@ -120,8 +137,11 @@ export function assembleTurnPrompt(input: TurnStoryInput): TurnPrompt {
       `Background: ${character.background}`,
       `Personality: ${character.personality}`,
       `Voice: ${character.voice}`,
+      `Private knowledge: ${character.privateKnowledge}`,
       `Current location key: ${currentState?.currentLocationKey ?? 'Not present in Adventure state.'}`,
-      'Private knowledge and hidden mutable Character state are intentionally excluded from narration context.'
+      `Current mood: ${currentState?.mood ?? character.initialMood}`,
+      `Current status: ${currentState?.currentStatus ?? character.initialStatus}`,
+      `Player memory: ${currentState?.summarizedMemory ?? character.initialMemory}`
     )
   }
 

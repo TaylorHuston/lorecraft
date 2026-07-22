@@ -1,12 +1,15 @@
+import Character from '#models/character'
 import Location from '#models/location'
 import StartingPoint from '#models/starting_point'
 import User from '#models/user'
 import World, { type WorldVisibility } from '#models/world'
+import WorldVersion from '#models/world_version'
 import AdventureCreationService from '#services/adventure_creation_service'
 import { publishWorldVersion } from '#services/world_version_publication_service'
 import testUtils from '@adonisjs/core/services/test_utils'
 import db from '@adonisjs/lucid/services/db'
 import { test } from '@japa/runner'
+import { createHash } from 'node:crypto'
 
 type CreationError = Error & {
   code?: string
@@ -40,12 +43,14 @@ async function createWorld({
   visibility = 'private',
   publish = true,
   defaultStartingPoint = true,
+  includeCharacter = false,
 }: {
   authorId: number
   slug: string
   visibility?: WorldVisibility
   publish?: boolean
   defaultStartingPoint?: boolean
+  includeCharacter?: boolean
 }) {
   const world = await World.create({
     authorId,
@@ -65,6 +70,23 @@ async function createWorld({
     description: 'Rain runs down the locked chapel doors.',
     sortOrder: 0,
   })
+  const character = includeCharacter
+    ? await Character.create({
+        worldId: world.id,
+        locationId: location.id,
+        key: 'rain-warden',
+        name: 'Rain Warden',
+        physicalDescription: 'A watchful warden in a soaked oilskin cloak.',
+        background: 'The warden has guarded the chapel threshold through every storm.',
+        personality: 'Measured and vigilant.',
+        voice: 'Brief and practical.',
+        privateKnowledge: 'The threshold ward weakens when the bell rings.',
+        initialMood: 'Alert but uneasy.',
+        initialStatus: 'Watching the locked chapel doors.',
+        initialMemory: 'The warden has not yet spoken with the player.',
+        sortOrder: 0,
+      })
+    : null
 
   await StartingPoint.create({
     worldId: world.id,
@@ -77,7 +99,7 @@ async function createWorld({
   })
 
   const version = publish ? await publishWorldVersion(world.id) : null
-  return { world, location, version }
+  return { world, location, version, character }
 }
 
 function creationInput(
@@ -98,13 +120,14 @@ function creationInput(
 test.group('AdventureCreationService', (group) => {
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
-  test('LC-003/S1/R1-S1 + R2-S1: creates one pending Adventure aggregate from the current default Starting Point', async ({
+  test('LC-003/S1/R1-S1 + R2-S1 + R4-S2: creates one pending Adventure aggregate with frozen initial NPC state from the current default Starting Point', async ({
     assert,
   }) => {
     const owner = await createUser('adventure-create-owner@example.com')
-    const { world, version } = await createWorld({
+    const { world, version, character } = await createWorld({
       authorId: owner.id,
       slug: 'adventure-create-world',
+      includeCharacter: true,
     })
     const service = new AdventureCreationService()
     const requestId = '11111111-1111-4111-8111-111111111111'
@@ -120,6 +143,10 @@ test.group('AdventureCreationService', (group) => {
       .from('adventure_jobs')
       .where('adventure_id', result.adventureId)
       .firstOrFail()
+    const characterStates = await db
+      .from('adventure_character_states')
+      .where('adventure_id', result.adventureId)
+      .select('character_key', 'current_location_key', 'mood', 'status', 'memory')
 
     assert.equal(result.status, 'opening_pending')
     assert.equal(result.route, `/adventures/${result.adventureId}`)
@@ -150,6 +177,57 @@ test.group('AdventureCreationService', (group) => {
       status: 'pending',
       attempt_count: 0,
     })
+    assert.deepEqual(characterStates, [
+      {
+        character_key: character!.key,
+        current_location_key: 'chapel-threshold',
+        mood: 'Alert but uneasy.',
+        status: 'Watching the locked chapel doors.',
+        memory: 'The warden has not yet spoken with the player.',
+      },
+    ])
+  })
+
+  test('LC-003/S1/R2-S1: derives nonblank Adventure state from a legacy blank frozen snapshot without changing that source', async ({
+    assert,
+  }) => {
+    const owner = await createUser('legacy-snapshot-create-owner@example.com')
+    const { world, version } = await createWorld({
+      authorId: owner.id,
+      slug: 'legacy-snapshot-create-world',
+      includeCharacter: true,
+    })
+    const legacySnapshot = structuredClone(version!.snapshot)
+    legacySnapshot.characters[0].initialMood = ''
+    legacySnapshot.characters[0].initialStatus = ' \t '
+    legacySnapshot.characters[0].initialMemory = undefined
+    const legacyVersion = await WorldVersion.create({
+      worldId: world.id,
+      ordinal: version!.ordinal + 1,
+      schemaVersion: version!.schemaVersion,
+      contentHash: createHash('sha256').update(JSON.stringify(legacySnapshot)).digest('hex'),
+      snapshot: legacySnapshot,
+    })
+    await db.from('worlds').where('id', world.id).update({ current_version_id: legacyVersion.id })
+
+    const result = await new AdventureCreationService().create(
+      creationInput(owner.id, world.slug, '12121212-1212-4121-8121-121212121212')
+    )
+
+    const state = await db
+      .from('adventure_character_states')
+      .where('adventure_id', result.adventureId)
+      .firstOrFail()
+    const frozenSource = await db.from('world_versions').where('id', legacyVersion.id).firstOrFail()
+
+    assert.deepInclude(state, {
+      mood: 'No current mood has been recorded yet.',
+      status: 'No current status has been recorded yet.',
+      memory: 'No interactions with the player have been recorded yet.',
+    })
+    const frozenCharacter = (frozenSource.snapshot as typeof legacySnapshot).characters[0]
+    assert.deepInclude(frozenCharacter, { initialMood: '', initialStatus: ' \t ' })
+    assert.notProperty(frozenCharacter, 'initialMemory')
   })
 
   test('LC-003/S1/R1-S2: owner-scoped idempotency replays the result without duplicates', async ({

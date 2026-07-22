@@ -2,16 +2,24 @@ import { describe, expect, it, vi } from 'vitest'
 import { createTuyauWorldApi } from './tuyauWorldApi'
 
 const tuyau = vi.hoisted(() => ({
+  csrf: vi.fn(),
   listWorlds: vi.fn(),
   getWorld: vi.fn(),
+  createCharacter: vi.fn(),
+  updateCharacter: vi.fn(),
+  deleteCharacter: vi.fn(),
 }))
 
 vi.mock('@tuyau/core/client', () => ({
   createTuyau: () => ({
     api: {
+      auth: { csrf: tuyau.csrf },
       worlds: {
         index: tuyau.listWorlds,
         show: tuyau.getWorld,
+        storeCharacter: tuyau.createCharacter,
+        updateCharacter: tuyau.updateCharacter,
+        destroyCharacter: tuyau.deleteCharacter,
       },
     },
   }),
@@ -80,7 +88,7 @@ describe('Tuyau World adapter', () => {
     await expect(api.listWorlds()).rejects.toMatchObject({ code: 'unauthorized' })
   })
 
-  it('returns playable World detail with only player-facing Characters and owner Adventures', async () => {
+  it('returns playable World detail with complete debug Character Cards and owner Adventures', async () => {
     tuyau.getWorld.mockResolvedValue({
       data: {
         id: 1,
@@ -109,6 +117,10 @@ describe('Tuyau World adapter', () => {
             background: 'Mira grew up around the chapel.',
             personality: 'Cautious and observant.',
             voice: 'Plain-spoken and restrained.',
+            privateKnowledge: 'Mira rang the bell before the storm arrived.',
+            initialMood: 'Watchful',
+            initialStatus: 'Sheltering in the chapel.',
+            initialMemory: 'She has not yet met the player.',
             location: { key: 'chapel', name: 'Chapel' },
           },
         ],
@@ -123,7 +135,7 @@ describe('Tuyau World adapter', () => {
     })
   })
 
-  it('rejects World detail that exposes private Character knowledge', async () => {
+  it('accepts the complete private debug Character Card', async () => {
     tuyau.getWorld.mockResolvedValue({
       data: {
         id: 1,
@@ -144,6 +156,9 @@ describe('Tuyau World adapter', () => {
             personality: 'Cautious and observant.',
             voice: 'Plain-spoken and restrained.',
             privateKnowledge: 'Mira rang the bell.',
+            initialMood: 'Watchful',
+            initialStatus: 'Sheltering in the chapel.',
+            initialMemory: 'She has not yet met the player.',
             location: { key: 'chapel', name: 'Chapel' },
           },
         ],
@@ -151,9 +166,8 @@ describe('Tuyau World adapter', () => {
     })
     const api = createTuyauWorldApi('http://frontend.example.test')
 
-    await expect(api.getWorld('stormbound-chapel')).rejects.toMatchObject({
-      code: 'network',
-      message: 'Lorecraft returned an invalid World response.',
+    await expect(api.getWorld('stormbound-chapel')).resolves.toMatchObject({
+      characters: [{ privateKnowledge: 'Mira rang the bell.' }],
     })
   })
 
@@ -195,6 +209,76 @@ describe('Tuyau World adapter', () => {
 
     await expect(api.getWorld('stormbound-chapel')).rejects.toMatchObject({
       code: 'unauthorized',
+    })
+  })
+
+  it('requires every complete Character Card field in World detail', async () => {
+    tuyau.getWorld.mockResolvedValue({
+      data: {
+        id: 1,
+        slug: 'stormbound-chapel',
+        name: 'Stormbound Chapel',
+        description: 'A storm-battered sanctuary.',
+        visibility: 'public',
+        readOnly: true,
+        playability: { available: true, reason: null },
+        adventures: [],
+        locations: [{ key: 'chapel', name: 'Chapel', description: 'Rain taps at the windows.' }],
+        characters: [
+          {
+            key: 'mira',
+            name: 'Mira',
+            physicalDescription: 'A local woman with watchful eyes.',
+            background: 'Mira grew up around the chapel.',
+            personality: 'Cautious and observant.',
+            voice: 'Plain-spoken and restrained.',
+            privateKnowledge: 'Mira rang the bell.',
+            initialMood: 'Watchful',
+            initialStatus: 'Sheltering in the chapel.',
+            location: { key: 'chapel', name: 'Chapel' },
+          },
+        ],
+      },
+    })
+
+    await expect(createTuyauWorldApi('http://frontend.example.test').getWorld('stormbound-chapel')).rejects.toMatchObject({
+      code: 'network',
+    })
+  })
+
+  it('uses CSRF-protected Character create, edit, and delete routes', async () => {
+    tuyau.csrf.mockResolvedValue(undefined)
+    tuyau.createCharacter.mockResolvedValue({ data: {} })
+    tuyau.updateCharacter.mockResolvedValue({ data: {} })
+    tuyau.deleteCharacter.mockResolvedValue(undefined)
+    const api = createTuyauWorldApi('http://frontend.example.test')
+    const input = {
+      key: 'mira',
+      name: 'Mira',
+      locationKey: 'chapel',
+      physicalDescription: 'A local woman with watchful eyes.',
+      background: 'Mira grew up around the chapel.',
+      personality: 'Cautious and observant.',
+      voice: 'Plain-spoken and restrained.',
+      privateKnowledge: 'Mira rang the bell.',
+      initialMood: 'Watchful',
+      initialStatus: 'Sheltering in the chapel.',
+      initialMemory: 'She has not yet met the player.',
+    }
+
+    await api.createCharacter('stormbound-chapel', input)
+    const { key, ...update } = input
+    await api.updateCharacter('stormbound-chapel', key, update)
+    await api.deleteCharacter('stormbound-chapel', key)
+
+    expect(tuyau.csrf).toHaveBeenCalledTimes(3)
+    expect(tuyau.createCharacter).toHaveBeenCalledWith({ params: { slug: 'stormbound-chapel' }, body: input })
+    expect(tuyau.updateCharacter).toHaveBeenCalledWith({
+      params: { slug: 'stormbound-chapel', key },
+      body: update,
+    })
+    expect(tuyau.deleteCharacter).toHaveBeenCalledWith({
+      params: { slug: 'stormbound-chapel', key },
     })
   })
 })

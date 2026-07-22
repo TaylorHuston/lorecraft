@@ -1,6 +1,7 @@
 import type {
   OpeningStoryInput,
   StoryGenerationEvidence,
+  StoryGenerationDebugContext,
   StoryGenerationResult,
   StoryGenerationSettings,
   StoryGenerator,
@@ -32,6 +33,12 @@ class ResponseTooLargeError extends Error {}
 const defaultMaxResponseBytes = 1_000_000
 const maximumRetryAfterMs = 60_000
 const knownFinishReasons = new Set(['stop', 'length', 'tool_calls', 'content_filter'])
+
+function usageTokenCount(value: unknown) {
+  if (typeof value !== 'number' && typeof value !== 'string') return undefined
+  const parsed = typeof value === 'number' ? value : Number(value)
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : undefined
+}
 
 export function parseRetryAfter(value: string | null, nowMs = Date.now()) {
   if (!value) return undefined
@@ -147,13 +154,9 @@ function parsedResponseFrom(rawResponse: string, evidence: StoryGenerationEviden
         ? parsed.choices[0].finish_reason
         : undefined,
     promptTokens:
-      usage && 'prompt_tokens' in usage && typeof usage.prompt_tokens === 'number'
-        ? usage.prompt_tokens
-        : undefined,
+      usage && 'prompt_tokens' in usage ? usageTokenCount(usage.prompt_tokens) : undefined,
     completionTokens:
-      usage && 'completion_tokens' in usage && typeof usage.completion_tokens === 'number'
-        ? usage.completion_tokens
-        : undefined,
+      usage && 'completion_tokens' in usage ? usageTokenCount(usage.completion_tokens) : undefined,
   }
 }
 
@@ -163,25 +166,32 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator, TurnStory
   /** Shared transport primitive for a separately-owned structured operation. */
   async generatePrompt(
     prompt: { system: string; user: string },
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
-    return this.#generate(prompt, signal)
+    return this.#generate(prompt, signal, debug)
   }
 
   async generateOpening(
     input: OpeningStoryInput,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
-    return this.generatePrompt(assembleOpeningPrompt(input), signal)
+    return this.generatePrompt(assembleOpeningPrompt(input), signal, debug)
   }
 
-  async generateTurn(input: TurnStoryInput, signal?: AbortSignal): Promise<StoryGenerationResult> {
-    return this.generatePrompt(assembleTurnPrompt(input), signal)
+  async generateTurn(
+    input: TurnStoryInput,
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
+  ): Promise<StoryGenerationResult> {
+    return this.generatePrompt(assembleTurnPrompt(input), signal, debug)
   }
 
   async #generate(
     prompt: { system: string; user: string },
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    debug?: StoryGenerationDebugContext
   ): Promise<StoryGenerationResult> {
     const url = `${this.config.baseUrl.replace(/\/$/, '')}/chat/completions`
     const body = {
@@ -297,6 +307,31 @@ export class OpenAICompatibleStoryGenerator implements StoryGenerator, TurnStory
         ...(retryAfterMs === undefined ? {} : { retryAfterMs }),
       },
     }
+    await debug?.trace.capture({
+      traceId: debug.traceId,
+      operation: debug.operation,
+      stage: 'provider',
+      adventureId: debug.adventureId,
+      jobId: debug.jobId,
+      turnId: debug.turnId,
+      provider: pendingEvidence.provider,
+      model: pendingEvidence.model,
+      promptSummary: {
+        systemCharacters: prompt.system.length,
+        userCharacters: prompt.user.length,
+      },
+      promptByteCount: Buffer.byteLength(`${prompt.system}\n${prompt.user}`, 'utf8'),
+      rawRequest: {
+        headers: {
+          'accept': 'application/json',
+          'authorization': `Bearer ${this.config.apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: serializedBody,
+      },
+      rawResponse,
+      status: response.ok ? 'succeeded' : 'failed',
+    })
 
     if (!response.ok) {
       throw new StoryGenerationError(

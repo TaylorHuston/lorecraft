@@ -55,11 +55,27 @@ const adventure: AdventureDetail = {
         key: 'mira',
         name: 'Mira',
         physicalDescription: 'A watchful local with rain-dark hair.',
+        background: 'Mira grew up around the chapel.',
+        personality: 'Cautious and observant.',
+        voice: 'Plain-spoken and restrained.',
+        privateKnowledge: 'Mira rang the bell before the storm arrived.',
+        currentLocation: { key: 'chapel', name: 'Chapel' },
+        mood: 'Watchful',
+        status: 'Sheltering in the chapel.',
+        memory: 'She has not yet met the player.',
       },
       {
         key: 'alden',
         name: 'Brother Alden',
         physicalDescription: 'A small priest carrying a black cassock and an old iron key.',
+        background: 'Alden has guarded the chapel archive for decades.',
+        personality: 'Guarded and dutiful.',
+        voice: 'Measured and formal.',
+        privateKnowledge: 'He carries the vestry key.',
+        currentLocation: { key: 'chapel', name: 'Chapel' },
+        mood: 'Concerned',
+        status: 'Studying the player.',
+        memory: 'He has not yet spoken to the player.',
       },
     ],
   },
@@ -152,6 +168,12 @@ const worldSummary = {
   ],
 }
 
+const worldApiDefaults: Pick<WorldApi, 'createCharacter' | 'updateCharacter' | 'deleteCharacter'> = {
+  createCharacter: async () => undefined,
+  updateCharacter: async () => undefined,
+  deleteCharacter: async () => undefined,
+}
+
 function workspace(worldApi: WorldApi) {
   return (
     <StorybookAppProviders route="/worlds">
@@ -224,6 +246,7 @@ export const Mobile: Story = {
 export const FileBrowser: Story = {
   render: () =>
     workspace({
+      ...worldApiDefaults,
       listWorlds: async () => [worldSummary],
       getWorld: async () => {
         throw new RuntimeError('Not used in this story.')
@@ -239,6 +262,7 @@ export const FileBrowser: Story = {
 export const Empty: Story = {
   render: () =>
     workspace({
+      ...worldApiDefaults,
       listWorlds: async () => [],
       getWorld: async () => {
         throw new RuntimeError('Not used in this story.')
@@ -254,6 +278,7 @@ export const Empty: Story = {
 export const Error: Story = {
   render: () =>
     workspace({
+      ...worldApiDefaults,
       listWorlds: async () => {
         throw new RuntimeError('Catalog unavailable')
       },

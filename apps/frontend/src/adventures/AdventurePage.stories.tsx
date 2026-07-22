@@ -38,6 +38,14 @@ const readyAdventure: AdventureDetail = {
         key: 'mira',
         name: 'Mira',
         physicalDescription: 'A watchful local with rain-dark hair.',
+        background: 'Mira grew up around the chapel.',
+        personality: 'Cautious and observant.',
+        voice: 'Plain-spoken and restrained.',
+        privateKnowledge: 'Mira rang the bell before the storm arrived.',
+        currentLocation: { key: 'chapel', name: 'Chapel' },
+        mood: 'Watchful',
+        status: 'Sheltering in the chapel.',
+        memory: 'She has not yet met the player.',
       },
     ],
   },
@@ -67,6 +75,7 @@ function apiFor(adventure: AdventureDetail): AdventureApi {
     }),
     retryTurn: async (turnId) => ({ id: turnId, status: 'pending' }),
     discardTurn: async () => undefined,
+    updateNpcState: async () => adventure,
     resetAdventure: async () => ({ adventureId: id, status: 'opening_pending', generation: 2 }),
     deleteAdventure: async () => undefined,
   }
@@ -134,6 +143,20 @@ export const ReadyMobile: Story = {
   },
 }
 
+export const DebugNpcEditor: Story = {
+  render: () => renderAdventure(readyAdventure),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const sceneTab = canvas.queryByRole('tab', { name: 'Scene' })
+    if (sceneTab) await userEvent.click(sceneTab)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Mira' }))
+    await expect(canvas.findByText(/Click a card value to edit/i)).resolves.toBeVisible()
+    await expect(canvas.getByLabelText('Name')).toHaveValue('Mira')
+    await expect(canvas.getByLabelText('Mood')).toHaveValue('Watchful')
+    expectNoHorizontalOverflow(canvasElement)
+  },
+}
+
 export const OpeningPending: Story = {
   render: () => renderAdventure({ ...readyAdventure, status: 'opening_pending', story: [] }),
   play: async ({ canvasElement }) => {
@@ -163,6 +186,7 @@ export const OpeningFailed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
@@ -176,6 +200,7 @@ export const OpeningFailedMobile: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const alert = await canvas.findByRole('alert')
+    await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
     await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()

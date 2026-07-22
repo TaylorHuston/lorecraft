@@ -26,11 +26,15 @@ export interface ApiDefinition {
   worlds: {
     index: typeof routes['worlds.index']
     show: typeof routes['worlds.show']
+    storeCharacter: typeof routes['worlds.store_character']
+    updateCharacter: typeof routes['worlds.update_character']
+    destroyCharacter: typeof routes['worlds.destroy_character']
   }
   adventures: {
     store: typeof routes['adventures.store']
     show: typeof routes['adventures.show']
     submitTurn: typeof routes['adventures.submit_turn']
+    updateNpcDebugState: typeof routes['adventures.update_npc_debug_state']
     retryTurn: typeof routes['adventures.retry_turn']
     discardTurn: typeof routes['adventures.discard_turn']
     retryOpening: typeof routes['adventures.retry_opening']

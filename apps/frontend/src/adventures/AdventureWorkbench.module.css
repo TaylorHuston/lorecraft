@@ -169,6 +169,25 @@
   color: var(--danger-text);
 }
 
+.turnFailure {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--danger);
+}
+
+.turnFailure h2 {
+  margin: var(--space-2) 0 0;
+  font-size: 1.125rem;
+}
+
+.turnFailure > p:not(.stateEyebrow, .retryError) {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
 .retryError {
   color: var(--danger-text);
 }
@@ -361,6 +380,53 @@
 .sceneNpcs h4 {
   margin: 0 0 var(--space-1);
   font-size: 0.875rem;
+}
+
+.npcEditor {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.npcEditor input,
+.npcEditor textarea {
+  width: 100%;
+  padding: var(--space-2);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.npcEditor textarea {
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+.npcEditor input[aria-invalid='true'],
+.npcEditor textarea[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.npcEditorFieldError {
+  color: var(--danger-text);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.npcEditorNote {
+  margin: var(--space-4) 0 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.npcEditor input:focus-visible,
+.npcEditor textarea:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .mobileWorkbench {

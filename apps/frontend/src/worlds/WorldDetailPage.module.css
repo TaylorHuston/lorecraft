@@ -284,6 +284,14 @@
   gap: var(--space-4);
 }
 
+.characterActions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
 .characterHeading span {
   min-width: 0;
   color: var(--text-muted);
@@ -291,6 +299,91 @@
   font-size: 0.75rem;
   overflow-wrap: anywhere;
   text-align: right;
+}
+
+.debugDisclosure {
+  margin: var(--space-4) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--info);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.characterEditor {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  padding: var(--space-5);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+}
+
+.characterEditorHeading {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.characterEditorHeading h3,
+.characterEditorHeading p {
+  margin: 0;
+}
+
+.characterEditorHeading > p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.characterFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.characterFields > :nth-child(n + 4) {
+  grid-column: 1 / -1;
+}
+
+.locationField {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.locationField label {
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.locationField select {
+  width: 100%;
+  min-height: var(--control-standard);
+  border: 1px solid var(--control-boundary);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  padding-inline: var(--space-3);
+}
+
+.locationField select:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.editorError,
+.editorFieldError {
+  margin: 0;
+  color: var(--danger-text);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.characterEditorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .entry dl {
@@ -360,6 +453,11 @@
     display: block;
   }
 
+  .characterActions {
+    justify-content: flex-start;
+    margin-top: var(--space-2);
+  }
+
   .characterHeading span {
     display: block;
     margin-top: var(--space-2);
@@ -373,6 +471,14 @@
 
   .entry dd {
     margin-bottom: var(--space-3);
+  }
+
+  .characterFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .characterFields > :nth-child(n) {
+    grid-column: auto;
   }
 
   .adventureRow {

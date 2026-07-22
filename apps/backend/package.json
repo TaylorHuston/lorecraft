@@ -17,6 +17,7 @@
     "dev:turn-worker": "node ace adventures:turns:work",
     "worker:adventure-openings": "node ace adventures:openings:work",
     "worker:adventure-turns": "node ace adventures:turns:work",
+    "smoke:opening": "node ace adventures:openings:smoke",
     "migrate": "node ace migration:run",
     "migrate:production": "node scripts/run-production-migrations.mjs",
     "migrate:ci": "node scripts/run-migrations.mjs test",

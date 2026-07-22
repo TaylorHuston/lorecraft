@@ -1,12 +1,14 @@
 ---
+schema: sdd-epic-v2
 id: LC-002
-status: implemented
+status: in_progress
 created: 2026-07-14
-modified: 2026-07-18
-last_verified: 2026-07-18
+modified: 2026-07-20
+last_verified: 2026-07-20
 stories:
   - S1
   - S2
+  - S3
 ---
 
 # LC-002 World Bible Catalog
@@ -17,6 +19,7 @@ stories:
   - `docs/changes/closed/2026-07-14-public-starter-world/`
   - `docs/changes/closed/2026-07-14-ui-cleanup-and-reconciliation/`
   - `docs/changes/closed/2026-07-16-private-adventure-foundation/`
+  - `docs/changes/2026-07-19-character-authoring-and-npc-cards/`
 - Related ADRs:
   - `docs/adrs/2026-07-12-adonisjs-api-first-backend.md`
   - `docs/adrs/2026-07-12-postgresql-on-neon.md`
@@ -25,48 +28,53 @@ stories:
   - `docs/adrs/2026-07-14-relational-world-aggregate.md`
   - `docs/adrs/2026-07-14-disposable-database-automation.md`
 
-Lorecraft's creator value begins with durable, structured World canon. This Epic owns the read-only catalog and detail paths over that canon; `LC-003` layers Adventure discovery and lifecycle actions onto the same surfaces without transferring their ownership here.
+Lorecraft's creator value begins with durable, structured World canon. This Epic owns World discovery, detail, and Character-canon authoring. `LC-003` consumes immutable WorldVersions for private Adventures without transferring canon authority from this Epic.
 
 ## Outcome
 
-An authenticated account can browse Worlds available to it and inspect a World's canonical Locations and Characters through a read-only creator-facing interface.
+An authenticated account can browse accessible Worlds, inspect complete development/debug Character Cards, and—when they are the World author—maintain those cards. Character changes publish or reuse immutable source versions for future Adventures without changing frozen Adventures.
 
 ## Current Scope
 
 - Authenticated discovery of public Worlds and Worlds privately owned by the current account.
-- Read-only World metadata, Locations, and stable Character information.
+- Read-only World metadata and Locations, plus complete Character Cards during the development/debug stage.
 - Intentional authorship and visibility persisted at the backend authority layer.
 - Explicit, repeatable installation of the shared `Stormbound Chapel` starter World.
+- Owner-only complete Character create, edit, and delete through World detail, with transactionally coupled immutable WorldVersion publication.
+- Development/debug disclosure of complete Character Cards, including private knowledge and initial Adventure state, to signed-in accounts with World access.
 
 ## Deferred Scope
 
-- World, Location, or Character authoring and deletion.
+- World and Location authoring and deletion.
 - Anonymous publishing, creator bylines, sharing controls, and collaboration.
 - Time-aware canon history, custom entity types, provenance, and continuity analysis.
+- Player-safe disclosure, spoiler filtering, player-known facts, selective disclosure, and removal of the debug full-card view.
+- Draft/publish workflows, WorldVersion management UI, bulk editing/import, and Character ordering controls.
 - Adventure play and mutable gameplay state are owned by `LC-003 Adventure Play`.
-- Creator-only private Character knowledge authoring and inspection.
 
 ## Candidate Stories
 
 Candidate Stories are planning signals only. They are not accepted Epic/Story truth until promoted into `## Stories`, and they do not receive `S#` labels until promotion.
 
-- None currently. Authoring and time-aware canon remain deferred capability areas rather than accepted Stories.
+- None. Future World and Location authoring, time-aware canon, custom concepts, and selective Character disclosure remain deferred capability areas.
 
 ## Story Index
 
-| Story | Status      | Capability                      | Last Verified | Notes                               |
-| ----- | ----------- | ------------------------------- | ------------- | ----------------------------------- |
-| S1    | implemented | Browse accessible Worlds.       | 2026-07-17    | Public and owner-private catalog.    |
-| S2    | implemented | Inspect structured World canon. | 2026-07-17    | Minimized Locations and Characters.  |
+| Story | Implementation | Verification | Capability | Last Verified | Notes |
+| --- | --- | --- | --- | --- | --- |
+| S1 | implemented | verified | Browse accessible Worlds. | 2026-07-19 | Public and owner-private catalog. |
+| S2 | implemented | partial | Inspect structured World canon and complete debug cards. | 2026-07-19 | Full-card API and rendered Storybook evidence exist; database and routed E2E proof remain pending. |
+| S3 | implemented | partial | Manage World Characters. | 2026-07-20 | Guarded database and deterministic creator CRUD E2E evidence pass; recovery and owner manual confirmation remain pending. |
 
 ## Stories
 
 ### Story S1: Browse Available Worlds
 
-Status: implemented
+Implementation: implemented
+Verification: verified
 Created: 2026-07-14
 Modified: 2026-07-18
-Last verified: 2026-07-17
+Last verified: 2026-07-19
 
 As a signed-in account holder, I want to browse Worlds available to me, so that I can choose canon to inspect.
 
@@ -92,7 +100,7 @@ The system SHALL list public Worlds and Worlds privately owned by the current ac
 
 - WHEN an authenticated account has no accessible Worlds
 - THEN the catalog presents an intentional empty state
-- AND no unavailable creation control is presented.
+- AND it does not present unavailable creation behavior.
 
 ###### Scenario R1-S4: Owner-Private World Visibility
 
@@ -152,37 +160,37 @@ The system SHALL identify the World catalog destination through its document tit
 
 #### Implemented By
 
-| Path                                                                                       | Role                                                                               | Recheck Trigger                                                 |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `apps/backend/app/services/world_catalog_service.ts`                                       | Enforces visibility and returns minimized catalog DTOs.                            | Recheck when visibility or catalog response rules change.       |
-| `apps/backend/app/controllers/worlds_controller.ts` and `apps/backend/start/routes.ts`     | Expose authenticated catalog and detail reads.                                     | Recheck when route authentication or response contracts change. |
-| `apps/frontend/src/workspace/WorkspacePage.tsx`                                            | Presents loading, failure, empty, and populated catalog states.                    | Recheck when catalog states or navigation change.               |
-| `apps/frontend/src/workspace/WorkspacePage.module.css` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Define and expose the responsive catalog hierarchy and deterministic state matrix. | Recheck when catalog presentation changes. |
-| `apps/frontend/src/worlds/worldApi.ts` and `apps/frontend/src/worlds/tuyauWorldApi.ts`     | Define and implement the validated typed client boundary.                          | Recheck when World DTO fields or API error semantics change.    |
-| `apps/frontend/src/auth/accountQueryKeys.ts` and `apps/frontend/src/auth/AuthProvider.tsx` | Scope account-owned data and clear it when the session changes.                    | Recheck when session or account cache ownership changes.        |
-| `apps/frontend/src/adventures/NewAdventurePage.tsx` and `apps/frontend/src/adventures/adventureApi.ts` | Add LC-003-owned Adventure creation behavior to the shared World workflow. | Recheck when Adventure launch or World playability changes. |
-| `apps/frontend/src/components/Button/Button.tsx` and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx` | Provide the app-owned action, pending, and confirmation grammar used on World surfaces. | Recheck when shared control or confirmation behavior changes. |
-| `apps/frontend/src/comparison/Workbench.stories.tsx` and `apps/frontend/src/comparison/Workbench.stories.module.css` | Expose deterministic, production-height catalog, empty, error, desktop, and mobile comparison fixtures without backend dependencies. | Recheck when the comparison protocol or representative World states change. |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S1/R1 | `apps/backend/app/services/world_catalog_service.ts#async listFor` | primary | Applies public-or-owner visibility filtering and projects catalog DTOs. |
+| S1/R1 | `apps/backend/app/controllers/worlds_controller.ts#async index` | adapter | Exposes the authenticated catalog read boundary. |
+| S1/R2 | `apps/frontend/src/workspace/WorkspacePage.tsx#export function WorkspacePage` | primary | Presents the catalog's loading, failure, empty, and populated states. |
+| S1/R3 | `apps/frontend/src/app/AppRoutes.tsx#function RoutePresentation` | primary | Sets catalog title and destination focus without stealing focus during non-route updates. |
+
+#### Implementation Gaps
+
+- None.
 
 #### Verified By
 
-| Requirement / Scenario       | Evidence                                                                                                    | Proves                                                                                                      | Status               |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------- |
-| S1/R1-S1, S1/R1-S2, S1/R1-S4 | `apps/backend/tests/functional/world_catalog.spec.ts`                                                       | Public catalog visibility, anonymous denial, and owner-private visibility/non-disclosure.                    | Passing 2026-07-17   |
-| S1/R1-S1, S1/R1-S3           | `apps/frontend/src/app/App.test.tsx`, `apps/frontend/src/worlds/WorldRoutes.test.tsx`, and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated and empty catalog states, including the authenticated empty-catalog route. | Passing 2026-07-17 |
-| S1/R1-S1                     | `apps/frontend/src/worlds/tuyauWorldApi.test.ts`                                                            | Catalog contract validation and API error mapping.                                                          | Passing 2026-07-17   |
-| S1/R1-S1                     | `apps/frontend/e2e/starter-world.setup.ts` and `apps/frontend/e2e/starter-world.spec.ts`                   | Real seed command and populated catalog path at desktop and mobile sizes.                                   | Passing 2026-07-17   |
-| S1/R1-S1                     | User-confirmed desktop/mobile catalog review                                                                | Visual acceptance of the populated catalog.                                                                 | User confirmed 2026-07-14 |
-| S1/R2-S1, S1/R2-S2, S1/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/workspace/WorkspacePage.stories.tsx` | Populated, empty, loading, failure, retry, sign-out, responsive, and Storybook accessibility states.        | Passing 2026-07-17   |
-| S1/R3-S1 and S1/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | Catalog navigation receives title/heading focus while background refresh preserves focus. | Passing 2026-07-18 |
-| S1/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts` and `apps/frontend/e2e/account-workspace.spec.ts`                | Catalog navigation, Adventure summaries/actions, no horizontal overflow, and representative mobile touch targets. | Passing 2026-07-17 |
-| S1/R2-S1, S1/R2-S2, S1/R2-S3 | User-confirmed desktop/mobile UI walkthrough                                                                | Current catalog hierarchy, loading, empty, recovery, sign-out, focus, and responsive behavior are accepted. | User confirmed 2026-07-15 |
-| S1/R2-S4                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/workspace/WorkspacePage.stories.tsx`, `apps/frontend/src/comparison/Workbench.stories.tsx`, and `apps/frontend/e2e/account-workspace.spec.ts` | Stable catalog context, distinct pending/disabled/focus treatment, deterministic comparison states, touch targets, and overflow-free desktop/mobile behavior. | Passing 2026-07-17 |
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S1/R1-S1 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S1: another signed-in account can list a public World` | A signed-in non-author receives the public World catalog item. | Passing 2026-07-20 |
+| S1/R1-S2 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S2: anonymous catalog access is denied without World data` | Anonymous catalog access returns 401 without World data. | Passing 2026-07-20 |
+| S1/R1-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R1-S3 + R2-S2 explains when no Worlds are available without creation` | An authenticated empty catalog is explicit and exposes no unavailable creation control. | Passing 2026-07-20 |
+| S1/R1-S4 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S1/R1-S4: an owner sees a private World without disclosing it to another account` | An owner can read a private World while another account receives neither catalog disclosure nor distinguishable detail. | Passing 2026-07-20 |
+| S1/R1-S5 | Private production acceptance | A clean migrated target received one normal HTTPS-created account and one idempotently seeded starter World with no copied development accounts or Adventures. | Passing 2026-07-18 |
+| S1/R2-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World` | The populated catalog remains readable with a named World link, public access label, touch target, and no horizontal overflow. | Passing 2026-07-20 |
+| S1/R2-S2 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S2 shows catalog loading while Worlds are unresolved` | The loading catalog exposes a stable status state. | Passing 2026-07-20 |
+| S1/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S3 recovers from a catalog load failure` | A recoverable catalog failure presents a named retry that restores the catalog. | Passing 2026-07-20 |
+| S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 preserves catalog context while retry is pending` | Retry pending leaves the catalog heading and account context visible and disables the retry control. | Passing 2026-07-20 |
+| S1/R2-S4 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S1/R2-S4 keeps the catalog visible while named sign-out is pending` | Pending sign-out preserves catalog context and exposes a disabled, busy control. | Passing 2026-07-20 |
+| S1/R3-S1 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context applies after an authenticated redirect` | The authenticated Worlds destination sets its document title and focuses its heading. | Passing 2026-07-20 |
+| S1/R3-S2 | Automated test `apps/frontend/src/app/RoutePresentation.test.tsx#LC-001/S3 route context preserves focus chosen while a destination is loading` | A data transition at the Worlds destination preserves deliberately chosen focus. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
-- The previously accepted catalog presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
-- `S1/R1-S5` passed in private production on 2026-07-18: the clean migrated target received one normal HTTPS-created account and one idempotently seeded `Stormbound Chapel` World, with no copied development accounts or Adventures.
+- None.
 
 #### Story Notes
 
@@ -192,16 +200,17 @@ The system SHALL identify the World catalog destination through its document tit
 
 ### Story S2: Inspect Structured World Canon
 
-Status: implemented
+Implementation: implemented
+Verification: partial
 Created: 2026-07-14
-Modified: 2026-07-18
-Last verified: 2026-07-17
+Modified: 2026-07-19
+Last verified: 2026-07-19
 
 As a signed-in account holder, I want to inspect a World's structured Locations and Characters, so that I can understand its established canon.
 
 #### Requirements And Scenarios
 
-##### Requirement R1: Read-Only World Detail
+##### Requirement R1: World Detail And Complete Debug Character Cards
 
 The system SHALL return and render an accessible World with deterministic Location and Character collections without exposing author account data.
 
@@ -209,8 +218,7 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 - WHEN a signed-in account opens `/worlds/stormbound-chapel`
 - THEN the interface shows all canonical starter Locations
-- AND it shows all canonical starter Characters with physical description, background, personality, voice, and canonical location
-- AND it withholds private Character knowledge from the shared reader/player response.
+- AND it shows every canonical starter Character's key, name, canonical Location, physical description, background, personality, voice, private knowledge, initial mood, initial status, and initial memory during the debug stage.
 
 ###### Scenario R1-S2: Unknown Or Inaccessible World
 
@@ -232,13 +240,13 @@ The system SHALL return and render an accessible World with deterministic Locati
 
 ##### Requirement R2: Readable Structured World Detail
 
-The system SHALL present World metadata, Locations, Characters, navigation, and detail-state feedback in a readable responsive hierarchy using the same app-owned control and state grammar as the catalog.
+The system SHALL present World metadata, Locations, complete debug Character Cards, navigation, and detail-state feedback in a readable responsive hierarchy using the same app-owned control and state grammar as the catalog.
 
 ###### Scenario R2-S1: Structured Detail At Supported Viewports
 
 - WHEN a signed-in account opens an accessible World at desktop or mobile width
 - THEN World identity, description, Locations, and all accepted Character fields remain readable without horizontal overflow
-- AND the read-only state and return navigation remain clear.
+- AND debug disclosure and return navigation remain clear.
 
 ###### Scenario R2-S2: Missing Or Unavailable World
 
@@ -270,64 +278,200 @@ The system SHALL identify an accessible World detail destination through its doc
 
 #### Implemented By
 
-| Path                                                                                                                  | Role                                                                                 | Recheck Trigger                                                           |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `apps/backend/database/migrations/1784053200000_create_world_catalog_tables.ts`                                       | Defines relational World, Location, and Character integrity.                         | Recheck when World aggregate persistence changes.                         |
-| `apps/backend/database/migrations/1784060400000_enforce_character_location_world_integrity.ts`                        | Enforces same-World Character Location references.                                   | Recheck when Character location semantics change.                         |
-| `apps/backend/database/migrations/1784146800000_add_world_seed_identity.ts`                                           | Adds unique immutable provenance for installed starter Worlds.                       | Recheck when seed identity or installation semantics change.              |
-| `apps/backend/app/services/stormbound_chapel_seed.ts` and `apps/backend/database/seeders/stormbound_chapel_seeder.ts` | Reconcile an immutably identified starter World transactionally.                     | Recheck when seed identity, command wiring, or canonical content changes. |
-| `apps/backend/app/services/world_catalog_service.ts`                                                                  | Loads deterministic structured detail without account data.                          | Recheck when detail fields or authorization rules change.                 |
-| `apps/frontend/src/worlds/WorldDetailPage.tsx`                                                                        | Presents minimized read-only Locations and Character fields plus LC-003-owned Adventure actions and summaries. | Recheck when detail presentation, disclosure, or shared Adventure integration changes. |
-| `apps/frontend/src/worlds/WorldDetailPage.module.css` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Define and expose responsive loaded, empty-collection, missing, and recovery states. | Recheck when detail presentation changes. |
-| `apps/frontend/src/components/Button/Button.tsx` and `apps/frontend/src/components/Dialog/ConfirmDialog.tsx` | Provide consistent retry, pending, and destructive confirmation behavior on the World detail surface. | Recheck when shared World action behavior changes. |
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S2/R1 | `apps/backend/app/services/world_catalog_service.ts#async findFor` | primary | Applies authorized detail lookup and projects ordered Locations and complete debug Character Cards. |
+| S2/R1-S2 | `apps/backend/app/controllers/worlds_controller.ts#async show` | adapter | Converts inaccessible detail reads into the non-disclosing not-found response. |
+| S2/R2 | `apps/frontend/src/worlds/WorldDetailPage.tsx#export function WorldDetailPage` | primary | Presents readable World detail, complete debug cards, collection states, and recovery controls. |
+| S2/R3 | `apps/frontend/src/app/AppRoutes.tsx#function RoutePresentation` | primary | Owns title and destination-focus behavior for World-detail routes. |
+
+#### Implementation Gaps
+
+- None. Database-backed and end-to-end confirmation remain verification gaps, not missing behavior.
 
 #### Verified By
 
-| Requirement / Scenario       | Evidence                                                                           | Proves                                                                                                                      | Status               |
-| ---------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| S2/R1-S1, S2/R1-S2, S2/R1-S3 | `apps/backend/tests/functional/world_catalog.spec.ts`                              | Structured minimized detail, private-knowledge omission, safe not-found behavior, immutable seed provenance, and exact reconciliation. | Passing 2026-07-17 |
-| S2/R1-S3                     | `apps/backend/tests/database/world_seed_identity_migration.spec.ts`                | Existing rows survive upgrade and starter provenance remains unique.                                                        | Passing 2026-07-15   |
-| S2/R3-S1 and S2/R3-S2 | `apps/frontend/src/app/RoutePresentation.test.tsx` | World detail and unavailable destinations receive stable route titles/heading focus without refresh focus theft. | Passing 2026-07-18 |
-| S2/R1-S1                     | `apps/backend/tests/database/character_location_world_integrity_migration.spec.ts` | Same-World Character Location integrity and upgrade safety.                                                                 | Passing 2026-07-15   |
-| S2/R1-S1, S2/R1-S2           | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Detail, disclosure, missing, error, retry, and Adventure-summary presentation states. | Passing 2026-07-17 |
-| S2/R1-S1                     | `apps/frontend/src/worlds/tuyauWorldApi.test.ts`                                   | Minimized detail contract validation and API error mapping.                                                                 | Passing 2026-07-17 |
-| S2/R1-S1, S2/R1-S3           | `apps/frontend/e2e/starter-world.setup.ts` and `apps/frontend/e2e/starter-world.spec.ts` | Real seed command, catalog navigation, minimized structured detail, and private-knowledge omission at desktop/mobile sizes. | Passing 2026-07-17 |
-| S2/R1-S1                     | User-confirmed desktop/mobile structured detail review                             | Visual acceptance of structured detail.                                                                                     | User confirmed 2026-07-14 |
-| S2/R2-S1, S2/R2-S2, S2/R2-S3 | `apps/frontend/src/worlds/WorldRoutes.test.tsx` and `apps/frontend/src/worlds/WorldDetailPage.stories.tsx` | Responsive structured detail, fixture-based empty collections, missing/unavailable/retry states, Adventure summaries, and accessibility. | Passing 2026-07-17 |
-| S2/R2-S1                     | `apps/frontend/e2e/starter-world.spec.ts`                                          | Loaded detail, Adventure actions, and return navigation remain readable, overflow-free, and touch accessible.                | Passing 2026-07-17 |
-| S2/R2-S1, S2/R2-S2, S2/R2-S3 | User-confirmed desktop/mobile UI walkthrough                                       | Current structured detail hierarchy, empty collections, recovery states, focus, and responsive behavior are accepted.       | User confirmed 2026-07-15 |
-| S2/R2-S2                     | `apps/frontend/src/worlds/WorldRoutes.test.tsx`, `apps/frontend/src/worlds/WorldDetailPage.stories.tsx`, and `apps/frontend/e2e/starter-world.spec.ts` | Clearly named recovery/navigation, consistent pending control grammar, loaded-canon distinction, touch access, and overflow-free desktop/mobile behavior. | Passing 2026-07-17 |
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S2/R1-S1 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S1 + R1-S2: detail exposes complete debug cards and is safely missing` | An accessible detail response contains Locations and private debug-card fields while omitting author account data. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R1-S2 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S1 + R1-S2: detail exposes complete debug cards and is safely missing` | Unknown and inaccessible detail requests return the same non-disclosing not-found response. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R1-S3 | Automated test `apps/backend/tests/functional/world_catalog.spec.ts#LC-002/S2/R1-S3: repeated starter seed reconciles one exact graph` | Repeated starter installation reconciles one exact World graph. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R2-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S1/R1-S1 + S2/R1-S1 browses the populated starter World` | Loaded detail exposes complete cards, return navigation, touch targets, and no horizontal overflow. | Passing 2026-07-20 against a guarded isolated schema |
+| S2/R2-S1 | Direct Storybook inspection: `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Complete-card authoring and populated cards were directly inspected without horizontal overflow or browser errors. | Passing 2026-07-19 |
+| S2/R2-S2 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S2 retries unavailable World detail with visible pending and recovery` | Unavailable detail has named return/retry controls and exposes pending retry behavior before recovery. | Passing 2026-07-20 |
+| S2/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S3 communicates empty Locations while preserving Character hierarchy` | An empty Location collection is explicit while Character hierarchy remains stable. | Passing 2026-07-20 |
+| S2/R2-S3 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S2/R2-S3 communicates empty Characters while preserving Location hierarchy` | An empty Character collection is explicit while Location hierarchy remains stable. | Passing 2026-07-20 |
 
 #### Verification Gaps
 
-- The previously accepted World-detail presentation remains user confirmed; only the new route-title and heading-focus walkthrough is pending at Change level.
-- `S2/R1-S4` has isolated restored-target data and current-image readiness proof. The restored target contained exactly one World plus the production account/session/Adventure/story state; fresh browser credential submission and restored structured-canon inspection are an accepted closeout gap.
+- `S2/R1-S1`, `S2/R2-S1`: Owner manual confirmation of complete-card authoring and non-author access remains pending; deterministic database, E2E, and rendered read-only fixture evidence now pass.
+- `S2/R1-S4`: Fresh browser credential submission and restored structured-canon inspection remain an accepted prior closeout gap.
+- `S2/R3-S1`, `S2/R3-S2`: World-detail-specific document-title and focus behavior have no current scenario-specific proof; generic route-presentation tests are insufficient evidence.
 
 #### Story Notes
 
-- Private Character knowledge remains canonical backend data but is intentionally omitted from the shared reader/player World response; creator-only access awaits authoring design.
+- During this development/debug stage, every signed-in account with World access may inspect complete Character Cards, including private knowledge and initial Adventure state; only the author may mutate canon under S3.
 - Empty-collection combinations that relational integrity cannot produce are deterministic presentation fixtures rather than database-backed states.
 - Starter installation is an explicit operation and never runs during normal server startup.
 
+### Story S3: Manage World Characters
+
+Implementation: implemented
+Verification: partial
+Created: 2026-07-19
+Modified: 2026-07-19
+Last verified: 2026-07-20
+
+As a World creator, I want to create, edit, and delete complete Character Cards, so that my current canon and future Adventures use the Characters I intend.
+
+#### Requirements And Scenarios
+
+##### Requirement R1: Author-Only Character Mutation
+
+The system SHALL allow only the authenticated World author to create, edit, or delete Character canon while preserving non-disclosing access behavior.
+
+###### Scenario R1-S1: Author Mutates Character Canon
+
+- WHEN the author performs a valid Character create, edit, or delete request
+- THEN the backend applies the requested mutation through the authoritative World application boundary
+- AND returns the updated World/Character contract without exposing persistence internals.
+
+###### Scenario R1-S2: Non-Author Mutation
+
+- WHEN another signed-in account or an anonymous request targets Character mutation
+- THEN authentication or the existing non-disclosing not-found result applies
+- AND no Character row or WorldVersion changes.
+
+##### Requirement R2: Create A Complete Character Card
+
+The system SHALL create one Character only when its immutable stable key, name, canonical Location, and every required card field is valid.
+
+###### Scenario R2-S1: Valid Complete Character
+
+- WHEN the author supplies a unique lowercase kebab-case key, name, same-World Location, physical description, background, personality, voice, private knowledge, initial mood, initial status, and initial memory within their limits
+- THEN Lorecraft creates one Character whose complete card is immediately readable
+- AND concise values are accepted without requiring artificial verbosity.
+
+###### Scenario R2-S2: Invalid Or Conflicting Character
+
+- WHEN a required value is blank, a field exceeds its limit, the key is invalid or already used in the World, or the Location belongs to another World
+- THEN field-specific validation is returned
+- AND neither Character canon nor the current WorldVersion changes.
+
+##### Requirement R3: Edit A Complete Character Card
+
+The system SHALL let the author change every card value except the stable key while keeping the complete card valid.
+
+###### Scenario R3-S1: Valid Character Edit
+
+- WHEN the author saves valid changes to display name, canonical Location, or any narrative/initial-state field
+- THEN the updated complete card becomes current World canon
+- AND the stable key remains unchanged.
+
+###### Scenario R3-S2: Invalid Or Stale Edit
+
+- WHEN an edit is invalid, targets a missing Character, or races with a state the server can no longer accept
+- THEN the request fails without a partial card or WorldVersion
+- AND the UI retains the author's entered values with actionable feedback when possible.
+
+##### Requirement R4: Delete A Character
+
+The system SHALL delete a selected Character only after explicit author confirmation and without mutating frozen Adventures.
+
+###### Scenario R4-S1: Confirmed Delete
+
+- WHEN the author confirms deletion of a current Character
+- THEN the Character is removed from editable World canon and future WorldVersions
+- AND existing Adventures and their frozen NPC Cards remain unchanged.
+
+###### Scenario R4-S2: Cancelled Or Failed Delete
+
+- WHEN the author cancels, the Character no longer exists, or publication fails
+- THEN the destructive operation does not produce a partial mutation
+- AND the current page retains or refreshes authoritative context with clear feedback.
+
+##### Requirement R5: Atomic Current-Version Publication
+
+The system SHALL publish or reuse the content-identical immutable WorldVersion in the same transaction as every accepted Character mutation.
+
+###### Scenario R5-S1: Changed Character Content
+
+- WHEN a Character create, edit, or delete changes serialized World content
+- THEN one new immutable version becomes the World's current version
+- AND a later Adventure uses that version while an existing Adventure remains on its original version.
+
+###### Scenario R5-S2: No-Op Or Failed Publication
+
+- WHEN saved content is identical to an existing version, Lorecraft reuses that immutable version
+- AND WHEN serialization, validation, or persistence fails
+- THEN the Character mutation and current-version pointer roll back together.
+
+##### Requirement R6: Coherent Character Authoring Experience
+
+The system SHALL integrate full cards, create/edit controls, validation, pending states, deletion confirmation, and read-only non-author state into the responsive World detail experience.
+
+###### Scenario R6-S1: Authoring And Read-Only States
+
+- WHEN the author opens a populated or empty Character section
+- THEN create and relevant edit/delete actions are discoverable without obscuring the World or Adventure context
+- AND a non-author sees the same complete debug cards without mutation controls.
+
+###### Scenario R6-S2: Responsive, Keyboard, And Recovery Behavior
+
+- WHEN Character authoring is used with keyboard, touch, zoom, long-but-valid content, loading, validation failure, request failure, pending save, or pending delete at supported desktop and mobile widths
+- THEN labels, focus, pending/disabled state, error association, confirmation behavior, and card readability remain clear without horizontal overflow.
+
+#### Implemented By
+
+| Requirement / Scenario | Location / Anchor | Kind | Responsibility |
+| --- | --- | --- | --- |
+| S3/R1, S3/R2, S3/R5 | `apps/backend/app/services/world_character_service.ts#async create` | primary | Author-scoped creation validates the complete card and publishes a WorldVersion in the transaction. |
+| S3/R1, S3/R3, S3/R5 | `apps/backend/app/services/world_character_service.ts#async update` | primary | Author-scoped edits preserve the stable key and publish a WorldVersion in the transaction. |
+| S3/R1, S3/R4, S3/R5 | `apps/backend/app/services/world_character_service.ts#async destroy` | primary | Author-scoped deletion publishes a WorldVersion without touching frozen Adventure rows. |
+| S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#function CharacterEditorForm` | primary | Presents complete-card inputs with field feedback and pending submission state. |
+| S3/R6 | `apps/frontend/src/worlds/WorldDetailPage.tsx#const deleteCharacter` | primary | Presents author-only mutation controls and confirmed deletion state. |
+
+#### Implementation Gaps
+
+- None.
+
+#### Verified By
+
+| Requirement / Scenario | Evidence | Proves | Status |
+| --- | --- | --- | --- |
+| S3/R1-S1, S3/R2-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S1 + R2-S1 + R5-S1: an author creates a complete card and publishes it atomically` | A valid author create returns a complete card and atomically publishes the updated WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R1-S2, S3/R2-S2 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R1-S2 + R2-S2: a non-author and invalid input cannot mutate or publish canon` | Non-author and invalid create requests do not mutate Character canon or publish a WorldVersion. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R3-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R3-S1 + R5-S1: an edit preserves stable key and leaves the prior immutable version unchanged` | A valid edit preserves the stable key, publishes current canon, and leaves the prior immutable version unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R4-S1, S3/R5-S1 | Automated test `apps/backend/tests/functional/world_character_authoring.spec.ts#LC-002/S3/R4-S1 + R5-S1: an author deletes current canon and publishes a new source without touching prior versions` | A confirmed deletion publishes current canon without mutating prior immutable versions. | Passing 2026-07-20 against a guarded direct disposable schema |
+| S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 exposes complete debug cards but only author controls to the World author` | The author can submit a complete card while the complete debug disclosure remains visible. | Passing 2026-07-20 |
+| S3/R6-S1 | Automated test `apps/frontend/src/worlds/WorldRoutes.test.tsx#LC-002/S3/R6-S1 keeps mutation controls out of a non-author World detail` | A non-author can inspect complete debug cards without mutation controls. | Passing 2026-07-20 |
+| S3/R6-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3 author creates, edits, and deletes a complete Character Card` | The creator completes the visible create, edit, and confirmed-delete journey. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+| S3/R5-S1 | Automated E2E `apps/frontend/e2e/starter-world.spec.ts#LC-002/S3/R5-S1 + LC-003/S1/R2-S2 freezes existing NPC cards while new Adventures use published canon` | An existing Adventure retains its frozen NPC while a later Adventure uses published Character canon. | Passing 2026-07-20 on desktop and mobile against a guarded isolated schema |
+| S3/R6-S1 | Direct Storybook inspection: `Application/Worlds/Detail/Authoring` at desktop and 390px mobile | Required fields, card hierarchy, delete-confirmation fixture, responsive layout, and no horizontal overflow were directly inspected. | Passing 2026-07-19 |
+
+#### Verification Gaps
+
+- `S3/R3-S2`, `S3/R4-S2`, `S3/R5-S2`: Invalid/stale edit, failed/cancelled delete, and no-op-or-failed publication recovery lack current scenario-specific proof.
+- `S3/R6-S2`: Validation, failed-save, failed-delete, long-content, and live routed author/non-author confirmation remain pending.
+
+#### Story Notes
+
+- Character stable keys are created once, are lowercase kebab-case and World-scoped, and remain immutable when display names change.
+- Character mutation and current-version publication must commit or roll back together; existing Adventures remain frozen on their original WorldVersion.
+
 ## Cross-Story Concerns
 
-- AdonisJS owns authentication, authorization, visibility filtering, persistence, and response minimization.
-- React owns catalog/detail presentation and client-local loading, error, and navigation state.
+- AdonisJS owns authentication, authorization, visibility filtering, Character mutation, publication, persistence, and response minimization or debug disclosure.
+- React owns catalog/detail presentation and client-local loading, error, navigation, draft, and dialog state.
 - Account-owned client cache entries are scoped by account identity and cleared when the shared session ends or changes.
 - The typed HTTP contract is reusable by future clients; no World rule lives only in the web UI.
-- Private Character knowledge is withheld from shared reader/player responses and requires a future creator-only authoring boundary.
+- Complete debug disclosure is intentionally temporary product behavior for this development stage. Normal model evidence omits card contents, assembled prompts, and private knowledge; local-development Debug/raw capture defaults on, is explicitly disableable, and is never part of normal operational evidence.
+- Character canon changes must publish a new or reused immutable WorldVersion without altering existing Adventures.
 - Normal server startup never creates or rewrites canonical World data.
-
-### Cross-Story Implementation And Evidence
-
-| Path / Evidence                                                           | Role / Proof                                                                                                                     |
-| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/frontend/src/styles/fonts.css`, `styles/tokens.css`, and `main.tsx` | Load the bundled type system and shared semantic presentation foundation used by the World catalog and structured detail routes. |
-| `apps/frontend/.storybook/preview.tsx`                                    | Applies the same shared foundation to catalog/detail state stories and their configured accessibility checks.                    |
 
 ## Open Decisions
 
-- None block the implemented read-only catalog. Authoring, anonymous publishing, and creator-only private-knowledge access remain deferred product decisions.
+- None block the active Character-authoring implementation. Selective disclosure, World/Location authoring, draft publication, version-management UI, and custom concepts remain deferred.
 
 ## Completion Criteria
 
@@ -336,10 +480,12 @@ This Epic is healthy when:
 - authenticated catalog and detail behavior remain mapped to deterministic backend, frontend, Storybook, and populated E2E evidence;
 - seed reconciliation can operate only on a World with immutable starter provenance;
 - World API responses are validated before reaching presentation code;
-- anonymous and inaccessible requests remain non-disclosing; and
-- authoring and creator-only private-knowledge access remain explicit gaps, while Adventure behavior stays owned by `LC-003`.
+- anonymous and inaccessible requests remain non-disclosing;
+- complete debug Character Cards and owner-only Character mutation have scenario-mapped evidence;
+- Character mutations and immutable WorldVersion publication are transactionally coupled while existing Adventures remain frozen; and
+- deferred World/Location authoring and selective disclosure are not represented as implemented.
 
 ## Notes
 
-- `Stormbound Chapel` is shared testing canon and is read-only in the current web client.
+- `Stormbound Chapel` is shared testing canon. Its author can manage Characters; other signed-in accounts retain read-only access.
 - The relational World aggregate and disposable database automation decisions are recorded in the related ADRs above.

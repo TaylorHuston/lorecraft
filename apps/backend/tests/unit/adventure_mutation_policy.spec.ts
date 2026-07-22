@@ -28,6 +28,9 @@ const snapshot: WorldVersionSnapshot = {
       personality: 'Watchful.',
       voice: 'Quiet.',
       privateKnowledge: 'She knows the bell.',
+      initialMood: 'Wary.',
+      initialStatus: 'Watching the chapel.',
+      initialMemory: 'Taylor arrived in the storm.',
       sortOrder: 0,
     },
   ],
@@ -142,7 +145,7 @@ test.group('Adventure mutation policy', () => {
           value: rejectedValue,
         },
         { actor: 'world', field: 'name', value: rejectedValue },
-        { actor: 'character', characterKey: 'mira', field: 'memory', value: 'm'.repeat(2_001) },
+        { actor: 'character', characterKey: 'mira', field: 'memory', value: 'm'.repeat(501) },
       ],
     })
 
@@ -185,6 +188,34 @@ test.group('Adventure mutation policy', () => {
       },
     ])
     assert.notInclude(JSON.stringify(resolved.rejected), rejectedValue)
+    assert.deepEqual(resolved.nextState, currentState())
+  })
+
+  test('LC-003/S3/R3-S1: rejects blank and over-limit Adventure NPC state values', ({ assert }) => {
+    const resolved = resolveAdventureMutations({
+      snapshot,
+      state: currentState(),
+      proposals: [
+        { actor: 'character', characterKey: 'mira', field: 'mood', value: 'm'.repeat(121) },
+        { actor: 'character', characterKey: 'mira', field: 'status', value: 's'.repeat(321) },
+        { actor: 'character', characterKey: 'mira', field: 'memory', value: 'm'.repeat(501) },
+        { actor: 'character', characterKey: 'mira', field: 'mood', value: '  ' },
+        { actor: 'character', characterKey: 'mira', field: 'status', value: '  ' },
+        { actor: 'character', characterKey: 'mira', field: 'memory', value: '  ' },
+      ],
+    })
+
+    assert.deepEqual(
+      resolved.rejected.map(({ field, rejectionCode }) => ({ field, rejectionCode })),
+      [
+        { field: 'mood', rejectionCode: 'value_too_long' },
+        { field: 'status', rejectionCode: 'value_too_long' },
+        { field: 'memory', rejectionCode: 'value_too_long' },
+        { field: 'mood', rejectionCode: 'invalid_value' },
+        { field: 'status', rejectionCode: 'invalid_value' },
+        { field: 'memory', rejectionCode: 'invalid_value' },
+      ]
+    )
     assert.deepEqual(resolved.nextState, currentState())
   })
 

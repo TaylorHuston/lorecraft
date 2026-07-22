@@ -14,7 +14,16 @@ import AdventureTurnSubmissionService, {
 import AdventureTurnLifecycleService, {
   AdventureTurnLifecycleError,
 } from '#services/adventure_turn_lifecycle_service'
-import { createAdventureValidator, submitAdventureTurnValidator } from '#validators/adventure'
+import AdventureNpcDebugStateService, {
+  AdventureNpcDebugStateError,
+  isAdventureNpcDebugEditingEnabled,
+} from '#services/adventure_npc_debug_state_service'
+import env from '#start/env'
+import {
+  createAdventureValidator,
+  submitAdventureTurnValidator,
+  updateAdventureNpcStateValidator,
+} from '#validators/adventure'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export type AdventureSummaryResponseDto = {
@@ -65,6 +74,10 @@ function turnSubmissionErrorResponse(
 }
 
 function turnLifecycleErrorResponse(error: AdventureTurnLifecycleError): AdventureErrorResponseDto {
+  return { errors: [{ code: error.code, message: error.message }] }
+}
+
+function npcDebugStateErrorResponse(error: AdventureNpcDebugStateError): AdventureErrorResponseDto {
   return { errors: [{ code: error.code, message: error.message }] }
 }
 
@@ -143,6 +156,29 @@ export default class AdventuresController {
         return response.status(error.status).send(turnSubmissionErrorResponse(error))
       }
 
+      throw error
+    }
+  }
+
+  async updateNpcDebugState({ auth, params, request, response }: HttpContext) {
+    if (!isAdventureNpcDebugEditingEnabled(env.get('NODE_ENV'))) {
+      return response.notFound(adventureNotFoundResponse)
+    }
+    const input = await request.validateUsing(updateAdventureNpcStateValidator)
+    try {
+      await new AdventureNpcDebugStateService().update({
+        ownerId: auth.user!.id,
+        adventureId: params.id,
+        characterKey: params.key,
+        ...input,
+      })
+      const adventure = await new AdventureQueryService().findForOwner(auth.user!.id, params.id)
+      if (!adventure) return response.notFound(adventureNotFoundResponse)
+      return { data: adventure }
+    } catch (error) {
+      if (error instanceof AdventureNpcDebugStateError) {
+        return response.status(error.status).send(npcDebugStateErrorResponse(error))
+      }
       throw error
     }
   }

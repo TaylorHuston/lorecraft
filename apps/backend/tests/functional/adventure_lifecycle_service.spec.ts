@@ -5,10 +5,12 @@ import Location from '#models/location'
 import StartingPoint from '#models/starting_point'
 import User from '#models/user'
 import World, { type WorldVisibility } from '#models/world'
+import WorldVersion from '#models/world_version'
 import { publishWorldVersion } from '#services/world_version_publication_service'
 import testUtils from '@adonisjs/core/services/test_utils'
 import db from '@adonisjs/lucid/services/db'
 import { test } from '@japa/runner'
+import { createHash } from 'node:crypto'
 
 const player = {
   name: 'Mara Venn',
@@ -79,6 +81,9 @@ async function createWorld({
     personality: 'Cautious and observant.',
     voice: 'Quiet and measured.',
     privateKnowledge: 'The bell has no rope.',
+    initialMood: 'Uneasy but resolute.',
+    initialStatus: 'Watching the chapel threshold.',
+    initialMemory: 'Mira has not yet spoken with the player.',
     sortOrder: 0,
   })
   const startingPoint = await StartingPoint.create({
@@ -170,7 +175,7 @@ async function makeAdventureReady(adventureId: string) {
 test.group('AdventureLifecycleService', (group) => {
   group.each.setup(() => testUtils.db().wrapInGlobalTransaction())
 
-  test('LC-003/S1/R4-S2 + S2/R4-S6: reset restores frozen player and NPC state and removes completed-turn lineage', async ({
+  test('LC-003/S1/R4-S2 + S2/R4-S6: reset restores populated frozen player and NPC state and removes completed-turn lineage', async ({
     assert,
   }) => {
     const owner = await createUser('lifecycle-reset-owner@example.com')
@@ -335,14 +340,59 @@ test.group('AdventureLifecycleService', (group) => {
     assert.deepInclude(characterStates[0], {
       character_key: source.character.key,
       current_location_key: source.chapel.key,
-      mood: '',
-      status: '',
-      memory: '',
+      mood: 'Uneasy but resolute.',
+      status: 'Watching the chapel threshold.',
+      memory: 'Mira has not yet spoken with the player.',
     })
     assert.isNotNull(await db.from('worlds').where('id', source.world.id).first())
     const persistedWorld = await db.from('worlds').where('id', source.world.id).firstOrFail()
     assert.equal(persistedWorld.current_version_id, newerVersion.id)
     assert.lengthOf(await db.from('world_versions').where('world_id', source.world.id), 2)
+  })
+
+  test('LC-003/S1/R4-S2: reset derives nonblank state from a legacy blank frozen snapshot without rewriting it', async ({
+    assert,
+  }) => {
+    const owner = await createUser('legacy-snapshot-reset-owner@example.com')
+    const source = await createWorld({ authorId: owner.id, slug: 'legacy-snapshot-reset-world' })
+    const legacySnapshot = structuredClone(source.version.snapshot)
+    legacySnapshot.characters[0].initialMood = ''
+    legacySnapshot.characters[0].initialStatus = '\n'
+    legacySnapshot.characters[0].initialMemory = undefined
+    const legacyVersion = await WorldVersion.create({
+      worldId: source.world.id,
+      ordinal: source.version.ordinal + 1,
+      schemaVersion: source.version.schemaVersion,
+      contentHash: createHash('sha256').update(JSON.stringify(legacySnapshot)).digest('hex'),
+      snapshot: legacySnapshot,
+    })
+    await db
+      .from('worlds')
+      .where('id', source.world.id)
+      .update({ current_version_id: legacyVersion.id })
+    const created = await createAdventure(
+      owner.id,
+      source.world.slug,
+      '13131313-1313-4131-8131-131313131313'
+    )
+    await makeAdventureReady(created.adventureId)
+
+    await new AdventureLifecycleService().reset(created.adventureId, owner.id)
+
+    const state = await db
+      .from('adventure_character_states')
+      .where('adventure_id', created.adventureId)
+      .firstOrFail()
+    const frozenSource = await db.from('world_versions').where('id', legacyVersion.id).firstOrFail()
+
+    assert.deepInclude(state, {
+      mood: 'No current mood has been recorded yet.',
+      status: 'No current status has been recorded yet.',
+      memory: 'No interactions with the player have been recorded yet.',
+    })
+    const frozenCharacter = (frozenSource.snapshot as typeof legacySnapshot).characters[0]
+    assert.deepInclude(frozenCharacter, { initialMood: '', initialStatus: '\n' })
+    assert.notProperty(frozenCharacter, 'initialMemory')
   })
 
   test('LC-003/S1/R4-S2: reset returns conflict while an opening job is active', async ({

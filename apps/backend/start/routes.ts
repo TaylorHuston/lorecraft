@@ -73,6 +73,15 @@ router
         router.get('', [controllers.Worlds, 'index'])
         router.get(':slug', [controllers.Worlds, 'show'])
         router
+          .post(':slug/characters', [controllers.Worlds, 'storeCharacter'])
+          .use(middleware.browserCsrf())
+        router
+          .patch(':slug/characters/:key', [controllers.Worlds, 'updateCharacter'])
+          .use(middleware.browserCsrf())
+        router
+          .delete(':slug/characters/:key', [controllers.Worlds, 'destroyCharacter'])
+          .use(middleware.browserCsrf())
+        router
           .post(':slug/adventures', [AdventuresController, 'store'])
           .use(middleware.browserCsrf())
           .use(adventureGenerationThrottle)
@@ -89,6 +98,9 @@ router
           .post(':id/turns', [AdventuresController, 'submitTurn'])
           .use(middleware.browserCsrf())
           .use(adventureGenerationThrottle)
+        router
+          .patch(':id/npcs/:key/debug-state', [AdventuresController, 'updateNpcDebugState'])
+          .use(middleware.browserCsrf())
         router
           .post(':id/turns/:turnId/retry', [AdventuresController, 'retryTurn'])
           .use(middleware.browserCsrf())

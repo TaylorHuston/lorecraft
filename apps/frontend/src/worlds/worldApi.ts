@@ -30,8 +30,28 @@ export type WorldCharacter = {
   background: string
   personality: string
   voice: string
+  privateKnowledge: string
+  initialMood: string
+  initialStatus: string
+  initialMemory: string
   location: Pick<WorldLocation, 'key' | 'name'> | null
 }
+
+export type WorldCharacterInput = {
+  key: string
+  name: string
+  locationKey: string
+  physicalDescription: string
+  background: string
+  personality: string
+  voice: string
+  privateKnowledge: string
+  initialMood: string
+  initialStatus: string
+  initialMemory: string
+}
+
+export type WorldCharacterUpdateInput = Omit<WorldCharacterInput, 'key'>
 
 export type WorldPlayability = {
   available: boolean
@@ -48,6 +68,9 @@ export type WorldDetail = WorldSummary & {
 export interface WorldApi {
   listWorlds(): Promise<WorldCatalogItem[]>
   getWorld(slug: string): Promise<WorldDetail>
+  createCharacter(slug: string, input: WorldCharacterInput): Promise<void>
+  updateCharacter(slug: string, key: string, input: WorldCharacterUpdateInput): Promise<void>
+  deleteCharacter(slug: string, key: string): Promise<void>
 }
 
 export const worldQueryKeys = {
@@ -57,12 +80,20 @@ export const worldQueryKeys = {
     [...accountOwnedQueryKeyFor(accountId), 'worlds', 'detail', slug] as const,
 }
 
-export type WorldApiErrorCode = 'not-found' | 'unauthorized' | 'network'
+export type WorldCharacterField = keyof WorldCharacterInput
+
+export type WorldApiErrorCode =
+  | 'not-found'
+  | 'unauthorized'
+  | 'validation'
+  | 'csrf-expired'
+  | 'network'
 
 export class WorldApiError extends Error {
   constructor(
     readonly code: WorldApiErrorCode,
-    message: string
+    message: string,
+    readonly fieldErrors: Partial<Record<WorldCharacterField, string>> = {}
   ) {
     super(message)
     this.name = 'WorldApiError'

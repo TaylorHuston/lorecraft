@@ -49,6 +49,14 @@ const pendingAdventure: AdventureDetail = {
         key: 'mira',
         name: 'Mira the Restless',
         physicalDescription: 'A spectral figure carrying a dying candle.',
+        background: 'A keeper bound to the chapel.',
+        personality: 'Reserved and exacting.',
+        voice: 'Low and deliberate.',
+        privateKnowledge: 'She knows why the bell rang.',
+        currentLocation: { key: 'chapel', name: 'Stormbound Chapel' },
+        mood: 'Uneasy',
+        status: 'Watching the doors.',
+        memory: 'The player has just arrived.',
       },
     ],
   },
@@ -288,6 +296,37 @@ describe('Adventure routes', () => {
     )
   })
 
+  it('LC-003/S2/R5-S4 renders a concurrent-turn conflict as actionable copy, not its transport code', async () => {
+    const user = userEvent.setup()
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        submitTurn: async () => {
+          throw new AdventureApiError(
+            'conflict',
+            'Another turn is already resolving. Wait for it to finish.',
+            {},
+            'ADVENTURE_BUSY'
+          )
+        },
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.type(
+      await screen.findByRole('textbox', { name: 'What would you like to do?' }),
+      'I wait for the next bell toll.'
+    )
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Another turn is already resolving. Wait for it to finish.'
+    )
+    expect(screen.queryByText('ADVENTURE_BUSY')).not.toBeInTheDocument()
+  })
+
   it('LC-003/S1/R3-S3 retries terminal failure and moves focus to the restarted Story status', async () => {
     const user = userEvent.setup()
     const retryOpening = vi.fn().mockResolvedValue({
@@ -344,6 +383,29 @@ describe('Adventure routes', () => {
         },
       },
     })
+
+    expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
+    expect(screen.queryByText('Elara Vance')).not.toBeInTheDocument()
+  })
+
+  it('LC-001/S3/R1-S4 ends the shared session when NPC autosave reports unauthorized', async () => {
+    const user = userEvent.setup()
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        updateNpcState: async () => {
+          throw new AdventureApiError('unauthorized', 'Session ended')
+        },
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Mira the Restless' }))
+    const name = screen.getByRole('textbox', { name: 'Name' })
+    await user.clear(name)
+    await user.type(name, 'Mira the Watchful')
 
     expect(await screen.findByRole('heading', { name: 'Sign in to Lorecraft' })).toBeVisible()
     expect(screen.queryByText('Elara Vance')).not.toBeInTheDocument()

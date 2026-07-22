@@ -12,12 +12,12 @@ Implemented now:
 
 - Account creation, sign-in, session restoration, protected workspace access, and sign-out.
 - An authenticated catalog of Worlds available to the current account.
-- Read-only inspection of structured World metadata, Locations, and Characters.
+- Inspection of structured World metadata, Locations, and complete development/debug Character Cards; World authors can create, edit, and delete Characters for future Adventures.
 - Explicit, repeatable installation of the shared `Stormbound Chapel` starter World for local testing.
 - Private Adventures created from a frozen version of an accessible World, with a durable generated opening, resume, retry, reset, and delete flows.
 - Owner-only Act, Pass, and private Guide turns with durable resolution, bounded Adventure-owned state changes, and retry or discard recovery.
 
-World creation and editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, Story utilities, history revision, streaming, combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics.
+World creation and broad World/Location editing are not implemented. The current product boundary also excludes a complete writing environment, collaboration, anonymous or reader-facing publishing, automated source ingestion, AI-assisted canon mutation, Story utilities, history revision, streaming, combat, inventory, character statistics, rulesets, multiplayer, and marketplace mechanics.
 
 The [Epics](#documentation) are the canonical source for detailed implemented behavior, scenarios, and verification evidence. This section is only a current summary.
 
@@ -106,6 +106,8 @@ Backend configuration lives in `apps/backend/.env`:
 
 Adventure opening and turn generation send the applicable player profile, frozen World context, current Adventure state, and current Act or private Guide input to the configured AI provider. Lorecraft retains accepted narration and bounded operational metadata, but not assembled prompts, provider request messages, raw provider responses, or private Guide text as operational evidence.
 
+Local development defaults to protected JSONL diagnostics and sanitized raw provider request/response capture under ignored `apps/backend/tmp/debug/`. Set `LORECRAFT_DEBUG_TRACE=0`, `LORECRAFT_DEBUG_TRACE_RAW_REQUEST=0`, or `LORECRAFT_DEBUG_TRACE_RAW_RESPONSE=0` to explicitly disable the corresponding local capture mode. This feature refuses production, redacts sensitive values, makes directories/files owner-only, and purges traces older than seven days. It never writes Debug content to normal logs, model-call records, or browser APIs.
+
 Frontend configuration lives in `apps/frontend/.env`:
 
 - `API_SERVER_URL` identifies the AdonisJS server used by Vite's development-only `/api` proxy. It defaults to `http://localhost:4311` in the example file.
@@ -164,6 +166,14 @@ npm run verify:contracts
 ```
 
 `npm run dev` starts the frontend, API, opening worker, and turn worker together. It exits visibly when required worker provider configuration is absent instead of leaving Adventures permanently pending.
+
+Before relying on a changed local provider model or token limit, run one synthetic opening acceptance check:
+
+```bash
+npm run smoke:opening --workspace @lorecraft/backend
+```
+
+The command makes one configured-provider request using bounded synthetic World, player, and two-NPC context. It exits non-zero if the provider truncates the opening, and logs only the effective model, token cap, timeout, and bounded response metadata—not narration, prompts, or creator data.
 
 `npm run verify:contracts` regenerates the tracked Tuyau client and fails when `apps/backend/.adonisjs/client` differs from the committed contract. CI runs the same scoped cleanliness check immediately after the application build.
 

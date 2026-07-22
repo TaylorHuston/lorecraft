@@ -36,6 +36,9 @@ const characters = [
     'Cautious, observant, and slow to trust. Mira notices exits, strangers, and small changes before she speaks, and she tests whether someone is safe before sharing frightening truths.',
     'Plain-spoken and restrained. Mira uses short warnings, practical details, and chapel or weather imagery. She avoids grand claims unless fear breaks through.',
     'Mira knows the storm began after the chapel bell rang at midnight, but she is afraid to say that plainly.',
+    'Uneasy and alert.',
+    'Watching the chapel doors.',
+    'Mira has not yet spoken with the player.',
   ],
   [
     'brother-alden',
@@ -46,6 +49,9 @@ const characters = [
     'Gentle, nervous, and dutiful. Alden tries to calm frightened people before admitting how much he knows, and he dislikes open confrontation.',
     'Soft and formal, with small apologies and careful religious phrasing. He often answers indirectly before gathering courage.',
     'Alden found a torn bell-rope fiber near the altar after midnight, but he has not told Mira because he fears accusing someone without proof.',
+    'Nervous but trying to appear composed.',
+    'Holding the ledger close to the altar.',
+    'Brother Alden has not yet spoken with the player.',
   ],
   [
     'rowan',
@@ -56,6 +62,9 @@ const characters = [
     'Practical, watchful, and protective of his regulars. Rowan is friendly enough to paying guests, but he notices trouble before he names it.',
     'Dry and plainspoken, with tavern humor and short warnings. Rowan asks direct questions and rarely wastes words.',
     'Rowan heard someone pass the tavern toward the chapel shortly before the midnight bell, but he did not see their face.',
+    'Wary of the worsening storm.',
+    'Keeping the Lantern & Bell open for shelter.',
+    'Rowan has not yet met the player.',
   ],
   [
     'lena',
@@ -66,6 +75,9 @@ const characters = [
     'Curious, evasive, and amused by danger until it becomes personal. Lena collects rumors and tests strangers with jokes before offering truth.',
     'Lyrical but sly. Lena answers with teasing images, half-rhymes, and sudden blunt admissions when cornered.',
     "Lena noticed the chapel bell's sound had two tones at midnight, as if something cracked after the first strike.",
+    'Curious and quietly amused.',
+    'Listening for news beside the tavern hearth.',
+    'Lena has not yet met the player.',
   ],
 ] as const
 
@@ -269,6 +281,9 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
         personality,
         voice,
         privateKnowledge,
+        initialMood,
+        initialStatus,
+        initialMemory,
       ],
     ] of characters.entries()) {
       await trx
@@ -283,6 +298,9 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
           personality,
           voice,
           private_knowledge: privateKnowledge,
+          initial_mood: initialMood,
+          initial_status: initialStatus,
+          initial_memory: initialMemory,
           sort_order: index,
           created_at: new Date(),
           updated_at: new Date(),
@@ -296,6 +314,9 @@ export async function seedStormboundChapel(authorEmail: string | undefined) {
           'personality',
           'voice',
           'private_knowledge',
+          'initial_mood',
+          'initial_status',
+          'initial_memory',
           'sort_order',
           'updated_at',
         ])

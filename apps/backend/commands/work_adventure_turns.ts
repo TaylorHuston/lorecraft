@@ -2,6 +2,11 @@ import AdventureTurnProductionCompletionPort from '#services/adventure_turn_prod
 import AdventureTurnWorker from '#services/adventure_turn_worker'
 import { OpenAICompatibleAdventureStateExtractor } from '#services/story_generation/openai_compatible_adventure_state_extractor'
 import { OpenAICompatibleStoryGenerator } from '#services/story_generation/openai_compatible_story_generator'
+import { resolveStoryGenerationRuntimeConfiguration } from '#services/story_generation/runtime_configuration'
+import {
+  createDevelopmentDebugTrace,
+  resolveDevelopmentDebugTraceOptions,
+} from '#services/story_generation/development_debug_trace'
 import { BaseCommand } from '@adonisjs/core/ace'
 import env from '#start/env'
 import logger from '@adonisjs/core/services/logger'
@@ -9,14 +14,12 @@ import { randomUUID } from 'node:crypto'
 import { hostname } from 'node:os'
 
 const defaultPollIntervalMs = 1_000
-const defaultTimeoutMs = 120_000
-const defaultMaxTokens = 500
-const defaultTemperature = 0.8
 
 function positiveNumber(value: number | undefined, fallback: number, name: string) {
   const resolved = value ?? fallback
-  if (!Number.isFinite(resolved) || resolved <= 0)
+  if (!Number.isFinite(resolved) || resolved <= 0) {
     throw new Error(`${name} must be a positive number.`)
+  }
   return resolved
 }
 
@@ -41,47 +44,59 @@ export default class WorkAdventureTurns extends BaseCommand {
   static options = { startApp: true, staysAlive: true }
 
   async run() {
-    const baseUrl = env.get('LLM_BASE_URL')?.trim()
-    const model = env.get('LLM_MODEL')?.trim()
-    if (!baseUrl || !model) {
-      this.logger.error('LLM_BASE_URL and LLM_MODEL are required to run the Adventure worker.')
-      this.exitCode = 1
-      return
-    }
+    const configuration = resolveStoryGenerationRuntimeConfiguration({
+      LLM_BASE_URL: env.get('LLM_BASE_URL'),
+      LLM_MODEL: env.get('LLM_MODEL'),
+      LLM_TIMEOUT_MS: env.get('LLM_TIMEOUT_MS'),
+      LLM_MAX_TOKENS: env.get('LLM_MAX_TOKENS'),
+      LLM_TEMPERATURE: env.get('LLM_TEMPERATURE'),
+      LLM_REASONING_EFFORT: env.get('LLM_REASONING_EFFORT'),
+    })
     const pollIntervalMs = positiveNumber(
       env.get('ADVENTURE_WORKER_POLL_INTERVAL_MS'),
       defaultPollIntervalMs,
       'ADVENTURE_WORKER_POLL_INTERVAL_MS'
     )
-    const timeoutMs = positiveNumber(env.get('LLM_TIMEOUT_MS'), defaultTimeoutMs, 'LLM_TIMEOUT_MS')
-    const maxTokens = positiveNumber(env.get('LLM_MAX_TOKENS'), defaultMaxTokens, 'LLM_MAX_TOKENS')
-    const temperature = env.get('LLM_TEMPERATURE') ?? defaultTemperature
-    if (!Number.isFinite(temperature) || temperature < 0 || temperature > 2) {
-      throw new Error('LLM_TEMPERATURE must be between 0 and 2.')
-    }
-
     const storyGenerator = new OpenAICompatibleStoryGenerator({
       fetch,
-      baseUrl,
+      baseUrl: configuration.baseUrl,
       apiKey: env.get('LLM_API_KEY') ?? 'local-provider',
-      model,
-      settings: { temperature, maxTokens, reasoningEffort: env.get('LLM_REASONING_EFFORT') },
-      timeoutMs,
+      model: configuration.model,
+      settings: configuration.settings,
+      timeoutMs: configuration.timeoutMs,
     })
     const workerId = `${hostname()}:${process.pid}:${randomUUID()}`
+    const debugTrace = createDevelopmentDebugTrace(
+      resolveDevelopmentDebugTraceOptions({
+        nodeEnv: env.get('NODE_ENV'),
+        enabled: env.get('LORECRAFT_DEBUG_TRACE'),
+        captureRawRequest: env.get('LORECRAFT_DEBUG_TRACE_RAW_REQUEST'),
+        captureRawResponse: env.get('LORECRAFT_DEBUG_TRACE_RAW_RESPONSE'),
+      })
+    )
     const worker = new AdventureTurnWorker({
       completion: new AdventureTurnProductionCompletionPort({
         storyGenerator,
         stateExtractor: new OpenAICompatibleAdventureStateExtractor(storyGenerator),
+        debugTrace,
       }),
       workerId,
-      leaseDurationMs: timeoutMs * 2 + 30_000,
+      leaseDurationMs: configuration.timeoutMs * 2 + 30_000,
     })
     const shutdown = new AbortController()
     const stop = () => shutdown.abort()
     process.once('SIGINT', stop)
     process.once('SIGTERM', stop)
-    logger.info({ workerId, model, pollIntervalMs }, 'adventure_turn.worker_started')
+    logger.info(
+      {
+        workerId,
+        model: configuration.model,
+        maxTokens: configuration.settings.maxTokens,
+        timeoutMs: configuration.timeoutMs,
+        pollIntervalMs,
+      },
+      'adventure_turn.worker_started'
+    )
     try {
       while (!shutdown.signal.aborted) {
         const result = await worker.runOnce(shutdown.signal)

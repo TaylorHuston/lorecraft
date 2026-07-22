@@ -24,6 +24,24 @@ export default class AdventureCharacterState extends BaseModel {
   @column()
   declare memory: string
 
+  @column()
+  declare name: string | null
+
+  @column()
+  declare physicalDescription: string | null
+
+  @column()
+  declare background: string | null
+
+  @column()
+  declare personality: string | null
+
+  @column()
+  declare voice: string | null
+
+  @column()
+  declare privateKnowledge: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

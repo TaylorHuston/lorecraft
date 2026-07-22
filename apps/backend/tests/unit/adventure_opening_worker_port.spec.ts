@@ -7,6 +7,7 @@ import type {
   StoryGenerationResult,
   StoryGenerator,
 } from '#services/story_generation/story_generator'
+import type { DevelopmentDebugTraceEntry } from '#services/story_generation/development_debug_trace'
 import { test } from '@japa/runner'
 
 const claim: ClaimedOpening = {
@@ -37,6 +38,7 @@ const result: StoryGenerationResult = {
 
 class FakeRepository implements AdventureOpeningRepository {
   finalized: StoryGenerationResult | null = null
+  failure: OpeningFailure | null = null
 
   async failOneExhaustedLease() {
     return null
@@ -51,7 +53,8 @@ class FakeRepository implements AdventureOpeningRepository {
     this.finalized = generation
     return true
   }
-  async finalizeFailure(_claim: ClaimedOpening, _failure: OpeningFailure) {
+  async finalizeFailure(_claim: ClaimedOpening, failure: OpeningFailure) {
+    this.failure = failure
     return 'failed' as const
   }
 }
@@ -60,6 +63,7 @@ test('Adventure opening worker orchestrates publication through its repository p
   assert,
 }) => {
   const repository = new FakeRepository()
+  const traces: DevelopmentDebugTraceEntry[] = []
   const generator: StoryGenerator = {
     async generateOpening() {
       return result
@@ -69,8 +73,100 @@ test('Adventure opening worker orchestrates publication through its repository p
     generator,
     workerId: 'unit-worker',
     repository,
+    debugTrace: {
+      async capture(entry) {
+        traces.push(entry)
+      },
+    },
   })
 
   assert.deepInclude(await worker.runOnce(), { status: 'succeeded', attempt: 1 })
   assert.deepEqual(repository.finalized, result)
+  assert.sameMembers(
+    traces.map((entry) => entry.stage),
+    ['input', 'outcome']
+  )
+})
+
+test('LC-003/S2/R3-S5: never publishes an opening that directly reflects NPC private knowledge', async ({
+  assert,
+}) => {
+  const repository = new FakeRepository()
+  const worker = new AdventureOpeningWorker({
+    generator: {
+      async generateOpening() {
+        return {
+          ...result,
+          narration: 'The keeper admits the bell rope is hidden behind the altar.',
+        }
+      },
+    },
+    workerId: 'unit-worker',
+    repository,
+  })
+  const claimWithPrivateNpc: ClaimedOpening = {
+    ...claim,
+    input: {
+      ...claim.input,
+      charactersPresent: [
+        {
+          key: 'keeper',
+          name: 'Keeper',
+          physicalDescription: 'Watchful.',
+          background: 'Keeps the chapel.',
+          personality: 'Cautious.',
+          voice: 'Quiet.',
+          privateKnowledge: 'The bell rope is hidden behind the altar.',
+          initialMood: 'Uneasy.',
+          initialStatus: 'Waiting.',
+          initialMemory: '',
+          sortOrder: 0,
+        },
+      ],
+    },
+  }
+  repository.claimOne = async () => claimWithPrivateNpc
+
+  assert.deepInclude(await worker.runOnce(), { status: 'failed', attempt: 1 })
+  assert.isNull(repository.finalized)
+  assert.deepInclude(repository.failure!, { code: 'malformed_response' })
+})
+
+test('LC-003/S2/R3-S5: permits ordinary opening prose when private knowledge is concise', async ({
+  assert,
+}) => {
+  const repository = new FakeRepository()
+  const worker = new AdventureOpeningWorker({
+    generator: {
+      async generateOpening() {
+        return { ...result, narration: 'A bell tolls across the empty chapel.' }
+      },
+    },
+    workerId: 'unit-worker',
+    repository,
+  })
+  repository.claimOne = async () => ({
+    ...claim,
+    input: {
+      ...claim.input,
+      charactersPresent: [
+        {
+          key: 'keeper',
+          name: 'Keeper',
+          physicalDescription: 'Watchful.',
+          background: 'Keeps the chapel.',
+          personality: 'Cautious.',
+          voice: 'Quiet.',
+          privateKnowledge: 'a',
+          initialMood: 'Uneasy.',
+          initialStatus: 'Waiting.',
+          initialMemory: '',
+          sortOrder: 0,
+        },
+      ],
+    },
+  })
+
+  assert.deepInclude(await worker.runOnce(), { status: 'succeeded', attempt: 1 })
+  assert.deepInclude(repository.finalized!, { narration: 'A bell tolls across the empty chapel.' })
 })

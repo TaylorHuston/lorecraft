@@ -42,8 +42,15 @@ const adventureApi: AdventureApi = {
   deleteAdventure: async () => undefined,
 }
 
+const worldApiDefaults: Pick<WorldApi, 'createCharacter' | 'updateCharacter' | 'deleteCharacter'> = {
+  createCharacter: async () => undefined,
+  updateCharacter: async () => undefined,
+  deleteCharacter: async () => undefined,
+}
+
 function renderForm(source = world) {
   const worldApi: WorldApi = {
+    ...worldApiDefaults,
     listWorlds: async () => [],
     getWorld: async () => source,
   }
@@ -63,7 +70,7 @@ const meta = {
   title: 'Application/Adventures/New',
   component: NewAdventurePage,
   args: {
-    worldApi: { listWorlds: async () => [], getWorld: async () => world },
+    worldApi: { ...worldApiDefaults, listWorlds: async () => [], getWorld: async () => world },
     adventureApi,
   },
   parameters: { controls: { disable: true } },

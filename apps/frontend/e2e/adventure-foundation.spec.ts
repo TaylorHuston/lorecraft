@@ -123,10 +123,31 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
       await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Mira')
     }
 
+    await page
+      .getByLabel('What would you like to do?')
+      .fill('E2E_NPC_REFRESH: I ask Mira what she heard after the bell.')
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(page.getByText(actTurn)).toBeVisible({ timeout: 15_000 })
+    if (testInfo.project.name.includes('mobile')) {
+      await page.getByRole('tab', { name: 'Scene' }).click()
+    }
+    const scene = testInfo.project.name.includes('mobile')
+      ? page.getByRole('tabpanel', { name: 'Scene' })
+      : page.getByRole('region', { name: 'Scene' })
+    await scene.getByRole('button', { name: 'Mira', exact: true }).click()
+    await expect(scene.getByLabel('Mood')).toHaveValue('Watchful after the bell.')
+    await expect(scene.getByLabel('Status')).toHaveValue('Waiting beside the altar.')
+    await expect(scene.getByLabel('Memory')).toHaveValue(
+      'The player asked about the second bell toll.'
+    )
+    if (testInfo.project.name.includes('mobile')) {
+      await page.getByRole('tab', { name: 'Story' }).click()
+    }
+
     await page.getByLabel('What would you like to do?').fill('I ask why the bell rang.')
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
-    await expect(page.getByText(actTurn)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2, { timeout: 15_000 })
     if (testInfo.project.name.includes('mobile')) {
       await page.getByRole('tab', { name: 'Player' }).click()
       await expect(page.getByRole('tabpanel', { name: 'Player' })).toContainText('Vestry')
@@ -139,7 +160,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     }
 
     const privateGuide = 'Let the ledger matter, but do not reveal why.'
-    await page.getByRole('tab', { name: 'Guide' }).click()
+    await page.getByRole('button', { name: 'Guide' }).click()
     await page.getByLabel('Private direction for this turn').fill(privateGuide)
     await page.getByRole('button', { name: 'Continue' }).click()
     await expect(page.getByText(guideTurn)).toBeVisible({ timeout: 15_000 })

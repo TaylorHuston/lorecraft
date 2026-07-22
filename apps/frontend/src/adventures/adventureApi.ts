@@ -12,6 +12,19 @@ export type SubmitAdventureTurnInput = {
   input?: string
 }
 
+export type UpdateAdventureNpcStateInput = {
+  name: string
+  currentLocationKey: string
+  physicalDescription: string
+  background: string
+  personality: string
+  voice: string
+  privateKnowledge: string
+  mood: string
+  status: string
+  memory: string
+}
+
 export type AdventureTurnSubmission = {
   id: string
   adventureId: string
@@ -71,6 +84,14 @@ export type AdventureDetail = Omit<AdventureSummary, 'playerName'> & {
       key: string
       name: string
       physicalDescription: string
+      background: string
+      personality: string
+      voice: string
+      privateKnowledge: string
+      currentLocation: { key: string; name: string }
+      mood: string
+      status: string
+      memory: string
     }>
   }
   activeTurn: {
@@ -98,6 +119,11 @@ export interface AdventureApi {
   submitTurn(adventureId: string, input: SubmitAdventureTurnInput): Promise<AdventureTurnSubmission>
   retryTurn(adventureId: string, turnId: string): Promise<AdventureTurnLifecycleResult>
   discardTurn(adventureId: string, turnId: string): Promise<void>
+  updateNpcState?(
+    adventureId: string,
+    characterKey: string,
+    input: UpdateAdventureNpcStateInput
+  ): Promise<AdventureDetail>
   resetAdventure(adventureId: string): Promise<AdventureLifecycleResult>
   deleteAdventure(adventureId: string): Promise<void>
 }
@@ -111,6 +137,16 @@ export type AdventureField =
   | 'creationRequestId'
   | 'requestId'
   | 'input'
+  | 'name'
+  | 'currentLocationKey'
+  | 'physicalDescription'
+  | 'background'
+  | 'personality'
+  | 'voice'
+  | 'privateKnowledge'
+  | 'mood'
+  | 'status'
+  | 'memory'
   | 'player.name'
   | 'player.physicalDescription'
   | 'player.backstory'
