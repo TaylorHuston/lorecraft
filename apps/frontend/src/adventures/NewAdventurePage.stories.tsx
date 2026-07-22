@@ -1,10 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Route, Routes } from 'react-router-dom'
-import { expect, userEvent, within } from 'storybook/test'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
+import { AppRoutes } from '../app/AppRoutes'
+import { AuthProvider } from '../auth/AuthProvider'
 import { StorybookAppProviders } from '../stories/StorybookAppProviders'
-import type { WorldApi, WorldDetail } from '../worlds/worldApi'
+import { WorldApiError, type WorldApi, type WorldDetail } from '../worlds/worldApi'
 import { NewAdventurePage } from './NewAdventurePage'
-import type { AdventureApi } from './adventureApi'
+import { AdventureApiError, type AdventureApi } from './adventureApi'
 
 const world: WorldDetail = {
   id: 1,
@@ -66,6 +69,38 @@ function renderForm(source = world) {
   )
 }
 
+function renderRoutedSessionLoss({
+  worldApi,
+  adventureApi,
+}: {
+  worldApi: WorldApi
+  adventureApi: AdventureApi
+}) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { refetchOnWindowFocus: false, retry: false },
+      mutations: { retry: false },
+    },
+  })
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider
+        api={{
+          restoreSession: async () => ({ id: 1, email: 'keeper@lorecraft.test' }),
+          signUp: async (input) => ({ id: 2, email: input.email }),
+          signIn: async (input) => ({ id: 1, email: input.email }),
+          signOut: async () => undefined,
+        }}
+      >
+        <MemoryRouter initialEntries={['/worlds/stormbound-chapel/adventures/new']}>
+          <AppRoutes worldApi={worldApi} adventureApi={adventureApi} />
+        </MemoryRouter>
+      </AuthProvider>
+    </QueryClientProvider>
+  )
+}
+
 const meta = {
   title: 'Application/Adventures/New',
   component: NewAdventurePage,
@@ -123,4 +158,58 @@ export const Unplayable: Story = {
 export const EmptyMobile: Story = {
   ...Empty,
   parameters: { viewport: { defaultViewport: 'mobile1' } },
+}
+
+export const WorldLoadSessionLoss: Story = {
+  render: () =>
+    renderRoutedSessionLoss({
+      worldApi: {
+        ...worldApiDefaults,
+        listWorlds: async () => [],
+        getWorld: async () => {
+          throw new WorldApiError('unauthorized', 'Session ended')
+        },
+      },
+      adventureApi,
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    await expect(
+      canvas.findByRole('heading', { name: 'Sign in to Lorecraft' })
+    ).resolves.toBeVisible()
+    await expect(canvas.queryByRole('heading', { name: 'Start an Adventure' })).not.toBeInTheDocument()
+    await waitFor(() => expect(canvasElement.ownerDocument.title).toBe('Sign in | Lorecraft'))
+  },
+}
+
+export const CreationSessionLoss: Story = {
+  render: () =>
+    renderRoutedSessionLoss({
+      worldApi: {
+        ...worldApiDefaults,
+        listWorlds: async () => [],
+        getWorld: async () => world,
+      },
+      adventureApi: {
+        ...adventureApi,
+        createAdventure: async () => {
+          throw new AdventureApiError('unauthorized', 'Session ended')
+        },
+      },
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.type(
+      await canvas.findByLabelText('Player name (required)'),
+      'Elara Vance'
+    )
+    await userEvent.click(canvas.getByRole('button', { name: 'Start Adventure' }))
+
+    await expect(
+      canvas.findByRole('heading', { name: 'Sign in to Lorecraft' })
+    ).resolves.toBeVisible()
+    await expect(canvas.queryByRole('heading', { name: 'Start an Adventure' })).not.toBeInTheDocument()
+    await waitFor(() => expect(canvasElement.ownerDocument.title).toBe('Sign in | Lorecraft'))
+  },
 }
