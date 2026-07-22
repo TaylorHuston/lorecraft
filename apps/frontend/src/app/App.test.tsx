@@ -69,7 +69,7 @@ describe('account workspace entry', () => {
     await user.type(screen.getByLabelText('Confirm password'), 'correct horse')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    expect(await screen.findByRole('heading', { name: 'Worlds' })).toBeVisible()
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Worlds' })).toBeVisible())
     expect(signUp).toHaveBeenCalledWith({
       email: 'new@example.com',
       password: 'correct horse',

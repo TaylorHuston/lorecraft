@@ -274,6 +274,68 @@ test.group('AdventureTurnWorker', (group) => {
     assert.notInclude(JSON.stringify(calls), 'Mira beckons')
   })
 
+  test('LC-003/S2/R1-S3 + R3-S4: publishes ordinary narration containing a concise Guide as a larger word', async ({
+    assert,
+  }) => {
+    const fixture = await createReadyAdventure('guide-substring')
+    const turn = await submitTurn(
+      fixture.owner.id,
+      fixture.adventureId,
+      crypto.randomUUID(),
+      'guide',
+      'OK'
+    )
+    let extractorCalled = false
+    const worker = new AdventureTurnWorker({
+      completion: new AdventureTurnProductionCompletionPort({
+        storyGenerator: {
+          async generateTurn(input) {
+            assert.equal(input.context.trigger, 'guide')
+            assert.equal(input.context.input, 'OK')
+            return {
+              narration: 'The lookout waves from the archway.',
+              provider: 'test-provider',
+              model: 'test-model',
+              settings: { temperature: 0, maxTokens: 10 },
+              request: { byteCount: 10, timeoutMs: 1 },
+              response: { byteCount: 10, statusCode: 200 },
+            }
+          },
+        },
+        stateExtractor: {
+          async extract(input) {
+            extractorCalled = true
+            assert.equal(input.narration, 'The lookout waves from the archway.')
+            return {
+              extraction: { proposals: [] },
+              provider: 'test-provider',
+              model: 'test-model',
+              settings: { temperature: 0, maxTokens: 10 },
+              request: { byteCount: 10, timeoutMs: 1 },
+              response: { byteCount: 10, statusCode: 200 },
+            }
+          },
+        },
+      }),
+      workerId: 'turn-worker-guide-substring',
+      now: () => new Date(now),
+    })
+
+    assert.deepInclude(await worker.runOnce(), { status: 'succeeded', turnId: turn.id })
+    assert.isTrue(extractorCalled)
+    assert.deepInclude(await db.from('adventure_turns').where('id', turn.id).firstOrFail(), {
+      status: 'succeeded',
+    })
+    assert.deepInclude(
+      await db
+        .from('adventure_story_entries')
+        .where('adventure_id', fixture.adventureId)
+        .where('kind', 'narration')
+        .firstOrFail(),
+      { content: 'The lookout waves from the archway.' }
+    )
+  })
+
   test('LC-003/S2/R1-S3 + R3-S4: rejects even short reflected Guide text before narration publication', async ({
     assert,
   }) => {
@@ -453,13 +515,28 @@ test.group('AdventureTurnWorker', (group) => {
     })
   })
 
-  test('LC-003/S2/R2-S4 + R2-S6: a stale head or a throwing staged commit cannot publish a partial result', async ({
+  test('LC-003/S2/R2-S4 + R2-S5 + R2-S6: a stale head terminally fails its exact claim, and a throwing staged commit cannot publish a partial result', async ({
     assert,
   }) => {
     const staleFixture = await createReadyAdventure('stale')
     const staleTurn = await submitTurn(staleFixture.owner.id, staleFixture.adventureId)
+    let staleGeneratorCalled = false
+    let staleExtractorCalled = false
     const staleWorker = new AdventureTurnWorker({
-      completion: new DeferredCompletionPort(successfulCompletion()),
+      completion: new AdventureTurnProductionCompletionPort({
+        storyGenerator: {
+          async generateTurn() {
+            staleGeneratorCalled = true
+            throw new Error('A stale head must fail before narration generation.')
+          },
+        },
+        stateExtractor: {
+          async extract() {
+            staleExtractorCalled = true
+            throw new Error('A stale head must fail before state extraction.')
+          },
+        },
+      }),
       workerId: 'turn-worker-stale',
       now: () => new Date(now),
     })
@@ -479,11 +556,43 @@ test.group('AdventureTurnWorker', (group) => {
       head_revision_id: replacementHead.id,
       turn_count: 1,
     })
-    assert.deepInclude(await staleWorker.finishClaimForTest(claim!), { status: 'stale' })
+    assert.deepInclude(await staleWorker.finishClaimForTest(claim!), {
+      status: 'failed',
+      turnId: staleTurn.id,
+      attempt: 1,
+    })
+    assert.isFalse(staleGeneratorCalled)
+    assert.isFalse(staleExtractorCalled)
     assert.deepInclude(await db.from('adventure_turns').where('id', staleTurn.id).firstOrFail(), {
-      status: 'processing',
+      status: 'failed',
       result_revision_id: null,
     })
+    assert.deepInclude(
+      await db.from('adventure_jobs').where('turn_id', staleTurn.id).firstOrFail(),
+      {
+        status: 'failed',
+        failure_code: 'stale_turn_claim',
+        lease_owner: null,
+        lease_expires_at: null,
+      }
+    )
+    const lifecycle = new AdventureTurnLifecycleService()
+    try {
+      await lifecycle.retry({
+        ownerId: staleFixture.owner.id,
+        adventureId: staleFixture.adventureId,
+        turnId: staleTurn.id,
+      })
+      assert.fail('Stale source claims must not become retryable work.')
+    } catch (error) {
+      assert.equal((error as { code?: string }).code, 'TURN_NOT_RETRYABLE')
+    }
+    await lifecycle.discard({
+      ownerId: staleFixture.owner.id,
+      adventureId: staleFixture.adventureId,
+      turnId: staleTurn.id,
+    })
+    assert.isNull(await db.from('adventure_turns').where('id', staleTurn.id).first())
 
     const atomicFixture = await createReadyAdventure('atomic')
     const atomicTurn = await submitTurn(atomicFixture.owner.id, atomicFixture.adventureId)
@@ -518,7 +627,11 @@ test.group('AdventureTurnWorker', (group) => {
       workerId: 'turn-worker-atomic',
       now: () => new Date(now),
     })
-    assert.deepInclude(await atomicWorker.runOnce(), { status: 'failed', turnId: atomicTurn.id })
+    assert.deepInclude(await atomicWorker.runOnce(), {
+      status: 'retry_scheduled',
+      turnId: atomicTurn.id,
+      attempt: 1,
+    })
     assert.lengthOf(
       await db.from('adventure_revisions').where('adventure_id', atomicFixture.adventureId),
       1
@@ -534,5 +647,14 @@ test.group('AdventureTurnWorker', (group) => {
         turn_count: 0,
       }
     )
+    assert.deepInclude(await atomicWorker.runOnce(), {
+      status: 'failed',
+      turnId: atomicTurn.id,
+      attempt: 2,
+    })
+    assert.deepInclude(await db.from('adventure_turns').where('id', atomicTurn.id).firstOrFail(), {
+      status: 'failed',
+      result_revision_id: null,
+    })
   })
 })

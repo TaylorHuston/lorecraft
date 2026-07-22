@@ -15,11 +15,12 @@ import type { TurnStoryGenerator } from '#services/story_generation/turn_story_g
 import { StoryGenerationError } from '#services/story_generation/story_generator'
 import type { StoryGenerationDebugContext } from '#services/story_generation/story_generator'
 import type { DevelopmentDebugTrace } from '#services/story_generation/development_debug_trace'
-import type {
-  AdventureTurnCompletion,
-  AdventureTurnCompletionPort,
-  ClaimedAdventureTurn,
-  TurnFinalizationContext,
+import {
+  StaleAdventureTurnClaimError,
+  type AdventureTurnCompletion,
+  type AdventureTurnCompletionPort,
+  type ClaimedAdventureTurn,
+  type TurnFinalizationContext,
 } from '#services/adventure_turn_worker'
 import db from '@adonisjs/lucid/services/db'
 
@@ -289,7 +290,7 @@ export default class AdventureTurnProductionCompletionPort implements AdventureT
       .where('head_revision_id', claim.sourceRevisionId)
       .select('world_version_id')
       .first()
-    if (!adventure) throw new Error('Adventure changed before turn context could be assembled.')
+    if (!adventure) throw new StaleAdventureTurnClaimError()
 
     const [version, turn, player, characterRows, revisions] = await Promise.all([
       db.from('world_versions').where('id', adventure.world_version_id).select('snapshot').first(),

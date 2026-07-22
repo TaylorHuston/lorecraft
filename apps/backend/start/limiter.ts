@@ -1,6 +1,10 @@
 import limiter from '@adonisjs/limiter/services/main'
 
-const adventureGenerationLimit = process.env.NODE_ENV === 'test' ? 100 : 10
+// The deterministic Adventure lifecycle journey legitimately submits more than
+// ten queueable turns. Keep that extra fixture capacity explicit and confined
+// to the Playwright backend; functional tests retain the production quota.
+const adventureGenerationLimit =
+  process.env.NODE_ENV === 'test' && process.env.LORECRAFT_E2E === '1' ? 100 : 10
 
 export const csrfBootstrapThrottle = limiter.define('csrf-bootstrap', (ctx) => {
   return limiter.allowRequests(60).every('1 minute').usingKey(ctx.request.ip())

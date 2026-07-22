@@ -26,6 +26,13 @@ export type AdventureTurnCompletion = {
   commit(context: TurnFinalizationContext): Promise<{ resultRevisionId: string }>
 }
 
+export class StaleAdventureTurnClaimError extends Error {
+  constructor() {
+    super('Adventure changed before turn resolution could be completed.')
+    this.name = 'StaleAdventureTurnClaimError'
+  }
+}
+
 export interface AdventureTurnCompletionPort {
   resolve(claim: ClaimedAdventureTurn, signal?: AbortSignal): Promise<AdventureTurnCompletion>
 }
@@ -169,6 +176,46 @@ export default class AdventureTurnWorker {
     })
   }
 
+  async #failStaleClaim(claim: ClaimedAdventureTurn): Promise<boolean> {
+    return db.transaction(async (trx) => {
+      const now = this.#now()
+      const job = await trx
+        .from('adventure_jobs')
+        .where('id', claim.jobId)
+        .where('adventure_id', claim.adventureId)
+        .where('generation', claim.generation)
+        .where('status', 'processing')
+        .where('attempt_count', claim.attempt)
+        .where('lease_owner', claim.leaseToken)
+        .forUpdate()
+        .first()
+      const turn =
+        job &&
+        (await trx
+          .from('adventure_turns')
+          .where('id', claim.turnId)
+          .where('status', 'processing')
+          .where('source_revision_id', claim.sourceRevisionId)
+          .forUpdate()
+          .first())
+      if (!job || !turn) return false
+
+      await trx.from('adventure_jobs').where('id', job.id).update({
+        status: 'failed',
+        lease_owner: null,
+        lease_expires_at: null,
+        failure_code: 'stale_turn_claim',
+        failure_message: 'Turn resolution is stale and cannot be retried.',
+        updated_at: now,
+      })
+      await trx.from('adventure_turns').where('id', turn.id).update({
+        status: 'failed',
+        updated_at: now,
+      })
+      return true
+    })
+  }
+
   async finishClaimForTest(
     claim: ClaimedAdventureTurn,
     signal?: AbortSignal
@@ -223,20 +270,31 @@ export default class AdventureTurnWorker {
         })
         return true
       })
-      return succeeded
-        ? {
-            status: 'succeeded',
-            adventureId: claim.adventureId,
-            turnId: claim.turnId,
-            attempt: claim.attempt,
-          }
-        : {
-            status: 'stale',
-            adventureId: claim.adventureId,
-            turnId: claim.turnId,
-            attempt: claim.attempt,
-          }
-    } catch {
+      if (succeeded) {
+        return {
+          status: 'succeeded',
+          adventureId: claim.adventureId,
+          turnId: claim.turnId,
+          attempt: claim.attempt,
+        }
+      }
+      const terminallyFailed = await this.#failStaleClaim(claim)
+      return {
+        status: terminallyFailed ? 'failed' : 'stale',
+        adventureId: claim.adventureId,
+        turnId: claim.turnId,
+        attempt: claim.attempt,
+      }
+    } catch (error) {
+      if (error instanceof StaleAdventureTurnClaimError) {
+        const terminallyFailed = await this.#failStaleClaim(claim)
+        return {
+          status: terminallyFailed ? 'failed' : 'stale',
+          adventureId: claim.adventureId,
+          turnId: claim.turnId,
+          attempt: claim.attempt,
+        }
+      }
       const now = this.#now()
       const retryScheduled = await db.transaction(async (trx) => {
         const job = await trx

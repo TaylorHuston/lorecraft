@@ -5,6 +5,7 @@ import CreateWorldCatalog from '../../database/migrations/1784053200000_create_w
 import EnforceCharacterLocationWorldIntegrity from '../../database/migrations/1784060400000_enforce_character_location_world_integrity.js'
 import AddWorldSeedIdentity from '../../database/migrations/1784146800000_add_world_seed_identity.js'
 import AddFrozenWorldSourceFoundation from '../../database/migrations/1784233200000_add_frozen_world_source_foundation.js'
+import AddCharacterInitialState from '../../database/migrations/1784416800000_add_character_initial_state.js'
 import { publishWorldVersionInTransaction } from '#services/world_version_publication_service'
 import {
   rollbackMigration,
@@ -201,13 +202,20 @@ test.group('Frozen World source database migration', () => {
       )
     })
   })
+})
 
-  test('LC-003/S1/R2-S1: concurrent publication reuses one immutable version', async ({
+test.group('WorldVersion publication after Character initial-state migration', () => {
+  test('LC-002/S3/R5-S2 + LC-003/S1/R2-S1: concurrent publication reuses one immutable version', async ({
     assert,
   }) => {
     await withIsolatedMigrationDatabase(async (client) => {
       const fixture = await createWorldFixture(client)
       await runMigration(client, AddFrozenWorldSourceFoundation, migrationName)
+      await runMigration(
+        client,
+        AddCharacterInitialState,
+        '1784416800000_add_character_initial_state'
+      )
       await client
         .from('worlds')
         .where('id', fixture.firstWorldId)

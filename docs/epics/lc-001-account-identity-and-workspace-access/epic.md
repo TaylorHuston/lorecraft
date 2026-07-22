@@ -187,7 +187,7 @@ The system SHALL protect signup from cross-site mutation, unsupported or oversiz
 | S1/R3-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S1/R3-S3 independently discloses signup passwords without changing their values or purpose` | Each disclosure control preserves its field value and purpose independently. | Passing 2026-07-22 |
 | S1/R4-S1 | Automated test `apps/backend/tests/functional/account_security.spec.ts#csrfMutationCases` | The signup mutation case verifies missing and forged CSRF tokens do not create an account or session. | Passing 2026-07-22 |
 | S1/R4-S2 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R4-S2 + S2/R4-S2: auth routes reject oversized JSON before session and CSRF processing` | Unsupported and oversized auth input fails before session mutation. | Passing 2026-07-22 |
-| S1/R4-S3 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R4-S3: repeated signup attempts are throttled before validation` | Rate limiting rejects excess signup attempts before validation. | Passing 2026-07-22 |
+| S1/R4-S3 | Automated tests `apps/backend/tests/functional/account_security.spec.ts#LC-001/S1/R4-S3: repeated signup attempts are throttled before validation` and `apps/backend/tests/functional/limiter_isolation.spec.ts#LC-001/S1/R4-S3: throttles repeated signup attempts within one functional test` | Rate limiting rejects excess signup attempts before validation; the same test still receives 429 after ten requests. | Passing 2026-07-22 against a guarded disposable schema |
 
 #### Verification Gaps
 
@@ -331,7 +331,7 @@ The system SHALL protect sign-in from cross-site mutation, unsupported or oversi
 | S2/R3-S3 | Automated test `apps/frontend/src/app/App.test.tsx#LC-001/S2/R3-S3 discloses the sign-in password without changing submission` | Disclosure preserves the submitted password and control behavior. | Passing 2026-07-22 |
 | S2/R4-S1 | Automated test `apps/backend/tests/functional/account_security.spec.ts#csrfMutationCases` | The login mutation case verifies missing and invalid CSRF tokens do not alter sign-in session ownership. | Passing 2026-07-22 |
 | S2/R4-S2 | Automated test `apps/frontend/src/auth/tuyauAuthApi.test.ts#LC-001/S2/R4-S2 translates server sign-in validation into field guidance` | Safe server validation errors are translated to affected sign-in fields. | Passing 2026-07-22 |
-| S2/R4-S3 | Automated test `apps/backend/tests/functional/account_security.spec.ts#LC-001/S2/R4-S3: repeated login attempts are throttled per forwarded client` | Login attempts are rate limited per forwarded client. | Passing 2026-07-22 |
+| S2/R4-S3 | Automated tests `apps/backend/tests/functional/account_security.spec.ts#LC-001/S2/R4-S3: repeated login attempts are throttled per forwarded client` and `apps/backend/tests/functional/limiter_isolation.spec.ts#LC-001/S2/R4-S3: a later functional test starts with a fresh limiter store` | Login attempts remain rate limited per forwarded client, while functional-test setup cannot spend the next scenario's in-memory budget. | Passing 2026-07-22 against a guarded disposable schema |
 
 #### Verification Gaps
 

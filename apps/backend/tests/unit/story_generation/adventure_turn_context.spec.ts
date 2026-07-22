@@ -270,6 +270,51 @@ test.group('Adventure turn context', () => {
     )
   })
 
+  test('LC-003/S2/R1-S3: rejects even concise current Guide text before publication', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext({
+      ...turnContextInput,
+      trigger: 'guide',
+      input: 'OK',
+    })
+
+    assert.throws(
+      () => assertNarrationSafeForPublication('OK.', context),
+      UnsafeNarrationPublicationError
+    )
+  })
+
+  test('LC-003/S2/R1-S3: does not treat a concise Guide as a substring within ordinary narration', ({
+    assert,
+  }) => {
+    const context = assembleAdventureTurnContext({
+      ...turnContextInput,
+      trigger: 'guide',
+      input: 'OK',
+    })
+
+    assert.doesNotThrow(() =>
+      assertNarrationSafeForPublication('The lookout waves from the archway.', context)
+    )
+  })
+
+  test('LC-003/S2/R1-S3: permits ordinary narration for punctuation-only and common-token Guides', ({
+    assert,
+  }) => {
+    for (const input of ['...', 'the']) {
+      const context = assembleAdventureTurnContext({
+        ...turnContextInput,
+        trigger: 'guide',
+        input,
+      })
+
+      assert.doesNotThrow(() =>
+        assertNarrationSafeForPublication('Rain drums against the chapel shutters.', context)
+      )
+    }
+  })
+
   test('LC-003/S2/R3-S5: does not reject ordinary narration for concise private values', ({
     assert,
   }) => {

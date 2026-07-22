@@ -182,7 +182,7 @@ test.group('Adventure API', (group) => {
     assert.notInclude(serialized, 'adventureGuidance')
   })
 
-  test('LC-003/S1/R2-S2 + R4-S1: an owner reads the minimized frozen Adventure projection', async ({
+  test('LC-003/S1/R2-S2 + R4-S1: an owner reads the complete frozen Adventure debug projection', async ({
     client,
     assert,
   }) => {
@@ -229,14 +229,24 @@ test.group('Adventure API', (group) => {
         },
         scene: {
           location: { key: 'chapel-threshold', name: 'Chapel Threshold' },
-          npcs: [{ key: 'warden-hale', name: 'Warden Hale' }],
+          npcs: [
+            {
+              key: 'warden-hale',
+              name: 'Warden Hale',
+              physicalDescription: 'A weathered keeper in a salt-stained coat.',
+              background: 'He has guarded the chapel for decades.',
+              personality: 'Reserved and watchful.',
+              voice: 'Low and deliberate.',
+              privateKnowledge: 'He knows who rang the bell.',
+            },
+          ],
         },
         story: [],
       },
     })
     const serialized = JSON.stringify(response.body())
-    assert.notInclude(serialized, 'He knows who rang the bell.')
-    assert.notInclude(serialized, 'privateKnowledge')
+    assert.include(serialized, 'He knows who rang the bell.')
+    assert.include(serialized, 'privateKnowledge')
     assert.notInclude(serialized, 'snapshot')
     assert.notInclude(serialized, 'adventureGuidance')
   })

@@ -22,12 +22,13 @@ export default class AdventureTurnLifecycleService {
         .where('adventure_turns.id', input.turnId)
         .where('adventure_turns.adventure_id', input.adventureId)
         .where('adventures.owner_id', input.ownerId)
-        .select('adventure_turns.id', 'adventure_turns.status')
+        .join('adventure_jobs', 'adventure_jobs.turn_id', 'adventure_turns.id')
+        .select('adventure_turns.id', 'adventure_turns.status', 'adventure_jobs.failure_code')
         .forUpdate()
         .first()
       if (!turn)
         throw new AdventureTurnLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
-      if (turn.status !== 'failed') {
+      if (turn.status !== 'failed' || turn.failure_code === 'stale_turn_claim') {
         throw new AdventureTurnLifecycleError(
           'TURN_NOT_RETRYABLE',
           409,
@@ -61,12 +62,16 @@ export default class AdventureTurnLifecycleService {
         .where('adventure_turns.id', input.turnId)
         .where('adventure_turns.adventure_id', input.adventureId)
         .where('adventures.owner_id', input.ownerId)
-        .select('adventure_turns.id', 'adventure_turns.status')
+        .select(
+          'adventure_turns.id',
+          'adventure_turns.status',
+          'adventure_turns.result_revision_id'
+        )
         .forUpdate()
         .first()
       if (!turn)
         throw new AdventureTurnLifecycleError('ADVENTURE_NOT_FOUND', 404, 'Adventure not found.')
-      if (turn.status !== 'failed') {
+      if (!['failed', 'pending'].includes(turn.status) || turn.result_revision_id !== null) {
         throw new AdventureTurnLifecycleError(
           'TURN_NOT_DISCARDABLE',
           409,

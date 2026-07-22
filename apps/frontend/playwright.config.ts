@@ -72,6 +72,7 @@ export default defineConfig({
         ...databaseChildEnvironment(process.env),
         CORS_ORIGIN: frontendUrl,
         NODE_ENV: 'test',
+        LORECRAFT_E2E: '1',
         PORT: '4314',
         SESSION_DRIVER: 'database',
         LLM_BASE_URL: `${fakeStoryProviderUrl}/v1`,
