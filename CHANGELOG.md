@@ -29,3 +29,4 @@ The format is based on Keep a Changelog 1.1.0.
 ### Security
 
 - Adventure model-call records now retain bounded operational metadata instead of assembled prompts or raw provider responses.
+- Private Guide turn input is no longer reflected in generated Adventure narration.
