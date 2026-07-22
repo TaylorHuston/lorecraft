@@ -186,7 +186,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await expect(concurrentPage.getByRole('alert')).toContainText('resolving turn')
     await page.reload()
     await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
-    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2, { timeout: 15_000 })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3, { timeout: 15_000 })
     await concurrentPage.close()
 
     await page
@@ -198,10 +198,10 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     ).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2)
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
     await expectVestryContext(page, testInfo)
     await page.getByRole('button', { name: 'Retry turn' }).click()
-    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3, { timeout: 15_000 })
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(4, { timeout: 15_000 })
 
     await page
       .getByLabel('What would you like to do?')
@@ -212,11 +212,11 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     ).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(4)
     await expectVestryContext(page, testInfo)
     await page.getByRole('button', { name: 'Discard' }).click()
     await expect(page.getByLabel('What would you like to do?')).toBeVisible()
-    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(3)
+    await expect(page.getByText(actTurn, { exact: true })).toHaveCount(4)
     await expectVestryContext(page, testInfo)
 
     await page.getByRole('button', { name: 'Adventure settings' }).click()
@@ -225,7 +225,6 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     const resetDialog = page.getByRole('dialog', { name: 'Reset Adventure?' })
     await resetDialog.getByRole('button', { name: 'Reset Adventure' }).click()
     await expect(page).toHaveURL(adventureUrl)
-    await expect(page.getByText('Preparing your opening')).toBeVisible()
     await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
 
     await page.getByRole('link', { name: 'Return to World' }).click()

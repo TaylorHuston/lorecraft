@@ -13,6 +13,7 @@ const guideTurn =
 const passTurn =
   'The silence lengthens. Rain keeps time against the shutters until Mira finally turns toward the altar.'
 const failedTurnAttempts = new Map()
+let npcRefreshExtractionPending = false
 
 const server = createServer(async (request, response) => {
   if (request.method === 'GET' && request.url === '/health') {
@@ -36,6 +37,8 @@ const server = createServer(async (request, response) => {
     const system = messages.find((message) => message.role === 'system')?.content ?? ''
 
     if (system.includes('Extract only supported Adventure state proposals')) {
+      const refreshNpcState = npcRefreshExtractionPending
+      npcRefreshExtractionPending = false
       await delay(responseDelayMs)
       response.writeHead(200, { 'content-type': 'application/json' })
       response.end(
@@ -45,7 +48,7 @@ const server = createServer(async (request, response) => {
             {
               message: {
                 role: 'assistant',
-                content: context.includes('E2E_NPC_REFRESH')
+                content: refreshNpcState
                   ? JSON.stringify({
                       proposals: [
                         {
@@ -86,7 +89,10 @@ const server = createServer(async (request, response) => {
     }
 
     let content = opening
-    if (context.includes('[CURRENT_ACT]')) content = actTurn
+    if (context.includes('[CURRENT_ACT]')) {
+      npcRefreshExtractionPending = context.includes('E2E_NPC_REFRESH')
+      content = actTurn
+    }
     else if (context.includes('[PRIVATE_CURRENT_GUIDE]')) content = guideTurn
     else if (context.includes('[CURRENT_PASS]')) content = passTurn
     else if (
