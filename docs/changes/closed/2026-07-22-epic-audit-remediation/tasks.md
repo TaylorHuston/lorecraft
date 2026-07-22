@@ -5,11 +5,11 @@ status: in_review
 
 ## Resume Here
 
-- Last completed action: ran the acknowledged guarded database migration, six Character functional scenarios, and the isolated deterministic browser suite; repaired only E2E-fixture/timing/rate-limit test infrastructure exposed by that run.
-- Next action: complete the pending manual Character-editor acceptance before any separately authorized integration decision.
-- Active branch/ref: `change/epic-audit-remediation` from `develop` at `00be089`.
-- Expected dirty files: none after the in-review ledger commit; the LC-002/LC-003 audit reports are tracked historical inputs.
-- Known blockers: production/recovery proof is intentionally out of scope without explicit operational authorization. No required automated verification blocker remains.
+- Last completed action: owner confirmed the manual Character-editor acceptance after the already-authorized local integration and Change closeout.
+- Next action: continue release preflight from `develop` toward `main`.
+- Historical integration: `change/epic-audit-remediation` merged into `develop` with `8691f33`; the Change closed with `21c1a89`.
+- Expected dirty files: none after this closeout reconciliation commit.
+- Known blockers: production/recovery proof remains an accepted out-of-scope gap without explicit operational authorization. No required automated or manual acceptance blocker remains.
 
 ## Task Checklist
 
@@ -50,8 +50,8 @@ status: in_review
 ### 5. Review And Closeout
 
 - [x] 5.1 Run `/sdd-review` after all implementation and artifact reconciliation is committed (current verdict: ready; review record refreshed after `53ecbd0`).
-- [x] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap` (current: pending user).
-- [x] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification. No such operation was requested or performed.
+- [x] 5.2 Record manual Character-editor acceptance as `pending user`, `user confirmed`, or `accepted gap` (current: user confirmed on 2026-07-22).
+- [x] 5.3 Request explicit authorization before merge, close, push, deployment, or production verification. Local merge and closeout were later authorized and completed; no push, deployment, or production verification occurred.
 
 ## Implementation Ledger
 
@@ -135,7 +135,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: user confirmed on 2026-07-22
 - App URL / route: Character editor on an author-owned non-seed World.
 - Required setup or test data: an existing Character key and a Location outside the selected World or a removed Location key.
 - Steps: save duplicate key or invalid Location; correct the highlighted field; save again; verify other field values remain intact.
@@ -152,7 +152,7 @@ status: in_review
 
 ## Blockers / Open Questions
 
-- No required automated blocker remains. Production/recovery checks remain a separate accepted out-of-scope gap; manual Character-editor acceptance is still pending user confirmation.
+- No required automated or manual acceptance blocker remains. Production/recovery checks remain a separate accepted out-of-scope gap.
 
 ## Review Handoff Candidate
 
@@ -167,8 +167,8 @@ status: in_review
 
 - Change status: in_review.
 - Epic files updated: LC-001 normalized with controlled 401 rendering proof; LC-002 field recovery evidence includes controlled rendering; LC-003/S1-S2 evidence is scenario-mapped with explicit gaps.
-- Manual UI confirmation status: pending user.
+- Manual UI confirmation status: user confirmed on 2026-07-22.
 - Rendered UI verification status: independently complete for controlled Storybook 422/401 fixtures; guarded authenticated browser proof is complete.
-- PR / merge state: not started.
+- PR / merge state: locally merged into `develop` with `8691f33`; no integration PR or push was requested.
 - Deferred scope accepted: production/recovery checks only.
-- Change moved to `docs/changes/closed/`: no.
+- Change moved to `docs/changes/closed/`: yes, with closeout commit `21c1a89`; folder location is authoritative.

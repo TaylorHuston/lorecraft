@@ -16,8 +16,8 @@ ready
 | Rendered UI verification | pass | Independent Storybook desktop/mobile inspection remains clean for Character 422 and New Adventure 401 recovery states. |
 | Static and contract gates | pass | Root lint/typecheck, prior build/contract checks, and current diff check are clean. |
 | Security and pattern conformance | pass | Owner-scoped field errors remain non-disclosing; production still retains the normal generation limit. |
-| Manual UI confirmation | pending user | Character-editor manual acceptance is useful but is not an automated-review blocker. |
-| Merge readiness | ready with manual pending | Branch is technically ready for a future, separately authorized integration decision; no merge, close, push, or deployment was performed. |
+| Manual UI confirmation | user confirmed | Character-editor manual acceptance was confirmed by the owner on 2026-07-22 after the review snapshot. |
+| Merge readiness | complete for local integration | The reviewed branch was later authorized, merged into `develop` with `8691f33`, and closed with `21c1a89`; no push or deployment occurred. |
 
 ## Findings
 
@@ -31,7 +31,7 @@ ready
 ### REMAINING GAPS
 
 - Production/recovery verification is intentionally out of scope without operational authorization.
-- Manual Character-editor acceptance remains pending user confirmation.
+- Manual Character-editor acceptance was confirmed by the owner on 2026-07-22.
 - Existing scoped Epic gaps, such as stale/missing edit recovery and failed-delete recovery, remain explicit rather than being represented as complete.
 
 ## Verification Evidence
@@ -50,8 +50,8 @@ ready
 - Source branch: `change/epic-audit-remediation`
 - Behavior reviewed through: `53ecbd0` (`test: stabilize guarded adventure e2e`)
 - Target: `develop` at `00be089`
-- Branch policy: `change/*` to `develop` is correct. Merge, closeout, push, and deployment remain unauthorized.
-- Manual acceptance: pending user; not a technical-review blocker.
+- Branch policy: `change/*` to `develop` was correct. At review time merge, closeout, push, and deployment remained unauthorized; local merge and closeout were authorized later.
+- Manual acceptance: user confirmed on 2026-07-22 after the review snapshot.
 
 ## Review Log
 
