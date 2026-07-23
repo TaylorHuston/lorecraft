@@ -27,6 +27,7 @@ status: in_progress
 | 2026-07-22 | Make the lower-story fade much steeper. | cosmetic / chat-composer refinement | Adventure workbench CSS, Storybook, and Change design | Keep narration clear for most of the dock, add only a slight late fade, then fully clear the composer area. |
 | 2026-07-22 | Apply the same steep fade treatment beneath the pinned World title. | cosmetic / Story-header refinement | Adventure workbench CSS, Storybook, and Change design | Keep the World name fully legible while narration stays clear until a short fade before emerging below the header. |
 | 2026-07-22 | Correct the composer fade after direct long-story feedback showed narration running into its controls. | cosmetic / chat-composer refinement | Adventure workbench CSS, Storybook, and Change design | Move the fade's opaque end above the prompt so text has a small transition before clearing instead of remaining visible beneath the composer. |
+| 2026-07-22 | Remove the orange focus glow when the narration scroll region receives keyboard focus. | cosmetic / focus-treatment refinement | Adventure workbench CSS, Storybook, and Change design | Suppress only the decorative narration-region ring; retain focus visibility on action controls and tabs. |
 
 ## Checklist
 
@@ -74,6 +75,7 @@ status: in_progress
 | 2026-07-22 | Unboxed Story transcript | `AdventureWorkbench` CSS and Storybook | Removed message padding, borders, rounded corners, and fills. Game Master and Player messages remain visibly separated by left/right alignment, typography, and accessible labels. | commit candidate |
 | 2026-07-22 | Steep lower-story fade | `AdventureWorkbench` CSS and Storybook | Corrected the fade to a small 30% background blend at 10% of the dock and a fully opaque background at 24%, so narration clears above the composer controls. | commit candidate |
 | 2026-07-22 | Steep pinned-title fade | `AdventureWorkbench` CSS and Storybook | Replaced the broad title gradient with a full background through 58%, a brief 60% blend at 68%, and transparency at 78%. | commit candidate |
+| 2026-07-22 | Quiet narration focus | `AdventureWorkbench` CSS and Storybook | Removed the focus outline only from the focusable narration scroll region; interactive controls retain their existing focus treatment. | commit candidate |
 
 ## Verification Ledger
 
@@ -111,6 +113,7 @@ status: in_progress
 | 2026-07-22 | steep composer-fade long-story inspection | rendered Storybook | A desktop long-story simulation keeps narration readable until the dock's final band, where it has only a brief fade before clearing completely; no Vite overlay appeared. | passed |
 | 2026-07-22 | steep pinned-title long-story inspection | rendered Storybook | A desktop long-story simulation confirms the World name remains fully legible while narration has only a short fade under the title before emerging clear below it; no Vite overlay appeared. | passed |
 | 2026-07-22 | corrected composer-fade long-story inspection | rendered Storybook | A 2048x1136 long-paragraph simulation confirms text has a slight final fade and clears above the composer prompt rather than continuing beneath its controls; no Vite overlay appeared. | passed |
+| 2026-07-22 | narration-focus inspection | rendered Storybook | Programmatic focus on the narration scroll region yields no outline while the page remains meaningful and free of a Vite overlay. | passed |
 
 ## Visual Verification Matrix
 
@@ -118,6 +121,7 @@ status: in_progress
 |---|---|---|---|---|---|---|
 | Adventure ready state | `Application/Adventures/Workbench` ReadyDesktop and ReadyMobile | 1440x900 desktop three panes; 390x844 narrow tabs | Storybook plus `agent-browser` | Desktop image shows Player / Story / Scene only, with Story dominant, no header, and the pinned `Stormbound Chapel` World name. A long-story simulation shows a brief steep title fade before narration emerges fully clear; narrow Player tab retains contextual actions. | No Vite overlay; meaningful content; expected controls and regions present. | passed |
 | Adventure ready composer | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop; 390x844 narrow | Storybook plus `agent-browser` | Lower narration has a small transition then clears above the composer prompt; it does not remain visible below the dock fade. Its 96px text area ends halfway through the joined, equal-width Send/Pass row; the controls straddle that lower border with no gap. | No Vite overlay; 2048x1136 long-paragraph simulation inspected; action widths are 72px, gap is 0px, and the row midpoint equals the input bottom. | passed |
+| Narration focus | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop, focused narration scroll region | Storybook plus `agent-browser` | The focusable narration region has no decorative orange outline; controls and tabs retain their own focus styling. | No Vite overlay; computed narration outline is none. | passed |
 | Adventure Settings workspace | `Application/Adventures/Workbench` ReadyToAct | 1440x900 desktop | Storybook plus `agent-browser` | A wide modal shows the Adventure Settings left navigation and a spacious detail panel, with a bounded Reset section. NPCs and Locations are available as future-tool tabs. | No page errors; dialog, all tabs, and Reset control present. | passed |
 | Settings NPC cards and editor | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, two-card fixture | Storybook plus `agent-browser` | NPCs presents square initial-avatar cards; each name is visible. Selecting Mira opens the complete editable card in the same modal with Back to NPCs. | No page errors; card buttons and all editor fields present. | passed |
 | Stable Settings modal frame | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, card and editor views | Storybook plus `agent-browser` | The dialog remains 832px high in both views; the editor Back control renders as an icon-only left arrow. | No page errors; Back retains an accessible name. | passed |
