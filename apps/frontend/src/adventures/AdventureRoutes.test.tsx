@@ -266,7 +266,12 @@ describe('Adventure routes', () => {
     const resolving = {
       ...pendingAdventure,
       status: 'ready' as const,
-      activeTurn: { id: 'turn-1', trigger: 'act' as const, status: 'processing' as const },
+      activeTurn: {
+        id: 'turn-1',
+        trigger: 'act' as const,
+        status: 'processing' as const,
+        content: 'I follow Mira.',
+      },
       story: [
         { id: 'opening', kind: 'narration', content: 'The chapel doors open against the storm.' },
       ],

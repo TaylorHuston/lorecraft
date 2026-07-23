@@ -117,7 +117,7 @@ export function AdventurePage({
   })
   const submitTurn = useMutation({
     mutationFn: (input: SubmitAdventureTurnInput) => adventureApi.submitTurn(id, input),
-    onSuccess: (turn) => {
+    onSuccess: (turn, input) => {
       queryClient.setQueryData<AdventureDetail>(queryKey, (current) =>
         current
           ? {
@@ -125,7 +125,17 @@ export function AdventurePage({
               activeTurn:
                 turn.status === 'succeeded'
                   ? null
-                  : { id: turn.id, trigger: turn.trigger, status: turn.status },
+                  : {
+                      id: turn.id,
+                      trigger: turn.trigger,
+                      status: turn.status,
+                      content:
+                        turn.trigger === 'act'
+                          ? (input.input ?? null)
+                          : turn.trigger === 'pass'
+                            ? 'Pass'
+                            : null,
+                    },
             }
           : current
       )

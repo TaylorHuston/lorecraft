@@ -80,9 +80,43 @@ describe('AdventureWorkbench', () => {
     expect(screen.queryByRole('button', { name: 'Continue' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Pass' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Send' }).closest('[data-slot="turn-composer-actions"]')).not.toBeNull()
+    expect(screen.getByRole('button', { name: 'Send' }).closest('[data-slot="turn-composer-input"]')).not.toBeNull()
     expect(
       screen.queryByText(/private knowledge|personality|director observation/i)
     ).not.toBeInTheDocument()
+  })
+
+  it('LC-003/S2/R5-S6 renders player messages on the right and narration on the left without a Guide bubble', () => {
+    render(
+      <AdventureWorkbench
+        adventure={{
+          ...readyAdventure,
+          activeTurn: {
+            id: 'turn-active',
+            trigger: 'guide',
+            status: 'processing',
+            content: null,
+          },
+          story: [
+            ...readyAdventure.story,
+            { id: 'act-1', kind: 'act', content: 'I follow Mira to the vestry.' },
+            { id: 'narration-1', kind: 'narration', content: 'Mira raises her candle.' },
+            { id: 'pass-1', kind: 'pass', content: 'Pass' },
+          ],
+        }}
+      />
+    )
+
+    expect(screen.getAllByRole('article', { name: 'Player message' })[0]).toHaveAttribute(
+      'data-message-kind',
+      'act'
+    )
+    expect(screen.getAllByRole('article', { name: 'Player message' })[1]).toHaveAttribute(
+      'data-message-kind',
+      'pass'
+    )
+    expect(screen.getAllByRole('article', { name: 'Game Master message' })).toHaveLength(2)
+    expect(screen.queryByText('Private direction for this turn')).not.toBeInTheDocument()
   })
 
   it('LC-003/S3/R1-S1 opens a complete NPC debug card and restores list focus on Back', async () => {
@@ -476,7 +510,7 @@ describe('AdventureWorkbench', () => {
       <AdventureWorkbench
         adventure={{
           ...readyAdventure,
-          activeTurn: { id: 'turn-1', trigger: 'act', status: 'pending' },
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'pending', content: 'I wait.' },
         }}
       />
     )
@@ -491,7 +525,7 @@ describe('AdventureWorkbench', () => {
       <AdventureWorkbench
         adventure={{
           ...readyAdventure,
-          activeTurn: { id: 'turn-1', trigger: 'act', status: 'failed' },
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'failed', content: 'I wait.' },
         }}
         onRetryTurn={retryTurn}
         onDiscardTurn={discardTurn}
@@ -511,7 +545,7 @@ describe('AdventureWorkbench', () => {
       <AdventureWorkbench
         adventure={{
           ...readyAdventure,
-          activeTurn: { id: 'turn-1', trigger: 'act', status: 'processing' },
+          activeTurn: { id: 'turn-1', trigger: 'act', status: 'processing', content: 'I wait.' },
         }}
       />
     )

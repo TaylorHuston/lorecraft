@@ -2,12 +2,13 @@
 
 ## Why
 
-This tracked interactive session captures small, user-directed improvements to existing Lorecraft screens while keeping the current creator-first product behavior intact.
+This tracked interactive session captures small, user-directed improvements to existing Lorecraft screens while keeping the current creator-first product behavior intact. It now also reconciles the Adventure detail projection required for a durable chat-style transcript.
 
 ## What Changes
 
 - Record and apply one concrete UI refinement at a time.
 - Verify each changed rendered surface and keep the owning Epic evidence current when behavior changes.
+- Project owner-visible completed Act and Pass events beside Game Master narration so an Adventure reads as a coherent chat transcript.
 
 ## Target Repositories
 
@@ -23,23 +24,26 @@ This tracked interactive session captures small, user-directed improvements to e
 
 - `docs/epics/lc-003-adventure-play/epic.md`
   - Reconcile LC-003/S1 R5-S2 and R5-S4 implementation and rendered-evidence anchors for the full-height desktop workbench and retained narrow-screen tabs.
+  - Extend LC-003/S2 R5 with an owner-visible chat transcript scenario while preserving the existing private-Guide and generation-context exclusions.
 
 ## Epic Story Changes
 
 - Added: none.
 - Modified behavior: Adventure mode uses its existing Player / Story / Scene workbench as the complete desktop shell; its contextual Return and Settings controls move from the top header into Player context.
+- Modified behavior: the owner-visible Adventure detail becomes a chronological chat transcript: completed Act text and Pass markers appear as right-aligned player messages, while generated narration appears on the left. A pending or failed Act/Pass remains visible for its recovery state; Guide text remains absent.
 - Modified evidence: LC-003/S1 R5-S2 and R5-S4 receive current component, Storybook, and rendered-browser evidence.
 - Removed: none.
 
 ## Interactive Scope Boundary
 
-- In scope: cosmetic polish, accessible control refinement, and narrow UI defects on already implemented account, World, Character, or Adventure flows; specifically, the existing Adventure workbench becomes the full-height three-column desktop shell with no top navigation.
-- Out of scope: new capabilities, data or persistence changes, auth or authorization changes, public API or typed-contract changes, deployment changes, and multi-Epic behavior changes.
-- Stop and route to `/sdd-change --plan` if a request changes a Requirement or Scenario, requires a data/auth/API/deployment change, or crosses Epic ownership without a clear existing Story.
+- In scope: cosmetic polish, accessible control refinement, and narrow UI defects on already implemented account, World, Character, or Adventure flows; specifically, the existing Adventure workbench becomes the full-height three-column desktop shell with no top navigation. This replan also permits the owner-only Adventure detail contract to project its already durable completed and active Act/Pass data for the chat transcript.
+- Out of scope: new data storage or migrations, auth or authorization changes, Guide disclosure, changing the Game Master's normal story context, model/provider behavior, deployment changes, and multi-Epic behavior changes.
+- Stop and route to `/sdd-change --plan` if a request goes beyond this owner-only transcript projection or changes a Requirement or Scenario outside LC-003/S2.
 
 ## Scope Decisions
 
 - Confirmed: the session starts with no concrete UI adjustment selected; each request is classified and recorded in `tasks.md` before or immediately after implementation.
+- Confirmed: a resolved Act and Pass are player-facing chat events; private Guide text is not. The returned transcript must survive reload from existing durable turn and revision data, while the Game Master's prompt continues to receive narration and state only.
 - Deferred: all unrequested product, API, and behavior work.
 
 ## Change Folder
@@ -50,10 +54,10 @@ This tracked interactive session captures small, user-directed improvements to e
 ## Impact
 
 - Product: preserves the private creator-first World bible and non-canonical Adventure boundaries.
-- Code: frontend presentation only unless a concrete request proves otherwise.
-- Tests: focused component, browser, or rendered-route verification selected per refinement.
-- Docs: this Change ledger and affected Epic evidence only when behavior or its proof changes.
-- ADRs: not expected for cosmetic or narrow existing-flow refinements.
+- Code: frontend presentation plus a narrow owner-only Adventure query/client contract projection; no schema or persistence writer change.
+- Tests: focused query/service, client route/workbench, Storybook, and rendered-browser verification selected per refinement.
+- Docs: this Change ledger and LC-003/S2 behavior/evidence after implementation.
+- ADRs: not expected because this reuses existing immutable turn/revision data and does not establish a new storage or integration boundary.
 
 ## Release Communication Impact
 

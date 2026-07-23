@@ -180,13 +180,15 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         typeof value.activeTurn.trigger === 'string' &&
         adventureTurnTriggers.has(value.activeTurn.trigger as AdventureTurnTrigger) &&
         typeof value.activeTurn.status === 'string' &&
-        adventureTurnStatuses.has(value.activeTurn.status as AdventureTurnStatus))) &&
+        adventureTurnStatuses.has(value.activeTurn.status as AdventureTurnStatus) &&
+        (value.activeTurn.content === null || typeof value.activeTurn.content === 'string'))) &&
     Array.isArray(story) &&
     story.every(
       (entry) =>
         isRecord(entry) &&
         typeof entry.id === 'string' &&
         typeof entry.kind === 'string' &&
+        ['narration', 'act', 'pass'].includes(entry.kind) &&
         typeof entry.content === 'string'
     )
   )

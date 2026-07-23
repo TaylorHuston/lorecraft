@@ -56,6 +56,21 @@ const readyAdventure: AdventureDetail = {
       kind: 'narration',
       content: 'The chapel doors yield to the storm, and Mira looks up from the darkened aisle.',
     },
+    {
+      id: 'act-1',
+      kind: 'act',
+      content: 'I ask Mira why the bell rang.',
+    },
+    {
+      id: 'narration-1',
+      kind: 'narration',
+      content: 'Mira lowers her gaze and gestures toward the vestry.',
+    },
+    {
+      id: 'pass-1',
+      kind: 'pass',
+      content: 'Pass',
+    },
   ],
 }
 
@@ -129,6 +144,9 @@ export const ReadyDesktop: Story = {
     )
     expect(within(player).getByRole('button', { name: 'Adventure settings' })).toBeVisible()
     expect(canvasElement.querySelector('main > header')).not.toBeInTheDocument()
+    expect(within(story).getAllByRole('article', { name: 'Player message' })).toHaveLength(2)
+    expect(within(story).getAllByRole('article', { name: 'Game Master message' })).toHaveLength(2)
+    expect(within(story).queryByText('Direct the Game Master privately…')).not.toBeInTheDocument()
     await expect(player).toHaveTextContent('Elara Vance')
     await expect(scene).toHaveTextContent('Mira')
     const playerRect = player.getBoundingClientRect()
@@ -244,7 +262,12 @@ export const TurnPending: Story = {
   render: () =>
     renderAdventure({
       ...readyAdventure,
-      activeTurn: { id: '33333333-3333-4333-8333-333333333333', trigger: 'act', status: 'pending' },
+      activeTurn: {
+        id: '33333333-3333-4333-8333-333333333333',
+        trigger: 'act',
+        status: 'pending',
+        content: 'I follow Mira into the vestry.',
+      },
     }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -264,6 +287,7 @@ export const TurnFailed: Story = {
         id: '33333333-3333-4333-8333-333333333333',
         trigger: 'guide',
         status: 'failed',
+        content: null,
       },
     }),
   play: async ({ canvasElement }) => {

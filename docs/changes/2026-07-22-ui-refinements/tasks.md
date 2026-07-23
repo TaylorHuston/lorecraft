@@ -5,8 +5,8 @@ status: in_progress
 
 ## Resume Here
 
-- Adventure-mode desktop composition and pinned frozen-World heading are implemented and verified through focused tests and direct Storybook rendering. Await the user's manual check or the next refinement.
-- Keep future requests within the proposal boundary. Replan before any behavioral, data, auth, API, deployment, or cross-Epic expansion.
+- Owner-visible Act/Pass transcript and chat layout are implemented, including the compact fading bottom composer. The remaining blocker is database-backed proof for the new query contract: provide an acknowledged disposable `TEST_DATABASE_URL`, then run the focused backend test and aggregate candidate gate.
+- Keep the Change `in_progress`: no local commit was requested for this phase, and its required database and final committed-candidate gates remain outstanding.
 
 ## Interactive Log
 
@@ -20,6 +20,9 @@ status: in_progress
 | 2026-07-22 | In Settings, show each current-Scene NPC as a square avatar card and open its editable attributes on click. | cosmetic / existing Debug workflow relocation | LC-003/S3 R1-R3; Adventure page, reusable NPC editor, tests, Storybook, and Change design | Use the existing current-Scene projection and local Debug autosave boundary; do not introduce a new all-World-NPC API or production mutation path. |
 | 2026-07-22 | Keep the Settings modal at the NPC editor height and reduce Back to NPCs to an arrow icon. | cosmetic | Shared Dialog, Adventure page, route test, and rendered Storybook fixture | Preserve the icon's accessible Back to NPCs label and apply the stable desktop height to every Settings section. |
 | 2026-07-22 | Make the Settings workspace interior fill the modal height. | cosmetic | Shared Dialog, Adventure page, route test, and rendered Storybook fixture | Stretch the wide dialog content row plus its settings workspace, navigation, and panel without changing narrow fallback behavior. |
+| 2026-07-22 | Make the Adventure interface chat-like: player messages right, Game Master/NPC messages left. | scope expansion / owner-only query-contract refinement | LC-003/S2, Adventure detail query/client contract, workbench, focused query/frontend/contract/browser evidence | Replan accepted by the user: derive durable Act/Pass display events from existing turns/revisions, omit Guide text entirely, and keep the model's normal story context narration-only. |
+| 2026-07-22 | Fade narration beneath the bottom composer; reduce its height and inset Send/Pass inside the input's lower-right. | cosmetic / chat-composer refinement | Adventure workbench markup/CSS, focused test, Storybook, and Change design | Overlay the Story with a noninteractive fade, reserve textarea bottom clearance for touch actions, and retain Act/Guide/Pass behavior. |
+| 2026-07-22 | Make Send/Pass joined equal-width controls that straddle the input's bottom border. | cosmetic / chat-composer refinement | Adventure workbench CSS, pending label, Storybook, and Change design | Position the action row halfway across the border, remove its gap, preserve touch targets and typing clearance. |
 
 ## Checklist
 
@@ -40,8 +43,13 @@ status: in_progress
 - [x] Render current-Scene NPC avatar cards and reuse the bounded local Debug editor on selection.
 - [x] Fix the wide Settings modal at the NPC editor height and use an accessible icon-only Back control.
 - [x] Stretch the Settings workspace, left navigation, and detail panel to the modal's usable height.
+- [x] Add a failing-first owner-detail query contract for chronological resolved/current Act/Pass display events and Guide exclusion.
+- [x] Render left-aligned Game Master and right-aligned Player chat messages with non-visual author labels.
+- [x] Reconcile LC-003/S2 R3-S2 and new R5-S6 behavior/evidence after focused verification.
+- [x] Regenerate and verify the typed API contract after the server route shape change.
+- [x] Add the lower-story fade and compact inset-action chat composer.
 - [ ] Rerun the targeted Playwright Adventure journey after the stalled runner is recovered.
-- [ ] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
+- [x] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
 
 ## Implementation Ledger
 
@@ -55,6 +63,10 @@ status: in_progress
 | 2026-07-22 | Settings NPC cards | `AdventurePage`, `AdventureNpcEditor`, CSS, focused tests, Storybook | Replaced the NPC placeholder with current-Scene square initial-avatar cards. Selecting a card opens all existing NPC attributes and preserves local-only autosave behavior. | uncommitted |
 | 2026-07-22 | Stable Settings workspace frame | shared `Dialog`, `AdventurePage`, route test | Wide Settings sections now retain the NPC editor's height; the editor Back control is a Lucide arrow icon with an accessible label. | uncommitted |
 | 2026-07-22 | Full-height Settings interior | shared `Dialog`, `AdventurePage`, route test | The dialog's remaining grid row now stretches the workspace; its left navigation and right panel fill the same usable height. | uncommitted |
+| 2026-07-22 | Chat transcript replan | Change proposal/design/tasks | Reclassified the request from presentation-only work to a LC-003/S2 owner-detail contract refinement. Existing durable turns and revisions are sufficient; Guide and generation-context privacy remain fixed constraints. | uncommitted |
+| 2026-07-22 | Owner chat transcript | query service, generated client contract, frontend Workbench/CSS, route/workbench/adapter tests, Storybook, LC-003/S2 | Derived completed and active Act/Pass messages from durable turn/revision data; Guide remains absent from the response and UI. Story messages now render Game Master left and Player right with screen-reader author labels. | commit candidate; user authorization pending |
+| 2026-07-22 | Compact fading chat composer | `AdventureWorkbench`, CSS, focused test, Storybook | The composer overlays a lower-story fade, uses a shorter fixed text area, and places Send/Pass in the input's lower-right above reserved text clearance. | uncommitted |
+| 2026-07-22 | Joined border-straddling composer actions | `AdventureWorkbench`, CSS, Storybook | Send and Pass are 72px equal-width controls with no gap; their shared vertical midpoint sits on the textarea's bottom border. The sending label is concise enough to retain that geometry. | uncommitted |
 
 ## Verification Ledger
 
@@ -80,34 +92,107 @@ status: in_progress
 | 2026-07-22 | final Settings NPC regression | focused tests, component suite, and production build | Route/workbench tests pass 38/38, the focused Settings stories pass 20/20, all component stories pass 89/89, and the frontend production build succeeds. | passed |
 | 2026-07-22 | fixed-height / icon-only Back contract | focused route test and rendered Storybook inspection | The route contract confirms the Back control exposes the Lucide arrow while retaining its accessible name. Desktop rendering confirms a stable 832px Settings dialog in card and editor views with no page errors. | passed |
 | 2026-07-22 | full-height inner workspace inspection | rendered Storybook inspection | At 1440x900, the 832px dialog contains a 734px Settings workspace; its navigation and panel both fill that usable height with no page errors. | passed |
+| 2026-07-22 | owner transcript failing-first backend command | guarded database test | The new `adventure_query_service` contract test was added first. The test harness correctly refused to write because this workspace lacks `ALLOW_TEST_DATABASE_WRITES=1` and a separate disposable `TEST_DATABASE_URL`; no database test body ran. | blocked; safe refusal only |
+| 2026-07-22 | focused frontend transcript regression | automated UI/client contract | `AdventureWorkbench`, `AdventureRoutes`, and Tuyau adapter tests pass 55/55, including Player/Game Master labels, active Act cache content, and typed transcript parsing. | passed |
+| 2026-07-22 | full Storybook suite | component interaction regression | All Storybook tests pass 89/89; `ReadyDesktop` now asserts two Player and two Game Master messages. | passed |
+| 2026-07-22 | frontend build; backend/frontend typecheck and lint; generated contract check | supporting static/contract gates | The production frontend bundle, both workspace static checks, and regenerated Tuyau contract check pass. | passed |
+| 2026-07-22 | compact composer ownership contract | failing-first then focused frontend regression | The new assertion initially failed because Send sat outside the input. With actions inset, the workbench test passes; frontend typecheck and lint remain clean. | passed after expected initial failure; 20/20 |
+| 2026-07-22 | compact composer desktop and narrow inspection | rendered Storybook | The lower Story fades beneath the composer dock at 1440x900 and 390x844. The 96px input keeps Send/Pass inside its lower-right with a measured 12px bottom clearance and no Vite overlay. | passed |
+| 2026-07-22 | full component suite, production build, and Change validation | final frontend/SDD regression | All component stories pass, the frontend production bundle builds, and the active Change validates with no errors after the compact composer refinement. | passed 89/89; valid; 2 known `LARGE_STORY_SCOPE` warnings |
+| 2026-07-22 | joined border-action regression | focused frontend, Storybook, and production build | The workbench test, frontend typecheck/lint, all component stories, and production build remain green after the equal-width border-straddling action treatment. | passed; 20/20 focused, 89/89 Storybook |
 
 ## Visual Verification Matrix
 
 | Surface | Route / Fixture | Viewport / State | Tool | Inspection Result | Console / Network | Status |
 |---|---|---|---|---|---|---|
 | Adventure ready state | `Application/Adventures/Workbench` ReadyDesktop and ReadyMobile | 1440x900 desktop three panes; 390x844 narrow tabs | Storybook plus `agent-browser` | Desktop image shows Player / Story / Scene only, with Story dominant, no header, and the pinned `Stormbound Chapel` World name. A long-story simulation shows narration fading beneath the title gradient; narrow Player tab retains contextual actions. | No Vite overlay; meaningful content; expected controls and regions present. | passed |
-| Adventure ready composer | `Application/Adventures/Workbench` ReadyToAct | 1440x900 desktop | Storybook plus `agent-browser` | Composer shows no provider-disclosure line; Send and Pass sit together at the input's right edge, with Act/Guide and story content unchanged. | No page errors; expected Story, Player, Scene, Send, and Pass controls present. | passed |
+| Adventure ready composer | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop; 390x844 narrow | Storybook plus `agent-browser` | The lower narration fades beneath the composer dock. Its 96px text area ends halfway through the joined, equal-width Send/Pass row; the controls straddle that lower border with no gap. | No Vite overlay; meaningful content; action widths are 72px, gap is 0px, and the row midpoint equals the input bottom. | passed |
 | Adventure Settings workspace | `Application/Adventures/Workbench` ReadyToAct | 1440x900 desktop | Storybook plus `agent-browser` | A wide modal shows the Adventure Settings left navigation and a spacious detail panel, with a bounded Reset section. NPCs and Locations are available as future-tool tabs. | No page errors; dialog, all tabs, and Reset control present. | passed |
 | Settings NPC cards and editor | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, two-card fixture | Storybook plus `agent-browser` | NPCs presents square initial-avatar cards; each name is visible. Selecting Mira opens the complete editable card in the same modal with Back to NPCs. | No page errors; card buttons and all editor fields present. | passed |
 | Stable Settings modal frame | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, card and editor views | Storybook plus `agent-browser` | The dialog remains 832px high in both views; the editor Back control renders as an icon-only left arrow. | No page errors; Back retains an accessible name. | passed |
 | Full-height Settings workspace | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, card view | Storybook plus `agent-browser` | The left navigation divider and the right detail panel extend through the workspace's full usable height. | No page errors; dialog 832px, workspace/navigation 734px. | passed |
+| Owner chat transcript | `Application/Adventures/Workbench` ReadyDesktop and TurnPending | 1440x900 desktop; 390x844 narrow; ready and resolving Act states | Storybook plus `agent-browser` | Ready view directly shows two Game Master bubbles on the left and Act/Pass bubbles on the right; narrow view wraps all messages without overflow. The pending fixture adds the active Act bubble before the restrained resolving state. | Storybook loaded meaningful content; no Vite overlay. Snapshot reported 2 Player / 2 Game Master messages in ready state and no Guide composer text in pending state. | passed |
 
 ## Manual UI Confirmation
 
 - Status: pending user
 - App URL / route: `http://localhost:4310/adventures/<existing-adventure-id>`; use a ready Adventure at desktop and narrow widths.
 - Required setup or test data: an authenticated account with a ready Adventure, or the `Application/Adventures/Workbench` Storybook fixture.
-- Steps for the user: open a ready Adventure at desktop width; confirm the page starts immediately with Player / Story / Scene columns, Story is central, and no top header remains. Confirm the World name is pinned at the Story column's top left and narration softly fades beneath it while scrolling. Confirm Return and Settings live at the top of Player. Open Settings: it should be a large two-pane modal with Adventure Settings, NPCs, and Locations on the left, and it should retain its full editor-height across sections. In NPCs, each current-Scene NPC should be a square avatar/name card. Open one and confirm all existing NPC attributes are available in the editor; use the arrow-only Back button to return to the cards. Confirm the composer has no repeated provider-disclosure line and its Send/Pass buttons are together at the right. At narrow width, use the Story / Player / Scene tabs; Player must expose Return and Settings, and Story must retain the composer.
-- Expected result: Return, reset access, Story reading, compact composer actions, stable-height settings navigation, current-Scene NPC card drill-down, and narrow tabs remain available without horizontal overflow.
-- Feedback that would change artifacts: removal of Return or Settings rather than relocation, or a new pane/flow, triggers replan before implementation.
+- Steps for the user: open a ready Adventure at desktop width; confirm the page starts immediately with Player / Story / Scene columns, Story is central, and no top header remains. Confirm the World name is pinned at the Story column's top left and narration softly fades beneath it while scrolling. Submit an Act, then Pass: each submitted player event should appear on the Story's right before its Game Master response on the left. Submit a Guide and confirm its text does not appear as a message. Reload after a completed Act/Pass and confirm the message order remains. Confirm Return and Settings live at the top of Player. Open Settings: it should be a large two-pane modal with Adventure Settings, NPCs, and Locations on the left, and it should retain its full editor-height across sections. In NPCs, each current-Scene NPC should be a square avatar/name card. Open one and confirm all existing NPC attributes are available in the editor; use the arrow-only Back button to return to the cards. Confirm the composer has no repeated provider-disclosure line, that lower Story text softly fades beneath its dock, and that the joined equal-width Send/Pass row straddles the input's lower border without typed text entering its reserved bottom space. At narrow width, use the Story / Player / Scene tabs; Player must expose Return and Settings, and Story must retain the composer.
+- Expected result: durable Act/Pass player bubbles align right, Game Master narration aligns left, Guide remains private, and the existing composition, recovery, settings, and narrow tabs remain available without horizontal overflow.
+- Feedback that would change artifacts: a request to reveal Guide text, add another participant/message type, edit transcript history, or alter Game Master prompt history triggers another replan before implementation.
 
 ## Artifact Updates
 
-- LC-003/S1 R5 and S3 current-Scene card implementation/evidence now map Player-pane controls, Settings NPC cards, and rendered Storybook proof. No release communication is expected for this presentation refinement.
+- LC-003/S1 R5 and S3 current-Scene card implementation/evidence map Player-pane controls, Settings NPC cards, and rendered Storybook proof. LC-003/S2 now distinguishes the owner-visible Act/Pass transcript from the narration-only model context. No release communication is expected because this is a private local product-flow refinement.
 
 ## Open Questions
 
-- None blocking.
+- None blocking. User confirmed durable Act/Pass player bubbles and continued Guide exclusion on 2026-07-22.
+
+## Planning Updates
+
+| Date | Discovery / Classification | Decision | Artifacts Changed | Restart Point |
+|---|---|---|---|---|
+| 2026-07-22 | User-requested chat alignment requires historical player messages, but the current owner detail returns narration only. This is a scope expansion and typed-contract refinement within LC-003/S2. | Return only owner-visible Act/Pass transcript events derived from existing durable turn/revision records. Guide remains absent from the browser response and generation context; no storage migration or new Epic is required. | `proposal.md`, `design.md`, `tasks.md`; LC-003/S2 will be reconciled during Apply. | Run `/sdd-apply` from the new failing query-contract test; implement the query/client/workbench projection, then update Epic evidence. |
+
+## Implementation Risk And Confirmation Matrix
+
+| Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
+|---|---|---|---|---|---|
+| LC-003/S2/R3-S2, R5-S6 owner transcript | Act/Pass events appear once in chronological order; Guide never appears. | Joining turns to story entries leaks Guide, duplicates messages, or loses them after reload. | Query test with opening, Act, Pass, Guide, and active turn fixtures. | Failing-first test exists; its required guarded database run is blocked by absent disposable environment. | blocked |
+| LC-003/S2/R5-S6 workbench | Alignment supplements rather than replaces author semantics. | Long bubbles clip, messages appear in the wrong column, or assistive tech cannot identify authors. | Workbench test and desktop/narrow Storybook inspection. | 55 focused frontend tests, 89 Storybook tests, and direct desktop/narrow/pending inspection pass. | proved |
+| Ready composer layout | The compact composer remains readable while lower narration recedes beneath it. | Text reaches controls, actions fail to straddle the input border or differ in width, or the fixed dock obscures the Story without a fade. | DOM ownership assertion plus desktop/narrow Storybook geometry inspection. | Focused workbench test passes; rendered view shows 96px input, joined 72px actions, 0px gap, midpoint on the border, and no overlay. | proved |
+
+## Pattern Parity Matrix
+
+| Concern | Reference Location / Contract | New Location / Contract | Focused Proof | Intentional Divergence / Gap | Status |
+|---|---|---|---|---|---|
+| owner query and private input filtering | `adventure_query_service#findForOwner` current narration-only projection | same owner query derives visible Act/Pass only | functional query service fixture | Guide is intentionally excluded even for the owner-visible transcript. | blocked on disposable database |
+| Story reading and responsive composition | `AdventureWorkbench#StoryRegion` current centered narration | same region's labelled left/right message entries | workbench + Storybook desktop/narrow evidence | Chat layout changes alignment, not pane/tabs/composer behavior. | matched |
+
+## Boundary Contract Matrix
+
+| Origin Condition | Domain Result / Invariant | Adapter / Transport Mapping | Client Behavior / Retryability | Exact Proof | Status |
+|---|---|---|---|---|---|
+| resolved Act/Pass tied to a head-lineage revision | owner may read a derived display event before its resulting narration | `AdventureQueryService` → existing detail route/Tuyau → `AdventureDetail` → workbench | durable right-side player message after refresh; no retry behavior added | frontend type/adapter/workbench proof passes; functional query fixture blocked on database | partial; database proof blocked |
+| private Guide or non-owner Adventure | Guide input and another owner's events are not browser data | query omits Guide and preserves existing non-disclosing lookup | no bubble/no content; existing not-found behavior unchanged | Guide fixture/workbench proof passes; query fixture and existing owner-boundary functional proof await disposable database | partial; database proof blocked |
+
+## Stateful Transition Matrix
+
+| Start State | Trigger / Interleaving | Durable Invariant | Observer / Recovery Behavior | Focused Test Or Runtime Observation | Result |
+|---|---|---|---|---|---|
+| resolved Act/Pass | browser reload | event is reconstructed once from stored turn/revision lineage | right bubble precedes matching narration | functional query result + route refresh test | blocked on disposable database |
+| pending or failed Act/Pass | poll, retry, or discard | active bubble persists through recovery and vanishes only when discard removes the turn or resolution commits it | composer/recovery remains authoritative | route/workbench active-turn fixtures and direct pending Storybook inspection | passed for client state; durable query proof blocked |
+| private Guide | pending, failed, or resolved | Guide is never a visible transcript event | no bubble at each lifecycle state | Guide workbench fixture assertions; query fixture pending database | partial; database proof blocked |
+
+## Decision Fan-Out Ledger
+
+| Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
+|---|---|---|---|---|---|
+| 2026-07-22 | Durable Act/Pass chat transcript, Guide exclusion retained. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, frontend proof, generated contract, rendered inspection, and Epic reconciliation complete. README unchanged because it already says Acts/Passes and private Guides resolve; release note not needed for this private refinement. | partial; database proof and commit candidate remain |
+
+## Verification Environment
+
+| Evidence Obligation | Required Setup / Safety Boundary | Needed For | Current Readiness | Result / Resolution |
+|---|---|---|---|---|
+| Query projection | guarded disposable database with the existing backend test harness | LC-003/S2/R3-S2, R5-S6 | blocked: no `TEST_DATABASE_URL` or write acknowledgement supplied | Safe refusal confirmed; rerun the focused query test only with an acknowledged disposable target. |
+| Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
+| Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | current working tree check passed; commit-sensitive rerun pending | `npm run generate:contracts && npm run check:contracts` passed before commit; rerun after an authorized commit. |
+
+## Verification Scope Decision
+
+- Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
+- Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
+- Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
+- Exact committed source candidate: pending.
+- Freshness and cache treatment: run against the final commit with the required disposable-test environment; record meaningful execution.
+- Aggregate result and meaningful execution/count evidence: pending.
+- Post-gate evidence-record-only changes and affected checks rerun: pending.
+- Prospective integration gate required: yes; `/sdd-review` will assess the accumulated `develop` candidate.
+- Current target and prospective integration tree/ref: `develop`; pending final candidate.
+- Integration-candidate result or reason source proof is reusable: pending independent review.
+- Remote CI role: corroborating.
 
 ## Closeout
 

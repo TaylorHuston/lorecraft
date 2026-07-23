@@ -111,12 +111,27 @@ describe('Tuyau Adventure adapter', () => {
           },
         ],
       },
-      activeTurn: null,
+      activeTurn: {
+        id: '55555555-5555-4555-8555-555555555555',
+        trigger: 'act',
+        status: 'pending',
+        content: 'I follow Mira into the vestry.',
+      },
       story: [
         {
           id: '44444444-4444-4444-8444-444444444444',
-          kind: 'opening',
+          kind: 'narration',
           content: 'Thunder rolls over the chapel.',
+        },
+        {
+          id: '66666666-6666-4666-8666-666666666666',
+          kind: 'act',
+          content: 'I ask Mira why the bell rang.',
+        },
+        {
+          id: '77777777-7777-4777-8777-777777777777',
+          kind: 'pass',
+          content: 'Pass',
         },
       ],
     }

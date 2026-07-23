@@ -315,4 +315,173 @@ test.group('AdventureQueryService', (group) => {
       .firstOrFail()
     assert.equal(new Date(pending.last_played_at).toISOString(), original.toISOString())
   })
+
+  test('LC-003/S2/R3-S2 + R5-S6: projects only owner-visible Act and Pass messages into chronological chat history', async ({
+    assert,
+  }) => {
+    const author = await createUser('query-chat-author@example.com')
+    const owner = await createUser('query-chat-owner@example.com')
+    const { world } = await createPlayableWorld(author.id, 'query-chat-world', 'public')
+    const created = await createAdventure(
+      owner.id,
+      world.slug,
+      '55555555-5555-4555-8555-555555555555',
+      'Mara Venn'
+    )
+    const now = new Date('2026-07-22T18:00:00.000Z')
+    const [openingRevision] = await db
+      .table('adventure_revisions')
+      .insert({
+        adventure_id: created.adventureId,
+        sequence: 0,
+        kind: 'opening',
+        parent_revision_id: null,
+        created_at: now,
+      })
+      .returning(['id'])
+    const [actRevision] = await db
+      .table('adventure_revisions')
+      .insert({
+        adventure_id: created.adventureId,
+        sequence: 1,
+        kind: 'turn',
+        parent_revision_id: openingRevision.id,
+        created_at: now,
+      })
+      .returning(['id'])
+    const [passRevision] = await db
+      .table('adventure_revisions')
+      .insert({
+        adventure_id: created.adventureId,
+        sequence: 2,
+        kind: 'turn',
+        parent_revision_id: actRevision.id,
+        created_at: now,
+      })
+      .returning(['id'])
+    const [guideRevision] = await db
+      .table('adventure_revisions')
+      .insert({
+        adventure_id: created.adventureId,
+        sequence: 3,
+        kind: 'turn',
+        parent_revision_id: passRevision.id,
+        created_at: now,
+      })
+      .returning(['id'])
+
+    await db.table('adventure_story_entries').insert([
+      {
+        adventure_id: created.adventureId,
+        revision_id: openingRevision.id,
+        sequence: 0,
+        kind: 'narration',
+        content: 'Rain needles the chapel doors.',
+        created_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        revision_id: actRevision.id,
+        sequence: 0,
+        kind: 'narration',
+        content: 'Mira unlatches the side door.',
+        created_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        revision_id: passRevision.id,
+        sequence: 0,
+        kind: 'narration',
+        content: 'The bell rings once more.',
+        created_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        revision_id: guideRevision.id,
+        sequence: 0,
+        kind: 'narration',
+        content: 'A candle answers in the vestry.',
+        created_at: now,
+      },
+    ])
+    await db.table('adventure_turns').insert([
+      {
+        adventure_id: created.adventureId,
+        request_id: '55555555-5555-4555-8555-555555555556',
+        trigger: 'act',
+        input: 'I ask Mira to open the door.',
+        status: 'succeeded',
+        source_revision_id: openingRevision.id,
+        result_revision_id: actRevision.id,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        request_id: '55555555-5555-4555-8555-555555555557',
+        trigger: 'pass',
+        input: null,
+        status: 'succeeded',
+        source_revision_id: actRevision.id,
+        result_revision_id: passRevision.id,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        request_id: '55555555-5555-4555-8555-555555555558',
+        trigger: 'guide',
+        input: 'Reveal the hidden family secret.',
+        status: 'succeeded',
+        source_revision_id: passRevision.id,
+        result_revision_id: guideRevision.id,
+        created_at: now,
+        updated_at: now,
+      },
+    ])
+    const [activeTurn] = await db
+      .table('adventure_turns')
+      .insert({
+        adventure_id: created.adventureId,
+        request_id: '55555555-5555-4555-8555-555555555559',
+        trigger: 'act',
+        input: 'I step into the vestry.',
+        status: 'pending',
+        source_revision_id: guideRevision.id,
+        result_revision_id: null,
+        created_at: now,
+        updated_at: now,
+      })
+      .returning(['id'])
+    await db.from('adventures').where('id', created.adventureId).update({
+      status: 'ready',
+      head_revision_id: guideRevision.id,
+      turn_count: 3,
+      last_played_at: now,
+    })
+
+    const result = await new AdventureQueryService(() => DateTime.fromJSDate(now)).findForOwner(
+      owner.id,
+      created.adventureId
+    )
+
+    assert.deepEqual(
+      result?.story.map(({ kind, content }) => ({ kind, content })),
+      [
+        { kind: 'narration', content: 'Rain needles the chapel doors.' },
+        { kind: 'act', content: 'I ask Mira to open the door.' },
+        { kind: 'narration', content: 'Mira unlatches the side door.' },
+        { kind: 'pass', content: 'Pass' },
+        { kind: 'narration', content: 'The bell rings once more.' },
+        { kind: 'narration', content: 'A candle answers in the vestry.' },
+      ]
+    )
+    assert.deepEqual(result?.activeTurn, {
+      id: activeTurn.id,
+      trigger: 'act',
+      status: 'pending',
+      content: 'I step into the vestry.',
+    })
+    assert.notInclude(JSON.stringify(result), 'Reveal the hidden family secret.')
+  })
 })

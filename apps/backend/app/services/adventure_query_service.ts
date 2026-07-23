@@ -57,10 +57,11 @@ export type AdventureDetailDto = Omit<AdventureSummaryDto, 'playerName'> & {
     id: string
     trigger: 'act' | 'pass' | 'guide'
     status: 'pending' | 'processing' | 'failed'
+    content: string | null
   } | null
   story: Array<{
     id: string
-    kind: string
+    kind: 'narration' | 'act' | 'pass'
     content: string
   }>
 }
@@ -185,7 +186,7 @@ export default class AdventureQueryService {
         .whereIn('status', ['pending', 'processing', 'failed'])
         .orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'processing' THEN 1 ELSE 2 END")
         .orderBy('created_at', 'desc')
-        .select('id', 'trigger', 'status')
+        .select('id', 'trigger', 'status', 'input')
         .first(),
       adventure.headRevisionId
         ? db
@@ -200,13 +201,46 @@ export default class AdventureQueryService {
     const lineageIds = adventure.headRevisionId
       ? activeRevisionIds(revisions, adventure.headRevisionId)
       : []
-    const storyEntries = lineageIds.length
-      ? await AdventureStoryEntry.query()
-          .where('adventureId', adventure.id)
-          .whereIn('revisionId', lineageIds)
-          .orderBy('createdAt')
-          .orderBy('sequence')
-      : []
+    const [storyEntries, completedPlayerTurns] = lineageIds.length
+      ? await Promise.all([
+          AdventureStoryEntry.query()
+            .where('adventureId', adventure.id)
+            .whereIn('revisionId', lineageIds)
+            .orderBy('createdAt')
+            .orderBy('sequence'),
+          db
+            .from('adventure_turns')
+            .where('adventure_id', adventure.id)
+            .where('status', 'succeeded')
+            .whereIn('trigger', ['act', 'pass'])
+            .whereIn('result_revision_id', lineageIds)
+            .select('id', 'trigger', 'input', 'result_revision_id'),
+        ])
+      : [[], []]
+    const playerTurnByResultRevisionId = new Map(
+      completedPlayerTurns.map((turn) => [turn.result_revision_id as string, turn])
+    )
+    const story = storyEntries.flatMap((entry) => {
+      const playerTurn = playerTurnByResultRevisionId.get(entry.revisionId)
+      if (playerTurn) playerTurnByResultRevisionId.delete(entry.revisionId)
+
+      return [
+        ...(playerTurn
+          ? [
+              {
+                id: playerTurn.id as string,
+                kind: playerTurn.trigger as 'act' | 'pass',
+                content: playerTurn.trigger === 'pass' ? 'Pass' : (playerTurn.input as string),
+              },
+            ]
+          : []),
+        {
+          id: entry.id,
+          kind: 'narration' as const,
+          content: entry.content,
+        },
+      ]
+    })
 
     const summary = summaryFor(adventure)
     return {
@@ -274,13 +308,15 @@ export default class AdventureQueryService {
             id: activeTurn.id,
             trigger: activeTurn.trigger,
             status: activeTurn.status,
+            content:
+              activeTurn.trigger === 'act'
+                ? activeTurn.input
+                : activeTurn.trigger === 'pass'
+                  ? 'Pass'
+                  : null,
           }
         : null,
-      story: storyEntries.map((entry) => ({
-        id: entry.id,
-        kind: entry.kind,
-        content: entry.content,
-      })),
+      story,
     }
   }
 }

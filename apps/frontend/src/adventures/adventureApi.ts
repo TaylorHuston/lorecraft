@@ -98,10 +98,11 @@ export type AdventureDetail = Omit<AdventureSummary, 'playerName'> & {
     id: string
     trigger: AdventureTurnTrigger
     status: AdventureTurnStatus
+    content: string | null
   } | null
   story: Array<{
     id: string
-    kind: string
+    kind: 'narration' | 'act' | 'pass'
     content: string
   }>
 }

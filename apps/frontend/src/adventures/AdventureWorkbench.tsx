@@ -218,7 +218,7 @@ function TurnComposer({
             {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
           </em>
         </label>
-        <div className={styles.composerInput}>
+        <div className={styles.composerInput} data-slot="turn-composer-input">
           <div className={styles.composerModes} aria-label="Turn type" role="group">
             {(['act', 'guide'] as const).map((trigger) => (
               <Button
@@ -252,27 +252,27 @@ function TurnComposer({
             }
             value={text}
           />
+          <div className={styles.composerActions} data-slot="turn-composer-actions">
+            <Button pending={pending} pendingLabel="Sending…" size="touch" type="submit">
+              Send
+            </Button>
+            <Button
+              ref={passRef}
+              disabled={pending}
+              onClick={() => setPassOpen(true)}
+              size="touch"
+              type="button"
+              variant="secondary"
+            >
+              Pass
+            </Button>
+          </div>
         </div>
         {localError || error ? (
           <p className={styles.composerError} role="alert">
             {localError ?? error}
           </p>
         ) : null}
-        <div className={styles.composerActions} data-slot="turn-composer-actions">
-          <Button pending={pending} pendingLabel="Sending turn…" size="touch" type="submit">
-            Send
-          </Button>
-          <Button
-            ref={passRef}
-            disabled={pending}
-            onClick={() => setPassOpen(true)}
-            size="touch"
-            type="button"
-            variant="secondary"
-          >
-            Pass
-          </Button>
-        </div>
       </form>
       {passOpen ? (
         <ConfirmDialog
@@ -358,6 +358,18 @@ function StoryRegion({
     regionRef.current?.focus()
   }
 
+  const activePlayerMessage =
+    adventure.activeTurn?.trigger === 'act' || adventure.activeTurn?.trigger === 'pass'
+      ? {
+          id: adventure.activeTurn.id,
+          kind: adventure.activeTurn.trigger,
+          content:
+            adventure.activeTurn.trigger === 'pass'
+              ? 'Pass'
+              : (adventure.activeTurn.content ?? ''),
+        }
+      : null
+
   return (
     <section
       ref={regionRef}
@@ -409,13 +421,38 @@ function StoryRegion({
               </div>
             </div>
           ) : null}
-          {adventure.story.map((entry) => (
-            <article className={styles.storyEntry} key={entry.id}>
-              {entry.content.split(/\n\n+/).map((paragraph, index) => (
-                <p key={`${entry.id}-${index}`}>{paragraph}</p>
+          {adventure.story.map((entry) => {
+            const isPlayerMessage = entry.kind === 'act' || entry.kind === 'pass'
+            const author = isPlayerMessage ? 'Player' : 'Game Master'
+
+            return (
+              <article
+                aria-label={`${author} message`}
+                className={`${styles.storyEntry} ${
+                  isPlayerMessage ? styles.storyEntryPlayer : styles.storyEntryNarration
+                }`}
+                data-message-kind={entry.kind}
+                key={entry.id}
+              >
+                <span className={styles.srOnly}>{author}</span>
+                {entry.content.split(/\n\n+/).map((paragraph, index) => (
+                  <p key={`${entry.id}-${index}`}>{paragraph}</p>
+                ))}
+              </article>
+            )
+          })}
+          {activePlayerMessage?.content ? (
+            <article
+              aria-label="Player message"
+              className={`${styles.storyEntry} ${styles.storyEntryPlayer}`}
+              data-message-kind={activePlayerMessage.kind}
+            >
+              <span className={styles.srOnly}>Player</span>
+              {activePlayerMessage.content.split(/\n\n+/).map((paragraph, index) => (
+                <p key={`${activePlayerMessage.id}-${index}`}>{paragraph}</p>
               ))}
             </article>
-          ))}
+          ) : null}
         </div>
         <div className={styles.composerDock} data-slot="turn-composer-dock">
           {adventure.status === 'ready' && adventure.activeTurn?.status === 'failed' ? (
