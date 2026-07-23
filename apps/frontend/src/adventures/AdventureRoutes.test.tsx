@@ -368,7 +368,10 @@ describe('Adventure routes', () => {
     })
 
     await user.click(await screen.findByRole('button', { name: 'Guide' }))
-    await user.type(screen.getByRole('textbox', { name: 'Private direction for this turn' }), guideContent)
+    await user.type(
+      screen.getByRole('textbox', { name: 'Private direction for this turn' }),
+      guideContent
+    )
     await user.click(screen.getByRole('button', { name: 'Send' }))
 
     await waitFor(() =>
@@ -491,9 +494,7 @@ describe('Adventure routes', () => {
     await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     await user.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
-    await user.click(
-      within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' })
-    )
+    await user.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' }))
     const name = within(settingsDialog).getByRole('textbox', { name: 'Name' })
     await user.clear(name)
     await user.type(name, 'Mira the Watchful')
@@ -504,6 +505,7 @@ describe('Adventure routes', () => {
 
   it('LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure', async () => {
     const user = userEvent.setup()
+    const updatePlayerState = vi.fn().mockResolvedValue({ ...pendingAdventure, status: 'ready' })
     const resetAdventure = vi.fn().mockResolvedValue({
       adventureId: pendingAdventure.id,
       status: 'opening_pending',
@@ -520,6 +522,7 @@ describe('Adventure routes', () => {
           story: [{ id: 'opening', kind: 'narration', content: 'An opening.' }],
         }),
         resetAdventure,
+        updatePlayerState,
       },
       adventurePollIntervalMs: 60_000,
     })
@@ -546,12 +549,18 @@ describe('Adventure routes', () => {
     await user.keyboard('{ArrowDown}')
     expect(playerTab).toHaveFocus()
     expect(playerTab).toHaveAttribute('aria-selected', 'true')
-    expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
-      'Elara Vance'
-    )
-    expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
+    expect(within(settingsDialog).getByLabelText('Name')).toHaveValue('Elara Vance')
+    expect(within(settingsDialog).getByLabelText('Backstory')).toHaveValue(
       'An archivist following a forbidden map.'
     )
+    await user.clear(within(settingsDialog).getByLabelText('Status'))
+    await user.type(within(settingsDialog).getByLabelText('Status'), 'Watching the vestry.')
+    await waitFor(() => expect(updatePlayerState).toHaveBeenCalledTimes(1))
+    expect(updatePlayerState).toHaveBeenCalledWith(
+      pendingAdventure.id,
+      expect.objectContaining({ status: 'Watching the vestry.' })
+    )
+    playerTab.focus()
     await user.keyboard('{ArrowDown}')
     expect(npcsTab).toHaveFocus()
     expect(npcsTab).toHaveAttribute('aria-selected', 'true')
@@ -585,7 +594,9 @@ describe('Adventure routes', () => {
 
   it('LC-003/S3/R1-S1 + R2-S1 opens every current-Scene NPC card in Settings', async () => {
     const user = userEvent.setup()
-    const updateNpcState = vi.fn().mockResolvedValue({ ...pendingAdventure, status: 'ready' as const })
+    const updateNpcState = vi
+      .fn()
+      .mockResolvedValue({ ...pendingAdventure, status: 'ready' as const })
     renderTestApp({
       route: pendingAdventure.route,
       session: { id: 4, email: 'member@example.com' },
@@ -599,9 +610,7 @@ describe('Adventure routes', () => {
     await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
     await user.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
-    await user.click(
-      within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' })
-    )
+    await user.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' }))
 
     expect(within(settingsDialog).getByRole('heading', { name: 'Mira the Restless' })).toBeVisible()
     for (const field of [

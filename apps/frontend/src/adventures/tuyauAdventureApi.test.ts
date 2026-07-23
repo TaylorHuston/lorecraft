@@ -10,6 +10,7 @@ const tuyau = vi.hoisted(() => ({
   retryTurn: vi.fn(),
   discardTurn: vi.fn(),
   updateNpcDebugState: vi.fn(),
+  updatePlayerDebugState: vi.fn(),
   resetAdventure: vi.fn(),
   deleteAdventure: vi.fn(),
 }))
@@ -26,6 +27,7 @@ vi.mock('@tuyau/core/client', () => ({
         retryTurn: tuyau.retryTurn,
         discardTurn: tuyau.discardTurn,
         updateNpcDebugState: tuyau.updateNpcDebugState,
+        updatePlayerDebugState: tuyau.updatePlayerDebugState,
         reset: tuyau.resetAdventure,
         destroy: tuyau.deleteAdventure,
       },
@@ -318,6 +320,34 @@ describe('Tuyau Adventure adapter', () => {
         mood: 'Enter a value using 120 characters or fewer.',
         status: 'Enter a value using 320 characters or fewer.',
         memory: 'Enter a value using 500 characters or fewer.',
+      },
+    })
+  })
+
+  it('maps bounded Player Debug state validation to the Player field limits', async () => {
+    tuyau.updatePlayerDebugState.mockRejectedValue({
+      status: 422,
+      response: {
+        errors: [{ field: 'physicalDescription' }, { field: 'backstory' }, { field: 'status' }],
+      },
+    })
+    const api = createTuyauAdventureApi('http://frontend.example.test')
+
+    await expect(
+      api.updatePlayerState?.(summary.id, {
+        name: 'Mara',
+        currentLocationKey: 'chapel',
+        physicalDescription: 'p'.repeat(2_001),
+        backstory: 'b'.repeat(8_001),
+        status: 's'.repeat(1_001),
+      })
+    ).rejects.toMatchObject({
+      code: 'validation',
+      message: 'Correct the highlighted fields.',
+      fieldErrors: {
+        physicalDescription: 'Use 2,000 characters or fewer.',
+        backstory: 'Use 8,000 characters or fewer.',
+        status: 'Use 1,000 characters or fewer.',
       },
     })
   })

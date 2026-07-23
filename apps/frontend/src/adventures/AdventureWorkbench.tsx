@@ -16,12 +16,14 @@ import {
   type AdventureDetail,
   type AdventureTurnTrigger,
   type SubmitAdventureTurnInput,
+  type UpdateAdventurePlayerStateInput,
   type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 import styles from './AdventureWorkbench.module.css'
 
 export type AdventureView = AdventureDetail
 type NpcField = keyof UpdateAdventureNpcStateInput
+type PlayerField = keyof UpdateAdventurePlayerStateInput
 
 type AdventurePane = 'story' | 'player' | 'scene'
 
@@ -350,9 +352,7 @@ function StoryRegion({
           id: adventure.activeTurn.id,
           kind: adventure.activeTurn.trigger,
           content:
-            adventure.activeTurn.trigger === 'pass'
-              ? 'Pass'
-              : (adventure.activeTurn.content ?? ''),
+            adventure.activeTurn.trigger === 'pass' ? 'Pass' : (adventure.activeTurn.content ?? ''),
         }
       : null
 
@@ -717,10 +717,7 @@ export function AdventureNpcEditor({
             value={draft.privateKnowledge}
             {...fieldAccessibility('privateKnowledge')}
           />
-          <NpcFieldError
-            error={fieldErrors.privateKnowledge}
-            id={errorId('privateKnowledge')}
-          />
+          <NpcFieldError error={fieldErrors.privateKnowledge} id={errorId('privateKnowledge')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -786,6 +783,155 @@ export function AdventureNpcEditor({
           )}
         </dd>
       </div>
+    </>
+  )
+}
+
+export function AdventurePlayerEditor({
+  player,
+  onSave,
+}: {
+  player: AdventureView['player']
+  onSave?: (input: UpdateAdventurePlayerStateInput) => Promise<void>
+}) {
+  const [draft, setDraft] = useState<UpdateAdventurePlayerStateInput>({
+    name: player.name,
+    currentLocationKey: player.currentLocation.key,
+    physicalDescription: player.physicalDescription ?? '',
+    backstory: player.backstory ?? '',
+    status: player.status,
+  })
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<PlayerField, string>>>({})
+  const sourceSignature = JSON.stringify({
+    name: player.name,
+    currentLocationKey: player.currentLocation.key,
+    physicalDescription: player.physicalDescription ?? '',
+    backstory: player.backstory ?? '',
+    status: player.status,
+  })
+  const draftSignature = JSON.stringify(draft)
+  const [lastSubmittedSignature, setLastSubmittedSignature] = useState(sourceSignature)
+
+  useEffect(() => {
+    if (
+      !onSave ||
+      saving ||
+      sourceSignature === draftSignature ||
+      lastSubmittedSignature === draftSignature
+    )
+      return
+    const timeout = window.setTimeout(() => {
+      setLastSubmittedSignature(draftSignature)
+      setSaving(true)
+      setSaveError(null)
+      void onSave(draft)
+        .catch((error: unknown) => {
+          if (error instanceof AdventureApiError && error.code === 'validation') {
+            setFieldErrors(error.fieldErrors as Partial<Record<PlayerField, string>>)
+            setSaveError('Correct the highlighted fields.')
+            return
+          }
+          setSaveError(error instanceof Error ? error.message : 'Player state could not be saved.')
+        })
+        .finally(() => setSaving(false))
+    }, 500)
+    return () => window.clearTimeout(timeout)
+  }, [draft, draftSignature, lastSubmittedSignature, onSave, saving, sourceSignature])
+
+  function update<K extends PlayerField>(field: K, value: UpdateAdventurePlayerStateInput[K]) {
+    setFieldErrors((current) => {
+      const next = { ...current }
+      delete next[field]
+      return next
+    })
+    setSaveError(null)
+    setDraft((current) => ({ ...current, [field]: value }))
+  }
+
+  function fieldAccessibility(field: PlayerField) {
+    const error = fieldErrors[field]
+    return { 'aria-invalid': error ? true : undefined }
+  }
+
+  return (
+    <>
+      <div className={styles.npcEditor}>
+        <dt>Name</dt>
+        <dd>
+          <input
+            aria-label="Name"
+            disabled={!onSave || saving}
+            maxLength={100}
+            onChange={(event) => update('name', event.target.value)}
+            value={draft.name}
+            {...fieldAccessibility('name')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Current location</dt>
+        <dd>
+          <input
+            aria-label="Current location key"
+            disabled={!onSave || saving}
+            maxLength={100}
+            onChange={(event) => update('currentLocationKey', event.target.value)}
+            value={draft.currentLocationKey}
+            {...fieldAccessibility('currentLocationKey')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Physical description</dt>
+        <dd>
+          <textarea
+            aria-label="Physical description"
+            disabled={!onSave || saving}
+            maxLength={2000}
+            onChange={(event) => update('physicalDescription', event.target.value)}
+            value={draft.physicalDescription}
+            {...fieldAccessibility('physicalDescription')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Backstory</dt>
+        <dd>
+          <textarea
+            aria-label="Backstory"
+            disabled={!onSave || saving}
+            maxLength={8000}
+            onChange={(event) => update('backstory', event.target.value)}
+            value={draft.backstory}
+            {...fieldAccessibility('backstory')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Status</dt>
+        <dd>
+          <textarea
+            aria-label="Status"
+            disabled={!onSave || saving}
+            maxLength={1000}
+            onChange={(event) => update('status', event.target.value)}
+            value={draft.status}
+            {...fieldAccessibility('status')}
+          />
+        </dd>
+      </div>
+      {saving ? (
+        <p className={styles.npcEditorStatus} role="status">
+          Saving player state…
+        </p>
+      ) : null}
+      {saveError ? (
+        <p className={styles.npcEditorError} role="alert">
+          {saveError}
+        </p>
+      ) : null}
     </>
   )
 }

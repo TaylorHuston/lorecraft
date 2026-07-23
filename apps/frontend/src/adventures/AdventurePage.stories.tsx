@@ -107,6 +107,7 @@ function apiFor(adventure: AdventureDetail): AdventureApi {
     retryTurn: async (turnId) => ({ id: turnId, status: 'pending' }),
     discardTurn: async () => undefined,
     updateNpcState: async () => adventure,
+    updatePlayerState: async () => adventure,
     resetAdventure: async () => ({ adventureId: id, status: 'opening_pending', generation: 2 }),
     deleteAdventure: async () => undefined,
   }
@@ -148,7 +149,9 @@ export const ReadyDesktop: Story = {
     const player = canvas.getByRole('region', { name: 'Player' })
     const story = canvas.getByRole('region', { name: 'Story' })
     const scene = canvas.getByRole('region', { name: 'Scene' })
-    expect(within(story).getByRole('heading', { name: 'Stormbound Chapel', level: 1 })).toBeVisible()
+    expect(
+      within(story).getByRole('heading', { name: 'Stormbound Chapel', level: 1 })
+    ).toBeVisible()
     expect(
       within(story)
         .getByRole('heading', { name: 'Stormbound Chapel', level: 1 })
@@ -165,7 +168,9 @@ export const ReadyDesktop: Story = {
     expect(within(story).getByText('Action')).toBeVisible()
     expect(within(story).getAllByText('Pass')[0]).toBeVisible()
     expect(within(story).getAllByText('Guide')[0]).toBeVisible()
-    expect(within(story).getByText('Keep Mira guarded until the player earns her trust.').tagName).toBe('EM')
+    expect(
+      within(story).getByText('Keep Mira guarded until the player earns her trust.').tagName
+    ).toBe('EM')
     await expect(player).toHaveTextContent('Elara Vance')
     await expect(scene).toHaveTextContent('Mira')
     const playerRect = player.getBoundingClientRect()
@@ -347,9 +352,9 @@ export const ResetConfirmation: Story = {
     await expect(within(settingsDialog).getByRole('tab', { name: 'NPCs' })).toBeVisible()
     await expect(within(settingsDialog).getByRole('tab', { name: 'Locations' })).toBeVisible()
     await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'Player' }))
-    await expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
-      'Elara Vance'
-    )
+    await expect(within(settingsDialog).getByLabelText('Name')).toHaveValue('Elara Vance')
+    await expect(within(settingsDialog).getByLabelText('Status')).toBeVisible()
+    await expect(within(settingsDialog).getByLabelText('Status')).not.toBeDisabled()
     await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'Adventure Settings' }))
     await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
     await expect(page.getByRole('dialog', { name: 'Reset Adventure?' })).toBeVisible()
@@ -386,9 +391,7 @@ export const NpcSettings: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
     await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
-    await expect(
-      within(settingsDialog).getByRole('button', { name: 'Edit Mira' })
-    ).toBeVisible()
+    await expect(within(settingsDialog).getByRole('button', { name: 'Edit Mira' })).toBeVisible()
     await expect(
       within(settingsDialog).getByRole('button', { name: 'Edit Samira Vale' })
     ).toBeVisible()

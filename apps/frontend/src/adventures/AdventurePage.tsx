@@ -8,13 +8,14 @@ import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { Dialog } from '../components/Dialog/Dialog'
 import { IconButton } from '../components/IconButton/IconButton'
 import { worldQueryKeys } from '../worlds/worldApi'
-import { AdventureNpcEditor, AdventureWorkbench } from './AdventureWorkbench'
+import { AdventureNpcEditor, AdventurePlayerEditor, AdventureWorkbench } from './AdventureWorkbench'
 import {
   AdventureApiError,
   adventureQueryKeys,
   type AdventureApi,
   type AdventureDetail,
   type SubmitAdventureTurnInput,
+  type UpdateAdventurePlayerStateInput,
   type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 import styles from './AdventurePage.module.css'
@@ -72,6 +73,7 @@ export function AdventurePage({
   const [retryingLoad, setRetryingLoad] = useState(false)
   const queryKey = adventureQueryKeys.detail(account?.id ?? 0, id)
   const updateNpcStateFromApi = adventureApi.updateNpcState
+  const updatePlayerStateFromApi = adventureApi.updatePlayerState
   const adventure = useQuery({
     queryKey,
     queryFn: () => adventureApi.getAdventure(id),
@@ -180,6 +182,15 @@ export function AdventurePage({
       queryClient.setQueryData(queryKey, updatedAdventure)
     },
   })
+  const updatePlayerState = useMutation({
+    mutationFn: (input: UpdateAdventurePlayerStateInput) => {
+      if (!updatePlayerStateFromApi) {
+        throw new AdventureApiError('network', 'Player state editing is unavailable.')
+      }
+      return updatePlayerStateFromApi(id, input)
+    },
+    onSuccess: (updatedAdventure) => queryClient.setQueryData(queryKey, updatedAdventure),
+  })
 
   useEffect(() => {
     const error =
@@ -189,7 +200,8 @@ export function AdventurePage({
       submitTurn.error ??
       retryTurn.error ??
       discardTurn.error ??
-      updateNpcState.error
+      updateNpcState.error ??
+      updatePlayerState.error
     if (error instanceof AdventureApiError && error.code === 'unauthorized') {
       endSession()
     }
@@ -202,6 +214,7 @@ export function AdventurePage({
     retryTurn.error,
     submitTurn.error,
     updateNpcState.error,
+    updatePlayerState.error,
   ])
 
   if (adventure.isPending && !retryingLoad) {
@@ -268,6 +281,12 @@ export function AdventurePage({
           await updateNpcState.mutateAsync({ characterKey, input })
         }
       : undefined
+  const savePlayerState =
+    import.meta.env.DEV && updatePlayerStateFromApi
+      ? async (input: UpdateAdventurePlayerStateInput) => {
+          await updatePlayerState.mutateAsync(input)
+        }
+      : undefined
   const settingsNpc = adventure.data.scene.npcs.find((npc) => npc.key === settingsNpcKey) ?? null
 
   function openSettings() {
@@ -328,7 +347,11 @@ export function AdventurePage({
           <div className={styles.settingsContent} data-slot="adventure-settings-workspace">
             <nav className={styles.settingsNavigation} aria-label="Adventure settings sections">
               <p className={styles.settingsNavigationLabel}>Adventure</p>
-              <div aria-label="Adventure settings sections" className={styles.settingsTabs} role="tablist">
+              <div
+                aria-label="Adventure settings sections"
+                className={styles.settingsTabs}
+                role="tablist"
+              >
                 {settingsSections.map((section, index) => (
                   <button
                     key={section.id}
@@ -415,7 +438,11 @@ export function AdventurePage({
                         </p>
                       </div>
                       <dl className={styles.settingsNpcDetails}>
-                        <AdventureNpcEditor key={settingsNpc.key} npc={settingsNpc} onSave={saveNpcState} />
+                        <AdventureNpcEditor
+                          key={settingsNpc.key}
+                          npc={settingsNpc}
+                          onSave={saveNpcState}
+                        />
                       </dl>
                     </>
                   ) : (
@@ -465,30 +492,15 @@ export function AdventurePage({
                     <p className={styles.settingsEyebrow}>Adventure profile</p>
                     <h3>Player</h3>
                     <p className={styles.settingsCopy}>
-                      This Adventure&apos;s player profile and current state stay separate from World canon.
+                      This Adventure&apos;s player profile and current state stay separate from
+                      World canon.
                     </p>
                   </div>
                   <dl className={styles.settingsPlayerDetails}>
-                    <div>
-                      <dt>Name</dt>
-                      <dd>{adventure.data.player.name}</dd>
-                    </div>
-                    <div>
-                      <dt>Physical description</dt>
-                      <dd>{adventure.data.player.physicalDescription}</dd>
-                    </div>
-                    <div>
-                      <dt>Backstory</dt>
-                      <dd>{adventure.data.player.backstory}</dd>
-                    </div>
-                    <div>
-                      <dt>Status</dt>
-                      <dd>{adventure.data.player.status}</dd>
-                    </div>
-                    <div>
-                      <dt>Current location</dt>
-                      <dd>{adventure.data.player.currentLocation.name}</dd>
-                    </div>
+                    <AdventurePlayerEditor
+                      player={adventure.data.player}
+                      onSave={savePlayerState}
+                    />
                   </dl>
                 </section>
               ) : null}

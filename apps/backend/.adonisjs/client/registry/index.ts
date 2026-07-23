@@ -102,6 +102,12 @@ const routes = {
     tokens: [{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"npcs","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":1,"val":"key","end":""},{"old":"/api/v1/adventures/:id/npcs/:key/debug-state","type":0,"val":"debug-state","end":""}],
     types: placeholder as Registry['adventures.update_npc_debug_state']['types'],
   },
+  'adventures.update_player_debug_state': {
+    methods: ["PATCH"],
+    pattern: '/api/v1/adventures/:id/player/debug-state',
+    tokens: [{"old":"/api/v1/adventures/:id/player/debug-state","type":0,"val":"api","end":""},{"old":"/api/v1/adventures/:id/player/debug-state","type":0,"val":"v1","end":""},{"old":"/api/v1/adventures/:id/player/debug-state","type":0,"val":"adventures","end":""},{"old":"/api/v1/adventures/:id/player/debug-state","type":1,"val":"id","end":""},{"old":"/api/v1/adventures/:id/player/debug-state","type":0,"val":"player","end":""},{"old":"/api/v1/adventures/:id/player/debug-state","type":0,"val":"debug-state","end":""}],
+    types: placeholder as Registry['adventures.update_player_debug_state']['types'],
+  },
   'adventures.retry_turn': {
     methods: ["POST"],
     pattern: '/api/v1/adventures/:id/turns/:turnId/retry',
