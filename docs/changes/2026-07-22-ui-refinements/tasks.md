@@ -1,11 +1,11 @@
 ---
-status: planned
+status: in_progress
 ---
 # Tasks: UI Refinements
 
 ## Resume Here
 
-- Discovery completed on `change/ui-refinements`: the three historical LC-003 verification reports now form a valid immutable schema/lineage chain, and scoped Change validation passes with only the two accepted `LARGE_STORY_SCOPE` warnings. Commit this artifact-only enabling phase, transition to `in_progress`, then add failing-first proof for tied-timestamp lineage and Player Debug recovery/accessibility before production-code edits.
+- Discovery completed on `change/ui-refinements`: `409beaf` migrated the historical LC-003 verification reports into a valid immutable schema/lineage chain, and the Change is now `in_progress`. Scoped validation passes with only the two accepted `LARGE_STORY_SCOPE` warnings. Next, add failing-first proof for tied-timestamp lineage and Player Debug recovery/accessibility before production-code edits.
 - The final candidate still requires an explicitly acknowledged disposable `TEST_DATABASE_URL` and `E2E_DATABASE_URL` for targeted database/E2E proof and `npm run ci:required`. No such target is currently supplied; do not use the normal application database.
 
 ## Interactive Log
@@ -81,7 +81,7 @@ status: planned
 
 | Date | Slice | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|
-| 2026-07-23 | Epic verification report migration | three LC-003 immutable audit reports, Change ledger | Added current report schema, immutable refs, verdict metadata, required historical/current sections, and one unambiguous supersedes chain without changing historical outcomes. | commit pending |
+| 2026-07-23 | Epic verification report migration | three LC-003 immutable audit reports, Change ledger | Added current report schema, immutable refs, verdict metadata, required historical/current sections, and one unambiguous supersedes chain without changing historical outcomes. | `409beaf` |
 | 2026-07-22 | Session setup | Change artifacts | Created the interactive ledger; no application behavior changed. | uncommitted |
 | 2026-07-22 | Adventure desktop composition | `AdventurePage`, `AdventureWorkbench`, CSS, Storybook | Removed the top header. The full-height desktop shell remains Player / Story / Scene; Return and Settings moved into Player without changing reset behavior or narrow tabs. | uncommitted |
 | 2026-07-22 | Pinned Story title | `AdventureWorkbench`, CSS, Storybook | Used the frozen World name as the accessible, pinned Story heading with a soft gradient that lets scrolling narration fade behind it; no new Adventure field was added. | uncommitted |
@@ -283,4 +283,4 @@ status: planned
 - Release communication status: not applicable unless a refinement changes public user-visible behavior.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
 - Deferred gaps accepted: none. The targeted Playwright rerun is an unresolved verification gap, not accepted.
-- Folder state: active, `planned` after the 2026-07-23 replan.
+- Folder state: active, `in_progress` after the 2026-07-23 Apply discovery transition.
