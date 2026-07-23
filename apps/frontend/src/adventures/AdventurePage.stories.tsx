@@ -343,8 +343,14 @@ export const ResetConfirmation: Story = {
     await expect(
       within(settingsDialog).getByRole('tab', { name: 'Adventure Settings' })
     ).toHaveAttribute('aria-selected', 'true')
+    await expect(within(settingsDialog).getByRole('tab', { name: 'Player' })).toBeVisible()
     await expect(within(settingsDialog).getByRole('tab', { name: 'NPCs' })).toBeVisible()
     await expect(within(settingsDialog).getByRole('tab', { name: 'Locations' })).toBeVisible()
+    await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'Player' }))
+    await expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
+      'Elara Vance'
+    )
+    await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'Adventure Settings' }))
     await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
     await expect(page.getByRole('dialog', { name: 'Reset Adventure?' })).toBeVisible()
   },

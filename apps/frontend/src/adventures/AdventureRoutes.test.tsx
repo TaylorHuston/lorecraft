@@ -537,10 +537,21 @@ describe('Adventure routes', () => {
       name: 'Adventure Settings',
     })
     expect(adventureSettingsTab).toHaveAttribute('aria-selected', 'true')
+    const playerTab = within(settingsDialog).getByRole('tab', { name: 'Player' })
+    expect(playerTab).toBeVisible()
     const npcsTab = within(settingsDialog).getByRole('tab', { name: 'NPCs' })
     expect(npcsTab).toBeVisible()
     expect(within(settingsDialog).getByRole('tab', { name: 'Locations' })).toBeVisible()
     adventureSettingsTab.focus()
+    await user.keyboard('{ArrowDown}')
+    expect(playerTab).toHaveFocus()
+    expect(playerTab).toHaveAttribute('aria-selected', 'true')
+    expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
+      'Elara Vance'
+    )
+    expect(within(settingsDialog).getByRole('tabpanel', { name: 'Player' })).toHaveTextContent(
+      'An archivist following a forbidden map.'
+    )
     await user.keyboard('{ArrowDown}')
     expect(npcsTab).toHaveFocus()
     expect(npcsTab).toHaveAttribute('aria-selected', 'true')

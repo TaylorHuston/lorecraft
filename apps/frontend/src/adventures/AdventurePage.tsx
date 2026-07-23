@@ -45,6 +45,7 @@ function mutationError(error: unknown, fallback: string) {
 
 const settingsSections = [
   { id: 'adventure', label: 'Adventure Settings' },
+  { id: 'player', label: 'Player' },
   { id: 'npcs', label: 'NPCs' },
   { id: 'locations', label: 'Locations' },
 ] as const
@@ -452,6 +453,43 @@ export function AdventurePage({
                       )}
                     </>
                   )}
+                </section>
+              ) : null}
+              {settingsSection === 'player' ? (
+                <section
+                  aria-labelledby="adventure-settings-tab-player"
+                  id="adventure-settings-panel-player"
+                  role="tabpanel"
+                >
+                  <div>
+                    <p className={styles.settingsEyebrow}>Adventure profile</p>
+                    <h3>Player</h3>
+                    <p className={styles.settingsCopy}>
+                      This Adventure&apos;s player profile and current state stay separate from World canon.
+                    </p>
+                  </div>
+                  <dl className={styles.settingsPlayerDetails}>
+                    <div>
+                      <dt>Name</dt>
+                      <dd>{adventure.data.player.name}</dd>
+                    </div>
+                    <div>
+                      <dt>Physical description</dt>
+                      <dd>{adventure.data.player.physicalDescription}</dd>
+                    </div>
+                    <div>
+                      <dt>Backstory</dt>
+                      <dd>{adventure.data.player.backstory}</dd>
+                    </div>
+                    <div>
+                      <dt>Status</dt>
+                      <dd>{adventure.data.player.status}</dd>
+                    </div>
+                    <div>
+                      <dt>Current location</dt>
+                      <dd>{adventure.data.player.currentLocation.name}</dd>
+                    </div>
+                  </dl>
                 </section>
               ) : null}
               {settingsSection === 'locations' ? (

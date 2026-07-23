@@ -133,13 +133,15 @@
   overflow-wrap: anywhere;
 }
 
-.settingsNpcDetails {
+.settingsNpcDetails,
+.settingsPlayerDetails {
   display: grid;
   gap: var(--space-5);
   margin: 0;
 }
 
-.settingsNpcDetails dt {
+.settingsNpcDetails dt,
+.settingsPlayerDetails dt {
   color: var(--text-muted);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -147,7 +149,8 @@
   text-transform: uppercase;
 }
 
-.settingsNpcDetails dd {
+.settingsNpcDetails dd,
+.settingsPlayerDetails dd {
   margin: 0;
 }
 
@@ -198,7 +201,7 @@
   }
 
   .settingsTabs {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .settingsTab {
