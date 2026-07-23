@@ -214,6 +214,7 @@
 
 .storyEntryPlayer {
   justify-items: end;
+  margin-bottom: var(--space-6);
   padding-left: clamp(var(--space-6), 12%, 6rem);
 }
 

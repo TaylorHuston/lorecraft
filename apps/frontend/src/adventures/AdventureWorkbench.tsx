@@ -33,6 +33,12 @@ const paneLabels: Record<AdventurePane, string> = {
   scene: 'Scene',
 }
 
+function isPlayerMessageKind(
+  kind: AdventureView['story'][number]['kind']
+): kind is 'act' | 'pass' | 'guide' {
+  return kind === 'act' || kind === 'pass' || kind === 'guide'
+}
+
 const emptyNpcStateFallback = {
   mood: 'No current mood has been recorded yet.',
   status: 'No current status has been recorded yet.',
@@ -369,6 +375,12 @@ function StoryRegion({
         }
       : null
 
+  function playerMessageLabel(kind: 'act' | 'pass' | 'guide') {
+    if (kind === 'guide') return 'Guide'
+    if (kind === 'pass') return 'Pass'
+    return 'Action'
+  }
+
   return (
     <section
       ref={regionRef}
@@ -421,23 +433,22 @@ function StoryRegion({
             </div>
           ) : null}
           {adventure.story.map((entry) => {
-            const isPlayerMessage =
-              entry.kind === 'act' || entry.kind === 'pass' || entry.kind === 'guide'
-            const author = isPlayerMessage ? 'Player' : 'Game Master'
+            const playerMessageKind = isPlayerMessageKind(entry.kind) ? entry.kind : null
+            const author = playerMessageKind ? 'Player' : 'Game Master'
 
             return (
               <article
                 aria-label={`${author} message`}
                 className={`${styles.storyEntry} ${
-                  isPlayerMessage ? styles.storyEntryPlayer : styles.storyEntryNarration
+                  playerMessageKind ? styles.storyEntryPlayer : styles.storyEntryNarration
                 } ${entry.kind === 'guide' ? styles.storyEntryGuide : ''}`}
                 data-message-kind={entry.kind}
                 key={entry.id}
               >
                 <span className={styles.srOnly}>{author}</span>
-                {isPlayerMessage ? (
+                {playerMessageKind ? (
                   <span className={styles.messageAuthor} aria-hidden="true">
-                    You
+                    {playerMessageLabel(playerMessageKind)}
                   </span>
                 ) : null}
                 {entry.content.split(/\n\n+/).map((paragraph, index) => (
@@ -458,7 +469,7 @@ function StoryRegion({
             >
               <span className={styles.srOnly}>Player</span>
               <span className={styles.messageAuthor} aria-hidden="true">
-                You
+                {playerMessageLabel(activePlayerMessage.kind)}
               </span>
               {activePlayerMessage.content.split(/\n\n+/).map((paragraph, index) => (
                 <p key={`${activePlayerMessage.id}-${index}`}>
