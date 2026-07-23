@@ -210,6 +210,9 @@ function TurnComposer({
     )
   }
 
+  const inputPrompt =
+    mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'
+
   return (
     <>
       <form className={styles.turnComposer} aria-busy={pending} onSubmit={submitForm}>
@@ -231,13 +234,9 @@ function TurnComposer({
               </Button>
             ))}
           </div>
-          <label className={styles.composerPrompt} htmlFor="adventure-turn-input">
-            <em>
-              {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
-            </em>
-          </label>
           <textarea
             ref={textareaRef}
+            aria-label={inputPrompt}
             aria-invalid={Boolean(localError || error)}
             disabled={pending}
             id="adventure-turn-input"
@@ -247,9 +246,7 @@ function TurnComposer({
               setLocalError(null)
             }}
             onKeyDown={submitOnEnter}
-            placeholder={
-              mode === 'act' ? 'Describe your action…' : 'Direct the Game Master privately…'
-            }
+            placeholder={inputPrompt}
             value={text}
           />
           <div className={styles.composerActions} data-slot="turn-composer-actions">

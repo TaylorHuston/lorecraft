@@ -67,11 +67,12 @@ describe('AdventureWorkbench', () => {
     expect(screen.getByRole('region', { name: 'Player' })).toHaveTextContent('Elara Vance')
     expect(screen.getByRole('region', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
     expect(screen.queryByRole('heading', { name: 'Story' })).not.toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'What would you like to do?' })).toBeVisible()
+    expect(screen.getByRole('textbox', { name: 'What would you like to do?' })).toHaveAttribute(
+      'placeholder',
+      'What would you like to do?'
+    )
     expect(screen.getByRole('textbox').closest('[data-slot="turn-composer-dock"]')).not.toBeNull()
-    expect(
-      screen.getByText('What would you like to do?').closest('[data-slot="turn-composer-input"]')
-    ).not.toBeNull()
+    expect(screen.queryByText('What would you like to do?')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'false')
     expect(
@@ -420,12 +421,11 @@ describe('AdventureWorkbench', () => {
     )
 
     await user.click(screen.getByRole('button', { name: 'Guide' }))
-    expect(screen.getByRole('textbox', { name: 'Private direction for this turn' })).toBeVisible()
-    expect(
-      screen
-        .getByText('Private direction for this turn')
-        .closest('[data-slot="turn-composer-input"]')
-    ).not.toBeNull()
+    expect(screen.getByRole('textbox', { name: 'Private direction for this turn' })).toHaveAttribute(
+      'placeholder',
+      'Private direction for this turn'
+    )
+    expect(screen.queryByText('Private direction for this turn')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'true')
     expect(

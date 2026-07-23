@@ -399,32 +399,26 @@
   gap: 0;
 }
 
-.turnComposer .composerPrompt {
-  position: absolute;
-  z-index: 1;
-  top: calc(var(--control-dense) + var(--space-1));
-  left: var(--space-3);
-  pointer-events: none;
-  color: var(--text-muted);
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1rem;
-  font-style: italic;
-  font-weight: 400;
-}
-
 .turnComposer textarea {
   width: 100%;
   height: 6rem;
   min-height: 6rem;
   resize: none;
-  padding: calc(var(--space-3) + 1.5rem) var(--space-3)
-    calc(var(--control-touch) / 2 + var(--space-3));
+  padding: var(--space-3) var(--space-3) calc(var(--control-touch) / 2 + var(--space-3));
   border: 1px solid var(--control-boundary);
   border-radius: 0 var(--radius-control) var(--radius-control) var(--radius-control);
   background: var(--background);
   color: var(--text-primary);
   font: inherit;
   line-height: 1.5;
+}
+
+.turnComposer textarea::placeholder {
+  color: var(--text-muted);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  opacity: 1;
 }
 
 .turnComposer textarea:focus-visible {
