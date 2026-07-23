@@ -299,21 +299,10 @@
   width: fit-content;
   max-width: 100%;
   margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
   color: var(--text-secondary);
 }
 
-.storyEntryNarration p {
-  border-top-left-radius: var(--space-1);
-}
-
 .storyEntryPlayer p {
-  border-color: color-mix(in srgb, var(--action) 55%, var(--border));
-  border-top-right-radius: var(--space-1);
-  background: color-mix(in srgb, var(--action) 18%, var(--surface-raised));
   color: var(--text-primary);
 }
 
