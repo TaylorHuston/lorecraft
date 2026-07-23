@@ -5,8 +5,8 @@ status: planned
 
 ## Resume Here
 
-- Replan complete: use `/sdd-apply` to begin with failing tests for tied-timestamp transcript lineage and Player Debug functional/recovery/accessibility behavior. Do not edit LC-003 until those tests and the current implementation have been reconciled together.
-- The final candidate must use an explicitly acknowledged disposable `TEST_DATABASE_URL` and `E2E_DATABASE_URL` for targeted database/E2E proof and `npm run ci:required`. Historical LC-003 Epic verification reports also require migration or supersession through the Epic verification workflow before a readiness review can pass.
+- Discovery completed on `change/ui-refinements`: the three historical LC-003 verification reports now form a valid immutable schema/lineage chain, and scoped Change validation passes with only the two accepted `LARGE_STORY_SCOPE` warnings. Commit this artifact-only enabling phase, transition to `in_progress`, then add failing-first proof for tied-timestamp lineage and Player Debug recovery/accessibility before production-code edits.
+- The final candidate still requires an explicitly acknowledged disposable `TEST_DATABASE_URL` and `E2E_DATABASE_URL` for targeted database/E2E proof and `npm run ci:required`. No such target is currently supplied; do not use the normal application database.
 
 ## Interactive Log
 
@@ -81,6 +81,7 @@ status: planned
 
 | Date | Slice | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|
+| 2026-07-23 | Epic verification report migration | three LC-003 immutable audit reports, Change ledger | Added current report schema, immutable refs, verdict metadata, required historical/current sections, and one unambiguous supersedes chain without changing historical outcomes. | commit pending |
 | 2026-07-22 | Session setup | Change artifacts | Created the interactive ledger; no application behavior changed. | uncommitted |
 | 2026-07-22 | Adventure desktop composition | `AdventurePage`, `AdventureWorkbench`, CSS, Storybook | Removed the top header. The full-height desktop shell remains Player / Story / Scene; Return and Settings moved into Player without changing reset behavior or narrow tabs. | uncommitted |
 | 2026-07-22 | Pinned Story title | `AdventureWorkbench`, CSS, Storybook | Used the frozen World name as the accessible, pinned Story heading with a soft gradient that lets scrolling narration fade behind it; no new Adventure field was added. | uncommitted |
@@ -115,6 +116,7 @@ status: planned
 
 | Date | Check | Evidence Type | What It Proves | Result |
 |---|---|---|---|---|
+| 2026-07-23 | Historical Epic verification-report migration | SDD artifact validation | The versioned LC-003 report chain now has valid schema, immutable refs, matching verdict metadata, required current/historical sections, and one unambiguous tip. | passed; Change validation has 0 errors and two accepted `LARGE_STORY_SCOPE` warnings |
 | 2026-07-22 | `curl http://localhost:4310/` and `curl http://localhost:4311/api/health/ready` | local runtime readiness | The existing dev frontend and API were available before UI inspection. | frontend 200; backend ready 200 |
 | 2026-07-22 | `agent-browser` sign-in route inspection | rendered browser baseline | The running frontend loads meaningful content with no Vite error overlay; Adventure needs its existing Storybook fixture or authenticated local state for rendered inspection. | passed |
 | 2026-07-22 | `npm run test:storybook --workspace @lorecraft/frontend -- AdventurePage.stories.tsx` | failing-first rendered contract, then focused regression | Before implementation, the new Player-pane control contract failed because Return and Settings were only in the header. After implementation, all 19 selected Storybook checks passed. | passed after expected initial failure |
@@ -246,8 +248,9 @@ status: planned
 
 | Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
 |---|---|---|---|---|---|
+| 2026-07-23 | Historical verification reports require current report schema and linear immutable lineage. | The report chain cannot hide current validation failures; historical outcomes stay unchanged. | LC-003 review records, Change validation, final review handoff. | Migrated 2026-07-17 → 2026-07-22 0753 → 2026-07-22 1700; scoped validation passes. | resolved |
 | 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, and generated contract are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | partial; database proof remains blocked |
-| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Replanned proposal/design/tasks; actual Epic reconciliation and implementation remain Apply work. | planned |
+| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Replanned proposal/design/tasks; report migration completed and the remaining code/Epic reconciliation is Apply work. | partial |
 
 ## Verification Environment
 
@@ -257,7 +260,7 @@ status: planned
 | Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
 | Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | current working tree check passed; commit-sensitive rerun pending | `npm run generate:contracts && npm run check:contracts` passed before commit; rerun after an authorized commit. |
 | Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | blocked: caller has not supplied `TEST_DATABASE_URL`, `E2E_DATABASE_URL`, `ALLOW_TEST_DATABASE_WRITES=1`, and `ALLOW_E2E_DATABASE_WRITES=1` | Run focused functional tests, targeted E2E, then `npm run ci:required` on the final candidate. |
-| Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | blocked: three historical LC-003 reports are legacy-format | Migrate or supersede the reports through the Epic verification workflow; a schema-only edit is insufficient. |
+| Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | ready | The migrated immutable report chain preserves its source outcomes and now passes scoped Change validation with one unambiguous current tip. |
 
 ## Verification Scope Decision
 
