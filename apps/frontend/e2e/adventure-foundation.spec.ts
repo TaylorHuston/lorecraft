@@ -225,8 +225,10 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await expect(page).toHaveURL(adventureUrl)
     await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
 
-    await page.getByRole('link', { name: 'Return to World' }).click()
-    await page.getByRole('link', { name: 'Back to Worlds' }).click()
+    await page.getByRole('link', { name: 'Return to Worlds' }).click()
+    await expect(page).toHaveURL(/\/worlds$/)
+    await page.getByRole('link', { name: 'Stormbound Chapel' }).click()
+    await expect(page).toHaveURL(/\/worlds\/stormbound-chapel$/)
     const resume = page.getByRole('link', { name: `Resume Adventure as ${playerName}` })
     await expect(resume).toBeVisible()
     await expect(resume).toHaveText('Resume')

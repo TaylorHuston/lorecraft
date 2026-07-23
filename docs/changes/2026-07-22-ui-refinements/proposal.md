@@ -32,7 +32,7 @@ This tracked interactive session captures small, user-directed improvements to e
 ## Epic Story Changes
 
 - Added: none.
-- Modified behavior: Adventure mode uses its existing Player / Story / Scene workbench as the complete desktop shell; its contextual Return and Settings controls move from the top header into Player context.
+- Modified behavior: Adventure mode uses its existing Player / Story / Scene workbench as the complete desktop shell; its contextual icon-only Return to Worlds and Settings controls move from the top header into Player context.
 - Modified behavior: the owner-visible Adventure detail becomes a chronological chat transcript: completed Act text and Pass markers appear as right-aligned player messages, completed/current Guide input appears as an italicized right-aligned player message, and generated narration appears on the left. A pending or failed Act/Pass/Guide remains visible for its recovery state.
 - Modified behavior: selecting an NPC in Scene opens a read-only player-visible detail view with its name, physical description, and current Status (what it is doing). Complete Debug fields and editing remain in Settings.
 - Modified behavior: Adventure Settings exposes a development/test-only Player Debug editor for the five existing Adventure-owned Player fields; it uses the same owner/ready/resolving/frozen-Location protections as the local NPC editor and is unavailable in production.

@@ -157,9 +157,9 @@ export const ReadyDesktop: Story = {
         .getByRole('heading', { name: 'Stormbound Chapel', level: 1 })
         .closest('[data-slot="story-title"]')
     ).not.toBeNull()
-    expect(within(player).getByRole('link', { name: 'Return to World' })).toHaveAttribute(
+    expect(within(player).getByRole('link', { name: 'Return to Worlds' })).toHaveAttribute(
       'href',
-      '/worlds/stormbound-chapel'
+      '/worlds'
     )
     expect(within(player).getByRole('button', { name: 'Adventure settings' })).toBeVisible()
     expect(canvasElement.querySelector('main > header')).not.toBeInTheDocument()
@@ -194,7 +194,7 @@ export const ReadyMobile: Story = {
       'true'
     )
     await userEvent.click(canvas.getByRole('tab', { name: 'Player' }))
-    await expect(canvas.findByRole('link', { name: 'Return to World' })).resolves.toBeVisible()
+    await expect(canvas.findByRole('link', { name: 'Return to Worlds' })).resolves.toBeVisible()
     await expect(canvas.findByRole('button', { name: 'Adventure settings' })).resolves.toBeVisible()
     expectNoHorizontalOverflow(canvasElement)
   },
@@ -247,7 +247,7 @@ export const OpeningFailed: Story = {
     await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
-    await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
+    await expect(within(alert).getByRole('link', { name: 'Return to Worlds' })).toBeVisible()
     expectNoHorizontalOverflow(canvasElement)
   },
 }
@@ -261,7 +261,7 @@ export const OpeningFailedMobile: Story = {
     await expect(alert).toHaveTextContent('Opening failed')
     await expect(alert).toHaveTextContent("couldn't prepare your opening")
     await expect(within(alert).getByRole('button', { name: 'Try again' })).toBeVisible()
-    await expect(within(alert).getByRole('link', { name: 'Return to World' })).toBeVisible()
+    await expect(within(alert).getByRole('link', { name: 'Return to Worlds' })).toBeVisible()
     expectNoHorizontalOverflow(canvasElement)
   },
 }

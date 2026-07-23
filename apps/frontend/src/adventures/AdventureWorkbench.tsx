@@ -63,6 +63,14 @@ function PanelHeading({ eyebrow, id, title }: { eyebrow: string; id: string; tit
   )
 }
 
+function ReturnToWorldsLink() {
+  return (
+    <Link aria-label="Return to Worlds" className={styles.returnToWorld} to="/worlds">
+      <ArrowLeft aria-hidden="true" size={18} strokeWidth={1.8} />
+    </Link>
+  )
+}
+
 function PlayerRegion({
   adventure,
   onOpenSettings,
@@ -81,10 +89,7 @@ function PlayerRegion({
     >
       {onOpenSettings ? (
         <div className={styles.playerActions} data-slot="adventure-player-actions">
-          <Link className={styles.returnToWorld} to={adventure.sourceWorld.route}>
-            <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.8} />
-            Return to World
-          </Link>
+          <ReturnToWorldsLink />
           <IconButton label="Adventure settings" onClick={onOpenSettings}>
             <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
           </IconButton>
@@ -409,7 +414,7 @@ function StoryRegion({
                 >
                   Try again
                 </Button>
-                <Link to={adventure.sourceWorld.route}>Return to World</Link>
+                <ReturnToWorldsLink />
               </div>
             </div>
           ) : null}

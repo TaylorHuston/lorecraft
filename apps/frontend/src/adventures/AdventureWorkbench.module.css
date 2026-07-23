@@ -38,11 +38,12 @@
 
 .returnToWorld {
   display: inline-flex;
-  min-width: 0;
+  width: var(--control-touch);
+  min-width: var(--control-touch);
   min-height: var(--control-touch);
   align-items: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-3);
+  justify-content: center;
+  padding: 0;
   border-radius: var(--radius-control);
   background: var(--surface-raised);
   color: var(--text-primary);

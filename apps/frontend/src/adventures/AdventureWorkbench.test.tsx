@@ -374,10 +374,11 @@ describe('AdventureWorkbench', () => {
         level: 2,
       })
     ).toBeVisible()
-    expect(screen.getByRole('link', { name: 'Return to World' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Return to Worlds' })).toHaveAttribute(
       'href',
-      '/worlds/stormbound-chapel'
+      '/worlds'
     )
+    expect(screen.queryByText('Return to World')).not.toBeInTheDocument()
     expect(screen.queryByText('The chapel doors open against the storm.')).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Try again' }))
