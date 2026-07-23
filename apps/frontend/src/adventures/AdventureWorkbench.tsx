@@ -356,7 +356,9 @@ function StoryRegion({
   }
 
   const activePlayerMessage =
-    adventure.activeTurn?.trigger === 'act' || adventure.activeTurn?.trigger === 'pass'
+    adventure.activeTurn?.trigger === 'act' ||
+    adventure.activeTurn?.trigger === 'pass' ||
+    adventure.activeTurn?.trigger === 'guide'
       ? {
           id: adventure.activeTurn.id,
           kind: adventure.activeTurn.trigger,
@@ -419,7 +421,8 @@ function StoryRegion({
             </div>
           ) : null}
           {adventure.story.map((entry) => {
-            const isPlayerMessage = entry.kind === 'act' || entry.kind === 'pass'
+            const isPlayerMessage =
+              entry.kind === 'act' || entry.kind === 'pass' || entry.kind === 'guide'
             const author = isPlayerMessage ? 'Player' : 'Game Master'
 
             return (
@@ -427,13 +430,15 @@ function StoryRegion({
                 aria-label={`${author} message`}
                 className={`${styles.storyEntry} ${
                   isPlayerMessage ? styles.storyEntryPlayer : styles.storyEntryNarration
-                }`}
+                } ${entry.kind === 'guide' ? styles.storyEntryGuide : ''}`}
                 data-message-kind={entry.kind}
                 key={entry.id}
               >
                 <span className={styles.srOnly}>{author}</span>
                 {entry.content.split(/\n\n+/).map((paragraph, index) => (
-                  <p key={`${entry.id}-${index}`}>{paragraph}</p>
+                  <p key={`${entry.id}-${index}`}>
+                    {entry.kind === 'guide' ? <em>{paragraph}</em> : paragraph}
+                  </p>
                 ))}
               </article>
             )
@@ -441,12 +446,16 @@ function StoryRegion({
           {activePlayerMessage?.content ? (
             <article
               aria-label="Player message"
-              className={`${styles.storyEntry} ${styles.storyEntryPlayer}`}
+              className={`${styles.storyEntry} ${styles.storyEntryPlayer} ${
+                activePlayerMessage.kind === 'guide' ? styles.storyEntryGuide : ''
+              }`}
               data-message-kind={activePlayerMessage.kind}
             >
               <span className={styles.srOnly}>Player</span>
               {activePlayerMessage.content.split(/\n\n+/).map((paragraph, index) => (
-                <p key={`${activePlayerMessage.id}-${index}`}>{paragraph}</p>
+                <p key={`${activePlayerMessage.id}-${index}`}>
+                  {activePlayerMessage.kind === 'guide' ? <em>{paragraph}</em> : paragraph}
+                </p>
               ))}
             </article>
           ) : null}

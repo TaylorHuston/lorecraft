@@ -102,7 +102,7 @@ export type AdventureDetail = Omit<AdventureSummary, 'playerName'> & {
   } | null
   story: Array<{
     id: string
-    kind: 'narration' | 'act' | 'pass'
+    kind: 'narration' | 'act' | 'pass' | 'guide'
     content: string
   }>
 }

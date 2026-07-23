@@ -28,20 +28,20 @@ Lorecraft's creator-owned Worlds are authoritative canon. Adventure play lets an
 
 ## Outcome
 
-Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and private Guide turn resolution with bounded Adventure-owned consequences. The closed Character-authoring Change extended frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards. Historical guarded-schema, synthetic-smoke, deterministic-E2E, and live-provider evidence is retained in the scenario maps; current database/live-provider reruns and owner acceptance remain explicit verification gaps.
+Accounts can enter an authorized World through private Adventures, receive and resume a durable Game Master opening grounded in frozen canon, and return without changing the source World or another account's Adventure. S2 adds Act, Pass, and Guide turn resolution with bounded Adventure-owned consequences and an owner-visible Guide transcript treatment. The closed Character-authoring Change extended frozen source, current-Scene prompt context, Debug diagnostics, and current-Scene NPC Cards. Historical guarded-schema, synthetic-smoke, deterministic-E2E, and live-provider evidence is retained in the scenario maps; current database/live-provider reruns and owner acceptance remain explicit verification gaps.
 
 ## Current Scope
 
 - Start from one explicit immutable WorldVersion and one versioned default Starting Point.
 - Create one private Adventure-owned player profile.
 - Durably generate, persist, list, and resume an opening narration.
-- Resolve one owner-only, idempotent Act, Pass, or private Guide turn from a ready Adventure.
+- Resolve one owner-only, idempotent Act, Pass, or Guide turn from a ready Adventure.
 - Process turn narration and bounded Adventure-owned consequences through the durable worker, then publish a revision, narration, and current state atomically.
 - Materialize mutable Player/NPC Adventure state while retaining revision-linked mutation outcomes.
 - Reset to the original source version and delete only the selected Adventure.
 - Keep authorization, source isolation, lifecycle, provider orchestration, and typed API behavior in the AdonisJS backend.
 - Present World-contained Adventure discovery and a responsive story-first Adventure route in the React client.
-- Project the owner's durable Act and Pass events into the Story transcript without exposing private Guide text or changing model context.
+- Project the owner's durable Act, Pass, and Guide events into the Story transcript without changing model context.
 - Player-visible current-Scene NPC details, bounded context-size metadata, local development Debug diagnostics, and owner Debug inspection in Settings.
 - Provide a developer-run synthetic opening smoke command that uses the same effective provider configuration as the workers and fails when a response is truncated.
 
@@ -381,8 +381,8 @@ The system SHALL let the owner of a ready Adventure submit exactly one valid Act
 ###### Scenario R1-S3: Private One-Turn Guide
 
 - WHEN the owner submits a non-empty Guide within the accepted length
-- THEN Lorecraft creates one pending turn using that text only as hidden direction for this resolution
-- AND the raw Guide text never appears in the visible story or later normal story context.
+- THEN Lorecraft creates one pending turn using that text as private direction for this resolution
+- AND Guide text appears only in the authenticated owner's italicized transcript message and never enters later normal story context.
 
 ###### Scenario R1-S4: Invalid Action Input
 
@@ -457,7 +457,7 @@ The system SHALL build each turn from current authoritative context and keep sto
 - WHEN later turns are processed
 - THEN prior raw Act inputs, prior Guide text, Pass markers, model evidence, rejected mutations, and operational records are excluded from the Game Master's normal story context
 - AND accepted prior narration plus current structured state carry durable context forward.
-- AND the owner-visible Adventure transcript may separately project only completed Act text and Pass markers from durable turns, without projecting Guide text or feeding those events back into generation.
+- AND the owner-visible Adventure transcript may separately project completed Act and Guide text plus Pass markers from durable turns, without feeding those events back into generation.
 
 ###### Scenario R3-S3: Separate Model Contracts
 
@@ -560,8 +560,8 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 ###### Scenario R5-S6: Owner Chat Transcript
 
 - WHEN an owner views a ready Adventure with completed or active turns
-- THEN Game Master narration renders as chronological left-aligned messages and completed/active Act or Pass events render as chronological right-aligned Player messages
-- AND the transcript survives reload from durable turn and revision data, while private Guide text never appears as a message or browser response field.
+- THEN Game Master narration renders as chronological left-aligned messages and completed/active Act, Pass, or Guide events render as chronological right-aligned Player messages
+- AND Guide messages are italicized, the transcript survives reload from durable turn and revision data, and Guide text is exposed only in the authenticated owner's Adventure detail response.
 
 #### Implemented By
 
@@ -573,12 +573,12 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R2-S5, S2/R2-S6 | `apps/backend/app/services/adventure_turn_lifecycle_service.ts#async retry` and `apps/backend/app/services/adventure_turn_lifecycle_service.ts#async discard` | primary | Own retry/discard recovery for uncommitted or exhausted turn work without publishing a partial result. |
 | S2/R3 | `apps/backend/app/services/adventure_turn_production_completion_port.ts#AdventureTurnProductionCompletionPort` | primary | Stages grounded generation and extraction before publication. |
 | S2/R3-S1, S2/R3-S2, S2/R3-S5 | `apps/backend/app/services/story_generation/adventure_turn_context.ts#assembleAdventureTurnContext` | primary | Builds grounded current-turn context while excluding private and prohibited historical values. |
-| S2/R3-S2, S2/R5-S6 | `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Derives the owner-visible Act/Pass transcript from durable turn/revision lineage and omits Guide content from the detail projection. |
+| S2/R3-S2, S2/R5-S6 | `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Derives the owner-visible Act/Pass/Guide transcript from durable turn/revision lineage while retaining the owner-scoped detail boundary. |
 | S2/R3-S3 | `apps/backend/app/services/story_generation/runtime_configuration.ts#resolveStoryGenerationRuntimeConfiguration` | primary | Resolves the provider-neutral runtime configuration and bounded generation settings used for a turn. |
 | S2/R3-S6 | `apps/backend/app/services/story_generation/development_debug_trace.ts#createDevelopmentDebugTrace` | primary | Creates the local-only, explicitly disableable development trace and refuses production capture. |
 | S2/R4 | `apps/backend/app/services/adventure_mutation_policy.ts#resolveAdventureMutations` | primary | Applies only allowlisted Adventure-owned changes with provenance. |
 | S2/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Presents resolving actions, recovery, polling, responsive composition, and concise right-aligned Send/Pass controls. |
-| S2/R5-S6 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function StoryRegion` | primary | Renders labelled Game Master and Player message entries, including active Act/Pass recovery bubbles, while never rendering Guide input. |
+| S2/R5-S6 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function StoryRegion` | primary | Renders labelled Game Master and Player message entries, including active Act/Pass/Guide recovery bubbles and italicized Guide messages. |
 | S2/R5-S2, S2/R5-S3, S2/R5-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Owns routed Adventure reload, active-turn polling, unauthorized recovery, and the authoritative post-resolution refresh. |
 
 #### Implementation Gaps
@@ -605,12 +605,12 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R4-S1, S2/R4-S2 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S1 + R4-S2` | Only allowlisted player/NPC changes are accepted and source input remains unchanged. | Passing 2026-07-20 |
 | S2/R4-S3 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S3` | Unknown, forbidden, or out-of-bounds proposals preserve state and produce bounded rejection. | Passing 2026-07-20 |
 | S2/R4-S4 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S4` | Ordered proposal application keeps deterministic prior/result values. | Passing 2026-07-20 |
-| S2/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break`, and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 confirms Pass before submitting an empty turn` | Act, Guide, Send, and Pass interaction semantics. | Passing 2026-07-22 |
+| S2/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits Act and provides a Guide composer mode`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break`, and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 confirms Pass before submitting an empty turn` | Act, Guide, Send, and Pass interaction semantics. | Passing 2026-07-22 |
 | S2/R5-S2, S2/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S2 + R5-S3 polls one active turn` | Polls to completed narration, announces once, and preserves focus. | Passing 2026-07-20 |
 | S2/R5-S2, S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery` | Pending state retains Story/replaces the composer; failure supports Retry/Discard. | Passing 2026-07-22 |
 | S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S4 renders a concurrent-turn conflict` | UI reports an actionable conflict rather than a transport code. | Passing 2026-07-20 |
-| S2/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S6 renders player messages on the right and narration on the left without a Guide bubble` | Renders Act/Pass as Player-labelled entries, narration as Game Master-labelled entries, and retains no Guide bubble while Guide resolves. | Passing 2026-07-22 |
-| S2/R5-S6 | Component story `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyDesktop` | The ready desktop fixture directly proves the two-column message treatment and its accessible author labels; direct Storybook inspection additionally covered narrow and pending-Act states. | Passing 2026-07-22 |
+| S2/R5-S6 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S6 renders Guide input as an italicized player message beside the left/right transcript`, `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S6 projects a submitted Guide as an italicized active player message`, and `apps/frontend/src/adventures/tuyauAdventureApi.test.ts#reads the owner-safe Adventure projection including Guide transcript input` | Renders durable and active Guide input as an italicized Player-labelled entry, accepts the owner detail's `guide` contract, and preserves right-aligned Act/Pass plus left-aligned narration. | Passing 2026-07-22 |
+| S2/R5-S6 | Component story `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyDesktop` | The ready desktop fixture directly proves left/right author labels and an italicized owner Guide entry; direct browser inspection found meaningful content with no Vite overlay or console errors. | Passing 2026-07-22 |
 
 #### Verification Gaps
 
@@ -624,7 +624,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 #### Story Notes
 
 - Failed, uncommitted turns may be retried with the same input or discarded; successful-turn Retry, rollback, and branching remain deferred.
-- Raw Guide and prior action input remain private authoritative turn data; normal story context contains accepted narration and current structured state only. The owner-visible transcript separately shows only completed/active Act text and Pass markers.
+- Raw Guide and prior action input remain authoritative turn data; normal story context contains accepted narration and current structured state only. The authenticated owner's transcript separately shows completed/active Act and Guide text plus Pass markers, with Guide messages italicized.
 
 ### Story S3: Inspect NPC Details
 
@@ -746,7 +746,7 @@ The system SHALL allow local Debug mode in Adventure Settings to autosave every 
 - S2 enforces one pending or processing resolving turn per Adventure in PostgreSQL while current story and state remain readable during resolution.
 - S2 keeps accepted Player/NPC changes Adventure-owned, allowlisted, and recorded with immutable revision-linked outcomes; frozen WorldVersion canon remains unchanged.
 - Raw prompt/model bodies are not retained as operational evidence; bounded metadata remains backend-owned and never part of the normal player API. Default-on local development Debug capture is a protected, explicitly disableable exception governed by the provider-boundary ADR.
-- S2 treats raw Act/Guide input and Pass markers as private turn records, not normal story history or player-visible metadata.
+- S2 treats raw Act/Guide input and Pass markers as durable turn records, not normal story history. The authenticated owner may read them in the derived transcript; Guide remains distinct through italic presentation and is never fed back into normal generation context.
 - The closed Character-authoring Change keeps complete current-Scene card contents out of model-call evidence while recording only bounded count and serialized-character-size metadata; Debug trace content stays local, default-on for development, explicitly disableable, redacted, and outside the model-call store.
 - Complete debug-card disclosure is intentionally owner-only on Adventure surfaces; it does not change source-canon or cross-Adventure isolation.
 

@@ -71,6 +71,21 @@ const readyAdventure: AdventureDetail = {
       kind: 'pass',
       content: 'Pass',
     },
+    {
+      id: 'narration-2',
+      kind: 'narration',
+      content: 'The chapel settles into an uneasy silence.',
+    },
+    {
+      id: 'guide-1',
+      kind: 'guide',
+      content: 'Keep Mira guarded until the player earns her trust.',
+    },
+    {
+      id: 'narration-3',
+      kind: 'narration',
+      content: 'Mira turns the candle flame away from the vestry door.',
+    },
   ],
 }
 
@@ -144,9 +159,9 @@ export const ReadyDesktop: Story = {
     )
     expect(within(player).getByRole('button', { name: 'Adventure settings' })).toBeVisible()
     expect(canvasElement.querySelector('main > header')).not.toBeInTheDocument()
-    expect(within(story).getAllByRole('article', { name: 'Player message' })).toHaveLength(2)
-    expect(within(story).getAllByRole('article', { name: 'Game Master message' })).toHaveLength(2)
-    expect(within(story).queryByText('Direct the Game Master privately…')).not.toBeInTheDocument()
+    expect(within(story).getAllByRole('article', { name: 'Player message' })).toHaveLength(3)
+    expect(within(story).getAllByRole('article', { name: 'Game Master message' })).toHaveLength(4)
+    expect(within(story).getByText('Keep Mira guarded until the player earns her trust.').tagName).toBe('EM')
     await expect(player).toHaveTextContent('Elara Vance')
     await expect(scene).toHaveTextContent('Mira')
     const playerRect = player.getBoundingClientRect()

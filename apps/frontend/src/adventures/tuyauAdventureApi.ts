@@ -188,7 +188,7 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         isRecord(entry) &&
         typeof entry.id === 'string' &&
         typeof entry.kind === 'string' &&
-        ['narration', 'act', 'pass'].includes(entry.kind) &&
+        ['narration', 'act', 'pass', 'guide'].includes(entry.kind) &&
         typeof entry.content === 'string'
     )
   )

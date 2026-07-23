@@ -61,7 +61,7 @@ export type AdventureDetailDto = Omit<AdventureSummaryDto, 'playerName'> & {
   } | null
   story: Array<{
     id: string
-    kind: 'narration' | 'act' | 'pass'
+    kind: 'narration' | 'act' | 'pass' | 'guide'
     content: string
   }>
 }
@@ -201,7 +201,7 @@ export default class AdventureQueryService {
     const lineageIds = adventure.headRevisionId
       ? activeRevisionIds(revisions, adventure.headRevisionId)
       : []
-    const [storyEntries, completedPlayerTurns] = lineageIds.length
+    const [storyEntries, completedOwnerTurns] = lineageIds.length
       ? await Promise.all([
           AdventureStoryEntry.query()
             .where('adventureId', adventure.id)
@@ -212,25 +212,25 @@ export default class AdventureQueryService {
             .from('adventure_turns')
             .where('adventure_id', adventure.id)
             .where('status', 'succeeded')
-            .whereIn('trigger', ['act', 'pass'])
+            .whereIn('trigger', ['act', 'pass', 'guide'])
             .whereIn('result_revision_id', lineageIds)
             .select('id', 'trigger', 'input', 'result_revision_id'),
         ])
       : [[], []]
-    const playerTurnByResultRevisionId = new Map(
-      completedPlayerTurns.map((turn) => [turn.result_revision_id as string, turn])
+    const ownerTurnByResultRevisionId = new Map(
+      completedOwnerTurns.map((turn) => [turn.result_revision_id as string, turn])
     )
     const story = storyEntries.flatMap((entry) => {
-      const playerTurn = playerTurnByResultRevisionId.get(entry.revisionId)
-      if (playerTurn) playerTurnByResultRevisionId.delete(entry.revisionId)
+      const ownerTurn = ownerTurnByResultRevisionId.get(entry.revisionId)
+      if (ownerTurn) ownerTurnByResultRevisionId.delete(entry.revisionId)
 
       return [
-        ...(playerTurn
+        ...(ownerTurn
           ? [
               {
-                id: playerTurn.id as string,
-                kind: playerTurn.trigger as 'act' | 'pass',
-                content: playerTurn.trigger === 'pass' ? 'Pass' : (playerTurn.input as string),
+                id: ownerTurn.id as string,
+                kind: ownerTurn.trigger as 'act' | 'pass' | 'guide',
+                content: ownerTurn.trigger === 'pass' ? 'Pass' : (ownerTurn.input as string),
               },
             ]
           : []),
@@ -309,7 +309,7 @@ export default class AdventureQueryService {
             trigger: activeTurn.trigger,
             status: activeTurn.status,
             content:
-              activeTurn.trigger === 'act'
+              activeTurn.trigger === 'act' || activeTurn.trigger === 'guide'
                 ? activeTurn.input
                 : activeTurn.trigger === 'pass'
                   ? 'Pass'

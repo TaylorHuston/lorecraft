@@ -337,6 +337,51 @@ describe('Adventure routes', () => {
     )
   })
 
+  it('LC-003/S2/R5-S6 projects a submitted Guide as an italicized active player message', async () => {
+    const user = userEvent.setup()
+    const guideContent = 'Keep the lantern unlit until Mira speaks.'
+    const getAdventure = vi
+      .fn()
+      .mockResolvedValueOnce({ ...pendingAdventure, status: 'ready', activeTurn: null })
+      .mockResolvedValue({
+        ...pendingAdventure,
+        status: 'ready',
+        activeTurn: {
+          id: 'guide-turn-1',
+          trigger: 'guide',
+          status: 'pending',
+          content: guideContent,
+        },
+      })
+    const submitTurn = vi.fn().mockResolvedValue({
+      id: 'guide-turn-1',
+      adventureId: pendingAdventure.id,
+      trigger: 'guide',
+      status: 'pending',
+      route: pendingAdventure.route,
+    })
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: { getAdventure, submitTurn },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Guide' }))
+    await user.type(screen.getByRole('textbox', { name: 'Private direction for this turn' }), guideContent)
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() =>
+      expect(submitTurn).toHaveBeenCalledWith(
+        pendingAdventure.id,
+        expect.objectContaining({ trigger: 'guide', input: guideContent })
+      )
+    )
+    const guideMessage = await screen.findByRole('article', { name: 'Player message' })
+    expect(guideMessage).toHaveAttribute('data-message-kind', 'guide')
+    expect(guideMessage.querySelector('em')).toHaveTextContent(guideContent)
+  })
+
   it('LC-003/S2/R5-S4 renders a concurrent-turn conflict as actionable copy, not its transport code', async () => {
     const user = userEvent.setup()
     renderTestApp({

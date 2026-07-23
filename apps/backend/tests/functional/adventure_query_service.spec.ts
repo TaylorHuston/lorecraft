@@ -316,7 +316,7 @@ test.group('AdventureQueryService', (group) => {
     assert.equal(new Date(pending.last_played_at).toISOString(), original.toISOString())
   })
 
-  test('LC-003/S2/R3-S2 + R5-S6: projects only owner-visible Act and Pass messages into chronological chat history', async ({
+  test('LC-003/S2/R3-S2 + R5-S6: projects owner-visible Act, Pass, and Guide messages into chronological chat history', async ({
     assert,
   }) => {
     const author = await createUser('query-chat-author@example.com')
@@ -473,6 +473,7 @@ test.group('AdventureQueryService', (group) => {
         { kind: 'narration', content: 'Mira unlatches the side door.' },
         { kind: 'pass', content: 'Pass' },
         { kind: 'narration', content: 'The bell rings once more.' },
+        { kind: 'guide', content: 'Reveal the hidden family secret.' },
         { kind: 'narration', content: 'A candle answers in the vestry.' },
       ]
     )
@@ -482,6 +483,5 @@ test.group('AdventureQueryService', (group) => {
       status: 'pending',
       content: 'I step into the vestry.',
     })
-    assert.notInclude(JSON.stringify(result), 'Reveal the hidden family secret.')
   })
 })

@@ -130,7 +130,7 @@ export function AdventurePage({
                       trigger: turn.trigger,
                       status: turn.status,
                       content:
-                        turn.trigger === 'act'
+                        turn.trigger === 'act' || turn.trigger === 'guide'
                           ? (input.input ?? null)
                           : turn.trigger === 'pass'
                             ? 'Pass'

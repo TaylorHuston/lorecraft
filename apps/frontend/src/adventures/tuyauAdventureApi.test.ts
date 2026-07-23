@@ -68,7 +68,7 @@ describe('Tuyau Adventure adapter', () => {
     })
   })
 
-  it('reads the owner-safe Adventure projection', async () => {
+  it('reads the owner-safe Adventure projection including Guide transcript input', async () => {
     const detail = {
       id: summary.id,
       status: 'ready' as const,
@@ -132,6 +132,11 @@ describe('Tuyau Adventure adapter', () => {
           id: '77777777-7777-4777-8777-777777777777',
           kind: 'pass',
           content: 'Pass',
+        },
+        {
+          id: '88888888-8888-4888-8888-888888888888',
+          kind: 'guide',
+          content: 'Keep Mira guarded until the player earns her trust.',
         },
       ],
     }

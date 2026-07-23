@@ -90,7 +90,7 @@ describe('AdventureWorkbench', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('LC-003/S2/R5-S6 renders player messages on the right and narration on the left without a Guide bubble', () => {
+  it('LC-003/S2/R5-S6 renders Guide input as an italicized player message beside the left/right transcript', () => {
     render(
       <AdventureWorkbench
         adventure={{
@@ -99,7 +99,7 @@ describe('AdventureWorkbench', () => {
             id: 'turn-active',
             trigger: 'guide',
             status: 'processing',
-            content: null,
+            content: 'Keep the bell silent until Mira speaks.',
           },
           story: [
             ...readyAdventure.story,
@@ -119,8 +119,11 @@ describe('AdventureWorkbench', () => {
       'data-message-kind',
       'pass'
     )
+    const guideMessage = screen.getAllByRole('article', { name: 'Player message' })[2]
+    expect(guideMessage).toHaveAttribute('data-message-kind', 'guide')
+    expect(guideMessage).toHaveTextContent('Keep the bell silent until Mira speaks.')
+    expect(guideMessage.querySelector('em')).toHaveTextContent('Keep the bell silent until Mira speaks.')
     expect(screen.getAllByRole('article', { name: 'Game Master message' })).toHaveLength(2)
-    expect(screen.queryByText('Private direction for this turn')).not.toBeInTheDocument()
   })
 
   it('LC-003/S3/R1-S1 opens player-visible NPC details and restores list focus on Back', async () => {
@@ -406,7 +409,7 @@ describe('AdventureWorkbench', () => {
     expect(screen.getByRole('tabpanel', { name: 'Scene' })).toHaveTextContent('Mira the Restless')
   })
 
-  it('LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer', async () => {
+  it('LC-003/S2/R5-S1 submits Act and provides a Guide composer mode', async () => {
     const user = userEvent.setup()
     const submitTurn = vi.fn().mockResolvedValue(undefined)
     render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
@@ -428,11 +431,6 @@ describe('AdventureWorkbench', () => {
     expect(screen.queryByText('Private direction for this turn')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'true')
-    expect(
-      screen.queryByText(
-        'This direction guides only this resolution. It is not shown in the story.'
-      )
-    ).not.toBeInTheDocument()
   })
 
   it('LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break', async () => {
