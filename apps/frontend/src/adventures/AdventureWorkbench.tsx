@@ -213,11 +213,6 @@ function TurnComposer({
   return (
     <>
       <form className={styles.turnComposer} aria-busy={pending} onSubmit={submitForm}>
-        <label className={styles.composerPrompt} htmlFor="adventure-turn-input">
-          <em>
-            {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
-          </em>
-        </label>
         <div className={styles.composerInput} data-slot="turn-composer-input">
           <div className={styles.composerModes} aria-label="Turn type" role="group">
             {(['act', 'guide'] as const).map((trigger) => (
@@ -236,6 +231,11 @@ function TurnComposer({
               </Button>
             ))}
           </div>
+          <label className={styles.composerPrompt} htmlFor="adventure-turn-input">
+            <em>
+              {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
+            </em>
+          </label>
           <textarea
             ref={textareaRef}
             aria-invalid={Boolean(localError || error)}

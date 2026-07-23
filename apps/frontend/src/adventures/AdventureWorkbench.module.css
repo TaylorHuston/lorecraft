@@ -318,11 +318,13 @@
   width: min(100%, 48rem);
   gap: var(--space-2);
   margin: 0 auto;
+  padding-top: calc(1.5rem + var(--space-2));
 }
 
 .turnComposerResolving {
   min-height: 4.5rem;
   place-items: center;
+  padding-top: 0;
 }
 
 .composerProgress {
@@ -397,13 +399,12 @@
   gap: 0;
 }
 
-.turnComposer label {
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  font-weight: 650;
-}
-
 .turnComposer .composerPrompt {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--control-dense) + var(--space-1));
+  left: var(--space-3);
+  pointer-events: none;
   color: var(--text-muted);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 1rem;
@@ -416,7 +417,8 @@
   height: 6rem;
   min-height: 6rem;
   resize: none;
-  padding: var(--space-3) var(--space-3) calc(var(--control-touch) + var(--space-5));
+  padding: calc(var(--space-3) + 1.5rem) var(--space-3)
+    calc(var(--control-touch) / 2 + var(--space-3));
   border: 1px solid var(--control-boundary);
   border-radius: 0 var(--radius-control) var(--radius-control) var(--radius-control);
   background: var(--background);
