@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -451,17 +451,15 @@ describe('AdventureWorkbench', () => {
     )
   })
 
-  it('LC-003/S2/R5-S1 confirms Pass before submitting an empty turn', async () => {
+  it('LC-003/S2/R5-S1 submits Pass immediately as an empty turn', async () => {
     const user = userEvent.setup()
     const submitTurn = vi.fn().mockResolvedValue(undefined)
     render(<AdventureWorkbench adventure={readyAdventure} onSubmitTurn={submitTurn} />)
 
     await user.click(screen.getByRole('button', { name: 'Pass' }))
-    const dialog = screen.getByRole('dialog', { name: 'Pass this moment?' })
-    expect(dialog).toHaveTextContent('without an action from you')
-    await user.click(within(dialog).getByRole('button', { name: 'Pass' }))
     expect(submitTurn).toHaveBeenCalledWith(expect.objectContaining({ trigger: 'pass' }))
     expect(submitTurn.mock.calls[0][0]).not.toHaveProperty('input')
+    expect(screen.queryByRole('dialog', { name: 'Pass this moment?' })).not.toBeInTheDocument()
   })
 
   it('LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery', async () => {

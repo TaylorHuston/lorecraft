@@ -35,6 +35,7 @@ status: in_progress
 | 2026-07-22 | Show the private Guide instruction in the owner-visible transcript as an italicized player message. | requirement refinement / owner-only query-contract change | LC-003/S2, owner detail query/client contract, workbench, focused query/frontend/contract/browser evidence | User explicitly approved owner-visible Guide input. Keep it out of normal generation context, other owners' responses, model evidence, and raw provider outputs. |
 | 2026-07-22 | Add a line-height gap between Story paragraphs and use the Adventure workbench spike to clarify player messages. | cosmetic / chat transcript refinement | Adventure workbench markup/CSS, focused test, Storybook, and Change design | Preserve unboxed messages. Adopt the spike's concise author-cue approach as a visible “You” eyebrow plus slim right accent; do not restore card fills or backgrounds. |
 | 2026-07-22 | Add more spacing after player messages and distinguish Action from Guide. | cosmetic / chat transcript refinement | Adventure workbench markup/CSS, focused test, Storybook, and Change design | Replace the generic visible “You” cue with message-kind labels: Action, Pass, or Guide. Keep the slim accent and unboxed treatment; add bottom space only after player entries. |
+| 2026-07-22 | Remove the Pass confirmation dialog. | interaction refinement | LC-003/S2 R5-S1, Adventure composer, focused test, E2E journey, and Epic evidence | Submit Pass immediately from its existing composer button; retain the disabled pending state and server-side turn concurrency protection. |
 
 ## Checklist
 
@@ -63,6 +64,7 @@ status: in_progress
 - [x] Add the lower-story fade and compact inset-action chat composer.
 - [x] Add paragraph rhythm and unboxed visual player-message cues from the Adventure workbench spike.
 - [x] Add post-player spacing and Action/Pass/Guide message-kind labels.
+- [x] Remove the Pass confirmation dialog and submit the deliberate Pass action immediately.
 - [x] Add a failing-first player-visible Scene NPC detail contract and retain complete Debug editing in Settings.
 - [ ] Rerun the targeted Playwright Adventure journey after the stalled runner is recovered.
 - [x] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
@@ -94,6 +96,7 @@ status: in_progress
 | 2026-07-22 | Owner-visible Guide transcript replan | Change proposal/design/tasks, LC-003/S2 | User approved changing the prior private-Guide browser boundary. Completed/current Guide input appears only to the Adventure owner as an italicized right-side message; normal generation context remains narration/state only. | implemented in `585f804` |
 | 2026-07-22 | Story paragraph rhythm and player cues | `AdventureWorkbench`, CSS, focused test, Storybook | Added one line-height between adjacent message paragraphs and the initial visible player cue; the later kind-label refinement supersedes the generic “You” eyebrow. Player messages remain unboxed with the slim right-edge accent, borrowing the spike's authored-prose distinction without its muted card background. | commit candidate |
 | 2026-07-22 | Player message spacing and kind labels | `AdventureWorkbench`, CSS, focused test, Storybook | Added extra bottom spacing after player entries and replaced the generic visible author cue with `Action`, `Pass`, or `Guide`. The existing semantic Player label remains available to assistive technology. | commit candidate |
+| 2026-07-22 | Immediate Pass action | `TurnComposer`, focused workbench test, E2E journey, LC-003/S2 | Removed the client-only Pass confirmation dialog. The existing Pass button submits an empty Pass turn immediately and stays disabled while a turn is pending. | commit candidate |
 
 ## Verification Ledger
 
@@ -125,6 +128,7 @@ status: in_progress
 | 2026-07-22 | Guide contract/static regression | static and generated-contract gates | Backend/frontend typechecks and lint pass; backend contract generation and committed-client check pass after the `guide` story union expansion. | passed |
 | 2026-07-22 | Story paragraph rhythm and player-cue regression | focused workbench, Storybook, lint, and rendered browser | The initial regression asserted a visible player cue per message. The ReadyDesktop fixture renders a multi-paragraph narration with one line-height of separation; Player entries have a visible eyebrow and thin right accent with no card fill. The later kind-label regression supersedes the generic “You” copy. | passed; 19 focused workbench tests, 20 focused Storybook tests, lint, direct browser inspection |
 | 2026-07-22 | Player message kind-label and spacing regression | focused workbench, Storybook, typecheck, lint, build, and rendered browser | The transcript and Storybook contracts assert visible Action, Pass, and Guide labels. The browser fixture shows extra player-to-narration spacing, the slim player accent, no card fill, no Vite overlay, and no captured console errors. | passed; 19 focused workbench tests, 20 focused Storybook tests, typecheck, lint, build, direct browser inspection |
+| 2026-07-22 | Immediate Pass regression | failing-first then focused workbench/E2E contract | The focused composer test initially failed while Pass opened a confirmation dialog. Pass now invokes the empty-turn submission directly, with no dialog rendered; the E2E journey targets Send and directly triggers Pass. | passed; focused workbench test |
 | 2026-07-22 | focused frontend transcript regression | automated UI/client contract | `AdventureWorkbench`, `AdventureRoutes`, and Tuyau adapter tests pass 55/55, including Player/Game Master labels, active Act cache content, and typed transcript parsing. | passed |
 | 2026-07-22 | full Storybook suite | component interaction regression | All Storybook tests pass 89/89; `ReadyDesktop` now asserts two Player and two Game Master messages. | passed |
 | 2026-07-22 | frontend build; backend/frontend typecheck and lint; generated contract check | supporting static/contract gates | The production frontend bundle, both workspace static checks, and regenerated Tuyau contract check pass. | passed |

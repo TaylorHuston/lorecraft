@@ -9,7 +9,6 @@ import {
 import { ArrowLeft, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
-import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { IconButton } from '../components/IconButton/IconButton'
 import { creationRequestId } from './creationRequestId'
 import {
@@ -137,11 +136,9 @@ function TurnComposer({
   const [mode, setMode] = useState<Exclude<AdventureTurnTrigger, 'pass'>>('act')
   const [text, setText] = useState('')
   const [localError, setLocalError] = useState<string | null>(null)
-  const [passOpen, setPassOpen] = useState(false)
   const requestIdRef = useRef<string | null>(null)
   const signatureRef = useRef<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const passRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (error) textareaRef.current?.focus()
@@ -178,7 +175,6 @@ function TurnComposer({
       setText('')
       requestIdRef.current = null
       signatureRef.current = null
-      setPassOpen(false)
     } catch {
       // The route owns the actionable error message; retain the input and request identity for retry.
     }
@@ -260,9 +256,8 @@ function TurnComposer({
               Send
             </Button>
             <Button
-              ref={passRef}
               disabled={pending}
-              onClick={() => setPassOpen(true)}
+              onClick={() => void submit('pass')}
               size="touch"
               type="button"
               variant="secondary"
@@ -277,20 +272,6 @@ function TurnComposer({
           </p>
         ) : null}
       </form>
-      {passOpen ? (
-        <ConfirmDialog
-          confirmLabel="Pass"
-          finalFocusRef={passRef}
-          onCancel={() => setPassOpen(false)}
-          onConfirm={() => void submit('pass')}
-          open={passOpen}
-          pending={pending}
-          pendingLabel="Passing…"
-          title="Pass this moment?"
-        >
-          <p>The Game Master may advance the scene without an action from you.</p>
-        </ConfirmDialog>
-      ) : null}
     </>
   )
 }

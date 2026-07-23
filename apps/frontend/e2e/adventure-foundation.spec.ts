@@ -126,7 +126,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page
       .getByLabel('What would you like to do?')
       .fill('E2E_NPC_REFRESH: I ask Mira what she heard after the bell.')
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByText(actTurn)).toBeVisible({ timeout: 15_000 })
     if (testInfo.project.name.includes('mobile')) {
       await page.getByRole('tab', { name: 'Scene' }).click()
@@ -145,7 +145,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     }
 
     await page.getByLabel('What would you like to do?').fill('I ask why the bell rang.')
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
     await expect(page.getByText(actTurn, { exact: true })).toHaveCount(2, { timeout: 15_000 })
     if (testInfo.project.name.includes('mobile')) {
@@ -162,13 +162,11 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     const privateGuide = 'Let the ledger matter, but do not reveal why.'
     await page.getByRole('button', { name: 'Guide' }).click()
     await page.getByLabel('Private direction for this turn').fill(privateGuide)
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByText(guideTurn)).toBeVisible({ timeout: 15_000 })
     await expect(page.getByText(privateGuide, { exact: true })).toHaveCount(0)
 
     await page.getByRole('button', { name: 'Pass' }).click()
-    const passDialog = page.getByRole('dialog', { name: 'Pass this moment?' })
-    await passDialog.getByRole('button', { name: 'Pass' }).click()
     await expect(page.getByText(passTurn)).toBeVisible({ timeout: 15_000 })
 
     const concurrentPage = await page.context().newPage()
@@ -180,9 +178,9 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page
       .getByLabel('What would you like to do?')
       .fill('E2E_SLOW_TURN: I wait for the next bell toll.')
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
-    await concurrentPage.getByRole('button', { name: 'Continue' }).click()
+    await concurrentPage.getByRole('button', { name: 'Send' }).click()
     await expect(concurrentPage.getByRole('alert')).toContainText('resolving turn')
     await page.reload()
     await expect(page.getByRole('status', { name: 'Resolving your turn' })).toBeVisible()
@@ -192,7 +190,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page
       .getByLabel('What would you like to do?')
       .fill('E2E_FAIL_TWICE: ask Mira about the ledger.')
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(
       page.getByRole('heading', { name: 'Your last turn did not change the story' })
     ).toBeVisible({
@@ -206,7 +204,7 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page
       .getByLabel('What would you like to do?')
       .fill('E2E_FAIL_ALWAYS: ask Mira about the ledger.')
-    await page.getByRole('button', { name: 'Continue' }).click()
+    await page.getByRole('button', { name: 'Send' }).click()
     await expect(
       page.getByRole('heading', { name: 'Your last turn did not change the story' })
     ).toBeVisible({
