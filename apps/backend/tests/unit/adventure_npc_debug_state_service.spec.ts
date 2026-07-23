@@ -8,7 +8,7 @@ test('LC-003/S3/R3-S2: production refuses the NPC Debug editor boundary', ({ ass
   assert.isTrue(isAdventureNpcDebugEditingEnabled('test'))
 })
 
-test('LC-003/S1/R5-S3: production refuses the Player Debug editor boundary', ({ assert }) => {
+test('LC-003/S1/R5-S7: production refuses the Player Debug editor boundary', ({ assert }) => {
   assert.isFalse(isAdventurePlayerDebugEditingEnabled('production'))
   assert.isTrue(isAdventurePlayerDebugEditingEnabled('development'))
   assert.isTrue(isAdventurePlayerDebugEditingEnabled('test'))

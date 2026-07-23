@@ -149,6 +149,7 @@ test.group('Adventure Player Debug state API', (group) => {
 
   test('LC-003/S1/R5-S7: hides Player Debug editing from another Adventure owner', async ({
     client,
+    assert,
   }) => {
     const ownerBrowser = await createAuthenticatedBrowser(
       client,
@@ -157,6 +158,11 @@ test.group('Adventure Player Debug state API', (group) => {
     const owner = await User.findByOrFail('email', 'player-debug-owner-two@example.com')
     const { adventureId } = await createReadyAdventure(owner.id)
     const otherBrowser = await createAuthenticatedBrowser(client, 'player-debug-other@example.com')
+    const playerBeforeDeniedWrite = await db
+      .from('adventure_players')
+      .where('adventure_id', adventureId)
+      .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+      .firstOrFail()
 
     const response = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
@@ -165,6 +171,14 @@ test.group('Adventure Player Debug state API', (group) => {
     ).json(validPlayerState)
     response.assertNotFound()
     response.assertBodyContains({ errors: [{ code: 'ADVENTURE_NOT_FOUND' }] })
+    assert.deepEqual(
+      await db
+        .from('adventure_players')
+        .where('adventure_id', adventureId)
+        .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+        .firstOrFail(),
+      playerBeforeDeniedWrite
+    )
 
     const ownerResponse = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
@@ -172,6 +186,38 @@ test.group('Adventure Player Debug state API', (group) => {
       { csrf: true }
     ).json(validPlayerState)
     ownerResponse.assertOk()
+  })
+
+  test('LC-003/S1/R5-S7: rejects Player Debug editing before an Adventure is ready', async ({
+    client,
+    assert,
+  }) => {
+    const browser = await createAuthenticatedBrowser(client, 'player-debug-not-ready@example.com')
+    const owner = await User.findByOrFail('email', 'player-debug-not-ready@example.com')
+    const { adventureId } = await createReadyAdventure(owner.id)
+    const playerBeforeDeniedWrite = await db
+      .from('adventure_players')
+      .where('adventure_id', adventureId)
+      .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+      .firstOrFail()
+    await db.from('adventures').where('id', adventureId).update({ status: 'creating' })
+
+    const response = await withBrowserSession(
+      client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
+      browser,
+      { csrf: true }
+    ).json(validPlayerState)
+
+    response.assertConflict()
+    response.assertBodyContains({ errors: [{ code: 'ADVENTURE_NOT_READY' }] })
+    assert.deepEqual(
+      await db
+        .from('adventure_players')
+        .where('adventure_id', adventureId)
+        .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+        .firstOrFail(),
+      playerBeforeDeniedWrite
+    )
   })
 
   test('LC-003/S1/R5-S7: rejects invalid frozen Locations and edits while a turn is active', async ({

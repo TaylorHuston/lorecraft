@@ -44,7 +44,7 @@ test.group('Adventure validation', () => {
     }
   })
 
-  test('LC-003/S1/R5-S3: bounds complete Debug Player state while allowing empty optional profile text', async ({
+  test('LC-003/S1/R5-S7: bounds complete Debug Player state while allowing empty optional profile text', async ({
     assert,
   }) => {
     const validPlayerState = {
