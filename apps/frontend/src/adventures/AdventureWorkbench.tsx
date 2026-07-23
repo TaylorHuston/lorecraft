@@ -784,20 +784,10 @@ export function AdventureNpcEditor({
   )
 }
 
-function SceneRegion({
-  adventure,
-  onSaveNpcState,
-}: {
-  adventure: AdventureView
-  onSaveNpcState?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
-}) {
+function SceneRegion({ adventure }: { adventure: AdventureView }) {
   const { scene } = adventure
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [selectedNpc, setSelectedNpc] = useState<AdventureView['scene']['npcs'][number] | null>(
-    null
-  )
-  const selected =
-    scene.npcs.find((npc) => npc.key === selectedKey) ?? (onSaveNpcState ? selectedNpc : null)
+  const selected = scene.npcs.find((npc) => npc.key === selectedKey) ?? null
   const npcButtonRefs = useRef(new Map<string, HTMLButtonElement>())
   const sceneRegionRef = useRef<HTMLElement>(null)
 
@@ -812,12 +802,11 @@ function SceneRegion({
       <PanelHeading eyebrow="Scene" id="adventure-scene-heading" title={scene.location.name} />
       <p className={styles.sceneDescription}>{scene.location.description}</p>
       {selected ? (
-        <section className={styles.sceneNpcs} aria-label="NPC debug card">
+        <section className={styles.sceneNpcs} aria-label="NPC details">
           <Button
             onClick={() => {
               const returningKey = selected.key
               setSelectedKey(null)
-              setSelectedNpc(null)
               window.setTimeout(() => {
                 const returningButton = npcButtonRefs.current.get(returningKey)
                 if (returningButton) returningButton.focus()
@@ -829,77 +818,16 @@ function SceneRegion({
           >
             Back to Scene
           </Button>
-          <p className={styles.stateEyebrow}>Development / debug information</p>
-          <h3>{onSaveNpcState ? 'NPC card' : selected.name}</h3>
-          {onSaveNpcState ? (
-            <>
-              <p className={styles.npcEditorNote}>
-                Click a card value to edit. It autosaves to this Adventure only and never changes
-                the frozen World or seed data.
-              </p>
-              {!scene.npcs.some((npc) => npc.key === selected.key) ? (
-                <p className={styles.npcEditorNote}>
-                  This NPC is no longer in the current Scene; this Debug editor remains open for
-                  local edits.
-                </p>
-              ) : null}
-            </>
-          ) : null}
+          <h3>{selected.name}</h3>
           <dl className={styles.details}>
             <div>
-              <dt>Key</dt>
-              <dd>{selected.key}</dd>
+              <dt>Physical description</dt>
+              <dd>{selected.physicalDescription}</dd>
             </div>
-            {onSaveNpcState ? (
-              <AdventureNpcEditor
-                key={selected.key}
-                npc={selected}
-                onSave={onSaveNpcState}
-              />
-            ) : (
-              <>
-                <div>
-                  <dt>Name</dt>
-                  <dd>{selected.name}</dd>
-                </div>
-                <div>
-                  <dt>Current location</dt>
-                  <dd>{selected.currentLocation.name}</dd>
-                </div>
-                <div>
-                  <dt>Physical description</dt>
-                  <dd>{selected.physicalDescription}</dd>
-                </div>
-                <div>
-                  <dt>Background</dt>
-                  <dd>{selected.background}</dd>
-                </div>
-                <div>
-                  <dt>Personality</dt>
-                  <dd>{selected.personality}</dd>
-                </div>
-                <div>
-                  <dt>Voice</dt>
-                  <dd>{selected.voice}</dd>
-                </div>
-                <div>
-                  <dt>Private knowledge</dt>
-                  <dd>{selected.privateKnowledge}</dd>
-                </div>
-                <div>
-                  <dt>Mood</dt>
-                  <dd>{selected.mood}</dd>
-                </div>
-                <div>
-                  <dt>Status</dt>
-                  <dd>{selected.status}</dd>
-                </div>
-                <div>
-                  <dt>Memory</dt>
-                  <dd>{selected.memory}</dd>
-                </div>
-              </>
-            )}
+            <div>
+              <dt>Status</dt>
+              <dd>{selected.status}</dd>
+            </div>
           </dl>
         </section>
       ) : (
@@ -916,7 +844,6 @@ function SceneRegion({
                     }}
                     onClick={() => {
                       setSelectedKey(npc.key)
-                      setSelectedNpc(npc)
                     }}
                     size="touch"
                     variant="ghost"
@@ -951,7 +878,6 @@ export function AdventureWorkbench({
   discardingTurn = false,
   turnDiscardError = null,
   onOpenSettings,
-  onSaveNpcState,
   layout = 'auto',
 }: {
   adventure: AdventureView
@@ -968,7 +894,6 @@ export function AdventureWorkbench({
   discardingTurn?: boolean
   turnDiscardError?: string | null
   onOpenSettings?: () => void
-  onSaveNpcState?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
   layout?: 'auto' | 'desktop' | 'mobile'
 }) {
   const [narrowViewport, setNarrowViewport] = useState(
@@ -992,7 +917,7 @@ export function AdventureWorkbench({
       return <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
     }
     if (pane === 'scene') {
-      return <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
+      return <SceneRegion adventure={adventure} />
     }
     return (
       <StoryRegion
@@ -1083,7 +1008,7 @@ export function AdventureWorkbench({
         turnDiscardError={turnDiscardError}
       />
       <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
-      <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
+      <SceneRegion adventure={adventure} />
     </div>
   )
 }

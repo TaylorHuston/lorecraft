@@ -443,8 +443,13 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 60_000,
     })
 
-    await user.click(await screen.findByRole('button', { name: 'Mira the Restless' }))
-    const name = screen.getByRole('textbox', { name: 'Name' })
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    await user.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
+    await user.click(
+      within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' })
+    )
+    const name = within(settingsDialog).getByRole('textbox', { name: 'Name' })
     await user.clear(name)
     await user.type(name, 'Mira the Watchful')
 

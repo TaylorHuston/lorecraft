@@ -5,8 +5,8 @@ status: in_progress
 
 ## Resume Here
 
-- Owner-visible Act/Pass transcript and chat layout are implemented, including the compact fading bottom composer. The remaining blocker is database-backed proof for the new query contract: provide an acknowledged disposable `TEST_DATABASE_URL`, then run the focused backend test and aggregate candidate gate.
-- Keep the Change `in_progress`: no local commit was requested for this phase, and its required database and final committed-candidate gates remain outstanding.
+- Owner-visible Act/Pass transcript and chat layout are implemented, including the compact fading bottom composer. Scene NPC drill-down now renders only name, physical description, and current Status; complete local Debug editing remains in Settings. The remaining blocker is database-backed proof for the new query contract: provide an acknowledged disposable `TEST_DATABASE_URL`, then run the focused backend test and aggregate candidate gate.
+- Keep the Change `in_progress`: the required database and final committed-candidate gates remain outstanding.
 
 ## Interactive Log
 
@@ -29,6 +29,7 @@ status: in_progress
 | 2026-07-22 | Correct the composer fade after direct long-story feedback showed narration running into its controls. | cosmetic / chat-composer refinement | Adventure workbench CSS, Storybook, and Change design | Move the fade's opaque end above the prompt so text has a small transition before clearing instead of remaining visible beneath the composer. |
 | 2026-07-22 | Remove the orange focus glow when the narration scroll region receives keyboard focus. | cosmetic / focus-treatment refinement | Adventure workbench CSS, Storybook, and Change design | Suppress only the decorative narration-region ring; retain focus visibility on action controls and tabs. |
 | 2026-07-22 | Move Act and Guide prompts into the composer as italic helper text. | cosmetic / chat-composer refinement | Adventure workbench markup/CSS, focused test, Storybook, and Change design | Keep the input's existing vertical position and buffer; reserve text space below the helper and above the joined controls. |
+| 2026-07-22 | Make Scene NPC selection player-visible only; Status means what the NPC is currently doing. | requirement refinement / presentation boundary | LC-003/S3, Adventure workbench, Settings Debug editor, focused test, and Change design | Render only name, physical description, and Status in Scene. Do not show private/Debug fields or editing controls there; retain complete Debug editing in Settings. |
 
 ## Checklist
 
@@ -54,6 +55,7 @@ status: in_progress
 - [x] Reconcile LC-003/S2 R3-S2 and new R5-S6 behavior/evidence after focused verification.
 - [x] Regenerate and verify the typed API contract after the server route shape change.
 - [x] Add the lower-story fade and compact inset-action chat composer.
+- [x] Add a failing-first player-visible Scene NPC detail contract and retain complete Debug editing in Settings.
 - [ ] Rerun the targeted Playwright Adventure journey after the stalled runner is recovered.
 - [x] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
 
@@ -78,6 +80,7 @@ status: in_progress
 | 2026-07-22 | Steep pinned-title fade | `AdventureWorkbench` CSS and Storybook | Replaced the broad title gradient with a full background through 58%, a brief 60% blend at 68%, and transparency at 78%. | commit candidate |
 | 2026-07-22 | Quiet narration focus | `AdventureWorkbench` CSS and Storybook | Removed the focus outline only from the focusable narration scroll region; interactive controls retain their existing focus treatment. | commit candidate |
 | 2026-07-22 | In-box Act/Guide helper | `TurnComposer`, CSS, focused test, Storybook | Moved the accessible dynamic label inside the composer input, kept it italicized above its placeholder, and preserved the former label's outer buffer as a spacer. | commit candidate |
+| 2026-07-22 | Player-visible Scene NPC details | `AdventureWorkbench`, `AdventurePage`, focused test, LC-003/S3 | Removed the full Debug editor and hidden fields from Scene. A selected NPC now shows only name, physical description, and current Status; the existing Settings editor remains the full Debug surface. | commit candidate |
 
 ## Verification Ledger
 
@@ -117,6 +120,8 @@ status: in_progress
 | 2026-07-22 | corrected composer-fade long-story inspection | rendered Storybook | A 2048x1136 long-paragraph simulation confirms text has a slight final fade and clears above the composer prompt rather than continuing beneath its controls; no Vite overlay appeared. | passed |
 | 2026-07-22 | narration-focus inspection | rendered Storybook | Programmatic focus on the narration scroll region yields no outline while the page remains meaningful and free of a Vite overlay. | passed |
 | 2026-07-22 | composer-helper desktop, Guide, and narrow inspection | focused test and rendered Storybook | The Act and Guide helper labels are descendants of the composer input, render italicized above the editable line, preserve the outer buffer, and do not overlap Send/Pass at desktop or narrow width. | passed after expected initial failure; 20/20 focused |
+| 2026-07-22 | player-visible Scene NPC detail contract | failing-first then focused route/workbench regression | The first focused test failed because the sidebar still exposed a Debug card. The Scene now renders name, physical description, and Status only; the authorization autosave test reaches the retained Settings editor. | passed; 38/38 focused tests, typecheck, lint, build, and Change validation |
+| 2026-07-22 | full visual regression after Settings Debug relocation | Storybook interaction suite | The Debug editor Storybook interaction now enters through Settings, while Scene selection remains player-visible only. | passed 89/89 |
 
 ## Visual Verification Matrix
 
@@ -131,19 +136,20 @@ status: in_progress
 | Stable Settings modal frame | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, card and editor views | Storybook plus `agent-browser` | The dialog remains 832px high in both views; the editor Back control renders as an icon-only left arrow. | No page errors; Back retains an accessible name. | passed |
 | Full-height Settings workspace | `Application/Adventures/Workbench` NpcSettings | 1440x900 desktop, card view | Storybook plus `agent-browser` | The left navigation divider and the right detail panel extend through the workspace's full usable height. | No page errors; dialog 832px, workspace/navigation 734px. | passed |
 | Owner chat transcript | `Application/Adventures/Workbench` ReadyDesktop and TurnPending | 1440x900 desktop; 390x844 narrow; ready and resolving Act states | Storybook plus `agent-browser` | Ready view directly shows two unboxed Game Master messages on the left and unboxed Act/Pass messages on the right; narrow view wraps all messages without overflow. The pending fixture adds the active Act entry before the restrained resolving state. | Storybook loaded meaningful content; four inspected message elements had zero borders/background fills, no Vite overlay, and no Guide composer text in pending state. | passed |
+| Player-visible Scene NPC details | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop, selected Mira | Storybook plus `agent-browser` | Mira's read-only detail view shows name, physical description, and Status (“Sheltering in the chapel.”). It has no Debug label or private knowledge. | Meaningful content, no Vite overlay, and no console errors. | passed |
 
 ## Manual UI Confirmation
 
 - Status: pending user
 - App URL / route: `http://localhost:4310/adventures/<existing-adventure-id>`; use a ready Adventure at desktop and narrow widths.
 - Required setup or test data: an authenticated account with a ready Adventure, or the `Application/Adventures/Workbench` Storybook fixture.
-- Steps for the user: open a ready Adventure at desktop width; confirm the page starts immediately with Player / Story / Scene columns, Story is central, and no top header remains. Confirm the World name is pinned at the Story column's top left and narration stays clear before a brief steep fade beneath it while scrolling. Submit an Act, then Pass: each submitted player event should appear on the Story's right before its Game Master response on the left. Submit a Guide and confirm its text does not appear as a message. Reload after a completed Act/Pass and confirm the message order remains. Confirm Return and Settings live at the top of Player. Open Settings: it should be a large two-pane modal with Adventure Settings, NPCs, and Locations on the left, and it should retain its full editor-height across sections. In NPCs, each current-Scene NPC should be a square avatar/name card. Open one and confirm all existing NPC attributes are available in the editor; use the arrow-only Back button to return to the cards. Confirm the composer has no repeated provider-disclosure line, that lower Story text stays clear before a brief steep fade under its dock, and that the joined equal-width Send/Pass row straddles the input's lower border without typed text entering its reserved bottom space. At narrow width, use the Story / Player / Scene tabs; Player must expose Return and Settings, and Story must retain the composer.
+- Steps for the user: open a ready Adventure at desktop width; confirm the page starts immediately with Player / Story / Scene columns, Story is central, and no top header remains. Confirm the World name is pinned at the Story column's top left and narration stays clear before a brief steep fade beneath it while scrolling. Submit an Act, then Pass: each submitted player event should appear on the Story's right before its Game Master response on the left. Submit a Guide and confirm its text does not appear as a message. Reload after a completed Act/Pass and confirm the message order remains. In Scene, select an NPC and confirm its read-only details show only name, physical description, and Status (what it is currently doing), without Debug metadata, private knowledge, or controls. Confirm Return and Settings live at the top of Player. Open Settings: it should be a large two-pane modal with Adventure Settings, NPCs, and Locations on the left, and it should retain its full editor-height across sections. In NPCs, each current-Scene NPC should be a square avatar/name card. Open one and confirm all existing NPC attributes are available in the editor; use the arrow-only Back button to return to the cards. Confirm the composer has no repeated provider-disclosure line, that lower Story text stays clear before a brief steep fade under its dock, and that the joined equal-width Send/Pass row straddles the input's lower border without typed text entering its reserved bottom space. At narrow width, use the Story / Player / Scene tabs; Player must expose Return and Settings, and Story must retain the composer.
 - Expected result: durable unboxed Act/Pass player messages align right, unboxed Game Master narration aligns left, Guide remains private, and the existing composition, recovery, settings, and narrow tabs remain available without horizontal overflow.
 - Feedback that would change artifacts: a request to reveal Guide text, add another participant/message type, edit transcript history, or alter Game Master prompt history triggers another replan before implementation.
 
 ## Artifact Updates
 
-- LC-003/S1 R5 and S3 current-Scene card implementation/evidence map Player-pane controls, Settings NPC cards, and rendered Storybook proof. LC-003/S2 now distinguishes the owner-visible Act/Pass transcript from the narration-only model context. No release communication is expected because this is a private local product-flow refinement.
+- LC-003/S1 R5 and S3 now distinguish player-visible Scene NPC details from Settings-only Debug cards, alongside Player-pane controls and rendered Storybook proof. LC-003/S2 distinguishes the owner-visible Act/Pass transcript from the narration-only model context. No release communication is expected because this is a private local product-flow refinement.
 
 ## Open Questions
 

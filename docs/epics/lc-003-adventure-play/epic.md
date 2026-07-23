@@ -42,7 +42,7 @@ Accounts can enter an authorized World through private Adventures, receive and r
 - Keep authorization, source isolation, lifecycle, provider orchestration, and typed API behavior in the AdonisJS backend.
 - Present World-contained Adventure discovery and a responsive story-first Adventure route in the React client.
 - Project the owner's durable Act and Pass events into the Story transcript without exposing private Guide text or changing model context.
-- Complete frozen-and-current NPC Cards for all and only NPCs in the current Scene, bounded context-size metadata, local development Debug diagnostics, and owner debug inspection.
+- Player-visible current-Scene NPC details, bounded context-size metadata, local development Debug diagnostics, and owner Debug inspection in Settings.
 - Provide a developer-run synthetic opening smoke command that uses the same effective provider configuration as the workers and fails when a response is truncated.
 
 ## Deferred Scope
@@ -69,7 +69,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-22    | Scenario evidence is narrowed to current anchors; database rerun, production/recovery, and owner manual acceptance remain explicit gaps. |
 | S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-22    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; database/live-provider and owner manual proof remain explicit gaps. |
-| S3    | implemented    | partial      | Inspect complete NPC Cards.            | 2026-07-22    | Current-Scene projection and interactive UI are implemented; rendered recovery and owner manual proof remain pending. |
+| S3    | implemented    | partial      | Inspect NPC details.                   | 2026-07-22    | Player-visible Scene details and Settings-only Debug editing are implemented; rendered recovery and owner manual proof remain pending. |
 
 ## Stories
 
@@ -626,7 +626,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 - Failed, uncommitted turns may be retried with the same input or discarded; successful-turn Retry, rollback, and branching remain deferred.
 - Raw Guide and prior action input remain private authoritative turn data; normal story context contains accepted narration and current structured state only. The owner-visible transcript separately shows only completed/active Act text and Pass markers.
 
-### Story S3: Inspect Complete NPC Cards
+### Story S3: Inspect NPC Details
 
 Implementation: implemented
 Verification: partial
@@ -634,19 +634,19 @@ Created: 2026-07-19
 Modified: 2026-07-22
 Last verified: 2026-07-22
 
-As an Adventure owner, I want to open complete cards for NPCs in my current Scene, so that I can inspect the exact canon and mutable state guiding the story during development.
+As an Adventure player, I want to inspect only visible details for NPCs in my current Scene, while keeping complete Debug editing in Settings, so that the Scene pane reflects what the player can see.
 
 #### Requirements And Scenarios
 
-##### Requirement R1: Complete Current-Scene NPC Cards
+##### Requirement R1: Player-Visible Current-Scene NPC Details
 
-The system SHALL list every NPC in the current Scene and expose that NPC's complete frozen identity plus current Adventure-owned state.
+The system SHALL list every NPC in the current Scene and expose only that NPC's player-visible read-only details in the Scene pane.
 
 ###### Scenario R1-S1: Open A Present NPC Card
 
 - WHEN one or more NPCs are present and the owner selects one
-- THEN the Scene region shows key, name, physical description, background, personality, voice, private knowledge, current Location, mood, status, and memory
-- AND clearly identifies the surface as development/debug information.
+- THEN the Scene region shows the NPC's name, physical description, and current Status (what the NPC is doing)
+- AND it does not render the key, current Location, background, personality, voice, private knowledge, mood, memory, Debug labels, or edit controls.
 
 ###### Scenario R1-S2: Empty Scene
 
@@ -676,9 +676,9 @@ The system SHALL adapt the spike's list-to-card drill-down to the accepted Playe
 - THEN the card remains readable without horizontal overflow or clipped content
 - AND loading/error/retry behavior does not reveal another Adventure's data.
 
-##### Requirement R3: Debug NPC State Editing
+##### Requirement R3: Settings Debug NPC State Editing
 
-The system SHALL allow local Debug mode to autosave every bounded, displayable Adventure-owned NPC card field except its stable key: name, Location, physical description, background, personality, voice, private knowledge, mood, status, and memory.
+The system SHALL allow local Debug mode in Adventure Settings to autosave every bounded, displayable Adventure-owned NPC card field except its stable key: name, Location, physical description, background, personality, voice, private knowledge, mood, status, and memory.
 
 ###### Scenario R3-S1: Autosave Adventure-Owned State
 
@@ -691,11 +691,11 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 - WHEN production, a non-owner, an unknown NPC, an invalid frozen Location or field value, or an Adventure with a pending or processing turn targets the Debug edit route
 - THEN Lorecraft refuses the mutation without disclosing another Adventure or changing any persisted state.
 
-###### Scenario R3-S3: Selected Editor Continuity After Location Move
+###### Scenario R3-S3: Settings-Only Debug Editing
 
-- WHEN the owner autosaves an already selected Debug NPC card to a different valid frozen Location
-- THEN that NPC is removed from fresh current-Scene selection but the existing editor remains usable to inspect, correct, or save its remaining card fields
-- AND Back returns to the current Scene list with focus on the original entry when it remains present, otherwise on the Scene region.
+- WHEN the owner needs complete frozen and mutable NPC fields or to edit them in local Debug mode
+- THEN those controls are available from the Adventure Settings NPC section, not the Scene pane
+- AND an authoritative Scene refresh removes an NPC that leaves the current Scene from the player-visible selection.
 
 #### Implemented By
 
@@ -704,12 +704,11 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 | S3/R1                  | `apps/backend/app/services/adventure_query_service.ts#findForOwner`                                                                                                                                        | primary      | Projects only NPCs whose current Adventure-owned Location matches the player's Scene, with frozen identity and mutable state. |
 | S3/R3                  | `apps/backend/app/services/adventure_npc_debug_state_service.ts#async update` and `apps/backend/app/controllers/adventures_controller.ts#updateNpcDebugState` | primary      | Refuses production, non-owner, invalid, and active-turn edits; persists only bounded Adventure NPC state.                     |
 | S3/R3                  | `apps/backend/app/services/character_field_limits.ts#characterFieldLimits`, `apps/backend/app/validators/adventure.ts#updateAdventureNpcStateValidator`, and `apps/backend/app/services/adventure_mutation_policy.ts#adventureMutationFieldLimits` | support | Governs shared 100/120/320/500 limits and rejects blank or oversize Debug/extracted mutable state before persistence. |
-| S3/R3-S3               | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Preserves an already selected Debug editor across its Location move without creating an off-scene selection, then returns appropriate Scene focus.                   |
+| S3/R1, S3/R1-S3, S3/R2 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion` | primary | Renders the current Scene list and player-visible read-only name, physical description, and Status, clearing stale selection after an authoritative refresh. |
 | S3/R1-S3, S3/R3-S1, S3/R3-S2 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Reloads authoritative Scene state after a completed turn or Debug autosave, handles page-level recovery, and ends the shared session on unauthorized Adventure access. |
-| S3/R3                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventureNpcEditor` and `apps/frontend/src/adventures/AdventurePage.tsx#export function AdventurePage` | presentation | Exposes local-development-only debounced autosave controls, preserves focus through the authoritative refresh, and refreshes Adventure detail.                  |
-| S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Keeps Scene drill-down, back navigation, focus return, and Story-first responsive interaction coherent.                       |
+| S3/R3                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventureNpcEditor` and `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | presentation | Exposes local-development-only debounced autosave controls in Adventure Settings and refreshes Adventure detail. |
 | S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.module.css#sceneNpcs` and `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyMobile`                                                            | presentation | Defines desktop/mobile Scene composition, empty state, and Storybook fixtures.                                                |
-| S3/R1-S1, S3/R2-S1     | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`                                                                                                                                                | presentation | Presents current-Scene NPCs as Settings avatar cards and opens the existing complete card editor without broadening the query or save boundary.                  |
+| S3/R3-S3               | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | presentation | Presents current-Scene NPCs as Settings avatar cards and opens the existing complete card editor without broadening the query or save boundary. |
 
 #### Implementation Gaps
 
@@ -719,25 +718,24 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 
 | Requirement / Scenario                 | Evidence                                                                                                                               | Proves                                                                                                                                                                                  | Status                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| S3/R1-S1, S3/R2-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S1 opens a complete NPC debug card and restores list focus on Back` | A present NPC opens a labelled complete Debug card and Back restores focus to its Scene-list entry. | Passing 2026-07-20 |
-| S3/R1-S1, S3/R2-S1, S3/R3-S1 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S3/R1-S1 + R2-S1 opens every current-Scene NPC card in Settings` | The Settings NPC section lists the authoritative current-Scene projection, opens one complete field editor, and returns to its card without creating a broader NPC query or save path. | Passing 2026-07-22 |
+| S3/R1-S1, S3/R2-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S1 opens player-visible NPC details and restores list focus on Back` | A present NPC opens a labelled read-only detail view containing only name, physical description, and Status; Back restores focus to its Scene-list entry. | Passing 2026-07-22 |
+| S3/R3-S3, S3/R3-S1 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S3/R1-S1 + R2-S1 opens every current-Scene NPC card in Settings` | The Settings NPC section lists the authoritative current-Scene projection, opens one complete field editor, and returns to its card without creating a broader NPC query or save path. | Passing 2026-07-22 |
 | S3/R1-S2, S3/R1-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it` | An authoritative Scene refresh with no present NPCs shows the empty-state message and removes the stale selected card. | Passing 2026-07-20 |
 | S3/R2-S1 | Storybook `Application/Adventures/Workbench/ReadyDesktop`, `ReadyMobile`, and `DebugNpcEditor` | Directly inspected desktop NPC list and selected complete editor plus mobile Story-first Scene-to-card selection; all bounded editable fields render without horizontal overflow. | Passing 2026-07-20 |
 | S3/R3-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S1 autosaves every editable Adventure-owned NPC card field` and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S1: autosaves bounded NPC card overrides without changing frozen canon or seed Character` | Every editable card field is sent as a bounded Adventure-owned override; the persisted update leaves frozen canon, seed Character, story revision, and turn count unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
 | S3/R3-S2 | `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S3/R3-S2: accepts only complete bounded Debug NPC state` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts#LC-003/S1/R4-S2 + S3/R3-S2: preserves authored values, backfills legacy blanks, and enforces complete bounded state` | Invalid or legacy Debug state is subject to whitespace-aware nonblank bounds, while reconciliation preserves nonblank authored values. | Passing 2026-07-20 against a guarded isolated schema |
 | S3/R3-S2 | `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S3/R3-S2: production refuses the NPC Debug editor boundary`, `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: hides Debug editing from a different Adventure owner`, and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: rejects invalid frozen Locations and edits while a turn is active` | Production disables the editor boundary; another owner receives non-disclosing not-found, and invalid frozen Locations or active turns are refused. | Existing guarded database proof last passed 2026-07-20; labels reconciled 2026-07-22 |
 | S3/R3-S2 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure` and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 retries an unchanged NPC draft after a recoverable autosave failure` | Validation marks the rejected field with actionable guidance; a recoverable failure preserves the unchanged draft for an explicit retry. | Passing 2026-07-20 |
-| S3/R3-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S3 keeps the Debug editor usable after moving its selected NPC out of Scene` | Moving the selected NPC out of Scene keeps that editor usable; Back returns focus to the current Scene region when the original entry is absent. | Passing 2026-07-20 |
 | S3/R1-S3 | `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | A fixture-controlled completed Act refreshes the selected current-Scene NPC's authoritative Mood, Status, and Memory values. | Passing 2026-07-22 on desktop against an acknowledged guarded isolated schema; prior mobile proof passed 2026-07-20 |
 
 #### Verification Gaps
 
-- `S3/R2-S2`, `S3/R3-S2`: Owner manual confirmation of long sparse cards and rendered save/delete/stale-selection recovery remains pending. Deterministic post-turn refresh, database-backed Debug-edit/owner-isolation, and retryable failed autosave behavior now pass.
+- `S3/R2-S2`, `S3/R3-S2`: Owner manual confirmation of long sparse player-visible details and rendered Settings save/delete/recovery remains pending. Deterministic post-turn refresh, database-backed Debug-edit/owner-isolation, and retryable failed autosave behavior now pass.
 
 #### Story Notes
 
-- Complete cards are intentionally exposed only to the Adventure owner during this development/debug stage; no raw prompt or model evidence is exposed.
-- A selected NPC that leaves the Scene after an authoritative refresh is no longer selectable through the current-Scene list; its already open Debug editor remains available so the owner can correct or continue that local edit.
+- The Scene pane renders only player-visible details. Complete cards are intentionally confined to the owner-only Settings Debug workflow; no raw prompt or model evidence is exposed.
+- A selected NPC that leaves the Scene after an authoritative refresh is no longer selectable or displayed in the player-visible Scene pane.
 
 ## Cross-Story Concerns
 

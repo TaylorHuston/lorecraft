@@ -315,7 +315,6 @@ export function AdventurePage({
         discardingTurn={discardTurn.isPending}
         turnDiscardError={turnDiscardError}
         onOpenSettings={openSettings}
-        onSaveNpcState={saveNpcState}
       />
       {settingsOpen ? (
         <Dialog

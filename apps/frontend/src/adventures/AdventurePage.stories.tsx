@@ -180,12 +180,13 @@ export const DebugNpcEditor: Story = {
   render: () => renderAdventure(readyAdventure),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const sceneTab = canvas.queryByRole('tab', { name: 'Scene' })
-    if (sceneTab) await userEvent.click(sceneTab)
-    await userEvent.click(await canvas.findByRole('button', { name: 'Mira' }))
-    await expect(canvas.findByText(/Click a card value to edit/i)).resolves.toBeVisible()
-    await expect(canvas.getByLabelText('Name')).toHaveValue('Mira')
-    await expect(canvas.getByLabelText('Mood')).toHaveValue('Watchful')
+    const page = within(canvasElement.ownerDocument.body)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
+    await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
+    await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira' }))
+    await expect(within(settingsDialog).getByLabelText('Name')).toHaveValue('Mira')
+    await expect(within(settingsDialog).getByLabelText('Mood')).toHaveValue('Watchful')
     expectNoHorizontalOverflow(canvasElement)
   },
 }
