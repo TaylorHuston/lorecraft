@@ -39,6 +39,7 @@ status: in_progress
 | 2026-07-22 | Add a Player section to Adventure Settings. | information architecture / presentation refinement | LC-003/S1 R5, Adventure Settings modal, focused route test, Storybook, and rendered browser evidence | Add a read-only Player tab using the existing Adventure detail projection; do not add editing or a player mutation API. |
 | 2026-07-22 | Make the Player section an NPC-style Debug editor for all available player fields. | scoped local Debug contract refinement | LC-003/S1 R5, owner-scoped development route/service/validator, typed contract, Player editor, focused tests, and rendered browser evidence | Supersede the read-only Player tab. Add a development/test-only Adventure-owned Player editor for name, physical description, backstory, status, and frozen Location key; refuse production, active turns, and source-canon writes. |
 | 2026-07-23 | Permanently hide the main Story area's scrollbar. | cosmetic | Adventure workbench CSS and rendered Storybook check | Preserve normal pointer, keyboard, and programmatic Story scrolling while hiding only its native scrollbar across Firefox, legacy Edge/IE, and WebKit browsers. |
+| 2026-07-23 | Add a little more buffer after the last narration. | cosmetic | Adventure workbench CSS and rendered Storybook check | Increase only the Story scroller's bottom padding by one spacing token; leave the composer height, its fade, and its text-clearance reserve unchanged. |
 
 ## Checklist
 
@@ -106,6 +107,7 @@ status: in_progress
 | 2026-07-22 | Settings Player profile | `AdventurePage`, CSS, focused route test, Storybook | Added the initial read-only Player tab; this presentation slice is superseded by the Player Debug editor below. | `3b538ff` |
 | 2026-07-22 | Settings Player Debug editor | Player debug service/controller/validator/route, generated contract, API adapter, `AdventurePlayerEditor`, focused tests | Replaced the read-only view with a debounced local Debug editor for every Player field currently exposed by the Adventure projection. The route is owner-scoped and disabled in production; it only writes the Adventure player record after ready/busy/frozen-Location guards. | commit candidate |
 | 2026-07-23 | Hidden Story scrollbar | `AdventureWorkbench.module.css`, focused Storybook/browser check | Kept the focusable Story scroller and its native overflow behavior while visually suppressing only its browser scrollbar through standard and engine-specific CSS. | commit candidate |
+| 2026-07-23 | Story ending buffer | `AdventureWorkbench.module.css`, rendered Storybook check | Added one spacing token to the bottom of the scrollable Story content so its final narration clears the composer with more breathing room. | commit candidate |
 
 ## Verification Ledger
 
@@ -158,6 +160,7 @@ status: in_progress
 | 2026-07-22 | arrow-only Scene return inspection | rendered Storybook | The selected Scene detail renders an accessible Back to Scene button containing only the ArrowLeft icon; no Vite overlay or console errors appear. | passed |
 | 2026-07-22 | dynamic composer placeholder regression | focused frontend, static gates, build, and rendered Storybook | The Act and Guide prompts replace the legacy placeholders and have no separate helper line. | passed; 38/38 focused tests, typecheck, lint, build, and direct rendered inspection |
 | 2026-07-23 | hidden Story scrollbar regression | focused workbench test, lint, and rendered Storybook | The focusable Story scroll region remains `overflow: auto` and scrolls programmatically, while Firefox, legacy Edge/IE, and WebKit scrollbar presentation is suppressed. | passed; 19 focused tests, lint, direct rendered inspection |
+| 2026-07-23 | Story ending buffer regression | focused workbench test, lint, and rendered Storybook | The final narration keeps an additional spacing token of clearance before the fixed composer. The Story remains scrollable and its scrollbar stays hidden. | passed; 19 focused tests, lint, 196px computed bottom padding, direct rendered inspection |
 
 ## Visual Verification Matrix
 

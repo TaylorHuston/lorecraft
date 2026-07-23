@@ -148,7 +148,7 @@
   overflow: auto;
   -ms-overflow-style: none;
   padding: calc(clamp(var(--space-6), 5vw, 4rem) + 3.5rem) clamp(var(--space-6), 5vw, 4rem)
-    11rem;
+    calc(11rem + var(--space-5));
   scrollbar-width: none;
 }
 
