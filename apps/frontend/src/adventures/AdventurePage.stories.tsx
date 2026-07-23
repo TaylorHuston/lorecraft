@@ -54,7 +54,8 @@ const readyAdventure: AdventureDetail = {
     {
       id: 'opening',
       kind: 'narration',
-      content: 'The chapel doors yield to the storm, and Mira looks up from the darkened aisle.',
+      content:
+        'The chapel doors yield to the storm, and Mira looks up from the darkened aisle.\n\nRain gathers around the ruined pews as the bell goes quiet.',
     },
     {
       id: 'act-1',
@@ -161,6 +162,7 @@ export const ReadyDesktop: Story = {
     expect(canvasElement.querySelector('main > header')).not.toBeInTheDocument()
     expect(within(story).getAllByRole('article', { name: 'Player message' })).toHaveLength(3)
     expect(within(story).getAllByRole('article', { name: 'Game Master message' })).toHaveLength(4)
+    expect(within(story).getAllByText('You')).toHaveLength(3)
     expect(within(story).getByText('Keep Mira guarded until the player earns her trust.').tagName).toBe('EM')
     await expect(player).toHaveTextContent('Elara Vance')
     await expect(scene).toHaveTextContent('Mira')

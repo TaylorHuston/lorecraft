@@ -435,6 +435,11 @@ function StoryRegion({
                 key={entry.id}
               >
                 <span className={styles.srOnly}>{author}</span>
+                {isPlayerMessage ? (
+                  <span className={styles.messageAuthor} aria-hidden="true">
+                    You
+                  </span>
+                ) : null}
                 {entry.content.split(/\n\n+/).map((paragraph, index) => (
                   <p key={`${entry.id}-${index}`}>
                     {entry.kind === 'guide' ? <em>{paragraph}</em> : paragraph}
@@ -452,6 +457,9 @@ function StoryRegion({
               data-message-kind={activePlayerMessage.kind}
             >
               <span className={styles.srOnly}>Player</span>
+              <span className={styles.messageAuthor} aria-hidden="true">
+                You
+              </span>
               {activePlayerMessage.content.split(/\n\n+/).map((paragraph, index) => (
                 <p key={`${activePlayerMessage.id}-${index}`}>
                   {activePlayerMessage.kind === 'guide' ? <em>{paragraph}</em> : paragraph}

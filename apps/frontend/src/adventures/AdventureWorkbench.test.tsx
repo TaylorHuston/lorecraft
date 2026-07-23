@@ -123,6 +123,7 @@ describe('AdventureWorkbench', () => {
     expect(guideMessage).toHaveAttribute('data-message-kind', 'guide')
     expect(guideMessage).toHaveTextContent('Keep the bell silent until Mira speaks.')
     expect(guideMessage.querySelector('em')).toHaveTextContent('Keep the bell silent until Mira speaks.')
+    expect(screen.getAllByText('You')).toHaveLength(3)
     expect(screen.getAllByRole('article', { name: 'Game Master message' })).toHaveLength(2)
   })
 
