@@ -146,8 +146,14 @@
 .storyContent {
   height: 100%;
   overflow: auto;
+  -ms-overflow-style: none;
   padding: calc(clamp(var(--space-6), 5vw, 4rem) + 3.5rem) clamp(var(--space-6), 5vw, 4rem)
     11rem;
+  scrollbar-width: none;
+}
+
+.storyContent::-webkit-scrollbar {
+  display: none;
 }
 
 .storyTitle {

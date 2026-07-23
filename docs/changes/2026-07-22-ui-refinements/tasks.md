@@ -38,6 +38,7 @@ status: in_progress
 | 2026-07-22 | Remove the Pass confirmation dialog. | interaction refinement | LC-003/S2 R5-S1, Adventure composer, focused test, E2E journey, and Epic evidence | Submit Pass immediately from its existing composer button; retain the disabled pending state and server-side turn concurrency protection. |
 | 2026-07-22 | Add a Player section to Adventure Settings. | information architecture / presentation refinement | LC-003/S1 R5, Adventure Settings modal, focused route test, Storybook, and rendered browser evidence | Add a read-only Player tab using the existing Adventure detail projection; do not add editing or a player mutation API. |
 | 2026-07-22 | Make the Player section an NPC-style Debug editor for all available player fields. | scoped local Debug contract refinement | LC-003/S1 R5, owner-scoped development route/service/validator, typed contract, Player editor, focused tests, and rendered browser evidence | Supersede the read-only Player tab. Add a development/test-only Adventure-owned Player editor for name, physical description, backstory, status, and frozen Location key; refuse production, active turns, and source-canon writes. |
+| 2026-07-23 | Permanently hide the main Story area's scrollbar. | cosmetic | Adventure workbench CSS and rendered Storybook check | Preserve normal pointer, keyboard, and programmatic Story scrolling while hiding only its native scrollbar across Firefox, legacy Edge/IE, and WebKit browsers. |
 
 ## Checklist
 
@@ -69,6 +70,7 @@ status: in_progress
 - [x] Remove the Pass confirmation dialog and submit the deliberate Pass action immediately.
 - [x] Add a read-only Player profile section to Adventure Settings (superseded by the local Debug editor).
 - [x] Add a development/test-only Player Debug editor and typed owner route.
+- [x] Hide the main Story scroll region's native scrollbar without disabling scrolling.
 - [x] Add a failing-first player-visible Scene NPC detail contract and retain complete Debug editing in Settings.
 - [ ] Rerun the targeted Playwright Adventure journey after the stalled runner is recovered.
 - [x] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
@@ -103,6 +105,7 @@ status: in_progress
 | 2026-07-22 | Immediate Pass action | `TurnComposer`, focused workbench test, E2E journey, LC-003/S2 | Removed the client-only Pass confirmation dialog. The existing Pass button submits an empty Pass turn immediately and stays disabled while a turn is pending. | commit candidate |
 | 2026-07-22 | Settings Player profile | `AdventurePage`, CSS, focused route test, Storybook | Added the initial read-only Player tab; this presentation slice is superseded by the Player Debug editor below. | `3b538ff` |
 | 2026-07-22 | Settings Player Debug editor | Player debug service/controller/validator/route, generated contract, API adapter, `AdventurePlayerEditor`, focused tests | Replaced the read-only view with a debounced local Debug editor for every Player field currently exposed by the Adventure projection. The route is owner-scoped and disabled in production; it only writes the Adventure player record after ready/busy/frozen-Location guards. | commit candidate |
+| 2026-07-23 | Hidden Story scrollbar | `AdventureWorkbench.module.css`, focused Storybook/browser check | Kept the focusable Story scroller and its native overflow behavior while visually suppressing only its browser scrollbar through standard and engine-specific CSS. | commit candidate |
 
 ## Verification Ledger
 
@@ -154,12 +157,13 @@ status: in_progress
 | 2026-07-22 | full visual regression after Settings Debug relocation | Storybook interaction suite | The Debug editor Storybook interaction now enters through Settings, while Scene selection remains player-visible only. | passed 89/89 |
 | 2026-07-22 | arrow-only Scene return inspection | rendered Storybook | The selected Scene detail renders an accessible Back to Scene button containing only the ArrowLeft icon; no Vite overlay or console errors appear. | passed |
 | 2026-07-22 | dynamic composer placeholder regression | focused frontend, static gates, build, and rendered Storybook | The Act and Guide prompts replace the legacy placeholders and have no separate helper line. | passed; 38/38 focused tests, typecheck, lint, build, and direct rendered inspection |
+| 2026-07-23 | hidden Story scrollbar regression | focused workbench test, lint, and rendered Storybook | The focusable Story scroll region remains `overflow: auto` and scrolls programmatically, while Firefox, legacy Edge/IE, and WebKit scrollbar presentation is suppressed. | passed; 19 focused tests, lint, direct rendered inspection |
 
 ## Visual Verification Matrix
 
 | Surface | Route / Fixture | Viewport / State | Tool | Inspection Result | Console / Network | Status |
 |---|---|---|---|---|---|---|
-| Adventure ready state | `Application/Adventures/Workbench` ReadyDesktop and ReadyMobile | 1440x900 desktop three panes; 390x844 narrow tabs | Storybook plus `agent-browser` | Desktop image shows Player / Story / Scene only, with Story dominant, no header, and the pinned `Stormbound Chapel` World name. A long-story simulation shows a brief steep title fade before narration emerges fully clear; narrow Player tab retains contextual actions. | No Vite overlay; meaningful content; expected controls and regions present. | passed |
+| Adventure ready state | `Application/Adventures/Workbench` ReadyDesktop and ReadyMobile | 1440x900 desktop three panes; 390x844 narrow tabs | Storybook plus `agent-browser` | Desktop image shows Player / Story / Scene only, with Story dominant, no header, the pinned `Stormbound Chapel` World name, and no visible native Story scrollbar. A long-story simulation shows a brief steep title fade before narration emerges fully clear; narrow Player tab retains contextual actions. | No Vite overlay; meaningful content; expected controls and regions present. The Story scroller retains `overflow: auto`, `scrollbar-width: none`, and a working nonzero scroll position. | passed |
 | Adventure ready composer | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop; 390x844 narrow | Storybook plus `agent-browser` | Lower narration has a small transition then clears above the composer prompt; it does not remain visible below the dock fade. Its 96px text area ends halfway through the joined, equal-width Send/Pass row; the controls straddle that lower border with no gap. | No Vite overlay; 2048x1136 long-paragraph simulation inspected; action widths are 72px, gap is 0px, and the row midpoint equals the input bottom. | passed |
 | Narration focus | `Application/Adventures/Workbench` ReadyDesktop | 1440x900 desktop, focused narration scroll region | Storybook plus `agent-browser` | The focusable narration region has no decorative orange outline; controls and tabs retain their own focus styling. | No Vite overlay; computed narration outline is none. | passed |
 | Composer prompt placeholder | `Application/Adventures/Workbench` ReadyDesktop | Desktop Act/Guide; 390x844 narrow Act | Storybook plus `agent-browser` | The dynamic prompt replaces the textarea placeholder for both modes; no separate helper line consumes vertical space. | Focused DOM contract confirms the placeholder and accessible textbox label change with the mode. | passed |
