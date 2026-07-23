@@ -1,12 +1,12 @@
 ---
-status: proposed
+status: planned
 ---
 # Tasks: UI Refinements
 
 ## Resume Here
 
-- Owner-visible Guide transcript entries are implemented: completed/current Guide input renders as an italicized right-side player message while the Game Master's normal context remains narration/state only. The query/client/workbench, adapter, Storybook, LC-003/S2, and rendered-browser evidence are reconciled.
-- Keep the Change `in_progress`: the revised database-backed query proof and final committed-candidate gates remain outstanding. Supply an acknowledged disposable `TEST_DATABASE_URL` to execute the focused backend fixture.
+- Replan complete: use `/sdd-apply` to begin with failing tests for tied-timestamp transcript lineage and Player Debug functional/recovery/accessibility behavior. Do not edit LC-003 until those tests and the current implementation have been reconciled together.
+- The final candidate must use an explicitly acknowledged disposable `TEST_DATABASE_URL` and `E2E_DATABASE_URL` for targeted database/E2E proof and `npm run ci:required`. Historical LC-003 Epic verification reports also require migration or supersession through the Epic verification workflow before a readiness review can pass.
 
 ## Interactive Log
 
@@ -204,12 +204,16 @@ status: proposed
 |---|---|---|---|---|
 | 2026-07-22 | User-requested chat alignment requires historical player messages, but the current owner detail returns narration only. This is a scope expansion and typed-contract refinement within LC-003/S2. | Initial decision: return only owner-visible Act/Pass transcript events derived from existing durable turn/revision records. This Guide-exclusion decision is superseded by the later owner-visible Guide replan; normal generation context remains unchanged. | `proposal.md`, `design.md`, `tasks.md`; LC-003/S2 will be reconciled during Apply. | Superseded by the owner-visible Guide replan below. |
 | 2026-07-22 | The user explicitly approved displaying their Guide input in the owner-visible transcript. This invalidates the prior private-Guide browser boundary but not the normal generation-context exclusion. | Return owner-only completed/current Guide events from the existing durable turns alongside Act/Pass. Style Guide messages italicized and preserve owner/non-owner authorization. No storage migration or new Epic is required. | `proposal.md`, `design.md`, `tasks.md`, and LC-003/S2. | Validate the replanned artifacts, then restart `/sdd-apply` from a failing Guide query/client/workbench contract. |
+| 2026-07-23 | Independent review found an Epic ownership change and technical constraints: Player Debug persistence lacks a governing Scenario and functional boundary proof; transcript ties are nondeterministic; Player recovery/accessibility and Story focus are incomplete. | Keep Player Debug in scope as local Adventure state. Add planned S1/R5-S7, tighten S2/R5-S6 chronology, require NPC-parity recovery/accessibility, and require historical report migration plus disposable-environment proof. | `proposal.md`, `design.md`, `tasks.md`; LC-003 and historical reports are Apply-owned. | Restart `/sdd-apply` with failing tied-timestamp query, Player Debug functional API, and Player editor recovery/accessibility tests. |
 
 ## Implementation Risk And Confirmation Matrix
 
 | Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
 |---|---|---|---|---|---|
 | LC-003/S2/R3-S2, R5-S6 owner transcript | Act/Pass/Guide events appear once in chronological order; Guide is italicized and owner-only. | Joining turns to story entries omits Guide, duplicates messages, leaks another owner's Guide, or loses events after reload. | Query test with opening, Act, Pass, Guide, and active turn fixtures. | Revised failing-first fixture asserts the Guide entry; its required guarded database run remains blocked by absent disposable environment. | blocked |
+| LC-003/S2/R5-S6 lineage ordering | Owner events and narration follow head-revision lineage even when all timestamps tie. | Database row order changes the transcript chronology because entry sequence is only revision-local. | Failing-first functional fixture with identical timestamps and sequence values across revisions. | Review found the current query orders by `created_at, sequence` only. | planned |
+| LC-003/S1/R5-S7 Player Debug | Only a ready owner can persist the five existing Adventure Player fields in development/test, and no source canon or revision history changes. | Owner, CSRF, production, busy, frozen-Location, or canon-isolation boundary is unproven. | Functional API suite patterned after NPC Debug, with disposable database. | Existing service intent is present but has no functional boundary evidence. | planned |
+| LC-003/S1/R5-S7 Player recovery and accessibility | Failed saves preserve the draft, retry unchanged recoverable edits, and describe rejected fields. | A submitted signature prevents retry, or `aria-invalid` has no usable error description. | Focused Player editor tests for retry and per-field error association. | Review found NPC parity missing. | planned |
 | LC-003/S2/R5-S6 workbench | Alignment supplements rather than replaces author semantics. | Long bubbles clip, messages appear in the wrong column, Guide loses italics, or assistive tech cannot identify authors. | Workbench/route tests and desktop Storybook inspection. | 39 focused frontend tests, 20 focused Storybook tests, and direct desktop inspection pass. | proved |
 | Ready composer layout | The compact composer remains readable while lower narration recedes beneath it. | Text reaches controls, actions fail to straddle the input border or differ in width, or the fixed dock obscures the Story without a fade. | DOM ownership assertion plus desktop/narrow Storybook geometry inspection. | Focused workbench test passes; rendered view shows 96px input, joined 72px actions, 0px gap, midpoint on the border, and no overlay. | proved |
 
@@ -219,6 +223,7 @@ status: proposed
 |---|---|---|---|---|---|
 | owner query and Guide authorization | `adventure_query_service#findForOwner` current narration-only projection | same owner query derives visible Act/Pass/Guide only | functional query service fixture | Guide is included for the owner transcript only; existing non-disclosing lookup remains unchanged. | blocked on disposable database |
 | Story reading and responsive composition | `AdventureWorkbench#StoryRegion` current centered narration | same region's labelled left/right message entries | workbench + Storybook desktop/narrow evidence | Chat layout changes alignment, not pane/tabs/composer behavior. | matched |
+| Player Debug failure recovery | `AdventureWorkbench#AdventureNpcEditor` retry, field-error, and autosave contract | `AdventureWorkbench#AdventurePlayerEditor` | focused Player editor retry/field-error tests | Player fields and optional values differ, but recoverable-save and accessibility behavior must match NPC Debug. | planned |
 
 ## Boundary Contract Matrix
 
@@ -226,6 +231,7 @@ status: proposed
 |---|---|---|---|---|---|
 | resolved Act/Pass/Guide tied to a head-lineage revision | owner may read a derived display event before its resulting narration | `AdventureQueryService` → existing detail route/Tuyau → `AdventureDetail` → workbench | durable right-side player message after refresh; Guide is italicized; no retry behavior added | frontend route/workbench, Storybook, type, lint, and generated-contract proof pass; functional query fixture blocked on database | partial; database proof blocked |
 | Guide from another owner or non-owner Adventure | Guide input is not browser data outside its owning Adventure detail | existing owner-scoped query preserves non-disclosing lookup | no content outside the authenticated owner view | revised query fixture plus existing owner-boundary functional proof await disposable database | partial; database proof blocked |
+| Player Debug update request | ready local Adventure Player fields | owner-scoped route, production guard, validator, service, typed client, authoritative detail refresh | invalid/busy/non-owner/production writes do not change Player, World, revisions, or turns; recoverable failure remains retryable | new functional API and focused client evidence required | planned |
 
 ## Stateful Transition Matrix
 
@@ -233,12 +239,15 @@ status: proposed
 |---|---|---|---|---|---|
 | resolved Act/Pass/Guide | browser reload | event is reconstructed once from stored turn/revision lineage | right bubble precedes matching narration; Guide is italicized | functional query result + route refresh test | blocked on disposable database |
 | pending or failed Act/Pass/Guide | poll, retry, or discard | active bubble persists through recovery and vanishes only when discard removes the turn or resolution commits it | composer/recovery remains authoritative | route/workbench active-Guide fixtures pass; durable query proof and pending Guide rendered inspection remain outstanding | partial |
+| completed opening, Act, Pass, and Guide revisions with tied timestamps | detail reload | lineage order determines owner event plus narration order | owner sees stable chronological chat history after every reload | new tied-timestamp functional query test required | planned |
+| Player Debug save rejects without a field error | retry unchanged draft | unchanged draft remains eligible for an explicit retry | status announces failure and retry succeeds without a new edit | new focused Player editor test required | planned |
 
 ## Decision Fan-Out Ledger
 
 | Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
 |---|---|---|---|---|---|
 | 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, and generated contract are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | partial; database proof remains blocked |
+| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Replanned proposal/design/tasks; actual Epic reconciliation and implementation remain Apply work. | planned |
 
 ## Verification Environment
 
@@ -247,13 +256,15 @@ status: proposed
 | Query projection | guarded disposable database with the existing backend test harness | LC-003/S2/R3-S2, R5-S6 | blocked: no `TEST_DATABASE_URL` or write acknowledgement supplied | Safe refusal confirmed; rerun the focused query test only with an acknowledged disposable target. |
 | Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
 | Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | current working tree check passed; commit-sensitive rerun pending | `npm run generate:contracts && npm run check:contracts` passed before commit; rerun after an authorized commit. |
+| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | blocked: caller has not supplied `TEST_DATABASE_URL`, `E2E_DATABASE_URL`, `ALLOW_TEST_DATABASE_WRITES=1`, and `ALLOW_E2E_DATABASE_WRITES=1` | Run focused functional tests, targeted E2E, then `npm run ci:required` on the final candidate. |
+| Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | blocked: three historical LC-003 reports are legacy-format | Migrate or supersede the reports through the Epic verification workflow; a schema-only edit is insufficient. |
 
 ## Verification Scope Decision
 
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: `585f804` (`show guide messages in adventure transcript`), superseded by the 2026-07-23 review candidate `63f763b`; do not reuse this pending evidence for a later candidate.
+- Exact committed source candidate: not yet created after the 2026-07-23 replan. `63f763b` is the reviewed implementation candidate and `1d85596` is a documentation-only review record; neither aggregate result is reusable after the planned behavior changes.
 - Freshness and cache treatment: run against the final commit with the required disposable-test environment; record meaningful execution.
 - Aggregate result and meaningful execution/count evidence: pending.
 - Post-gate evidence-record-only changes and affected checks rerun: pending.
@@ -264,9 +275,9 @@ status: proposed
 
 ## Closeout
 
-- Review record: `review.md` created 2026-07-23 with `changes-requested` findings; return through `/sdd-change --replan` before another apply pass.
+- Review record: `review.md` records the 2026-07-23 `changes-requested` findings; this replan addresses its ownership and constraint decisions. A new independent review is required after Apply.
 - Manual UI confirmation status: pending user.
 - Release communication status: not applicable unless a refinement changes public user-visible behavior.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
 - Deferred gaps accepted: none. The targeted Playwright rerun is an unresolved verification gap, not accepted.
-- Folder state: active, `proposed` pending the required replan.
+- Folder state: active, `planned` after the 2026-07-23 replan.
