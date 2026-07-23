@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import { AdventureApiError } from './adventureApi'
-import { AdventureNpcEditor, AdventureWorkbench, type AdventureView } from './AdventureWorkbench'
+import {
+  AdventureNpcEditor,
+  AdventurePlayerEditor,
+  AdventureWorkbench,
+  type AdventureView,
+} from './AdventureWorkbench'
 
 const readyAdventure: AdventureView = {
   id: '11111111-1111-4111-8111-111111111111',
@@ -258,6 +263,49 @@ describe('AdventureWorkbench', () => {
     )
   })
 
+  it('LC-003/S1/R5-S7 identifies the rejected Player Debug field after an autosave validation failure', async () => {
+    const user = userEvent.setup()
+    const savePlayerState = vi.fn().mockRejectedValue(
+      new AdventureApiError('validation', 'Correct the highlighted fields.', {
+        status: 'Enter a value using 1,000 characters or fewer.',
+      })
+    )
+    render(<AdventurePlayerEditor player={readyAdventure.player} onSave={savePlayerState} />)
+
+    await user.clear(screen.getByLabelText('Status'))
+    await user.type(screen.getByLabelText('Status'), 'Watching the rain.')
+
+    await waitFor(() => expect(savePlayerState).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(screen.getByLabelText('Status')).toHaveAttribute('aria-invalid', 'true'))
+    expect(screen.getByLabelText('Status')).toHaveAccessibleDescription(
+      'Enter a value using 1,000 characters or fewer.'
+    )
+    expect(screen.getByText('Enter a value using 1,000 characters or fewer.')).toBeVisible()
+    expect(screen.getByText('Correct the highlighted fields.')).toBeVisible()
+  })
+
+  it('LC-003/S1/R5-S7 retries an unchanged Player Debug draft after a recoverable autosave failure', async () => {
+    const user = userEvent.setup()
+    const savePlayerState = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Player state could not be saved.'))
+      .mockResolvedValueOnce(undefined)
+    render(<AdventurePlayerEditor player={readyAdventure.player} onSave={savePlayerState} />)
+
+    await user.clear(screen.getByLabelText('Status'))
+    await user.type(screen.getByLabelText('Status'), 'Watching the rain.')
+
+    await waitFor(() => expect(savePlayerState).toHaveBeenCalledTimes(1))
+    expect(screen.getByRole('alert')).toHaveTextContent('Player state could not be saved.')
+    expect(screen.getByRole('button', { name: 'Retry save' })).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Retry save' }))
+    await waitFor(() => expect(savePlayerState).toHaveBeenCalledTimes(2))
+    expect(savePlayerState).toHaveBeenLastCalledWith(
+      expect.objectContaining({ status: 'Watching the rain.' })
+    )
+  })
+
   it('LC-003/S3/R3-S1 preserves the active editor through an authoritative autosave refresh', async () => {
     const user = userEvent.setup()
     const saveNpcState = vi.fn().mockResolvedValue(undefined)
@@ -337,6 +385,18 @@ describe('AdventureWorkbench', () => {
         delete (HTMLElement.prototype as { scrollHeight?: number }).scrollHeight
       }
     }
+  })
+
+  it('LC-003/S1/R5-S7 keeps the Story scroll region keyboard-focusable', () => {
+    render(<AdventureWorkbench adventure={readyAdventure} />)
+
+    const storyContent = screen
+      .getByRole('region', { name: 'Story' })
+      .querySelector('[data-slot="story-scroll-region"]') as HTMLDivElement
+    expect(storyContent).toHaveAttribute('tabindex', '0')
+
+    storyContent.focus()
+    expect(storyContent).toHaveFocus()
   })
 
   it('LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending', () => {

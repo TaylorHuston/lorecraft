@@ -834,8 +834,15 @@ export function AdventurePlayerEditor({
       void onSave(draft)
         .catch((error: unknown) => {
           if (error instanceof AdventureApiError && error.code === 'validation') {
-            setFieldErrors(error.fieldErrors as Partial<Record<PlayerField, string>>)
-            setSaveError('Correct the highlighted fields.')
+            const nextFieldErrors = Object.fromEntries(
+              Object.entries(error.fieldErrors).filter(([field]) => field in draft)
+            ) as Partial<Record<PlayerField, string>>
+            setFieldErrors(nextFieldErrors)
+            setSaveError(
+              Object.keys(nextFieldErrors).length > 0
+                ? 'Correct the highlighted fields.'
+                : 'Player state could not be saved. Please try again.'
+            )
             return
           }
           setSaveError(error instanceof Error ? error.message : 'Player state could not be saved.')
@@ -855,9 +862,22 @@ export function AdventurePlayerEditor({
     setDraft((current) => ({ ...current, [field]: value }))
   }
 
+  function retrySave() {
+    setFieldErrors({})
+    setSaveError(null)
+    setLastSubmittedSignature('')
+  }
+
+  function errorId(field: PlayerField) {
+    return `player-${field}-error`
+  }
+
   function fieldAccessibility(field: PlayerField) {
     const error = fieldErrors[field]
-    return { 'aria-invalid': error ? true : undefined }
+    return {
+      'aria-describedby': error ? errorId(field) : undefined,
+      'aria-invalid': error ? true : undefined,
+    }
   }
 
   return (
@@ -873,6 +893,7 @@ export function AdventurePlayerEditor({
             value={draft.name}
             {...fieldAccessibility('name')}
           />
+          <NpcFieldError error={fieldErrors.name} id={errorId('name')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -885,6 +906,10 @@ export function AdventurePlayerEditor({
             onChange={(event) => update('currentLocationKey', event.target.value)}
             value={draft.currentLocationKey}
             {...fieldAccessibility('currentLocationKey')}
+          />
+          <NpcFieldError
+            error={fieldErrors.currentLocationKey}
+            id={errorId('currentLocationKey')}
           />
         </dd>
       </div>
@@ -899,6 +924,10 @@ export function AdventurePlayerEditor({
             value={draft.physicalDescription}
             {...fieldAccessibility('physicalDescription')}
           />
+          <NpcFieldError
+            error={fieldErrors.physicalDescription}
+            id={errorId('physicalDescription')}
+          />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -912,6 +941,7 @@ export function AdventurePlayerEditor({
             value={draft.backstory}
             {...fieldAccessibility('backstory')}
           />
+          <NpcFieldError error={fieldErrors.backstory} id={errorId('backstory')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -925,6 +955,7 @@ export function AdventurePlayerEditor({
             value={draft.status}
             {...fieldAccessibility('status')}
           />
+          <NpcFieldError error={fieldErrors.status} id={errorId('status')} />
         </dd>
       </div>
       {saving ? (
@@ -933,9 +964,14 @@ export function AdventurePlayerEditor({
         </p>
       ) : null}
       {saveError ? (
-        <p className={styles.npcEditorError} role="alert">
-          {saveError}
-        </p>
+        <div className={styles.npcEditorError} role="alert">
+          <span>{saveError}</span>
+          {onSave && Object.keys(fieldErrors).length === 0 ? (
+            <Button onClick={retrySave} size="dense" variant="secondary">
+              Retry save
+            </Button>
+          ) : null}
+        </div>
       ) : null}
     </>
   )

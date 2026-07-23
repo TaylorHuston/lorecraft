@@ -17,7 +17,8 @@
 }
 
 .storyContent:focus-visible {
-  outline: none;
+  outline: 2px solid var(--border-strong);
+  outline-offset: -2px;
 }
 
 .sideRegion {

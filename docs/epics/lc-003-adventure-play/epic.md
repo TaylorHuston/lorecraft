@@ -283,6 +283,13 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 - THEN Lorecraft politely announces that the opening is ready
 - AND the generated narration becomes readable without moving the account holder's current focus.
 
+###### Scenario R5-S7: Local Player Debug State
+
+- WHEN a ready Adventure owner uses Player Settings in development or test
+- THEN they may update the existing Adventure-owned name, frozen Location key, physical description, backstory, and Status fields
+- AND a rejected autosave preserves its unchanged draft, describes any rejected field, and permits an explicit recoverable retry
+- AND production, non-owner, resolving, or invalid frozen-Location requests are refused without changing World canon, Adventure revisions, turns, or another owner's state.
+
 #### Implemented By
 
 | Requirement / Scenario | Location / Anchor | Kind | Responsibility |
@@ -297,6 +304,9 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R4 | `apps/backend/app/services/adventure_lifecycle_service.ts#async reset` and `apps/backend/app/services/adventure_lifecycle_service.ts#async delete` | primary | Resets from the frozen source and deletes only the selected owner Adventure. |
 | S1/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` and `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Renders the responsive story-first Adventure experience, including the pinned frozen-World Story heading, an accessible arrow-only return to the Worlds index, compact right-aligned Send/Pass composer actions, and wide Adventure Settings workspace with a local Player Debug editor. |
 | S1/R5-S2, S1/R5-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | support | Supplies the Player-pane Settings action while the full-height Workbench preserves the desktop Player / Story / Scene shell and narrow tabs. |
+| S1/R5-S7 | `apps/backend/app/services/adventure_player_debug_state_service.ts#async update` and `apps/backend/app/controllers/adventures_controller.ts#updatePlayerDebugState` | primary | Enforces the development/test, owner, ready, and frozen-Location boundary before persisting only Adventure-owned Player state. |
+| S1/R5-S7 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventurePlayerEditor` | primary | Preserves Player Debug drafts, field guidance, and recoverable retry behavior in Settings. |
+| S1/R5-S7 | `apps/backend/app/validators/adventure.ts#updateAdventurePlayerStateValidator` | support | Bounds the five Player Debug fields before the service boundary. |
 
 #### Implementation Gaps
 
@@ -335,12 +345,15 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R5-S3 | Automated tests `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R5-S3` reset-unavailable, duplicate-confirmation, and conflict cases | Reset and delete controls disclose recovery/conflict states safely. | Passing 2026-07-20 |
 | S1/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure`, plus `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S1/R5-S3` and `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S1/R5-S3` | The wide Adventure Settings workspace keeps Reset on its initial tab and provides keyboard-operable Player/NPC/Location section navigation. Player Debug accepts only bounded Adventure-owned fields and is unavailable in production. | Frontend passing 2026-07-22; backend unit bodies await disposable database environment |
 | S1/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R3-S2 + R5-S6 polls pending work until the ready opening is authoritative` | Announces readiness while preserving current focus. | Passing 2026-07-22 |
+| S1/R5-S7 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 identifies the rejected Player Debug field after an autosave validation failure` and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 retries an unchanged Player Debug draft after a recoverable autosave failure` | Fielded validation links errors to Player inputs; an unchanged recoverable draft can be retried. | Passing 2026-07-23 |
+| S1/R5-S7 | Rendered Storybook `Application/Adventures/Workbench/Ready Desktop` Player Settings | Settings exposes the five Adventure Player fields with no browser console error. | Passing 2026-07-23 |
 
 #### Verification Gaps
 
 - `S1/R3-S9`, `S1/R3-S10`: Production worker/restart acceptance is historical only and was not reproducibly rerun; explicit operational verification is required before claiming current proof.
 - `S1/R5-S5`: No current Adventure-route title/focus test directly proves this navigation behavior.
 - `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey was started with the acknowledged disposable E2E environment but stalled after setup and the account journey; rerun it before `in_review`. Current component-story, rendered-browser, and focused route/workbench evidence pass.
+- `S1/R5-S7`: The new Player Debug functional API boundary must run against an acknowledged disposable test database, then the targeted E2E and aggregate candidate gates must be rerun.
 - All S1: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
