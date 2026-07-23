@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Settings } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useParams } from 'react-router-dom'
 import { useAuth } from '../auth/authContext'
 import { Button } from '../components/Button/Button'
 import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
 import { Dialog } from '../components/Dialog/Dialog'
 import { IconButton } from '../components/IconButton/IconButton'
 import { worldQueryKeys } from '../worlds/worldApi'
-import { AdventureWorkbench } from './AdventureWorkbench'
+import { AdventureNpcEditor, AdventureWorkbench } from './AdventureWorkbench'
 import {
   AdventureApiError,
   adventureQueryKeys,
@@ -43,6 +43,14 @@ function mutationError(error: unknown, fallback: string) {
   return fallback
 }
 
+const settingsSections = [
+  { id: 'adventure', label: 'Adventure Settings' },
+  { id: 'npcs', label: 'NPCs' },
+  { id: 'locations', label: 'Locations' },
+] as const
+
+type SettingsSection = (typeof settingsSections)[number]['id']
+
 export function AdventurePage({
   adventureApi,
   pollIntervalMs = 2_000,
@@ -54,7 +62,10 @@ export function AdventurePage({
   const { account, endSession } = useAuth()
   const queryClient = useQueryClient()
   const settingsTriggerRef = useRef<HTMLButtonElement>(null)
+  const settingsTabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsSection, setSettingsSection] = useState<SettingsSection>('adventure')
+  const [settingsNpcKey, setSettingsNpcKey] = useState<string | null>(null)
   const [resetOpen, setResetOpen] = useState(false)
   const [resetError, setResetError] = useState<string | null>(null)
   const [retryingLoad, setRetryingLoad] = useState(false)
@@ -240,30 +251,43 @@ export function AdventurePage({
   const turnDiscardError = discardTurn.error
     ? mutationError(discardTurn.error, 'Lorecraft could not discard this turn. Try again.')
     : null
+  const saveNpcState =
+    import.meta.env.DEV && updateNpcStateFromApi
+      ? async (characterKey: string, input: UpdateAdventureNpcStateInput) => {
+          await updateNpcState.mutateAsync({ characterKey, input })
+        }
+      : undefined
+  const settingsNpc = adventure.data.scene.npcs.find((npc) => npc.key === settingsNpcKey) ?? null
+
+  function openSettings() {
+    setSettingsSection('adventure')
+    setSettingsNpcKey(null)
+    setSettingsOpen(true)
+  }
+
+  function moveSettingsTab(event: KeyboardEvent<HTMLButtonElement>, current: SettingsSection) {
+    const currentIndex = settingsSections.findIndex((section) => section.id === current)
+    let nextIndex: number
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % settingsSections.length
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+      nextIndex = (currentIndex - 1 + settingsSections.length) % settingsSections.length
+    } else if (event.key === 'Home') {
+      nextIndex = 0
+    } else if (event.key === 'End') {
+      nextIndex = settingsSections.length - 1
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    setSettingsSection(settingsSections[nextIndex].id)
+    settingsTabRefs.current[nextIndex]?.focus()
+  }
 
   return (
     <main className={styles.shell}>
-      <header className={styles.header}>
-        <div className={styles.headerStart}>
-          <Link className={styles.returnButton} to={adventure.data.sourceWorld.route}>
-            <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.8} />
-            Return to World
-          </Link>
-          <div className={styles.identity}>
-            <strong>Lorecraft</strong>
-            <span aria-hidden="true" />
-            <span title={adventure.data.sourceWorld.name}>{adventure.data.sourceWorld.name}</span>
-          </div>
-        </div>
-        <IconButton
-          className={styles.settingsButton}
-          label="Adventure settings"
-          onClick={() => setSettingsOpen(true)}
-          ref={settingsTriggerRef}
-        >
-          <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
-        </IconButton>
-      </header>
       <AdventureWorkbench
         adventure={adventure.data}
         retrying={retry.isPending}
@@ -280,41 +304,161 @@ export function AdventurePage({
         onDiscardTurn={(turnId) => discardTurn.mutate(turnId)}
         discardingTurn={discardTurn.isPending}
         turnDiscardError={turnDiscardError}
-        onSaveNpcState={
-          import.meta.env.DEV && updateNpcStateFromApi
-            ? async (characterKey, input) => {
-                await updateNpcState.mutateAsync({ characterKey, input })
-              }
-            : undefined
-        }
+        onOpenSettings={openSettings}
+        onSaveNpcState={saveNpcState}
       />
       {settingsOpen ? (
         <Dialog
           closeLabel="Close Adventure settings"
           open={settingsOpen}
+          size="wide"
           title="Adventure settings"
           onOpenChange={setSettingsOpen}
         >
-          <div className={styles.settingsContent}>
-            <Button
-              className={styles.resetAction}
-              disabled={isAdventureWorkActive(adventure.data)}
-              aria-describedby={
-                isAdventureWorkActive(adventure.data) ? 'reset-unavailable' : undefined
-              }
-              onClick={() => {
-                setResetError(null)
-                setSettingsOpen(false)
-                window.setTimeout(() => setResetOpen(true), 0)
-              }}
-              size="touch"
-              variant="destructive"
-            >
-              Reset Adventure
-            </Button>
-            {isAdventureWorkActive(adventure.data) ? (
-              <p id="reset-unavailable">Reset is unavailable while Adventure work is active.</p>
-            ) : null}
+          <div className={styles.settingsContent} data-slot="adventure-settings-workspace">
+            <nav className={styles.settingsNavigation} aria-label="Adventure settings sections">
+              <p className={styles.settingsNavigationLabel}>Adventure</p>
+              <div aria-label="Adventure settings sections" className={styles.settingsTabs} role="tablist">
+                {settingsSections.map((section, index) => (
+                  <button
+                    key={section.id}
+                    ref={(element) => {
+                      settingsTabRefs.current[index] = element
+                    }}
+                    aria-controls={`adventure-settings-panel-${section.id}`}
+                    aria-selected={settingsSection === section.id}
+                    className={styles.settingsTab}
+                    id={`adventure-settings-tab-${section.id}`}
+                    onClick={() => setSettingsSection(section.id)}
+                    onKeyDown={(event) => moveSettingsTab(event, section.id)}
+                    role="tab"
+                    tabIndex={settingsSection === section.id ? 0 : -1}
+                    type="button"
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </div>
+            </nav>
+            <div className={styles.settingsPanel}>
+              {settingsSection === 'adventure' ? (
+                <section
+                  aria-labelledby="adventure-settings-tab-adventure"
+                  id="adventure-settings-panel-adventure"
+                  role="tabpanel"
+                >
+                  <div>
+                    <p className={styles.settingsEyebrow}>Adventure configuration</p>
+                    <h3>Adventure Settings</h3>
+                    <p className={styles.settingsCopy}>
+                      Prompt instructions and other Adventure-level direction will live here.
+                    </p>
+                  </div>
+                  <section className={styles.dangerZone} aria-labelledby="adventure-reset-heading">
+                    <div>
+                      <p className={styles.settingsEyebrow}>Danger zone</p>
+                      <h4 id="adventure-reset-heading">Reset this Adventure</h4>
+                      <p className={styles.settingsCopy}>
+                        Start again from the frozen World source and preserve the player profile.
+                      </p>
+                    </div>
+                    <Button
+                      className={styles.resetAction}
+                      disabled={isAdventureWorkActive(adventure.data)}
+                      aria-describedby={
+                        isAdventureWorkActive(adventure.data) ? 'reset-unavailable' : undefined
+                      }
+                      onClick={() => {
+                        setResetError(null)
+                        setSettingsOpen(false)
+                        window.setTimeout(() => setResetOpen(true), 0)
+                      }}
+                      size="touch"
+                      variant="destructive"
+                    >
+                      Reset Adventure
+                    </Button>
+                    {isAdventureWorkActive(adventure.data) ? (
+                      <p className={styles.settingsNotice} id="reset-unavailable">
+                        Reset is unavailable while Adventure work is active.
+                      </p>
+                    ) : null}
+                  </section>
+                </section>
+              ) : null}
+              {settingsSection === 'npcs' ? (
+                <section
+                  aria-labelledby="adventure-settings-tab-npcs"
+                  id="adventure-settings-panel-npcs"
+                  role="tabpanel"
+                >
+                  {settingsNpc ? (
+                    <>
+                      <IconButton label="Back to NPCs" onClick={() => setSettingsNpcKey(null)}>
+                        <ArrowLeft aria-hidden="true" size={20} strokeWidth={1.8} />
+                      </IconButton>
+                      <div>
+                        <p className={styles.settingsEyebrow}>NPC card</p>
+                        <h3>{settingsNpc.name}</h3>
+                        <p className={styles.settingsCopy}>
+                          Edit this Adventure&apos;s NPC state without changing the frozen World.
+                        </p>
+                      </div>
+                      <dl className={styles.settingsNpcDetails}>
+                        <AdventureNpcEditor key={settingsNpc.key} npc={settingsNpc} onSave={saveNpcState} />
+                      </dl>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <p className={styles.settingsEyebrow}>Adventure workspace</p>
+                        <h3>NPCs</h3>
+                        <p className={styles.settingsCopy}>People in the current Scene</p>
+                      </div>
+                      {adventure.data.scene.npcs.length > 0 ? (
+                        <ul className={styles.settingsNpcGrid}>
+                          {adventure.data.scene.npcs.map((npc) => (
+                            <li key={npc.key}>
+                              <button
+                                aria-label={`Edit ${npc.name}`}
+                                className={styles.settingsNpcCard}
+                                onClick={() => setSettingsNpcKey(npc.key)}
+                                type="button"
+                              >
+                                <span aria-hidden="true" className={styles.settingsNpcAvatar}>
+                                  {npc.name
+                                    .split(/\s+/)
+                                    .map((part) => part[0])
+                                    .join('')
+                                    .slice(0, 2)
+                                    .toUpperCase()}
+                                </span>
+                                <span className={styles.settingsNpcName}>{npc.name}</span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className={styles.settingsCopy}>No NPCs are in the current Scene.</p>
+                      )}
+                    </>
+                  )}
+                </section>
+              ) : null}
+              {settingsSection === 'locations' ? (
+                <section
+                  aria-labelledby="adventure-settings-tab-locations"
+                  id="adventure-settings-panel-locations"
+                  role="tabpanel"
+                >
+                  <p className={styles.settingsEyebrow}>Adventure workspace</p>
+                  <h3>Locations</h3>
+                  <p className={styles.settingsCopy}>
+                    Adventure-scoped location tools will appear here.
+                  </p>
+                </section>
+              ) : null}
+            </div>
           </div>
         </Dialog>
       ) : null}

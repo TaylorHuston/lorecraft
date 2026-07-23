@@ -72,11 +72,14 @@ describe('AdventureWorkbench', () => {
     expect(screen.getByRole('button', { name: 'Act' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'Guide' })).toHaveAttribute('aria-pressed', 'false')
     expect(
-      screen.getByText(
+      screen.queryByText(
         "Your turn and relevant Adventure and World context will be processed by Lorecraft's configured AI provider."
       )
-    ).toBeVisible()
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Send' })).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Continue' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Pass' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Send' }).closest('[data-slot="turn-composer-actions"]')).not.toBeNull()
     expect(
       screen.queryByText(/private knowledge|personality|director observation/i)
     ).not.toBeInTheDocument()
@@ -421,7 +424,7 @@ describe('AdventureWorkbench', () => {
       screen.getByRole('textbox', { name: 'What would you like to do?' }),
       'I ask Mira about the bell.'
     )
-    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Send' }))
     expect(submitTurn).toHaveBeenCalledWith(
       expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
     )

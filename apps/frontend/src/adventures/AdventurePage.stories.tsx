@@ -117,6 +117,18 @@ export const ReadyDesktop: Story = {
     const player = canvas.getByRole('region', { name: 'Player' })
     const story = canvas.getByRole('region', { name: 'Story' })
     const scene = canvas.getByRole('region', { name: 'Scene' })
+    expect(within(story).getByRole('heading', { name: 'Stormbound Chapel', level: 1 })).toBeVisible()
+    expect(
+      within(story)
+        .getByRole('heading', { name: 'Stormbound Chapel', level: 1 })
+        .closest('[data-slot="story-title"]')
+    ).not.toBeNull()
+    expect(within(player).getByRole('link', { name: 'Return to World' })).toHaveAttribute(
+      'href',
+      '/worlds/stormbound-chapel'
+    )
+    expect(within(player).getByRole('button', { name: 'Adventure settings' })).toBeVisible()
+    expect(canvasElement.querySelector('main > header')).not.toBeInTheDocument()
     await expect(player).toHaveTextContent('Elara Vance')
     await expect(scene).toHaveTextContent('Mira')
     const playerRect = player.getBoundingClientRect()
@@ -139,6 +151,9 @@ export const ReadyMobile: Story = {
       'aria-selected',
       'true'
     )
+    await userEvent.click(canvas.getByRole('tab', { name: 'Player' }))
+    await expect(canvas.findByRole('link', { name: 'Return to World' })).resolves.toBeVisible()
+    await expect(canvas.findByRole('button', { name: 'Adventure settings' })).resolves.toBeVisible()
     expectNoHorizontalOverflow(canvasElement)
   },
 }
@@ -215,7 +230,13 @@ export const ReadyToAct: Story = {
     await expect(
       canvas.findByRole('textbox', { name: 'What would you like to do?' })
     ).resolves.toBeVisible()
+    await expect(canvas.getByRole('button', { name: 'Send' })).toBeVisible()
     await expect(canvas.getByRole('button', { name: 'Pass' })).toBeVisible()
+    await expect(
+      canvas.queryByText(
+        "Your turn and relevant Adventure and World context will be processed by Lorecraft's configured AI provider."
+      )
+    ).not.toBeInTheDocument()
   },
 }
 
@@ -272,7 +293,59 @@ export const ResetConfirmation: Story = {
     const page = within(canvasElement.ownerDocument.body)
     await userEvent.click(await canvas.findByRole('button', { name: 'Adventure settings' }))
     const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
+    await expect(
+      within(settingsDialog).getByRole('tablist', { name: 'Adventure settings sections' })
+    ).toBeVisible()
+    await expect(
+      within(settingsDialog).getByRole('tab', { name: 'Adventure Settings' })
+    ).toHaveAttribute('aria-selected', 'true')
+    await expect(within(settingsDialog).getByRole('tab', { name: 'NPCs' })).toBeVisible()
+    await expect(within(settingsDialog).getByRole('tab', { name: 'Locations' })).toBeVisible()
     await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Reset Adventure' }))
     await expect(page.getByRole('dialog', { name: 'Reset Adventure?' })).toBeVisible()
+  },
+}
+
+export const NpcSettings: Story = {
+  render: () =>
+    renderAdventure({
+      ...readyAdventure,
+      scene: {
+        ...readyAdventure.scene,
+        npcs: [
+          ...readyAdventure.scene.npcs,
+          {
+            key: 'samira',
+            name: 'Samira Vale',
+            physicalDescription: 'A courier with wind-tangled hair.',
+            background: 'Samira carries messages between the coast and the city.',
+            personality: 'Quick-witted and guarded.',
+            voice: 'Warm but measured.',
+            privateKnowledge: 'She saw Mira at the bell tower before the storm.',
+            currentLocation: { key: 'chapel', name: 'Chapel' },
+            mood: 'Alert',
+            status: 'Waiting out the storm.',
+            memory: 'She has not spoken with the player yet.',
+          },
+        ],
+      },
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(canvasElement.ownerDocument.body)
+    await userEvent.click(await canvas.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
+    await userEvent.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
+    await expect(
+      within(settingsDialog).getByRole('button', { name: 'Edit Mira' })
+    ).toBeVisible()
+    await expect(
+      within(settingsDialog).getByRole('button', { name: 'Edit Samira Vale' })
+    ).toBeVisible()
+    await userEvent.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira' }))
+    await expect(within(settingsDialog).getByRole('textbox', { name: 'Name' })).toBeVisible()
+    await expect(
+      within(settingsDialog).getByRole('textbox', { name: 'Private knowledge' })
+    ).toBeVisible()
   },
 }

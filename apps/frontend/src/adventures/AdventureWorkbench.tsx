@@ -6,9 +6,11 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react'
+import { ArrowLeft, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
 import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
+import { IconButton } from '../components/IconButton/IconButton'
 import { creationRequestId } from './creationRequestId'
 import {
   AdventureApiError,
@@ -54,7 +56,13 @@ function PanelHeading({ eyebrow, id, title }: { eyebrow: string; id: string; tit
   )
 }
 
-function PlayerRegion({ adventure }: { adventure: AdventureView }) {
+function PlayerRegion({
+  adventure,
+  onOpenSettings,
+}: {
+  adventure: AdventureView
+  onOpenSettings?: () => void
+}) {
   const { player } = adventure
 
   return (
@@ -64,6 +72,17 @@ function PlayerRegion({ adventure }: { adventure: AdventureView }) {
       data-slot="player-scroll-region"
       tabIndex={0}
     >
+      {onOpenSettings ? (
+        <div className={styles.playerActions} data-slot="adventure-player-actions">
+          <Link className={styles.returnToWorld} to={adventure.sourceWorld.route}>
+            <ArrowLeft aria-hidden="true" size={16} strokeWidth={1.8} />
+            Return to World
+          </Link>
+          <IconButton label="Adventure settings" onClick={onOpenSettings}>
+            <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
+          </IconButton>
+        </div>
+      ) : null}
       <PanelHeading eyebrow="Player" id="adventure-player-heading" title={player.name} />
       <dl className={styles.details}>
         <div>
@@ -234,18 +253,14 @@ function TurnComposer({
             value={text}
           />
         </div>
-        <p className={styles.composerDisclosure}>
-          Your turn and relevant Adventure and World context will be processed by Lorecraft&apos;s
-          configured AI provider.
-        </p>
         {localError || error ? (
           <p className={styles.composerError} role="alert">
             {localError ?? error}
           </p>
         ) : null}
-        <div className={styles.composerActions}>
+        <div className={styles.composerActions} data-slot="turn-composer-actions">
           <Button pending={pending} pendingLabel="Sending turn…" size="touch" type="submit">
-            Continue
+            Send
           </Button>
           <Button
             ref={passRef}
@@ -351,6 +366,9 @@ function StoryRegion({
       data-route-heading
       tabIndex={-1}
     >
+      <div className={styles.storyTitle} data-slot="story-title">
+        <h1>{adventure.sourceWorld.name}</h1>
+      </div>
       {!openingInProgress ? (
         <p className={styles.srOnly} role="status" aria-atomic="true">
           {completionAnnouncement}
@@ -447,12 +465,12 @@ function StoryRegion({
   )
 }
 
-function NpcDebugEditor({
+export function AdventureNpcEditor({
   npc,
   onSave,
 }: {
   npc: AdventureView['scene']['npcs'][number]
-  onSave: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
+  onSave?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
 }) {
   const initialMood = npc.mood.trim() || emptyNpcStateFallback.mood
   const initialStatus = npc.status.trim() || emptyNpcStateFallback.status
@@ -488,7 +506,12 @@ function NpcDebugEditor({
   const [lastSubmittedSignature, setLastSubmittedSignature] = useState(sourceSignature)
 
   useEffect(() => {
-    if (saving || sourceSignature === draftSignature || lastSubmittedSignature === draftSignature)
+    if (
+      !onSave ||
+      saving ||
+      sourceSignature === draftSignature ||
+      lastSubmittedSignature === draftSignature
+    )
       return
     const timeout = window.setTimeout(() => {
       setLastSubmittedSignature(draftSignature)
@@ -555,7 +578,7 @@ function NpcDebugEditor({
         <dd>
           <input
             aria-label="Name"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={100}
             onChange={(event) => update('name', event.target.value)}
             value={draft.name}
@@ -569,7 +592,7 @@ function NpcDebugEditor({
         <dd>
           <input
             aria-label="Current location key"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={100}
             onChange={(event) => update('currentLocationKey', event.target.value)}
             value={draft.currentLocationKey}
@@ -586,7 +609,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Physical description"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('physicalDescription', event.target.value)}
             value={draft.physicalDescription}
@@ -603,7 +626,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Background"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={700}
             onChange={(event) => update('background', event.target.value)}
             value={draft.background}
@@ -617,7 +640,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Personality"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('personality', event.target.value)}
             value={draft.personality}
@@ -631,7 +654,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Voice"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={240}
             onChange={(event) => update('voice', event.target.value)}
             value={draft.voice}
@@ -645,7 +668,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Private knowledge"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={700}
             onChange={(event) => update('privateKnowledge', event.target.value)}
             value={draft.privateKnowledge}
@@ -662,7 +685,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Mood"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={120}
             onChange={(event) => update('mood', event.target.value)}
             value={draft.mood}
@@ -676,7 +699,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Status"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('status', event.target.value)}
             value={draft.status}
@@ -690,7 +713,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Memory"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={500}
             onChange={(event) => update('memory', event.target.value)}
             value={draft.memory}
@@ -705,12 +728,14 @@ function NpcDebugEditor({
           {saveError ? (
             <>
               <span role="alert">{saveError}</span>
-              {Object.keys(fieldErrors).length === 0 ? (
+              {onSave && Object.keys(fieldErrors).length === 0 ? (
                 <Button onClick={retrySave} size="dense" variant="secondary">
                   Retry save
                 </Button>
               ) : null}
             </>
+          ) : !onSave ? (
+            'NPC editing is unavailable in this environment.'
           ) : saving ? (
             'Saving NPC state…'
           ) : (
@@ -789,7 +814,7 @@ function SceneRegion({
               <dd>{selected.key}</dd>
             </div>
             {onSaveNpcState ? (
-              <NpcDebugEditor
+              <AdventureNpcEditor
                 key={selected.key}
                 npc={selected}
                 onSave={onSaveNpcState}
@@ -888,6 +913,7 @@ export function AdventureWorkbench({
   onDiscardTurn,
   discardingTurn = false,
   turnDiscardError = null,
+  onOpenSettings,
   onSaveNpcState,
   layout = 'auto',
 }: {
@@ -904,6 +930,7 @@ export function AdventureWorkbench({
   onDiscardTurn?: (turnId: string) => void
   discardingTurn?: boolean
   turnDiscardError?: string | null
+  onOpenSettings?: () => void
   onSaveNpcState?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
   layout?: 'auto' | 'desktop' | 'mobile'
 }) {
@@ -924,7 +951,9 @@ export function AdventureWorkbench({
   const mobile = layout === 'mobile' || (layout === 'auto' && narrowViewport)
 
   function paneFor(pane: AdventurePane) {
-    if (pane === 'player') return <PlayerRegion adventure={adventure} />
+    if (pane === 'player') {
+      return <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
+    }
     if (pane === 'scene') {
       return <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
     }
@@ -1016,7 +1045,7 @@ export function AdventureWorkbench({
         discardingTurn={discardingTurn}
         turnDiscardError={turnDiscardError}
       />
-      <PlayerRegion adventure={adventure} />
+      <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
       <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
     </div>
   )

@@ -1,6 +1,6 @@
 .shell {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-width: 0;
   height: 100vh;
   height: 100svh;
@@ -8,100 +8,211 @@
   background: var(--background);
 }
 
-.header {
-  display: flex;
-  min-width: 0;
-  min-height: 3.5rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: 0 var(--space-4);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 0.8125rem;
+.settingsContent {
+  display: grid;
+  grid-template-columns: minmax(11rem, 13rem) minmax(0, 1fr);
+  min-block-size: 0;
+  block-size: 100%;
 }
 
-.headerStart {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--space-3);
+.settingsNavigation {
+  min-inline-size: 0;
+  padding-right: var(--space-5);
+  border-right: 1px solid var(--border);
 }
 
-.identity {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.identity strong {
-  flex: 0 0 auto;
+.settingsNavigationLabel,
+.settingsEyebrow {
+  margin: 0;
   color: var(--identity);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.identity > span[aria-hidden] {
-  width: 1px;
-  height: 1.1rem;
-  flex: 0 0 auto;
-  background: var(--border-strong);
+.settingsTabs {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
 }
 
-.identity > span:last-child {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--text-muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.returnButton,
-.settingsButton {
-  display: inline-flex;
+.settingsTab {
   min-height: var(--control-touch);
-  align-items: center;
-  justify-content: center;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
   border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-align: left;
 }
 
-.returnButton {
-  flex: 0 0 auto;
-  gap: var(--space-2);
-  padding: 0 var(--space-3);
-  border: 0;
+.settingsTab:hover {
   background: var(--surface-raised);
   color: var(--text-primary);
-  font-weight: 650;
-  text-decoration: none;
 }
 
-.returnButton:hover,
-.settingsButton:hover {
+.settingsTab[aria-selected='true'] {
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+.settingsTab:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.settingsPanel {
+  min-inline-size: 0;
+  padding-left: clamp(var(--space-5), 5vw, var(--space-8));
+}
+
+.settingsPanel [role='tabpanel'] {
+  display: grid;
+  min-block-size: 100%;
+  align-content: start;
+  gap: var(--space-7);
+}
+
+.settingsNpcGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settingsNpcCard {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 650;
+  text-align: center;
+}
+
+.settingsNpcCard:hover {
+  border-color: var(--identity);
   background: var(--surface-interactive);
 }
 
-.settingsButton {
-  width: var(--control-touch);
-  flex: 0 0 var(--control-touch);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text-secondary);
+.settingsNpcCard:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
-.settingsContent {
+.settingsNpcAvatar {
   display: grid;
+  width: min(100%, 5.5rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--identity) 50%, var(--border-strong));
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--surface), color-mix(in srgb, var(--identity) 28%, var(--surface)));
+  color: var(--identity);
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+}
+
+.settingsNpcName {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.settingsNpcDetails {
+  display: grid;
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.settingsNpcDetails dt {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.settingsNpcDetails dd {
+  margin: 0;
+}
+
+.settingsPanel h3,
+.settingsPanel h4 {
+  margin: var(--space-2) 0 0;
+}
+
+.settingsPanel h3 {
+  font-size: 1.25rem;
+}
+
+.settingsPanel h4 {
+  font-size: 0.9375rem;
+}
+
+.settingsCopy,
+.settingsNotice {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.dangerZone {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid color-mix(in srgb, var(--danger) 48%, var(--border));
+  border-radius: var(--radius-panel);
+  background: color-mix(in srgb, var(--danger) 6%, var(--surface));
 }
 
 .resetAction {
-  width: 100%;
+  justify-self: start;
 }
 
-.settingsContent p {
-  margin: var(--space-2) 0 0;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  line-height: 1.45;
+@media (max-width: 42rem) {
+  .settingsContent {
+    grid-template-columns: minmax(0, 1fr);
+    min-block-size: 0;
+  }
+
+  .settingsNavigation {
+    padding: 0 0 var(--space-4);
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .settingsTabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .settingsTab {
+    padding: var(--space-2);
+    font-size: 0.75rem;
+  }
+
+  .settingsPanel {
+    padding: var(--space-5) 0 0;
+  }
+
+  .settingsNpcGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .pendingStatus {
@@ -151,17 +262,4 @@
   background: var(--action);
   color: var(--action-foreground);
   font-weight: 650;
-}
-
-@media (max-width: 30rem) {
-  .identity > span[aria-hidden],
-  .identity > span:last-child {
-    display: none;
-  }
-
-  .returnButton {
-    padding-right: var(--space-3);
-    padding-left: var(--space-3);
-    font-size: 0.75rem;
-  }
 }

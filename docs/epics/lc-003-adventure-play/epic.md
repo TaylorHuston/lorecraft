@@ -77,7 +77,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 Implementation: implemented
 Verification: partial
 Created: 2026-07-16
-Modified: 2026-07-20
+Modified: 2026-07-22
 Last verified: 2026-07-22
 
 As a signed-in account holder, I want to start and resume a private Adventure from an accessible World, so that I can enter stable canon as my own player character.
@@ -294,7 +294,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R3-S2, S1/R5-S6 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Loads and polls the authoritative opening state, surfaces recovery, and announces readiness without moving the owner's focus. |
 | S1/R4 | `apps/backend/app/services/adventure_query_service.ts#async listForWorld` and `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Lists and resumes only the owner's Adventures from their frozen source context. |
 | S1/R4 | `apps/backend/app/services/adventure_lifecycle_service.ts#async reset` and `apps/backend/app/services/adventure_lifecycle_service.ts#async delete` | primary | Resets from the frozen source and deletes only the selected owner Adventure. |
-| S1/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Renders the responsive story-first Adventure experience. |
+| S1/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` and `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Renders the responsive story-first Adventure experience, including the pinned frozen-World Story heading, compact right-aligned Send/Pass composer actions, and wide Adventure Settings workspace. |
+| S1/R5-S2, S1/R5-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | support | Supplies the Player-pane Settings action while the full-height Workbench preserves the desktop Player / Story / Scene shell and narrow tabs. |
 
 #### Implementation Gaps
 
@@ -327,15 +328,18 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R4-S2 | Automated tests `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts#LC-003/S1/R4-S2 + S2/R4-S6: reset restores` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx#confirms reset` | Restores frozen player/NPC state and removes turn lineage; UI confirms reset. | Passing 2026-07-20; backend rerun pending disposable database |
 | S1/R4-S3 | Automated tests `apps/backend/tests/functional/adventure_lifecycle_service.spec.ts#LC-003/S1/R1-S3 + R4-S3: delete removes` and `apps/frontend/src/worlds/WorldRoutes.test.tsx#deletes only the confirmed Adventure` | Deletes only the selected owner aggregate without changing its World or siblings. | Passing 2026-07-20; backend rerun pending disposable database |
 | S1/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S1 keeps Player and Scene context available while the opening is pending` and `apps/frontend/src/adventures/AdventureRoutes.test.tsx#preserves input and one idempotency key` | Pending context remains visible and retry preserves the draft/request key. | Passing 2026-07-20 |
-| S1/R5-S2 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S2 renders the ready opening as primary content with filtered context` | Ready Story, Player, and Scene rendering is story-first. | Passing 2026-07-20 |
+| S1/R5-S2 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S2 renders the ready opening as primary content with filtered context` | Ready Story, Player, and Scene rendering is story-first; the ready composer has Send/Pass actions without a repeated provider disclosure. | Passing 2026-07-22 |
 | S1/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S4 uses Story-first keyboard-operable tabs on mobile` | Mobile tab interaction remains keyboard-operable. | Passing 2026-07-22 |
+| S1/R5-S2, S1/R5-S4 | Component stories `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyDesktop` and `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyMobile` | The ready fixture has no separate top header; its Player pane retains Return and Settings, the frozen World name is the pinned Story heading, Story remains the widest desktop region, and narrow tabs retain both actions without horizontal overflow. | Passing 2026-07-22 |
 | S1/R5-S3 | Automated tests `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R5-S3` reset-unavailable, duplicate-confirmation, and conflict cases | Reset and delete controls disclose recovery/conflict states safely. | Passing 2026-07-20 |
+| S1/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure` | The wide Adventure Settings workspace keeps Reset on its initial tab and provides keyboard-operable NPC/Location section navigation without adding those deferred tools. | Passing 2026-07-22 |
 | S1/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R3-S2 + R5-S6 polls pending work until the ready opening is authoritative` | Announces readiness while preserving current focus. | Passing 2026-07-22 |
 
 #### Verification Gaps
 
 - `S1/R3-S9`, `S1/R3-S10`: Production worker/restart acceptance is historical only and was not reproducibly rerun; explicit operational verification is required before claiming current proof.
 - `S1/R5-S5`: No current Adventure-route title/focus test directly proves this navigation behavior.
+- `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey was started with the acknowledged disposable E2E environment but stalled after setup and the account journey; rerun it before `in_review`. Current component-story, rendered-browser, and focused route/workbench evidence pass.
 - All S1: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
@@ -564,7 +568,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R3-S3 | `apps/backend/app/services/story_generation/runtime_configuration.ts#resolveStoryGenerationRuntimeConfiguration` | primary | Resolves the provider-neutral runtime configuration and bounded generation settings used for a turn. |
 | S2/R3-S6 | `apps/backend/app/services/story_generation/development_debug_trace.ts#createDevelopmentDebugTrace` | primary | Creates the local-only, explicitly disableable development trace and refuses production capture. |
 | S2/R4 | `apps/backend/app/services/adventure_mutation_policy.ts#resolveAdventureMutations` | primary | Applies only allowlisted Adventure-owned changes with provenance. |
-| S2/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Presents resolving actions, recovery, polling, and responsive composition. |
+| S2/R5 | `apps/frontend/src/adventures/AdventureWorkbench.tsx#export function AdventureWorkbench` | primary | Presents resolving actions, recovery, polling, responsive composition, and concise right-aligned Send/Pass controls. |
 | S2/R5-S2, S2/R5-S3, S2/R5-S4 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Owns routed Adventure reload, active-turn polling, unauthorized recovery, and the authoritative post-resolution refresh. |
 
 #### Implementation Gaps
@@ -591,7 +595,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R4-S1, S2/R4-S2 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S1 + R4-S2` | Only allowlisted player/NPC changes are accepted and source input remains unchanged. | Passing 2026-07-20 |
 | S2/R4-S3 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S3` | Unknown, forbidden, or out-of-bounds proposals preserve state and produce bounded rejection. | Passing 2026-07-20 |
 | S2/R4-S4 | Automated test `apps/backend/tests/unit/adventure_mutation_policy.spec.ts#LC-003/S2/R4-S4` | Ordered proposal application keeps deterministic prior/result values. | Passing 2026-07-20 |
-| S2/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break`, and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 confirms Pass before submitting an empty turn` | Act, Guide, and Pass interaction semantics. | Passing 2026-07-20 |
+| S2/R5-S1 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits Act and keeps Guide private in the composer`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 submits a typed turn with Enter and keeps Shift+Enter for a line break`, and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S1 confirms Pass before submitting an empty turn` | Act, Guide, Send, and Pass interaction semantics. | Passing 2026-07-22 |
 | S2/R5-S2, S2/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S2 + R5-S3 polls one active turn` | Polls to completed narration, announces once, and preserves focus. | Passing 2026-07-20 |
 | S2/R5-S2, S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery` | Pending state retains Story/replaces the composer; failure supports Retry/Discard. | Passing 2026-07-22 |
 | S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S4 renders a concurrent-turn conflict` | UI reports an actionable conflict rather than a transport code. | Passing 2026-07-20 |
@@ -614,7 +618,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 Implementation: implemented
 Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-21
+Modified: 2026-07-22
 Last verified: 2026-07-22
 
 As an Adventure owner, I want to open complete cards for NPCs in my current Scene, so that I can inspect the exact canon and mutable state guiding the story during development.
@@ -689,9 +693,10 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 | S3/R3                  | `apps/backend/app/services/character_field_limits.ts#characterFieldLimits`, `apps/backend/app/validators/adventure.ts#updateAdventureNpcStateValidator`, and `apps/backend/app/services/adventure_mutation_policy.ts#adventureMutationFieldLimits` | support | Governs shared 100/120/320/500 limits and rejects blank or oversize Debug/extracted mutable state before persistence. |
 | S3/R3-S3               | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Preserves an already selected Debug editor across its Location move without creating an off-scene selection, then returns appropriate Scene focus.                   |
 | S3/R1-S3, S3/R3-S1, S3/R3-S2 | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage` | primary | Reloads authoritative Scene state after a completed turn or Debug autosave, handles page-level recovery, and ends the shared session on unauthorized Adventure access. |
-| S3/R3                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function NpcDebugEditor` and `apps/frontend/src/adventures/AdventurePage.tsx#export function AdventurePage` | presentation | Exposes local-development-only debounced autosave controls, preserves focus through the authoritative refresh, and refreshes Adventure detail.                  |
+| S3/R3                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#AdventureNpcEditor` and `apps/frontend/src/adventures/AdventurePage.tsx#export function AdventurePage` | presentation | Exposes local-development-only debounced autosave controls, preserves focus through the authoritative refresh, and refreshes Adventure detail.                  |
 | S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.tsx#function SceneRegion`                                                                                                                                 | primary      | Keeps Scene drill-down, back navigation, focus return, and Story-first responsive interaction coherent.                       |
 | S3/R2                  | `apps/frontend/src/adventures/AdventureWorkbench.module.css#sceneNpcs` and `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyMobile`                                                            | presentation | Defines desktop/mobile Scene composition, empty state, and Storybook fixtures.                                                |
+| S3/R1-S1, S3/R2-S1     | `apps/frontend/src/adventures/AdventurePage.tsx#AdventurePage`                                                                                                                                                | presentation | Presents current-Scene NPCs as Settings avatar cards and opens the existing complete card editor without broadening the query or save boundary.                  |
 
 #### Implementation Gaps
 
@@ -702,6 +707,7 @@ The system SHALL allow local Debug mode to autosave every bounded, displayable A
 | Requirement / Scenario                 | Evidence                                                                                                                               | Proves                                                                                                                                                                                  | Status                                            |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | S3/R1-S1, S3/R2-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S1 opens a complete NPC debug card and restores list focus on Back` | A present NPC opens a labelled complete Debug card and Back restores focus to its Scene-list entry. | Passing 2026-07-20 |
+| S3/R1-S1, S3/R2-S1, S3/R3-S1 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S3/R1-S1 + R2-S1 opens every current-Scene NPC card in Settings` | The Settings NPC section lists the authoritative current-Scene projection, opens one complete field editor, and returns to its card without creating a broader NPC query or save path. | Passing 2026-07-22 |
 | S3/R1-S2, S3/R1-S3 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R1-S3 clears a selected NPC when authoritative Scene state removes it` | An authoritative Scene refresh with no present NPCs shows the empty-state message and removes the stale selected card. | Passing 2026-07-20 |
 | S3/R2-S1 | Storybook `Application/Adventures/Workbench/ReadyDesktop`, `ReadyMobile`, and `DebugNpcEditor` | Directly inspected desktop NPC list and selected complete editor plus mobile Story-first Scene-to-card selection; all bounded editable fields render without horizontal overflow. | Passing 2026-07-20 |
 | S3/R3-S1 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S1 autosaves every editable Adventure-owned NPC card field` and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S1: autosaves bounded NPC card overrides without changing frozen canon or seed Character` | Every editable card field is sent as a bounded Adventure-owned override; the persisted update leaves frozen canon, seed Character, story revision, and turn count unchanged. | Passing 2026-07-20 against a guarded direct disposable schema |
