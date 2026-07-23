@@ -76,7 +76,7 @@ status: in_progress
 | 2026-07-22 | Stable Settings workspace frame | shared `Dialog`, `AdventurePage`, route test | Wide Settings sections now retain the NPC editor's height; the editor Back control is a Lucide arrow icon with an accessible label. | uncommitted |
 | 2026-07-22 | Full-height Settings interior | shared `Dialog`, `AdventurePage`, route test | The dialog's remaining grid row now stretches the workspace; its left navigation and right panel fill the same usable height. | uncommitted |
 | 2026-07-22 | Chat transcript replan | Change proposal/design/tasks | Reclassified the request from presentation-only work to a LC-003/S2 owner-detail contract refinement. Existing durable turns and revisions are sufficient; Guide and generation-context privacy remain fixed constraints. | uncommitted |
-| 2026-07-22 | Owner chat transcript | query service, generated client contract, frontend Workbench/CSS, route/workbench/adapter tests, Storybook, LC-003/S2 | Derived completed and active Act/Pass/Guide messages from durable turn/revision data. Guide messages are owner-only, right-aligned, and italicized; Story messages retain Game Master/Player screen-reader author labels. | commit candidate; database query proof blocked |
+| 2026-07-22 | Owner chat transcript | query service, generated client contract, frontend Workbench/CSS, route/workbench/adapter tests, Storybook, LC-003/S2 | Derived completed and active Act/Pass/Guide messages from durable turn/revision data. Guide messages are owner-only, right-aligned, and italicized; Story messages retain Game Master/Player screen-reader author labels. | `585f804`; database query proof blocked |
 | 2026-07-22 | Compact fading chat composer | `AdventureWorkbench`, CSS, focused test, Storybook | The composer overlays a lower-story fade, uses a shorter fixed text area, and places Send/Pass in the input's lower-right above reserved text clearance. | uncommitted |
 | 2026-07-22 | Joined border-straddling composer actions | `AdventureWorkbench`, CSS, Storybook | Send and Pass are 72px equal-width controls with no gap; their shared vertical midpoint sits on the textarea's bottom border. The sending label is concise enough to retain that geometry. | uncommitted |
 | 2026-07-22 | Unboxed Story transcript | `AdventureWorkbench` CSS and Storybook | Removed message padding, borders, rounded corners, and fills. Game Master and Player messages remain visibly separated by left/right alignment, typography, and accessible labels. | commit candidate |
@@ -87,7 +87,7 @@ status: in_progress
 | 2026-07-22 | Player-visible Scene NPC details | `AdventureWorkbench`, `AdventurePage`, focused test, LC-003/S3 | Removed the full Debug editor and hidden fields from Scene. A selected NPC now shows only name, physical description, and current Status; the existing Settings editor remains the full Debug surface. | commit candidate |
 | 2026-07-22 | Arrow-only Scene return | `AdventureWorkbench`, focused test | Replaced the visible Back to Scene text with an accessible ArrowLeft icon while retaining focus return to the selected NPC. | commit candidate |
 | 2026-07-22 | Dynamic composer placeholder | `TurnComposer`, CSS, focused test | Removed the visible helper and uses the accessible Act/Guide prompt as the textarea's italic placeholder, replacing legacy placeholder copy. | commit candidate |
-| 2026-07-22 | Owner-visible Guide transcript replan | Change proposal/design/tasks, LC-003/S2 | User approved changing the prior private-Guide browser boundary. Completed/current Guide input appears only to the Adventure owner as an italicized right-side message; normal generation context remains narration/state only. | implemented |
+| 2026-07-22 | Owner-visible Guide transcript replan | Change proposal/design/tasks, LC-003/S2 | User approved changing the prior private-Guide browser boundary. Completed/current Guide input appears only to the Adventure owner as an italicized right-side message; normal generation context remains narration/state only. | implemented in `585f804` |
 
 ## Verification Ledger
 
@@ -222,7 +222,7 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: pending.
+- Exact committed source candidate: `585f804` (`show guide messages in adventure transcript`).
 - Freshness and cache treatment: run against the final commit with the required disposable-test environment; record meaningful execution.
 - Aggregate result and meaningful execution/count evidence: pending.
 - Post-gate evidence-record-only changes and affected checks rerun: pending.
