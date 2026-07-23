@@ -200,7 +200,7 @@ test.group('Adventure Player Debug state API', (group) => {
       .where('adventure_id', adventureId)
       .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
       .firstOrFail()
-    await db.from('adventures').where('id', adventureId).update({ status: 'creating' })
+    await db.from('adventures').where('id', adventureId).update({ status: 'opening_pending' })
 
     const response = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
