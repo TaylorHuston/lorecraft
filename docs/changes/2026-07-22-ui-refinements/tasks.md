@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: proposed
 ---
 # Tasks: UI Refinements
 
@@ -253,7 +253,7 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: `585f804` (`show guide messages in adventure transcript`).
+- Exact committed source candidate: `585f804` (`show guide messages in adventure transcript`), superseded by the 2026-07-23 review candidate `63f763b`; do not reuse this pending evidence for a later candidate.
 - Freshness and cache treatment: run against the final commit with the required disposable-test environment; record meaningful execution.
 - Aggregate result and meaningful execution/count evidence: pending.
 - Post-gate evidence-record-only changes and affected checks rerun: pending.
@@ -264,9 +264,9 @@ status: in_progress
 
 ## Closeout
 
-- Review record: not started.
+- Review record: `review.md` created 2026-07-23 with `changes-requested` findings; return through `/sdd-change --replan` before another apply pass.
 - Manual UI confirmation status: pending user.
 - Release communication status: not applicable unless a refinement changes public user-visible behavior.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
 - Deferred gaps accepted: none. The targeted Playwright rerun is an unresolved verification gap, not accepted.
-- Folder state: active, `in_progress`.
+- Folder state: active, `proposed` pending the required replan.
