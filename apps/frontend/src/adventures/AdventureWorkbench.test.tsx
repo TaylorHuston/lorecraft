@@ -139,7 +139,9 @@ describe('AdventureWorkbench', () => {
     expect(details).not.toHaveTextContent('Low and deliberate.')
     expect(details).not.toHaveTextContent('The player has just arrived.')
 
-    await user.click(screen.getByRole('button', { name: 'Back to Scene' }))
+    const backToScene = screen.getByRole('button', { name: 'Back to Scene' })
+    expect(backToScene.querySelector('svg.lucide-arrow-left')).not.toBeNull()
+    await user.click(backToScene)
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Mira the Restless' })).toHaveFocus()
     )

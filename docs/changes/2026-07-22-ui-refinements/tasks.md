@@ -30,6 +30,7 @@ status: in_progress
 | 2026-07-22 | Remove the orange focus glow when the narration scroll region receives keyboard focus. | cosmetic / focus-treatment refinement | Adventure workbench CSS, Storybook, and Change design | Suppress only the decorative narration-region ring; retain focus visibility on action controls and tabs. |
 | 2026-07-22 | Move Act and Guide prompts into the composer as italic helper text. | cosmetic / chat-composer refinement | Adventure workbench markup/CSS, focused test, Storybook, and Change design | Keep the input's existing vertical position and buffer; reserve text space below the helper and above the joined controls. |
 | 2026-07-22 | Make Scene NPC selection player-visible only; Status means what the NPC is currently doing. | requirement refinement / presentation boundary | LC-003/S3, Adventure workbench, Settings Debug editor, focused test, and Change design | Render only name, physical description, and Status in Scene. Do not show private/Debug fields or editing controls there; retain complete Debug editing in Settings. |
+| 2026-07-22 | Make the Scene detail return control an arrow-only icon. | cosmetic / control refinement | Adventure workbench, focused test, and Change design | Preserve the accessible Back to Scene label and focus restoration while replacing the visible text with the existing ArrowLeft icon. |
 
 ## Checklist
 
@@ -81,6 +82,7 @@ status: in_progress
 | 2026-07-22 | Quiet narration focus | `AdventureWorkbench` CSS and Storybook | Removed the focus outline only from the focusable narration scroll region; interactive controls retain their existing focus treatment. | commit candidate |
 | 2026-07-22 | In-box Act/Guide helper | `TurnComposer`, CSS, focused test, Storybook | Moved the accessible dynamic label inside the composer input, kept it italicized above its placeholder, and preserved the former label's outer buffer as a spacer. | commit candidate |
 | 2026-07-22 | Player-visible Scene NPC details | `AdventureWorkbench`, `AdventurePage`, focused test, LC-003/S3 | Removed the full Debug editor and hidden fields from Scene. A selected NPC now shows only name, physical description, and current Status; the existing Settings editor remains the full Debug surface. | commit candidate |
+| 2026-07-22 | Arrow-only Scene return | `AdventureWorkbench`, focused test | Replaced the visible Back to Scene text with an accessible ArrowLeft icon while retaining focus return to the selected NPC. | commit candidate |
 
 ## Verification Ledger
 
@@ -122,6 +124,7 @@ status: in_progress
 | 2026-07-22 | composer-helper desktop, Guide, and narrow inspection | focused test and rendered Storybook | The Act and Guide helper labels are descendants of the composer input, render italicized above the editable line, preserve the outer buffer, and do not overlap Send/Pass at desktop or narrow width. | passed after expected initial failure; 20/20 focused |
 | 2026-07-22 | player-visible Scene NPC detail contract | failing-first then focused route/workbench regression | The first focused test failed because the sidebar still exposed a Debug card. The Scene now renders name, physical description, and Status only; the authorization autosave test reaches the retained Settings editor. | passed; 38/38 focused tests, typecheck, lint, build, and Change validation |
 | 2026-07-22 | full visual regression after Settings Debug relocation | Storybook interaction suite | The Debug editor Storybook interaction now enters through Settings, while Scene selection remains player-visible only. | passed 89/89 |
+| 2026-07-22 | arrow-only Scene return inspection | rendered Storybook | The selected Scene detail renders an accessible Back to Scene button containing only the ArrowLeft icon; no Vite overlay or console errors appear. | passed |
 
 ## Visual Verification Matrix
 

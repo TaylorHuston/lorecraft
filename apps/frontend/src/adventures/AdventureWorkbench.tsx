@@ -803,7 +803,8 @@ function SceneRegion({ adventure }: { adventure: AdventureView }) {
       <p className={styles.sceneDescription}>{scene.location.description}</p>
       {selected ? (
         <section className={styles.sceneNpcs} aria-label="NPC details">
-          <Button
+          <IconButton
+            label="Back to Scene"
             onClick={() => {
               const returningKey = selected.key
               setSelectedKey(null)
@@ -813,11 +814,9 @@ function SceneRegion({ adventure }: { adventure: AdventureView }) {
                 else sceneRegionRef.current?.focus()
               }, 0)
             }}
-            size="touch"
-            variant="ghost"
           >
-            Back to Scene
-          </Button>
+            <ArrowLeft aria-hidden="true" size={18} />
+          </IconButton>
           <h3>{selected.name}</h3>
           <dl className={styles.details}>
             <div>
