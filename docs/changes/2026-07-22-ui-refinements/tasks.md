@@ -81,6 +81,7 @@ status: in_progress
 
 | Date | Slice | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|
+| 2026-07-23 | LC-003/S2/R5-S6 lineage ordering | `AdventureQueryService.findForOwner`, functional query fixture, LC-003, Change ledger | Replaced timestamp-dependent transcript ordering with active revision lineage followed by entry sequence; the fixture inserts equal-time/equal-sequence narration rows in reverse lineage. | commit pending |
 | 2026-07-23 | Epic verification report migration | three LC-003 immutable audit reports, Change ledger | Added current report schema, immutable refs, verdict metadata, required historical/current sections, and one unambiguous supersedes chain without changing historical outcomes. | `409beaf` |
 | 2026-07-22 | Session setup | Change artifacts | Created the interactive ledger; no application behavior changed. | uncommitted |
 | 2026-07-22 | Adventure desktop composition | `AdventurePage`, `AdventureWorkbench`, CSS, Storybook | Removed the top header. The full-height desktop shell remains Player / Story / Scene; Return and Settings moved into Player without changing reset behavior or narrow tabs. | uncommitted |
@@ -116,6 +117,8 @@ status: in_progress
 
 | Date | Check | Evidence Type | What It Proves | Result |
 |---|---|---|---|---|
+| 2026-07-23 | `npm run test --workspace @lorecraft/backend -- tests/functional/adventure_query_service.spec.ts` | failing-first guarded functional test | The renamed tied-timestamp fixture would falsify database row-order chronology; the harness refused before test bodies because no acknowledged disposable test database is configured. | blocked safely: database writes require `ALLOW_TEST_DATABASE_WRITES=1` and disposable `TEST_DATABASE_URL` |
+| 2026-07-23 | backend typecheck, lint, and diff check | static supporting gates | The lineage-based query ordering compiles, lints, and leaves no whitespace errors. | passed |
 | 2026-07-23 | Historical Epic verification-report migration | SDD artifact validation | The versioned LC-003 report chain now has valid schema, immutable refs, matching verdict metadata, required current/historical sections, and one unambiguous tip. | passed; Change validation has 0 errors and two accepted `LARGE_STORY_SCOPE` warnings |
 | 2026-07-22 | `curl http://localhost:4310/` and `curl http://localhost:4311/api/health/ready` | local runtime readiness | The existing dev frontend and API were available before UI inspection. | frontend 200; backend ready 200 |
 | 2026-07-22 | `agent-browser` sign-in route inspection | rendered browser baseline | The running frontend loads meaningful content with no Vite error overlay; Adventure needs its existing Storybook fixture or authenticated local state for rendered inspection. | passed |
@@ -213,7 +216,7 @@ status: in_progress
 | Requirement / Surface | End-State Invariant | Risk / Failure Mode | Check Or Confirmation Needed | Evidence / Finding | Status |
 |---|---|---|---|---|---|
 | LC-003/S2/R3-S2, R5-S6 owner transcript | Act/Pass/Guide events appear once in chronological order; Guide is italicized and owner-only. | Joining turns to story entries omits Guide, duplicates messages, leaks another owner's Guide, or loses events after reload. | Query test with opening, Act, Pass, Guide, and active turn fixtures. | Revised failing-first fixture asserts the Guide entry; its required guarded database run remains blocked by absent disposable environment. | blocked |
-| LC-003/S2/R5-S6 lineage ordering | Owner events and narration follow head-revision lineage even when all timestamps tie. | Database row order changes the transcript chronology because entry sequence is only revision-local. | Failing-first functional fixture with identical timestamps and sequence values across revisions. | Review found the current query orders by `created_at, sequence` only. | planned |
+| LC-003/S2/R5-S6 lineage ordering | Owner events and narration follow head-revision lineage even when all timestamps tie. | Database row order changes the transcript chronology because entry sequence is only revision-local. | `adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage`. | Source now orders lineage then sequence; guarded execution is blocked by the absent disposable test DB. | partial |
 | LC-003/S1/R5-S7 Player Debug | Only a ready owner can persist the five existing Adventure Player fields in development/test, and no source canon or revision history changes. | Owner, CSRF, production, busy, frozen-Location, or canon-isolation boundary is unproven. | Functional API suite patterned after NPC Debug, with disposable database. | Existing service intent is present but has no functional boundary evidence. | planned |
 | LC-003/S1/R5-S7 Player recovery and accessibility | Failed saves preserve the draft, retry unchanged recoverable edits, and describe rejected fields. | A submitted signature prevents retry, or `aria-invalid` has no usable error description. | Focused Player editor tests for retry and per-field error association. | Review found NPC parity missing. | planned |
 | LC-003/S2/R5-S6 workbench | Alignment supplements rather than replaces author semantics. | Long bubbles clip, messages appear in the wrong column, Guide loses italics, or assistive tech cannot identify authors. | Workbench/route tests and desktop Storybook inspection. | 39 focused frontend tests, 20 focused Storybook tests, and direct desktop inspection pass. | proved |
@@ -223,7 +226,7 @@ status: in_progress
 
 | Concern | Reference Location / Contract | New Location / Contract | Focused Proof | Intentional Divergence / Gap | Status |
 |---|---|---|---|---|---|
-| owner query and Guide authorization | `adventure_query_service#findForOwner` current narration-only projection | same owner query derives visible Act/Pass/Guide only | functional query service fixture | Guide is included for the owner transcript only; existing non-disclosing lookup remains unchanged. | blocked on disposable database |
+| owner query and Guide authorization | `adventure_query_service#findForOwner` current narration-only projection | same owner query derives visible Act/Pass/Guide in active lineage then entry-sequence order | `adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` | Guide remains owner-only; the new adversarial fixture is blocked on the disposable database. | partial |
 | Story reading and responsive composition | `AdventureWorkbench#StoryRegion` current centered narration | same region's labelled left/right message entries | workbench + Storybook desktop/narrow evidence | Chat layout changes alignment, not pane/tabs/composer behavior. | matched |
 | Player Debug failure recovery | `AdventureWorkbench#AdventureNpcEditor` retry, field-error, and autosave contract | `AdventureWorkbench#AdventurePlayerEditor` | focused Player editor retry/field-error tests | Player fields and optional values differ, but recoverable-save and accessibility behavior must match NPC Debug. | planned |
 
@@ -241,7 +244,7 @@ status: in_progress
 |---|---|---|---|---|---|
 | resolved Act/Pass/Guide | browser reload | event is reconstructed once from stored turn/revision lineage | right bubble precedes matching narration; Guide is italicized | functional query result + route refresh test | blocked on disposable database |
 | pending or failed Act/Pass/Guide | poll, retry, or discard | active bubble persists through recovery and vanishes only when discard removes the turn or resolution commits it | composer/recovery remains authoritative | route/workbench active-Guide fixtures pass; durable query proof and pending Guide rendered inspection remain outstanding | partial |
-| completed opening, Act, Pass, and Guide revisions with tied timestamps | detail reload | lineage order determines owner event plus narration order | owner sees stable chronological chat history after every reload | new tied-timestamp functional query test required | planned |
+| completed opening, Act, Pass, and Guide revisions with tied timestamps | detail reload | lineage order determines owner event plus narration order | owner sees stable chronological chat history after every reload | `adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` | implementation complete; guarded database execution blocked |
 | Player Debug save rejects without a field error | retry unchanged draft | unchanged draft remains eligible for an explicit retry | status announces failure and retry succeeds without a new edit | new focused Player editor test required | planned |
 
 ## Decision Fan-Out Ledger

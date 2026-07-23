@@ -3,7 +3,7 @@ schema: sdd-epic-v2
 id: LC-003
 status: in_progress
 created: 2026-07-16
-modified: 2026-07-22
+modified: 2026-07-23
 last_verified: 2026-07-22
 stories:
   - S1
@@ -355,7 +355,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 Implementation: implemented
 Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-20
+Modified: 2026-07-23
 Last verified: 2026-07-22
 
 As a player, I want Act, Pass, or Guide to resolve a durable Game Master turn, so that my private Adventure can progress through narration and bounded persistent consequences.
@@ -561,7 +561,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 
 - WHEN an owner views a ready Adventure with completed or active turns
 - THEN Game Master narration renders as chronological left-aligned messages and completed/active Act, Pass, or Guide events render as chronological right-aligned Player messages
-- AND Guide messages are italicized, the transcript survives reload from durable turn and revision data, and Guide text is exposed only in the authenticated owner's Adventure detail response.
+- AND Guide messages are italicized, the transcript follows active revision lineage then per-revision entry sequence even when timestamps tie, survives reload from durable turn and revision data, and exposes Guide text only in the authenticated owner's Adventure detail response.
 
 #### Implemented By
 
@@ -573,7 +573,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R2-S5, S2/R2-S6 | `apps/backend/app/services/adventure_turn_lifecycle_service.ts#async retry` and `apps/backend/app/services/adventure_turn_lifecycle_service.ts#async discard` | primary | Own retry/discard recovery for uncommitted or exhausted turn work without publishing a partial result. |
 | S2/R3 | `apps/backend/app/services/adventure_turn_production_completion_port.ts#AdventureTurnProductionCompletionPort` | primary | Stages grounded generation and extraction before publication. |
 | S2/R3-S1, S2/R3-S2, S2/R3-S5 | `apps/backend/app/services/story_generation/adventure_turn_context.ts#assembleAdventureTurnContext` | primary | Builds grounded current-turn context while excluding private and prohibited historical values. |
-| S2/R3-S2, S2/R5-S6 | `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Derives the owner-visible Act/Pass/Guide transcript from durable turn/revision lineage while retaining the owner-scoped detail boundary. |
+| S2/R3-S2, S2/R5-S6 | `apps/backend/app/services/adventure_query_service.ts#async findForOwner` | primary | Derives the owner-visible Act/Pass/Guide transcript from durable turn/revision lineage, ordering entries by active-lineage position then entry sequence while retaining the owner-scoped detail boundary. |
 | S2/R3-S3 | `apps/backend/app/services/story_generation/runtime_configuration.ts#resolveStoryGenerationRuntimeConfiguration` | primary | Resolves the provider-neutral runtime configuration and bounded generation settings used for a turn. |
 | S2/R3-S6 | `apps/backend/app/services/story_generation/development_debug_trace.ts#createDevelopmentDebugTrace` | primary | Creates the local-only, explicitly disableable development trace and refuses production capture. |
 | S2/R4 | `apps/backend/app/services/adventure_mutation_policy.ts#resolveAdventureMutations` | primary | Applies only allowlisted Adventure-owned changes with provenance. |
@@ -618,7 +618,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 - `S2/R3-S6`: Development trace inspection passes, but the compatible provider omitted usage counters; API-model cost remains an estimate rather than measured usage.
 - `S2/R4-S5`, `S2/R4-S6`: Source/Adventure isolation and post-turn reset lack current scenario-specific repeatable evidence in the narrowed table.
 - `S2/R5-S5`: No direct responsive/touch/reduced-motion/zoom proof is retained in the cited automated anchors; rendered/manual confirmation remains pending.
-- `S2/R3-S2`, `S2/R5-S6`: The new guarded functional query test is present but cannot run until the caller supplies an acknowledged disposable `TEST_DATABASE_URL`; the current workspace has only an application `DATABASE_URL`.
+- `S2/R3-S2`, `S2/R5-S6`: `apps/backend/tests/functional/adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` now adversarially inserts equal-timestamp, equal-sequence narrations in reverse lineage, but its guarded functional run cannot execute until the caller supplies an acknowledged disposable `TEST_DATABASE_URL`; the current workspace has only an application `DATABASE_URL`.
 - All S2: Owner manual desktop/mobile confirmation remains pending; no raw prompt, Guide, or provider body will be retained as normal operational evidence.
 
 #### Story Notes

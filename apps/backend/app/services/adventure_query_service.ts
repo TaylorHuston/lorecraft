@@ -205,9 +205,7 @@ export default class AdventureQueryService {
       ? await Promise.all([
           AdventureStoryEntry.query()
             .where('adventureId', adventure.id)
-            .whereIn('revisionId', lineageIds)
-            .orderBy('createdAt')
-            .orderBy('sequence'),
+            .whereIn('revisionId', lineageIds),
           db
             .from('adventure_turns')
             .where('adventure_id', adventure.id)
@@ -217,10 +215,20 @@ export default class AdventureQueryService {
             .select('id', 'trigger', 'input', 'result_revision_id'),
         ])
       : [[], []]
+    const lineageIndexByRevisionId = new Map(
+      lineageIds.map((revisionId, index) => [revisionId, index])
+    )
+    const orderedStoryEntries = [...storyEntries].sort((left, right) => {
+      const lineageOrder =
+        (lineageIndexByRevisionId.get(left.revisionId) ?? 0) -
+        (lineageIndexByRevisionId.get(right.revisionId) ?? 0)
+
+      return lineageOrder === 0 ? left.sequence - right.sequence : lineageOrder
+    })
     const ownerTurnByResultRevisionId = new Map(
       completedOwnerTurns.map((turn) => [turn.result_revision_id as string, turn])
     )
-    const story = storyEntries.flatMap((entry) => {
+    const story = orderedStoryEntries.flatMap((entry) => {
       const ownerTurn = ownerTurnByResultRevisionId.get(entry.revisionId)
       if (ownerTurn) ownerTurnByResultRevisionId.delete(entry.revisionId)
 

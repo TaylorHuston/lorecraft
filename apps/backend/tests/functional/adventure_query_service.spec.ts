@@ -316,7 +316,7 @@ test.group('AdventureQueryService', (group) => {
     assert.equal(new Date(pending.last_played_at).toISOString(), original.toISOString())
   })
 
-  test('LC-003/S2/R3-S2 + R5-S6: projects owner-visible Act, Pass, and Guide messages into chronological chat history', async ({
+  test('LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage', async ({
     assert,
   }) => {
     const author = await createUser('query-chat-author@example.com')
@@ -370,21 +370,16 @@ test.group('AdventureQueryService', (group) => {
       })
       .returning(['id'])
 
+    // Deliberately insert result narrations in the reverse of their head-revision
+    // lineage. Every timestamp and per-revision sequence ties, so neither may
+    // determine the transcript's chronology.
     await db.table('adventure_story_entries').insert([
       {
         adventure_id: created.adventureId,
-        revision_id: openingRevision.id,
+        revision_id: guideRevision.id,
         sequence: 0,
         kind: 'narration',
-        content: 'Rain needles the chapel doors.',
-        created_at: now,
-      },
-      {
-        adventure_id: created.adventureId,
-        revision_id: actRevision.id,
-        sequence: 0,
-        kind: 'narration',
-        content: 'Mira unlatches the side door.',
+        content: 'A candle answers in the vestry.',
         created_at: now,
       },
       {
@@ -397,10 +392,18 @@ test.group('AdventureQueryService', (group) => {
       },
       {
         adventure_id: created.adventureId,
-        revision_id: guideRevision.id,
+        revision_id: actRevision.id,
         sequence: 0,
         kind: 'narration',
-        content: 'A candle answers in the vestry.',
+        content: 'Mira unlatches the side door.',
+        created_at: now,
+      },
+      {
+        adventure_id: created.adventureId,
+        revision_id: openingRevision.id,
+        sequence: 0,
+        kind: 'narration',
+        content: 'Rain needles the chapel doors.',
         created_at: now,
       },
     ])
