@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: in_review
 ---
 # Tasks: UI Refinements
 
@@ -7,8 +7,8 @@ status: in_progress
 
 - Implementation, focused evidence, rendered desktop/mobile inspection, reverse traceability, and the self-check remediation are complete. The full uncached aggregate passed all nine stages on clean candidate `9b87b98`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests.
 - Next action: transition to `in_review` for independent `/sdd-review`.
-- Active branch/ref: `change/ui-refinements` at `5fe3da2` (`Finalize UI refinement review evidence`); behavior/test implementation is immutable at `05ff5ab` and final aggregate proof is anchored to clean `9b87b98`.
-- Expected dirty files: only this post-commit handoff refresh; generated/build/browser outputs remain ignored local artifacts.
+- Active branch/ref: `change/ui-refinements` at `5463078` (`Record UI refinement handoff candidate`); behavior/test implementation is immutable at `05ff5ab` and final aggregate proof is anchored to clean `9b87b98`.
+- Expected dirty files: only the guarded lifecycle transition and this final resume refresh; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -313,13 +313,13 @@ status: in_progress
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Candidate source commit: `5fe3da2` (`Finalize UI refinement review evidence`); behavior/test implementation is immutable at `05ff5ab`, and clean tested candidate `9b87b98` differs afterward only by evidence records.
+- Candidate source commit: `5463078` (`Record UI refinement handoff candidate`); behavior/test implementation is immutable at `05ff5ab`, and clean tested candidate `9b87b98` differs afterward only by evidence records.
 - Source differs from target: yes; 33 changed paths span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, and SDD artifacts.
 - Intended implementation fully committed: yes; `5fe3da2` contains final Epic/tasks evidence after the immutable behavior/test candidate.
 - Unrelated dirty state: none; current dirt is limited to this post-commit handoff refresh.
 - Commit-sensitive checks: generated contract passed on the committed E2E candidate; the full uncached aggregate passed on `9b87b98`; scoped validation passes after the evidence-only refresh with 0 errors and the two accepted large-Story warnings.
 - Reverse traceability: LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output is the only intentionally unowned source candidate.
-- Required risk, fan-out, environment, or evidence rows still pending: lifecycle transition only; owner manual confirmation may remain `pending user` for independent review.
+- Required risk, fan-out, environment, or evidence rows still pending: none for Apply; owner manual confirmation remains `pending user` for independent review.
 - Independent review: required after Apply transitions the Change to `in_review`.
 
 ## Closeout
@@ -329,4 +329,4 @@ status: in_progress
 - Release communication status: not applicable for this private local product-flow refinement.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
 - Deferred gaps accepted: none. Implementation, targeted and aggregate verification, self-check, and reverse traceability are complete; independent review and owner manual confirmation remain review-stage gates.
-- Folder state: active, `in_progress`, pending transition to `in_review`.
+- Folder state: active, `in_review`, ready for a fresh independent `/sdd-review`.
