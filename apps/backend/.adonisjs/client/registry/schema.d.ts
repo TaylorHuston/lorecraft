@@ -199,6 +199,18 @@ export interface Registry {
       errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['updateNpcDebugState']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
+  'adventures.update_player_debug_state': {
+    methods: ["PATCH"]
+    pattern: '/api/v1/adventures/:id/player/debug-state'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#validators/adventure').updateAdventurePlayerStateValidator)>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#validators/adventure').updateAdventurePlayerStateValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['updatePlayerDebugState']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/adventures_controller').default['updatePlayerDebugState']>>> | { status: 422; response: { errors: SimpleError[] } }
+    }
+  }
   'adventures.retry_turn': {
     methods: ["POST"]
     pattern: '/api/v1/adventures/:id/turns/:turnId/retry'

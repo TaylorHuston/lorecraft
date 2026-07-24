@@ -25,6 +25,14 @@ export type UpdateAdventureNpcStateInput = {
   memory: string
 }
 
+export type UpdateAdventurePlayerStateInput = {
+  name: string
+  currentLocationKey: string
+  physicalDescription: string
+  backstory: string
+  status: string
+}
+
 export type AdventureTurnSubmission = {
   id: string
   adventureId: string
@@ -98,10 +106,11 @@ export type AdventureDetail = Omit<AdventureSummary, 'playerName'> & {
     id: string
     trigger: AdventureTurnTrigger
     status: AdventureTurnStatus
+    content: string | null
   } | null
   story: Array<{
     id: string
-    kind: string
+    kind: 'narration' | 'act' | 'pass' | 'guide'
     content: string
   }>
 }
@@ -123,6 +132,10 @@ export interface AdventureApi {
     adventureId: string,
     characterKey: string,
     input: UpdateAdventureNpcStateInput
+  ): Promise<AdventureDetail>
+  updatePlayerState?(
+    adventureId: string,
+    input: UpdateAdventurePlayerStateInput
   ): Promise<AdventureDetail>
   resetAdventure(adventureId: string): Promise<AdventureLifecycleResult>
   deleteAdventure(adventureId: string): Promise<void>
@@ -147,6 +160,7 @@ export type AdventureField =
   | 'mood'
   | 'status'
   | 'memory'
+  | 'backstory'
   | 'player.name'
   | 'player.physicalDescription'
   | 'player.backstory'

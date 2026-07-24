@@ -13,6 +13,7 @@ export interface DialogProps {
   initialFocusRef?: RefObject<HTMLElement | null>
   onOpenChange: (open: boolean) => void
   open: boolean
+  size?: 'default' | 'wide'
   title: ReactNode
 }
 
@@ -25,6 +26,7 @@ export function Dialog({
   initialFocusRef,
   onOpenChange,
   open,
+  size = 'default',
   title,
 }: DialogProps) {
   return (
@@ -39,6 +41,7 @@ export function Dialog({
         <BaseDialog.Viewport className={styles.viewport}>
           <BaseDialog.Popup
             className={styles.popup}
+            data-size={size}
             finalFocus={finalFocusRef}
             initialFocus={initialFocusRef}
           >

@@ -12,6 +12,7 @@ import {
   type AdventureTurnSubmission,
   type AdventureTurnStatus,
   type AdventureTurnTrigger,
+  type UpdateAdventurePlayerStateInput,
   type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 
@@ -56,6 +57,7 @@ const validationMessages: Record<AdventureField, string> = {
   'name': 'Enter a name using 100 characters or fewer.',
   'currentLocationKey': 'Choose a frozen Location key using 100 characters or fewer.',
   'physicalDescription': 'Enter a value using 320 characters or fewer.',
+  'backstory': 'Use 8,000 characters or fewer.',
   'background': 'Enter a value using 700 characters or fewer.',
   'personality': 'Enter a value using 320 characters or fewer.',
   'voice': 'Enter a value using 240 characters or fewer.',
@@ -65,18 +67,25 @@ const validationMessages: Record<AdventureField, string> = {
   'memory': 'Enter a value using 500 characters or fewer.',
 }
 
-function validationApiError(error: unknown) {
+function validationApiError(
+  error: unknown,
+  messages: Partial<Record<AdventureField, string>> = {}
+) {
   const fieldErrors: Partial<Record<AdventureField, string>> = {}
   for (const entry of errorEntriesOf(error)) {
     if (typeof entry.field === 'string' && entry.field in validationMessages) {
       const field = entry.field as AdventureField
-      fieldErrors[field] = validationMessages[field]
+      fieldErrors[field] = messages[field] ?? validationMessages[field]
     }
   }
   return new AdventureApiError('validation', 'Correct the highlighted fields.', fieldErrors)
 }
 
-function sharedApiError(error: unknown, notFoundMessage: string) {
+function sharedApiError(
+  error: unknown,
+  notFoundMessage: string,
+  validationMessagesOverride: Partial<Record<AdventureField, string>> = {}
+) {
   if (statusOf(error) === 401) {
     return new AdventureApiError('unauthorized', 'Your Lorecraft session has ended.')
   }
@@ -101,7 +110,7 @@ function sharedApiError(error: unknown, notFoundMessage: string) {
       conflict?.code
     )
   }
-  if (statusOf(error) === 422) return validationApiError(error)
+  if (statusOf(error) === 422) return validationApiError(error, validationMessagesOverride)
   return null
 }
 
@@ -180,13 +189,15 @@ function isAdventureDetail(value: unknown): value is AdventureDetail {
         typeof value.activeTurn.trigger === 'string' &&
         adventureTurnTriggers.has(value.activeTurn.trigger as AdventureTurnTrigger) &&
         typeof value.activeTurn.status === 'string' &&
-        adventureTurnStatuses.has(value.activeTurn.status as AdventureTurnStatus))) &&
+        adventureTurnStatuses.has(value.activeTurn.status as AdventureTurnStatus) &&
+        (value.activeTurn.content === null || typeof value.activeTurn.content === 'string'))) &&
     Array.isArray(story) &&
     story.every(
       (entry) =>
         isRecord(entry) &&
         typeof entry.id === 'string' &&
         typeof entry.kind === 'string' &&
+        ['narration', 'act', 'pass', 'guide'].includes(entry.kind) &&
         typeof entry.content === 'string'
     )
   )
@@ -329,6 +340,26 @@ export function createTuyauAdventureApi(baseUrl: string): AdventureApi {
         if (mapped) throw mapped
         if (error instanceof AdventureApiError) throw error
         throw new AdventureApiError('network', 'Lorecraft could not save this NPC state.')
+      }
+    },
+    async updatePlayerState(adventureId, input: UpdateAdventurePlayerStateInput) {
+      try {
+        await client.api.auth.csrf({})
+        return dataOf(
+          await client.api.adventures.updatePlayerDebugState({
+            params: { id: adventureId },
+            body: input,
+          }),
+          isAdventureDetail
+        )
+      } catch (error) {
+        const mapped = sharedApiError(error, 'Adventure not found.', {
+          physicalDescription: 'Use 2,000 characters or fewer.',
+          status: 'Use 1,000 characters or fewer.',
+        })
+        if (mapped) throw mapped
+        if (error instanceof AdventureApiError) throw error
+        throw new AdventureApiError('network', 'Lorecraft could not save this Player state.')
       }
     },
     async resetAdventure(adventureId) {

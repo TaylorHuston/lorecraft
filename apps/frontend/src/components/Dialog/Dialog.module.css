@@ -27,6 +27,13 @@
   color: var(--text-primary);
 }
 
+.popup[data-size='wide'] {
+  grid-template-rows: auto minmax(0, 1fr);
+  inline-size: min(100%, 70rem);
+  block-size: min(52rem, calc(100dvh - (2 * var(--space-4))));
+  max-block-size: min(52rem, calc(100dvh - (2 * var(--space-4))));
+}
+
 .header {
   display: flex;
   align-items: flex-start;
@@ -57,6 +64,11 @@
 }
 .content {
   min-inline-size: 0;
+}
+
+.popup[data-size='wide'] .content {
+  min-block-size: 0;
+  overflow: auto;
 }
 
 @media (prefers-reduced-motion: no-preference) {

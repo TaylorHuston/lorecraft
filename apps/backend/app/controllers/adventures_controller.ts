@@ -18,11 +18,16 @@ import AdventureNpcDebugStateService, {
   AdventureNpcDebugStateError,
   isAdventureNpcDebugEditingEnabled,
 } from '#services/adventure_npc_debug_state_service'
+import AdventurePlayerDebugStateService, {
+  AdventurePlayerDebugStateError,
+  isAdventurePlayerDebugEditingEnabled,
+} from '#services/adventure_player_debug_state_service'
 import env from '#start/env'
 import {
   createAdventureValidator,
   submitAdventureTurnValidator,
   updateAdventureNpcStateValidator,
+  updateAdventurePlayerStateValidator,
 } from '#validators/adventure'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -78,6 +83,12 @@ function turnLifecycleErrorResponse(error: AdventureTurnLifecycleError): Adventu
 }
 
 function npcDebugStateErrorResponse(error: AdventureNpcDebugStateError): AdventureErrorResponseDto {
+  return { errors: [{ code: error.code, message: error.message }] }
+}
+
+function playerDebugStateErrorResponse(
+  error: AdventurePlayerDebugStateError
+): AdventureErrorResponseDto {
   return { errors: [{ code: error.code, message: error.message }] }
 }
 
@@ -178,6 +189,28 @@ export default class AdventuresController {
     } catch (error) {
       if (error instanceof AdventureNpcDebugStateError) {
         return response.status(error.status).send(npcDebugStateErrorResponse(error))
+      }
+      throw error
+    }
+  }
+
+  async updatePlayerDebugState({ auth, params, request, response }: HttpContext) {
+    if (!isAdventurePlayerDebugEditingEnabled(env.get('NODE_ENV'))) {
+      return response.notFound(adventureNotFoundResponse)
+    }
+    const input = await request.validateUsing(updateAdventurePlayerStateValidator)
+    try {
+      await new AdventurePlayerDebugStateService().update({
+        ownerId: auth.user!.id,
+        adventureId: params.id,
+        ...input,
+      })
+      const adventure = await new AdventureQueryService().findForOwner(auth.user!.id, params.id)
+      if (!adventure) return response.notFound(adventureNotFoundResponse)
+      return { data: adventure }
+    } catch (error) {
+      if (error instanceof AdventurePlayerDebugStateError) {
+        return response.status(error.status).send(playerDebugStateErrorResponse(error))
       }
       throw error
     }

@@ -266,7 +266,12 @@ describe('Adventure routes', () => {
     const resolving = {
       ...pendingAdventure,
       status: 'ready' as const,
-      activeTurn: { id: 'turn-1', trigger: 'act' as const, status: 'processing' as const },
+      activeTurn: {
+        id: 'turn-1',
+        trigger: 'act' as const,
+        status: 'processing' as const,
+        content: 'I follow Mira.',
+      },
       story: [
         { id: 'opening', kind: 'narration', content: 'The chapel doors open against the storm.' },
       ],
@@ -324,12 +329,60 @@ describe('Adventure routes', () => {
       await screen.findByRole('textbox', { name: 'What would you like to do?' }),
       'I ask Mira about the bell.'
     )
-    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Send' }))
     await waitFor(() => expect(submitTurn).toHaveBeenCalledTimes(1))
     expect(submitTurn.mock.calls[0][0]).toBe(pendingAdventure.id)
     expect(submitTurn.mock.calls[0][1]).toEqual(
       expect.objectContaining({ trigger: 'act', input: 'I ask Mira about the bell.' })
     )
+  })
+
+  it('LC-003/S2/R5-S6 projects a submitted Guide as an italicized active player message', async () => {
+    const user = userEvent.setup()
+    const guideContent = 'Keep the lantern unlit until Mira speaks.'
+    const getAdventure = vi
+      .fn()
+      .mockResolvedValueOnce({ ...pendingAdventure, status: 'ready', activeTurn: null })
+      .mockResolvedValue({
+        ...pendingAdventure,
+        status: 'ready',
+        activeTurn: {
+          id: 'guide-turn-1',
+          trigger: 'guide',
+          status: 'pending',
+          content: guideContent,
+        },
+      })
+    const submitTurn = vi.fn().mockResolvedValue({
+      id: 'guide-turn-1',
+      adventureId: pendingAdventure.id,
+      trigger: 'guide',
+      status: 'pending',
+      route: pendingAdventure.route,
+    })
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: { getAdventure, submitTurn },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Guide' }))
+    await user.type(
+      screen.getByRole('textbox', { name: 'Private direction for this turn' }),
+      guideContent
+    )
+    await user.click(screen.getByRole('button', { name: 'Send' }))
+
+    await waitFor(() =>
+      expect(submitTurn).toHaveBeenCalledWith(
+        pendingAdventure.id,
+        expect.objectContaining({ trigger: 'guide', input: guideContent })
+      )
+    )
+    const guideMessage = await screen.findByRole('article', { name: 'Player message' })
+    expect(guideMessage).toHaveAttribute('data-message-kind', 'guide')
+    expect(guideMessage.querySelector('em')).toHaveTextContent(guideContent)
   })
 
   it('LC-003/S2/R5-S4 renders a concurrent-turn conflict as actionable copy, not its transport code', async () => {
@@ -355,7 +408,7 @@ describe('Adventure routes', () => {
       await screen.findByRole('textbox', { name: 'What would you like to do?' }),
       'I wait for the next bell toll.'
     )
-    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Send' }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Another turn is already resolving. Wait for it to finish.'
@@ -438,8 +491,11 @@ describe('Adventure routes', () => {
       adventurePollIntervalMs: 60_000,
     })
 
-    await user.click(await screen.findByRole('button', { name: 'Mira the Restless' }))
-    const name = screen.getByRole('textbox', { name: 'Name' })
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    await user.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
+    await user.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' }))
+    const name = within(settingsDialog).getByRole('textbox', { name: 'Name' })
     await user.clear(name)
     await user.type(name, 'Mira the Watchful')
 
@@ -449,6 +505,7 @@ describe('Adventure routes', () => {
 
   it('LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure', async () => {
     const user = userEvent.setup()
+    const updatePlayerState = vi.fn().mockResolvedValue({ ...pendingAdventure, status: 'ready' })
     const resetAdventure = vi.fn().mockResolvedValue({
       adventureId: pendingAdventure.id,
       status: 'opening_pending',
@@ -465,6 +522,7 @@ describe('Adventure routes', () => {
           story: [{ id: 'opening', kind: 'narration', content: 'An opening.' }],
         }),
         resetAdventure,
+        updatePlayerState,
       },
       adventurePollIntervalMs: 60_000,
     })
@@ -472,6 +530,46 @@ describe('Adventure routes', () => {
     const settingsTrigger = await screen.findByRole('button', { name: 'Adventure settings' })
     await user.click(settingsTrigger)
     let settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    expect(
+      settingsDialog.querySelector('[data-slot="adventure-settings-workspace"]')
+    ).not.toBeNull()
+    expect(
+      within(settingsDialog).getByRole('tablist', { name: 'Adventure settings sections' })
+    ).toBeVisible()
+    const adventureSettingsTab = within(settingsDialog).getByRole('tab', {
+      name: 'Adventure Settings',
+    })
+    expect(adventureSettingsTab).toHaveAttribute('aria-selected', 'true')
+    const playerTab = within(settingsDialog).getByRole('tab', { name: 'Player' })
+    expect(playerTab).toBeVisible()
+    const npcsTab = within(settingsDialog).getByRole('tab', { name: 'NPCs' })
+    expect(npcsTab).toBeVisible()
+    expect(within(settingsDialog).getByRole('tab', { name: 'Locations' })).toBeVisible()
+    adventureSettingsTab.focus()
+    await user.keyboard('{ArrowDown}')
+    expect(playerTab).toHaveFocus()
+    expect(playerTab).toHaveAttribute('aria-selected', 'true')
+    expect(within(settingsDialog).getByLabelText('Name')).toHaveValue('Elara Vance')
+    expect(within(settingsDialog).getByLabelText('Backstory')).toHaveValue(
+      'An archivist following a forbidden map.'
+    )
+    await user.clear(within(settingsDialog).getByLabelText('Status'))
+    await user.type(within(settingsDialog).getByLabelText('Status'), 'Watching the vestry.')
+    await waitFor(() => expect(updatePlayerState).toHaveBeenCalledTimes(1))
+    expect(updatePlayerState).toHaveBeenCalledWith(
+      pendingAdventure.id,
+      expect.objectContaining({ status: 'Watching the vestry.' })
+    )
+    playerTab.focus()
+    await user.keyboard('{ArrowDown}')
+    expect(npcsTab).toHaveFocus()
+    expect(npcsTab).toHaveAttribute('aria-selected', 'true')
+    expect(within(settingsDialog).getByRole('tabpanel', { name: 'NPCs' })).toHaveTextContent(
+      'People in the current Scene'
+    )
+    await user.keyboard('{Home}')
+    expect(adventureSettingsTab).toHaveFocus()
+    expect(adventureSettingsTab).toHaveAttribute('aria-selected', 'true')
     let resetTrigger = within(settingsDialog).getByRole('button', { name: 'Reset Adventure' })
     await user.click(resetTrigger)
     let dialog = await screen.findByRole('dialog', { name: 'Reset Adventure?' })
@@ -492,6 +590,51 @@ describe('Adventure routes', () => {
       queryClient.getQueryData<AdventureDetail>(adventureQueryKeys.detail(4, pendingAdventure.id))
         ?.turnCount
     ).toBe(0)
+  })
+
+  it('LC-003/S3/R1-S1 + R2-S1 opens every current-Scene NPC card in Settings', async () => {
+    const user = userEvent.setup()
+    const updateNpcState = vi
+      .fn()
+      .mockResolvedValue({ ...pendingAdventure, status: 'ready' as const })
+    renderTestApp({
+      route: pendingAdventure.route,
+      session: { id: 4, email: 'member@example.com' },
+      adventureApi: {
+        getAdventure: async () => ({ ...pendingAdventure, status: 'ready' }),
+        updateNpcState,
+      },
+      adventurePollIntervalMs: 60_000,
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Adventure settings' }))
+    const settingsDialog = screen.getByRole('dialog', { name: 'Adventure settings' })
+    await user.click(within(settingsDialog).getByRole('tab', { name: 'NPCs' }))
+    await user.click(within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' }))
+
+    expect(within(settingsDialog).getByRole('heading', { name: 'Mira the Restless' })).toBeVisible()
+    for (const field of [
+      'Name',
+      'Current location key',
+      'Physical description',
+      'Background',
+      'Personality',
+      'Voice',
+      'Private knowledge',
+      'Mood',
+      'Status',
+      'Memory',
+    ]) {
+      expect(within(settingsDialog).getByRole('textbox', { name: field })).toBeVisible()
+    }
+    const backToNpcs = within(settingsDialog).getByRole('button', { name: 'Back to NPCs' })
+    expect(backToNpcs).toBeVisible()
+    expect(backToNpcs.querySelector('svg.lucide-arrow-left')).not.toBeNull()
+
+    await user.click(backToNpcs)
+    expect(
+      within(settingsDialog).getByRole('button', { name: 'Edit Mira the Restless' })
+    ).toBeVisible()
   })
 
   it('LC-003/S1/R5-S3 keeps reset unavailable while opening work is active', async () => {

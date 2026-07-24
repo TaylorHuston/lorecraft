@@ -35,6 +35,7 @@ export interface ApiDefinition {
     show: typeof routes['adventures.show']
     submitTurn: typeof routes['adventures.submit_turn']
     updateNpcDebugState: typeof routes['adventures.update_npc_debug_state']
+    updatePlayerDebugState: typeof routes['adventures.update_player_debug_state']
     retryTurn: typeof routes['adventures.retry_turn']
     discardTurn: typeof routes['adventures.discard_turn']
     retryOpening: typeof routes['adventures.retry_opening']

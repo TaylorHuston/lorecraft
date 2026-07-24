@@ -58,3 +58,12 @@ export const updateAdventureNpcStateValidator = vine.create({
   status: vine.string().trim().minLength(1).maxLength(characterFieldLimits.initialStatus),
   memory: vine.string().trim().minLength(1).maxLength(characterFieldLimits.initialMemory),
 })
+
+/** Development-only editor input for Adventure-owned Player state, never World canon. */
+export const updateAdventurePlayerStateValidator = vine.create({
+  name: vine.string().trim().minLength(1).maxLength(100),
+  currentLocationKey: vine.string().trim().minLength(1).maxLength(100),
+  physicalDescription: vine.string().trim().maxLength(2_000),
+  backstory: vine.string().trim().maxLength(8_000),
+  status: vine.string().trim().maxLength(1_000),
+})

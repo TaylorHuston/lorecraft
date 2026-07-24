@@ -102,6 +102,9 @@ router
           .patch(':id/npcs/:key/debug-state', [AdventuresController, 'updateNpcDebugState'])
           .use(middleware.browserCsrf())
         router
+          .patch(':id/player/debug-state', [AdventuresController, 'updatePlayerDebugState'])
+          .use(middleware.browserCsrf())
+        router
           .post(':id/turns/:turnId/retry', [AdventuresController, 'retryTurn'])
           .use(middleware.browserCsrf())
           .use(adventureGenerationThrottle)

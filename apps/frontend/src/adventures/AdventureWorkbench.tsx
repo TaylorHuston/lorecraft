@@ -6,21 +6,24 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react'
+import { ArrowLeft, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/Button/Button'
-import { ConfirmDialog } from '../components/Dialog/ConfirmDialog'
+import { IconButton } from '../components/IconButton/IconButton'
 import { creationRequestId } from './creationRequestId'
 import {
   AdventureApiError,
   type AdventureDetail,
   type AdventureTurnTrigger,
   type SubmitAdventureTurnInput,
+  type UpdateAdventurePlayerStateInput,
   type UpdateAdventureNpcStateInput,
 } from './adventureApi'
 import styles from './AdventureWorkbench.module.css'
 
 export type AdventureView = AdventureDetail
 type NpcField = keyof UpdateAdventureNpcStateInput
+type PlayerField = keyof UpdateAdventurePlayerStateInput
 
 type AdventurePane = 'story' | 'player' | 'scene'
 
@@ -29,6 +32,12 @@ const paneLabels: Record<AdventurePane, string> = {
   story: 'Story',
   player: 'Player',
   scene: 'Scene',
+}
+
+function isPlayerMessageKind(
+  kind: AdventureView['story'][number]['kind']
+): kind is 'act' | 'pass' | 'guide' {
+  return kind === 'act' || kind === 'pass' || kind === 'guide'
 }
 
 const emptyNpcStateFallback = {
@@ -54,7 +63,21 @@ function PanelHeading({ eyebrow, id, title }: { eyebrow: string; id: string; tit
   )
 }
 
-function PlayerRegion({ adventure }: { adventure: AdventureView }) {
+function ReturnToWorldsLink() {
+  return (
+    <Link aria-label="Return to Worlds" className={styles.returnToWorld} to="/worlds">
+      <ArrowLeft aria-hidden="true" size={18} strokeWidth={1.8} />
+    </Link>
+  )
+}
+
+function PlayerRegion({
+  adventure,
+  onOpenSettings,
+}: {
+  adventure: AdventureView
+  onOpenSettings?: () => void
+}) {
   const { player } = adventure
 
   return (
@@ -64,6 +87,14 @@ function PlayerRegion({ adventure }: { adventure: AdventureView }) {
       data-slot="player-scroll-region"
       tabIndex={0}
     >
+      {onOpenSettings ? (
+        <div className={styles.playerActions} data-slot="adventure-player-actions">
+          <ReturnToWorldsLink />
+          <IconButton label="Adventure settings" onClick={onOpenSettings}>
+            <Settings aria-hidden="true" size={18} strokeWidth={1.8} />
+          </IconButton>
+        </div>
+      ) : null}
       <PanelHeading eyebrow="Player" id="adventure-player-heading" title={player.name} />
       <dl className={styles.details}>
         <div>
@@ -112,11 +143,9 @@ function TurnComposer({
   const [mode, setMode] = useState<Exclude<AdventureTurnTrigger, 'pass'>>('act')
   const [text, setText] = useState('')
   const [localError, setLocalError] = useState<string | null>(null)
-  const [passOpen, setPassOpen] = useState(false)
   const requestIdRef = useRef<string | null>(null)
   const signatureRef = useRef<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const passRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (error) textareaRef.current?.focus()
@@ -153,7 +182,6 @@ function TurnComposer({
       setText('')
       requestIdRef.current = null
       signatureRef.current = null
-      setPassOpen(false)
     } catch {
       // The route owns the actionable error message; retain the input and request identity for retry.
     }
@@ -191,15 +219,13 @@ function TurnComposer({
     )
   }
 
+  const inputPrompt =
+    mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'
+
   return (
     <>
       <form className={styles.turnComposer} aria-busy={pending} onSubmit={submitForm}>
-        <label className={styles.composerPrompt} htmlFor="adventure-turn-input">
-          <em>
-            {mode === 'act' ? 'What would you like to do?' : 'Private direction for this turn'}
-          </em>
-        </label>
-        <div className={styles.composerInput}>
+        <div className={styles.composerInput} data-slot="turn-composer-input">
           <div className={styles.composerModes} aria-label="Turn type" role="group">
             {(['act', 'guide'] as const).map((trigger) => (
               <Button
@@ -219,6 +245,7 @@ function TurnComposer({
           </div>
           <textarea
             ref={textareaRef}
+            aria-label={inputPrompt}
             aria-invalid={Boolean(localError || error)}
             disabled={pending}
             id="adventure-turn-input"
@@ -228,51 +255,30 @@ function TurnComposer({
               setLocalError(null)
             }}
             onKeyDown={submitOnEnter}
-            placeholder={
-              mode === 'act' ? 'Describe your action…' : 'Direct the Game Master privately…'
-            }
+            placeholder={inputPrompt}
             value={text}
           />
+          <div className={styles.composerActions} data-slot="turn-composer-actions">
+            <Button pending={pending} pendingLabel="Sending…" size="touch" type="submit">
+              Send
+            </Button>
+            <Button
+              disabled={pending}
+              onClick={() => void submit('pass')}
+              size="touch"
+              type="button"
+              variant="secondary"
+            >
+              Pass
+            </Button>
+          </div>
         </div>
-        <p className={styles.composerDisclosure}>
-          Your turn and relevant Adventure and World context will be processed by Lorecraft&apos;s
-          configured AI provider.
-        </p>
         {localError || error ? (
           <p className={styles.composerError} role="alert">
             {localError ?? error}
           </p>
         ) : null}
-        <div className={styles.composerActions}>
-          <Button pending={pending} pendingLabel="Sending turn…" size="touch" type="submit">
-            Continue
-          </Button>
-          <Button
-            ref={passRef}
-            disabled={pending}
-            onClick={() => setPassOpen(true)}
-            size="touch"
-            type="button"
-            variant="secondary"
-          >
-            Pass
-          </Button>
-        </div>
       </form>
-      {passOpen ? (
-        <ConfirmDialog
-          confirmLabel="Pass"
-          finalFocusRef={passRef}
-          onCancel={() => setPassOpen(false)}
-          onConfirm={() => void submit('pass')}
-          open={passOpen}
-          pending={pending}
-          pendingLabel="Passing…"
-          title="Pass this moment?"
-        >
-          <p>The Game Master may advance the scene without an action from you.</p>
-        </ConfirmDialog>
-      ) : null}
     </>
   )
 }
@@ -343,6 +349,24 @@ function StoryRegion({
     regionRef.current?.focus()
   }
 
+  const activePlayerMessage =
+    adventure.activeTurn?.trigger === 'act' ||
+    adventure.activeTurn?.trigger === 'pass' ||
+    adventure.activeTurn?.trigger === 'guide'
+      ? {
+          id: adventure.activeTurn.id,
+          kind: adventure.activeTurn.trigger,
+          content:
+            adventure.activeTurn.trigger === 'pass' ? 'Pass' : (adventure.activeTurn.content ?? ''),
+        }
+      : null
+
+  function playerMessageLabel(kind: 'act' | 'pass' | 'guide') {
+    if (kind === 'guide') return 'Guide'
+    if (kind === 'pass') return 'Pass'
+    return 'Action'
+  }
+
   return (
     <section
       ref={regionRef}
@@ -351,6 +375,9 @@ function StoryRegion({
       data-route-heading
       tabIndex={-1}
     >
+      <div className={styles.storyTitle} data-slot="story-title">
+        <h1>{adventure.sourceWorld.name}</h1>
+      </div>
       {!openingInProgress ? (
         <p className={styles.srOnly} role="status" aria-atomic="true">
           {completionAnnouncement}
@@ -387,17 +414,56 @@ function StoryRegion({
                 >
                   Try again
                 </Button>
-                <Link to={adventure.sourceWorld.route}>Return to World</Link>
+                <ReturnToWorldsLink />
               </div>
             </div>
           ) : null}
-          {adventure.story.map((entry) => (
-            <article className={styles.storyEntry} key={entry.id}>
-              {entry.content.split(/\n\n+/).map((paragraph, index) => (
-                <p key={`${entry.id}-${index}`}>{paragraph}</p>
+          {adventure.story.map((entry) => {
+            const playerMessageKind = isPlayerMessageKind(entry.kind) ? entry.kind : null
+            const author = playerMessageKind ? 'Player' : 'Game Master'
+
+            return (
+              <article
+                aria-label={`${author} message`}
+                className={`${styles.storyEntry} ${
+                  playerMessageKind ? styles.storyEntryPlayer : styles.storyEntryNarration
+                } ${entry.kind === 'guide' ? styles.storyEntryGuide : ''}`}
+                data-message-kind={entry.kind}
+                key={entry.id}
+              >
+                <span className={styles.srOnly}>{author}</span>
+                {playerMessageKind ? (
+                  <span className={styles.messageAuthor} aria-hidden="true">
+                    {playerMessageLabel(playerMessageKind)}
+                  </span>
+                ) : null}
+                {entry.content.split(/\n\n+/).map((paragraph, index) => (
+                  <p key={`${entry.id}-${index}`}>
+                    {entry.kind === 'guide' ? <em>{paragraph}</em> : paragraph}
+                  </p>
+                ))}
+              </article>
+            )
+          })}
+          {activePlayerMessage?.content ? (
+            <article
+              aria-label="Player message"
+              className={`${styles.storyEntry} ${styles.storyEntryPlayer} ${
+                activePlayerMessage.kind === 'guide' ? styles.storyEntryGuide : ''
+              }`}
+              data-message-kind={activePlayerMessage.kind}
+            >
+              <span className={styles.srOnly}>Player</span>
+              <span className={styles.messageAuthor} aria-hidden="true">
+                {playerMessageLabel(activePlayerMessage.kind)}
+              </span>
+              {activePlayerMessage.content.split(/\n\n+/).map((paragraph, index) => (
+                <p key={`${activePlayerMessage.id}-${index}`}>
+                  {activePlayerMessage.kind === 'guide' ? <em>{paragraph}</em> : paragraph}
+                </p>
               ))}
             </article>
-          ))}
+          ) : null}
         </div>
         <div className={styles.composerDock} data-slot="turn-composer-dock">
           {adventure.status === 'ready' && adventure.activeTurn?.status === 'failed' ? (
@@ -447,12 +513,12 @@ function StoryRegion({
   )
 }
 
-function NpcDebugEditor({
+export function AdventureNpcEditor({
   npc,
   onSave,
 }: {
   npc: AdventureView['scene']['npcs'][number]
-  onSave: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
+  onSave?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
 }) {
   const initialMood = npc.mood.trim() || emptyNpcStateFallback.mood
   const initialStatus = npc.status.trim() || emptyNpcStateFallback.status
@@ -488,7 +554,12 @@ function NpcDebugEditor({
   const [lastSubmittedSignature, setLastSubmittedSignature] = useState(sourceSignature)
 
   useEffect(() => {
-    if (saving || sourceSignature === draftSignature || lastSubmittedSignature === draftSignature)
+    if (
+      !onSave ||
+      saving ||
+      sourceSignature === draftSignature ||
+      lastSubmittedSignature === draftSignature
+    )
       return
     const timeout = window.setTimeout(() => {
       setLastSubmittedSignature(draftSignature)
@@ -555,7 +626,7 @@ function NpcDebugEditor({
         <dd>
           <input
             aria-label="Name"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={100}
             onChange={(event) => update('name', event.target.value)}
             value={draft.name}
@@ -569,7 +640,7 @@ function NpcDebugEditor({
         <dd>
           <input
             aria-label="Current location key"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={100}
             onChange={(event) => update('currentLocationKey', event.target.value)}
             value={draft.currentLocationKey}
@@ -586,7 +657,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Physical description"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('physicalDescription', event.target.value)}
             value={draft.physicalDescription}
@@ -603,7 +674,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Background"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={700}
             onChange={(event) => update('background', event.target.value)}
             value={draft.background}
@@ -617,7 +688,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Personality"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('personality', event.target.value)}
             value={draft.personality}
@@ -631,7 +702,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Voice"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={240}
             onChange={(event) => update('voice', event.target.value)}
             value={draft.voice}
@@ -645,16 +716,13 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Private knowledge"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={700}
             onChange={(event) => update('privateKnowledge', event.target.value)}
             value={draft.privateKnowledge}
             {...fieldAccessibility('privateKnowledge')}
           />
-          <NpcFieldError
-            error={fieldErrors.privateKnowledge}
-            id={errorId('privateKnowledge')}
-          />
+          <NpcFieldError error={fieldErrors.privateKnowledge} id={errorId('privateKnowledge')} />
         </dd>
       </div>
       <div className={styles.npcEditor}>
@@ -662,7 +730,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Mood"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={120}
             onChange={(event) => update('mood', event.target.value)}
             value={draft.mood}
@@ -676,7 +744,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Status"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={320}
             onChange={(event) => update('status', event.target.value)}
             value={draft.status}
@@ -690,7 +758,7 @@ function NpcDebugEditor({
         <dd>
           <textarea
             aria-label="Memory"
-            disabled={saving}
+            disabled={!onSave || saving}
             maxLength={500}
             onChange={(event) => update('memory', event.target.value)}
             value={draft.memory}
@@ -705,12 +773,14 @@ function NpcDebugEditor({
           {saveError ? (
             <>
               <span role="alert">{saveError}</span>
-              {Object.keys(fieldErrors).length === 0 ? (
+              {onSave && Object.keys(fieldErrors).length === 0 ? (
                 <Button onClick={retrySave} size="dense" variant="secondary">
                   Retry save
                 </Button>
               ) : null}
             </>
+          ) : !onSave ? (
+            'NPC editing is unavailable in this environment.'
           ) : saving ? (
             'Saving NPC state…'
           ) : (
@@ -722,20 +792,195 @@ function NpcDebugEditor({
   )
 }
 
-function SceneRegion({
-  adventure,
-  onSaveNpcState,
+export function AdventurePlayerEditor({
+  player,
+  onSave,
 }: {
-  adventure: AdventureView
-  onSaveNpcState?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
+  player: AdventureView['player']
+  onSave?: (input: UpdateAdventurePlayerStateInput) => Promise<void>
 }) {
+  const [draft, setDraft] = useState<UpdateAdventurePlayerStateInput>({
+    name: player.name,
+    currentLocationKey: player.currentLocation.key,
+    physicalDescription: player.physicalDescription ?? '',
+    backstory: player.backstory ?? '',
+    status: player.status,
+  })
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<PlayerField, string>>>({})
+  const sourceSignature = JSON.stringify({
+    name: player.name,
+    currentLocationKey: player.currentLocation.key,
+    physicalDescription: player.physicalDescription ?? '',
+    backstory: player.backstory ?? '',
+    status: player.status,
+  })
+  const draftSignature = JSON.stringify(draft)
+  const [lastSubmittedSignature, setLastSubmittedSignature] = useState(sourceSignature)
+
+  useEffect(() => {
+    if (
+      !onSave ||
+      saving ||
+      sourceSignature === draftSignature ||
+      lastSubmittedSignature === draftSignature
+    )
+      return
+    const timeout = window.setTimeout(() => {
+      setLastSubmittedSignature(draftSignature)
+      setSaving(true)
+      setSaveError(null)
+      void onSave(draft)
+        .catch((error: unknown) => {
+          if (error instanceof AdventureApiError && error.code === 'validation') {
+            const nextFieldErrors = Object.fromEntries(
+              Object.entries(error.fieldErrors).filter(([field]) => field in draft)
+            ) as Partial<Record<PlayerField, string>>
+            setFieldErrors(nextFieldErrors)
+            setSaveError(
+              Object.keys(nextFieldErrors).length > 0
+                ? 'Correct the highlighted fields.'
+                : 'Player state could not be saved. Please try again.'
+            )
+            return
+          }
+          setSaveError(error instanceof Error ? error.message : 'Player state could not be saved.')
+        })
+        .finally(() => setSaving(false))
+    }, 500)
+    return () => window.clearTimeout(timeout)
+  }, [draft, draftSignature, lastSubmittedSignature, onSave, saving, sourceSignature])
+
+  function update<K extends PlayerField>(field: K, value: UpdateAdventurePlayerStateInput[K]) {
+    setFieldErrors((current) => {
+      const next = { ...current }
+      delete next[field]
+      return next
+    })
+    setSaveError(null)
+    setDraft((current) => ({ ...current, [field]: value }))
+  }
+
+  function retrySave() {
+    setFieldErrors({})
+    setSaveError(null)
+    setLastSubmittedSignature('')
+  }
+
+  function errorId(field: PlayerField) {
+    return `player-${field}-error`
+  }
+
+  function fieldAccessibility(field: PlayerField) {
+    const error = fieldErrors[field]
+    return {
+      'aria-describedby': error ? errorId(field) : undefined,
+      'aria-invalid': error ? true : undefined,
+    }
+  }
+
+  return (
+    <>
+      <div className={styles.npcEditor}>
+        <dt>Name</dt>
+        <dd>
+          <input
+            aria-label="Name"
+            disabled={!onSave || saving}
+            maxLength={100}
+            onChange={(event) => update('name', event.target.value)}
+            value={draft.name}
+            {...fieldAccessibility('name')}
+          />
+          <NpcFieldError error={fieldErrors.name} id={errorId('name')} />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Current location</dt>
+        <dd>
+          <input
+            aria-label="Current location key"
+            disabled={!onSave || saving}
+            maxLength={100}
+            onChange={(event) => update('currentLocationKey', event.target.value)}
+            value={draft.currentLocationKey}
+            {...fieldAccessibility('currentLocationKey')}
+          />
+          <NpcFieldError
+            error={fieldErrors.currentLocationKey}
+            id={errorId('currentLocationKey')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Physical description</dt>
+        <dd>
+          <textarea
+            aria-label="Physical description"
+            disabled={!onSave || saving}
+            maxLength={2000}
+            onChange={(event) => update('physicalDescription', event.target.value)}
+            value={draft.physicalDescription}
+            {...fieldAccessibility('physicalDescription')}
+          />
+          <NpcFieldError
+            error={fieldErrors.physicalDescription}
+            id={errorId('physicalDescription')}
+          />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Backstory</dt>
+        <dd>
+          <textarea
+            aria-label="Backstory"
+            disabled={!onSave || saving}
+            maxLength={8000}
+            onChange={(event) => update('backstory', event.target.value)}
+            value={draft.backstory}
+            {...fieldAccessibility('backstory')}
+          />
+          <NpcFieldError error={fieldErrors.backstory} id={errorId('backstory')} />
+        </dd>
+      </div>
+      <div className={styles.npcEditor}>
+        <dt>Status</dt>
+        <dd>
+          <textarea
+            aria-label="Status"
+            disabled={!onSave || saving}
+            maxLength={1000}
+            onChange={(event) => update('status', event.target.value)}
+            value={draft.status}
+            {...fieldAccessibility('status')}
+          />
+          <NpcFieldError error={fieldErrors.status} id={errorId('status')} />
+        </dd>
+      </div>
+      {saving ? (
+        <p className={styles.npcEditorStatus} role="status">
+          Saving player state…
+        </p>
+      ) : null}
+      {saveError ? (
+        <div className={styles.npcEditorError} role="alert">
+          <span>{saveError}</span>
+          {onSave && Object.keys(fieldErrors).length === 0 ? (
+            <Button onClick={retrySave} size="dense" variant="secondary">
+              Retry save
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+    </>
+  )
+}
+
+function SceneRegion({ adventure }: { adventure: AdventureView }) {
   const { scene } = adventure
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
-  const [selectedNpc, setSelectedNpc] = useState<AdventureView['scene']['npcs'][number] | null>(
-    null
-  )
-  const selected =
-    scene.npcs.find((npc) => npc.key === selectedKey) ?? (onSaveNpcState ? selectedNpc : null)
+  const selected = scene.npcs.find((npc) => npc.key === selectedKey) ?? null
   const npcButtonRefs = useRef(new Map<string, HTMLButtonElement>())
   const sceneRegionRef = useRef<HTMLElement>(null)
 
@@ -750,94 +995,31 @@ function SceneRegion({
       <PanelHeading eyebrow="Scene" id="adventure-scene-heading" title={scene.location.name} />
       <p className={styles.sceneDescription}>{scene.location.description}</p>
       {selected ? (
-        <section className={styles.sceneNpcs} aria-label="NPC debug card">
-          <Button
+        <section className={styles.sceneNpcs} aria-label="NPC details">
+          <IconButton
+            label="Back to Scene"
             onClick={() => {
               const returningKey = selected.key
               setSelectedKey(null)
-              setSelectedNpc(null)
               window.setTimeout(() => {
                 const returningButton = npcButtonRefs.current.get(returningKey)
                 if (returningButton) returningButton.focus()
                 else sceneRegionRef.current?.focus()
               }, 0)
             }}
-            size="touch"
-            variant="ghost"
           >
-            Back to Scene
-          </Button>
-          <p className={styles.stateEyebrow}>Development / debug information</p>
-          <h3>{onSaveNpcState ? 'NPC card' : selected.name}</h3>
-          {onSaveNpcState ? (
-            <>
-              <p className={styles.npcEditorNote}>
-                Click a card value to edit. It autosaves to this Adventure only and never changes
-                the frozen World or seed data.
-              </p>
-              {!scene.npcs.some((npc) => npc.key === selected.key) ? (
-                <p className={styles.npcEditorNote}>
-                  This NPC is no longer in the current Scene; this Debug editor remains open for
-                  local edits.
-                </p>
-              ) : null}
-            </>
-          ) : null}
+            <ArrowLeft aria-hidden="true" size={18} />
+          </IconButton>
+          <h3>{selected.name}</h3>
           <dl className={styles.details}>
             <div>
-              <dt>Key</dt>
-              <dd>{selected.key}</dd>
+              <dt>Physical description</dt>
+              <dd>{selected.physicalDescription}</dd>
             </div>
-            {onSaveNpcState ? (
-              <NpcDebugEditor
-                key={selected.key}
-                npc={selected}
-                onSave={onSaveNpcState}
-              />
-            ) : (
-              <>
-                <div>
-                  <dt>Name</dt>
-                  <dd>{selected.name}</dd>
-                </div>
-                <div>
-                  <dt>Current location</dt>
-                  <dd>{selected.currentLocation.name}</dd>
-                </div>
-                <div>
-                  <dt>Physical description</dt>
-                  <dd>{selected.physicalDescription}</dd>
-                </div>
-                <div>
-                  <dt>Background</dt>
-                  <dd>{selected.background}</dd>
-                </div>
-                <div>
-                  <dt>Personality</dt>
-                  <dd>{selected.personality}</dd>
-                </div>
-                <div>
-                  <dt>Voice</dt>
-                  <dd>{selected.voice}</dd>
-                </div>
-                <div>
-                  <dt>Private knowledge</dt>
-                  <dd>{selected.privateKnowledge}</dd>
-                </div>
-                <div>
-                  <dt>Mood</dt>
-                  <dd>{selected.mood}</dd>
-                </div>
-                <div>
-                  <dt>Status</dt>
-                  <dd>{selected.status}</dd>
-                </div>
-                <div>
-                  <dt>Memory</dt>
-                  <dd>{selected.memory}</dd>
-                </div>
-              </>
-            )}
+            <div>
+              <dt>Status</dt>
+              <dd>{selected.status}</dd>
+            </div>
           </dl>
         </section>
       ) : (
@@ -854,7 +1036,6 @@ function SceneRegion({
                     }}
                     onClick={() => {
                       setSelectedKey(npc.key)
-                      setSelectedNpc(npc)
                     }}
                     size="touch"
                     variant="ghost"
@@ -888,7 +1069,7 @@ export function AdventureWorkbench({
   onDiscardTurn,
   discardingTurn = false,
   turnDiscardError = null,
-  onSaveNpcState,
+  onOpenSettings,
   layout = 'auto',
 }: {
   adventure: AdventureView
@@ -904,7 +1085,7 @@ export function AdventureWorkbench({
   onDiscardTurn?: (turnId: string) => void
   discardingTurn?: boolean
   turnDiscardError?: string | null
-  onSaveNpcState?: (characterKey: string, input: UpdateAdventureNpcStateInput) => Promise<void>
+  onOpenSettings?: () => void
   layout?: 'auto' | 'desktop' | 'mobile'
 }) {
   const [narrowViewport, setNarrowViewport] = useState(
@@ -924,9 +1105,11 @@ export function AdventureWorkbench({
   const mobile = layout === 'mobile' || (layout === 'auto' && narrowViewport)
 
   function paneFor(pane: AdventurePane) {
-    if (pane === 'player') return <PlayerRegion adventure={adventure} />
+    if (pane === 'player') {
+      return <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
+    }
     if (pane === 'scene') {
-      return <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
+      return <SceneRegion adventure={adventure} />
     }
     return (
       <StoryRegion
@@ -1016,8 +1199,8 @@ export function AdventureWorkbench({
         discardingTurn={discardingTurn}
         turnDiscardError={turnDiscardError}
       />
-      <PlayerRegion adventure={adventure} />
-      <SceneRegion adventure={adventure} onSaveNpcState={onSaveNpcState} />
+      <PlayerRegion adventure={adventure} onOpenSettings={onOpenSettings} />
+      <SceneRegion adventure={adventure} />
     </div>
   )
 }

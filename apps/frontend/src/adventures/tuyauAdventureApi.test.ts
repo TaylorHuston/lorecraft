@@ -10,6 +10,7 @@ const tuyau = vi.hoisted(() => ({
   retryTurn: vi.fn(),
   discardTurn: vi.fn(),
   updateNpcDebugState: vi.fn(),
+  updatePlayerDebugState: vi.fn(),
   resetAdventure: vi.fn(),
   deleteAdventure: vi.fn(),
 }))
@@ -26,6 +27,7 @@ vi.mock('@tuyau/core/client', () => ({
         retryTurn: tuyau.retryTurn,
         discardTurn: tuyau.discardTurn,
         updateNpcDebugState: tuyau.updateNpcDebugState,
+        updatePlayerDebugState: tuyau.updatePlayerDebugState,
         reset: tuyau.resetAdventure,
         destroy: tuyau.deleteAdventure,
       },
@@ -68,7 +70,7 @@ describe('Tuyau Adventure adapter', () => {
     })
   })
 
-  it('reads the owner-safe Adventure projection', async () => {
+  it('reads the owner-safe Adventure projection including Guide transcript input', async () => {
     const detail = {
       id: summary.id,
       status: 'ready' as const,
@@ -111,12 +113,32 @@ describe('Tuyau Adventure adapter', () => {
           },
         ],
       },
-      activeTurn: null,
+      activeTurn: {
+        id: '55555555-5555-4555-8555-555555555555',
+        trigger: 'act',
+        status: 'pending',
+        content: 'I follow Mira into the vestry.',
+      },
       story: [
         {
           id: '44444444-4444-4444-8444-444444444444',
-          kind: 'opening',
+          kind: 'narration',
           content: 'Thunder rolls over the chapel.',
+        },
+        {
+          id: '66666666-6666-4666-8666-666666666666',
+          kind: 'act',
+          content: 'I ask Mira why the bell rang.',
+        },
+        {
+          id: '77777777-7777-4777-8777-777777777777',
+          kind: 'pass',
+          content: 'Pass',
+        },
+        {
+          id: '88888888-8888-4888-8888-888888888888',
+          kind: 'guide',
+          content: 'Keep Mira guarded until the player earns her trust.',
         },
       ],
     }
@@ -298,6 +320,34 @@ describe('Tuyau Adventure adapter', () => {
         mood: 'Enter a value using 120 characters or fewer.',
         status: 'Enter a value using 320 characters or fewer.',
         memory: 'Enter a value using 500 characters or fewer.',
+      },
+    })
+  })
+
+  it('maps bounded Player Debug state validation to the Player field limits', async () => {
+    tuyau.updatePlayerDebugState.mockRejectedValue({
+      status: 422,
+      response: {
+        errors: [{ field: 'physicalDescription' }, { field: 'backstory' }, { field: 'status' }],
+      },
+    })
+    const api = createTuyauAdventureApi('http://frontend.example.test')
+
+    await expect(
+      api.updatePlayerState?.(summary.id, {
+        name: 'Mara',
+        currentLocationKey: 'chapel',
+        physicalDescription: 'p'.repeat(2_001),
+        backstory: 'b'.repeat(8_001),
+        status: 's'.repeat(1_001),
+      })
+    ).rejects.toMatchObject({
+      code: 'validation',
+      message: 'Correct the highlighted fields.',
+      fieldErrors: {
+        physicalDescription: 'Use 2,000 characters or fewer.',
+        backstory: 'Use 8,000 characters or fewer.',
+        status: 'Use 1,000 characters or fewer.',
       },
     })
   })
