@@ -8,10 +8,11 @@ status: in_review
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
 - The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
 - Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
-- Fresh independent `/sdd-review` passes every technical gate at immutable watermark `b9eb218`. The verdict is `ready`; owner reconfirmation remains `pending user` and blocks merge/closeout.
-- Next action: ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary; after confirmation, recheck review freshness before any authorized merge-and-close.
-- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, review watermark `b9eb218`, target `develop` at `458125b`.
-- Expected dirty files: `review.md` and this ledger until the watermark record is committed; generated/build/browser outputs remain ignored local artifacts.
+- Fresh independent `/sdd-review` passes every technical gate at immutable watermark `b9eb218`; later commits are evidence-only.
+- The owner reconfirmed acceptance and explicitly authorized the local merge-and-close on 2026-07-24 by requesting “close and merge.” Manual status is `user confirmed`.
+- Next action: recheck source/target refs, conflict state, structural gates, and candidate-tree freshness; then merge `change/ui-refinements` into `develop` and close the Change.
+- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, review watermark `b9eb218`, review record `92cf739`, target `develop` at `458125b`.
+- Expected dirty files: `review.md` and this ledger until owner acceptance is committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -224,7 +225,7 @@ status: in_review
 
 ## Manual UI Confirmation
 
-- Status: pending user
+- Status: user confirmed
 - App URL / route: `http://localhost:4310/adventures/<existing-adventure-id>`; use a ready Adventure at desktop and narrow widths.
 - Required setup or test data: an authenticated account with a ready Adventure, or the `Application/Adventures/Workbench` Storybook fixture.
 - Steps for the user: open a ready Adventure at desktop width; confirm the page starts immediately with Player / Story / Scene columns, Story is central, and no top header remains. Confirm the World name is pinned at the Story column's top left and narration stays clear before a brief steep fade beneath it while scrolling. Check a multi-paragraph narration has a full line-height of space between paragraphs. Submit an Act, then Pass: each submitted player event should appear on the Story's right before its Game Master response on the left, with an amber Action or Pass label, slim right-edge accent, and extra space before the following narration, but no message card. Submit a Guide and confirm its input appears on the right in italics with a Guide label before its Game Master response. Reload after a completed Act/Pass/Guide and confirm the message order remains. In Scene, select an NPC and confirm its read-only details show only name, physical description, and Status (what it is currently doing), without Debug metadata, private knowledge, or controls. Confirm an accessible arrow-only Return to Worlds link and Settings live at the top of Player; Return must navigate to `/worlds`, not the source World. Open Settings: it should be a large two-pane modal with Adventure Settings, Player, NPCs, and Locations on the left, and it should retain its full editor-height across sections. The Player tab should contain Debug fields for name, current Location key, physical description, backstory, and status; changing a field should autosave only for the Adventure owner in local development, never change the World, and be unavailable in production. In NPCs, each current-Scene NPC should be a square avatar/name card. Open one and confirm all existing NPC attributes are available in the editor; use the arrow-only Back button to return to the cards. Confirm the composer has no repeated provider-disclosure line, that lower Story text stays clear before a brief steep fade under its dock, and that the joined equal-width Send/Pass row straddles the input's lower border without typed text entering its reserved bottom space. At narrow width, use the Story / Player / Scene tabs; Player must expose Return and Settings, Story must retain the composer, and the four Settings tabs must not create horizontal overflow.
@@ -236,6 +237,7 @@ status: in_review
 | Date | Feedback | Classification | Accepted behavior | Action / Evidence |
 |---|---|---|---|---|
 | 2026-07-24 | “There's still sometimes an orange hover effect on the borders of the main narration area.” | defect | Every keyboard-focusable Story region retains visible focus feedback, but the Story boundary uses the accepted neutral border rather than the decorative orange focus token. | Reproduced by focusing the outer `[aria-label="Story"]` region: computed outline was `rgb(209, 136, 92)` (`--focus-ring`), while the inner narration scroller correctly used `rgb(98, 93, 88)` (`--border-strong`). Add failing computed-style Storybook proof, fix the outer selector, and rerun rendered/aggregate verification. |
+| 2026-07-24 | “close and merge” | owner acceptance and integration authorization | The remediated Story focus and broader prepared walkthrough are accepted. | Record `user confirmed`; perform the authorized local `change/ui-refinements` → `develop` merge and SDD closeout without push, branch deletion, deployment, or production mutation. |
 
 ## Artifact Updates
 
@@ -297,7 +299,7 @@ status: in_review
 | 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, and release communication. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, desktop/mobile E2E, and the `38d4dcc` aggregate are current. `CHANGELOG.md` now records the user-visible transcript/privacy refinement. | resolved |
 | 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, desktop/mobile E2E, changed-surface ownership, exact no-mutation proof, and the final aggregate are complete. | resolved |
 | 2026-07-24 | Self-check reverse traceability and evidence falsification. | Every behavior-bearing changed source/test must be navigable from LC-003, and security/no-mutation claims must match exact assertions. | LC-003 implementation maps, Player Debug functional evidence, generated routes/contracts, Settings presentation, Change ledger. | Added adapter/presentation anchors; all eight changed tests are owned; generated registry output is explicitly classified; exact frozen/invalid/busy no-mutation assertions pass. | resolved |
-| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region, both selectors share `--border-strong`, exact candidate `40e857e` passes the full uncached aggregate, and fresh independent desktop/mobile rendered review passes. | resolved; owner reconfirmation pending |
+| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region, both selectors share `--border-strong`, exact candidate `40e857e` passes the full uncached aggregate, fresh independent desktop/mobile rendered review passes, and the owner confirmed acceptance on 2026-07-24. | resolved; user confirmed |
 
 ## Verification Environment
 
@@ -319,28 +321,28 @@ status: in_review
 - Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
 - Post-gate evidence-record-only changes and affected checks rerun: `40e857e..53e0898` changes only the ledger, LC-003, and review record; the safe review batch also changes only those artifacts. Scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after its commit. Any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; fresh `/sdd-review` assessed the complete source against `develop`, whose target has not advanced.
-- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; review watermark `b9eb218` yields tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
-- Integration-candidate result or reason source proof is reusable: pass; the target has 0 target-only commits, and every post-aggregate change is classified SDD evidence only. Owner acceptance remains separate.
+- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; review-record source `92cf739` yields tree `71238020b7114e03fc681f21790c441b031c182b`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
+- Integration-candidate result or reason source proof is reusable: pass; the target has 0 target-only commits, every post-aggregate change is classified SDD evidence only, and owner acceptance is `user confirmed`.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); exact aggregate candidate `40e857e` (`Record Story focus remediation candidate`).
-- Prospective integration tree: `5136f90f20e01a19f9e68d58abe0443c5a00ea4b` at review watermark `b9eb218`; target has 0 target-only commits and the post-aggregate diff is evidence-only.
+- Prospective integration tree: `71238020b7114e03fc681f21790c441b031c182b` at review-record commit `92cf739`; target has 0 target-only commits and the post-aggregate diff is evidence-only. The owner-acceptance commit will also be evidence-only and is rechecked before merge.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
 - Intended implementation fully committed: yes at `293bfa0`; aggregate candidate committed/tested at `40e857e`; fresh review and safe artifact remediation committed at `b9eb218`.
-- Unrelated dirty state: none; only the safe review artifact-remediation batch is pending commit.
+- Unrelated dirty state: none; only the owner-acceptance record is pending commit.
 - Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
 - Required non-manual evidence still pending: none.
-- Independent review: `ready`; all technical gates pass, with owner manual reconfirmation tracked separately as `pending user`.
+- Independent review: `ready`; all technical gates pass and owner manual confirmation is `user confirmed`.
 
 ## Closeout
 
 - Review record: fresh independent verdict is `ready` at immutable watermark `b9eb218`; this follow-up records that watermark only.
-- Manual UI confirmation status: pending user; owner reconfirmation is required after fresh independent review.
+- Manual UI confirmation status: user confirmed on 2026-07-24 through the explicit “close and merge” instruction.
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
-- PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.
+- PR / merge state: local merge-and-close explicitly authorized on 2026-07-24; execution pending. Push, branch deletion, deployment, production action, and release remain unauthorized.
 - Deferred gaps accepted: the React Router RSC-specific audit advisory remains a non-blocking suggestion because this Vite SPA does not enable RSC mode.
-- Folder state: active, `in_review`; technical review is ready and owner reconfirmation remains pending before merge/closeout.
+- Folder state: active, `in_review`; review and acceptance gates pass, pending authorized local merge and folder closeout.

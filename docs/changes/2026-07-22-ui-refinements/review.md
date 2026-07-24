@@ -4,7 +4,7 @@
 
 ready
 
-Fresh independent review finds no blocking or required application, artifact, verification, security, UI, documentation, or integration-readiness issue. The owner-reported outer Story focus defect is remediated and independently reproduced as a neutral boundary. Manual confirmation remains `pending user`, so merge and closeout are not yet ready.
+Fresh independent review finds no blocking or required application, artifact, verification, security, UI, documentation, or integration-readiness issue. The owner-reported outer Story focus defect is remediated and independently reproduced as a neutral boundary. The owner confirmed acceptance and authorized local merge-and-close on 2026-07-24.
 
 ## Gate Scorecard
 
@@ -25,14 +25,14 @@ Fresh independent review finds no blocking or required application, artifact, ve
 | Boundary contracts | pass | Owner scope, non-disclosing 404, CSRF, 409/422 meaning, retryability, production refusal, and authoritative detail refresh survive service-to-UI translation. |
 | Stateful transitions | pass | Reload chronology, active/completed turns, retry/discard, unchanged-draft retry, autosave refresh, Settings navigation, and responsive tabs have direct proof. |
 | Rendered UI verification | pass | Current Storybook source was independently exercised at 1280×900 and 390×844 across ready, focus, Settings, Scene detail, and recovery states. |
-| Manual UI confirmation | pass | Walkthrough is current; status remains `pending user`, which is a separate acceptance and closeout gate. |
+| Manual UI confirmation | pass | Walkthrough is current; owner status is `user confirmed` on 2026-07-24. |
 | Code review | pass | Complete `develop...HEAD` application diff and the focused remediation diff were inspected; no required defect remains. |
 | Visual / UX consistency | pass | Desktop/mobile composition, transcript hierarchy, modal layout, Scene privacy, touch targets, and neutral Story focus align with the accepted design. |
 | Security review | pass | Owner authorization, CSRF, frozen-canon isolation, production Debug refusal, private Guide handling, and denial no-mutation paths pass. One RSC-only dependency advisory remains a suggestion. |
 | Documentation | pass | README, changelog, ADRs, LC-003, historical report lineage, and Change records do not contradict current implementation after safe artifact remediation. |
 | Idea repository / current-state truth | pass | Private Idea entry points identify `spaces/lorecraft` as active official application and `lorecraft-mvp` as archived prototype reference. |
 | Release communication | pass | `CHANGELOG.md` covers the responsive workbench, transcript/privacy, navigation, and development-only Debug editors; the focus correction needs no separate bullet. |
-| Branch and merge readiness | pass | Source/target policy, clean conflict result, and technical candidate are unambiguous; owner acceptance and explicit merge authorization remain required. |
+| Branch and merge readiness | pass | Source/target policy and conflict result are unambiguous; owner acceptance and local merge-and-close authorization are recorded. |
 | Prospective integration candidate | pass | `develop` has 0 target-only commits; prospective content equals source, and post-aggregate differences are evidence-only. |
 | PRD alignment | pass | The Change remains a private, non-canonical Adventure surface derived from frozen World canon without changing creator-owned World truth. |
 
@@ -63,7 +63,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 | `npm run check:contracts` | generated-contract check | Player Debug/detail transport | pass | Committed Tuyau output matches current routes/controllers. |
 | `git merge-tree --write-tree develop HEAD` | integration-candidate check | source vs target | pass | Target applies without conflict and has not advanced. |
 | Current Storybook walkthrough | independent rendered verification | UI-bearing candidate | pass | Desktop/mobile ready, focus, Settings, Player/NPC editors, Scene privacy, and recovery states render without overflow or errors. |
-| Owner walkthrough below | manual acceptance | UI-bearing candidate | `pending user` | Required owner reconfirmation remains distinct from technical verification. |
+| Owner walkthrough below | manual acceptance | UI-bearing candidate | `user confirmed` | Owner accepted the remediated experience and requested local merge-and-close on 2026-07-24. |
 | Live-provider or production-path rerun | optional confidence evidence for this Change | unchanged provider/production boundaries | not rerun | This Change does not modify provider or deployment behavior; broader LC-003 operational gaps remain explicit in the Epic and do not block this UI/integration candidate. |
 
 ## Verification Scope And Candidate Gates
@@ -71,7 +71,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 - Project-defined aggregate command: `npm run ci:required`.
 - Aggregate gate required: yes; the diff crosses persistence-derived projection, local Debug mutation, generated contracts, privacy-sensitive owner data, responsive UI, and E2E behavior.
 - Cache/freshness policy: exact clean candidate `40e857e` used the project wrapper's forced uncached stages and acknowledged isolated disposable schemas.
-- Post-gate evidence-only classification: `40e857e..53e0898` changes only `review.md`, `tasks.md`, and LC-003; this safe review batch also changes only those artifacts. Validation, contracts, traceability, diff, merge-tree, and cleanliness are rerun after commit. Any later behavior, test, dependency, generated-contract, configuration, or migration change invalidates aggregate reuse.
+- Post-gate evidence-only classification: every commit after `40e857e` changes only `review.md`, `tasks.md`, and LC-003. The owner-acceptance record also changes only review/ledger evidence. Validation, contracts, traceability, diff, merge-tree, and cleanliness are rerun before integration. Any later behavior, test, dependency, generated-contract, configuration, or migration change invalidates aggregate reuse.
 
 | Stage | Exact Commit / Tree | Command | Meaningful Execution / Counts | Result |
 |---|---|---|---|---|
@@ -103,7 +103,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 ## Review Bundle
 
 - Source branch/ref: `change/ui-refinements`.
-- Reviewed source commit / watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; it contains application source `53e0898` plus the safe artifact-remediation batch.
+- Reviewed source commit / watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; review-record commit `92cf739` and the owner-acceptance commit are evidence-only descendants.
 - Target branch/ref and merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Source-only commits: 50 through the review watermark.
 - Target-only commits: 0.
@@ -111,7 +111,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 - Diff stat at review watermark: 3,282 insertions, 591 deletions.
 - Conflict check: pass; prospective integration tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`, identical to the reviewed source tree because target has not advanced.
 - Dirty state: clean at review watermark; the subsequent watermark-record update is evidence only.
-- Branch policy: compliant `change/*` source targeting non-production `develop`; local review commit authorized, no push/merge/close authorized.
+- Branch policy: compliant `change/*` source targeting non-production `develop`; local merge-and-close is authorized. Push, branch deletion, deployment, and production actions are not authorized.
 - External PR/issue/review metadata: no PR exists; owner feedback is recorded in the Change ledger.
 - Reverse traceability: 0 missing implementation refs, 0 missing verification refs, 0 unowned tests; generated registry index is support.
 
@@ -121,7 +121,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 - Epic ownership: LC-003/S1-S3 owns all behavior-bearing source and tests.
 - Support/generated/framework: changelog and SDD records are support; route registration and Tuyau output are adapter/generated support.
 - Stranded surfaces checked: old Scene Debug presentation, Pass confirmation, prior transcript ordering, Settings placement, source-World return target, generated bindings, and superseded focus selector.
-- Explicit gaps: none for this Change; broader production/live-provider and owner-acceptance gaps remain honestly recorded in LC-003.
+- Explicit gaps: none for this Change; broader production/live-provider gaps remain honestly recorded in LC-003 and owner acceptance is confirmed.
 
 ## Discovery Wave
 
@@ -138,7 +138,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 | Security / authority / budget / mutation safety | main review + npm audit | pass with suggestion | App boundaries pass; RSC-only dependency advisory retained. |
 | UI / visual identity | current independent browser review | pass | Desktop/mobile current-source screenshots and computed styles directly inspected. |
 | Docs / Idea truth / release communication / PRD | main review | pass | Public/private routing and non-canonical boundary remain aligned. |
-| Integration readiness | main review | pass technically | Manual acceptance and explicit integration authorization remain separate blockers. |
+| Integration readiness | main review | pass | Manual acceptance and explicit local merge-and-close authorization are recorded. |
 
 ## Consolidated Remediation
 
@@ -152,14 +152,14 @@ Fresh independent review finds no blocking or required application, artifact, ve
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Review watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; subsequent review-record update is evidence only.
+- Review watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; subsequent review and owner-acceptance records are evidence only.
 - Target branch: `develop`.
 - Tested source/integration trees: aggregate behavior tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`; reviewed prospective tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`; their differences are SDD evidence only.
 - Source/target refs: target remains `458125b` with 0 target-only commits.
 - Required aggregate rerun after drift: not required for evidence-only changes; structural and integration-sensitive checks are rerun.
 - Conflict check: pass.
 - PR status: not created; project policy does not require a PR for routine local integration.
-- Merge status: not performed. Owner acceptance and explicit merge-and-close authorization remain required.
+- Merge status: local merge-and-close authorized on 2026-07-24; execution pending this final freshness check.
 
 ## Suggested Manual UI Testing
 
@@ -167,11 +167,12 @@ Fresh independent review finds no blocking or required application, artifact, ve
 2. Confirm desktop/mobile transcript alignment, italic Guide, immediate Pass, public-only Scene NPC details, Player/NPC Settings editors, and rejected-edit retry.
 3. Confirm the arrow-only Return to Worlds reaches `/worlds` and narrow Story/Player/Scene plus Settings tabs do not overflow.
 
-Status: `pending user`.
+Status: `user confirmed` on 2026-07-24.
 
 ## Review Log
 
 - 2026-07-23: Initial independent review requested Player Debug, lineage-ordering, recovery, accessibility, evidence, and report-lineage remediation.
 - 2026-07-24: Earlier remediated candidate passed review, then owner feedback exposed the orange outer-Story focus selector and invalidated that watermark.
 - 2026-07-24: Focus remediation `293bfa0` and exact aggregate candidate `40e857e` passed; source returned to `in_review` at `53e0898`.
-- 2026-07-24: Fresh independent review completed the full artifact, code, evidence, security, UI, docs, and integration wave; verdict `ready`, owner confirmation `pending user`.
+- 2026-07-24: Fresh independent review completed the full artifact, code, evidence, security, UI, docs, and integration wave; verdict `ready`.
+- 2026-07-24: Owner confirmed the remediated walkthrough and explicitly authorized local merge-and-close.
