@@ -109,6 +109,7 @@ test.group('Adventure Player Debug state API', (group) => {
     const browser = await createAuthenticatedBrowser(client, 'player-debug-owner@example.com')
     const owner = await User.findByOrFail('email', 'player-debug-owner@example.com')
     const { adventureId, version } = await createReadyAdventure(owner.id)
+    const frozenSnapshotBefore = structuredClone(version.snapshot)
 
     const response = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
@@ -139,10 +140,7 @@ test.group('Adventure Player Debug state API', (group) => {
       }
     )
     await version.refresh()
-    assert.equal(
-      version.snapshot.locations.some((location) => location.key === 'vestry'),
-      true
-    )
+    assert.deepEqual(version.snapshot, frozenSnapshotBefore)
     const revisionCount = await db
       .from('adventure_revisions')
       .where('adventure_id', adventureId)
@@ -261,10 +259,21 @@ test.group('Adventure Player Debug state API', (group) => {
 
   test('LC-003/S1/R5-S7: rejects invalid frozen Locations and edits while a turn is active', async ({
     client,
+    assert,
   }) => {
     const browser = await createAuthenticatedBrowser(client, 'player-debug-bounds@example.com')
     const owner = await User.findByOrFail('email', 'player-debug-bounds@example.com')
     const { adventureId, openingRevisionId } = await createReadyAdventure(owner.id)
+    const playerBeforeDeniedWrites = await db
+      .from('adventure_players')
+      .where('adventure_id', adventureId)
+      .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+      .firstOrFail()
+    const adventureBeforeInvalidLocation = await db
+      .from('adventures')
+      .where('id', adventureId)
+      .select('status', 'head_revision_id', 'turn_count', 'last_played_at', 'updated_at')
+      .firstOrFail()
 
     const invalidLocation = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
@@ -273,6 +282,22 @@ test.group('Adventure Player Debug state API', (group) => {
     ).json({ ...validPlayerState, currentLocationKey: 'not-in-frozen-world' })
     invalidLocation.assertUnprocessableEntity()
     invalidLocation.assertBodyContains({ errors: [{ code: 'INVALID_PLAYER_STATE' }] })
+    assert.deepEqual(
+      await db
+        .from('adventure_players')
+        .where('adventure_id', adventureId)
+        .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+        .firstOrFail(),
+      playerBeforeDeniedWrites
+    )
+    assert.deepEqual(
+      await db
+        .from('adventures')
+        .where('id', adventureId)
+        .select('status', 'head_revision_id', 'turn_count', 'last_played_at', 'updated_at')
+        .firstOrFail(),
+      adventureBeforeInvalidLocation
+    )
 
     const now = new Date()
     await db.table('adventure_turns').insert({
@@ -285,6 +310,16 @@ test.group('Adventure Player Debug state API', (group) => {
       created_at: now,
       updated_at: now,
     })
+    const adventureBeforeBusyWrite = await db
+      .from('adventures')
+      .where('id', adventureId)
+      .select('status', 'head_revision_id', 'turn_count', 'last_played_at', 'updated_at')
+      .firstOrFail()
+    const turnBeforeBusyWrite = await db
+      .from('adventure_turns')
+      .where('adventure_id', adventureId)
+      .select('id', 'status', 'input', 'updated_at')
+      .firstOrFail()
     const busy = await withBrowserSession(
       client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
       browser,
@@ -292,5 +327,29 @@ test.group('Adventure Player Debug state API', (group) => {
     ).json(validPlayerState)
     busy.assertConflict()
     busy.assertBodyContains({ errors: [{ code: 'ADVENTURE_BUSY' }] })
+    assert.deepEqual(
+      await db
+        .from('adventure_players')
+        .where('adventure_id', adventureId)
+        .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+        .firstOrFail(),
+      playerBeforeDeniedWrites
+    )
+    assert.deepEqual(
+      await db
+        .from('adventures')
+        .where('id', adventureId)
+        .select('status', 'head_revision_id', 'turn_count', 'last_played_at', 'updated_at')
+        .firstOrFail(),
+      adventureBeforeBusyWrite
+    )
+    assert.deepEqual(
+      await db
+        .from('adventure_turns')
+        .where('adventure_id', adventureId)
+        .select('id', 'status', 'input', 'updated_at')
+        .firstOrFail(),
+      turnBeforeBusyWrite
+    )
   })
 })
