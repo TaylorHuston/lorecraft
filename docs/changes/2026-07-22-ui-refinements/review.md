@@ -11,7 +11,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 | Gate | Result | Notes |
 |---|---|---|
 | Change artifacts | findings | The accepted neutral Story-focus contract and LC-003 evidence are reconciled, but this review record remains invalidated until fresh independent review. |
-| Change status | findings | The Change correctly returned to `in_progress` while the owner-reported focus defect is remediated. |
+| Change status | pass | Apply completed the owner-reported focus remediation and returned the Change to `in_review` for a fresh independent gate. |
 | Epic truth | pass | LC-003 owns the responsive workbench, owner transcript, Scene privacy, Settings Debug editors, and Return to Worlds behavior. |
 | Canonical map authority | pass | LC-003 has one current implementation map and one current verification map per Story. |
 | Requirements and Scenarios | pass | The reviewed behavior is governed by LC-003/S1 R5, S2 R3/R5, and S3 R1-R3, including Player Debug Scenario R5-S7 and transcript chronology R5-S6. |
@@ -32,7 +32,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 | Documentation | pass | Change artifacts and LC-003 reflect current behavior and evidence; historical Epic reports preserve their audited outcomes and valid lineage. |
 | Idea repository / current-state truth | pass | The Idea still identifies this repository as the official app and preserves Adventure-local, non-canonical state boundaries. |
 | Release communication | pass | `CHANGELOG.md` now records the responsive workbench, transcript/privacy changes, navigation, and development-only Player/NPC editors. |
-| Branch and merge readiness | findings | Integration is not ready while the Change is `in_progress`; replacement aggregate proof passes, but fresh independent review and owner reconfirmation remain. |
+| Branch and merge readiness | findings | The Change is back in `in_review` and replacement aggregate proof passes, but fresh independent review and owner reconfirmation remain. |
 | Prospective integration candidate | findings | Prior watermark `7ffbf4e` is superseded by the manual-feedback remediation. |
 | PRD alignment | pass | The implementation remains a private creator-first Adventure surface derived from frozen World canon without changing canonical World data. |
 
@@ -111,7 +111,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 - Conflict check: pass for source `40e857e` and unchanged target.
 - Prospective integration tree: `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`, identical to the aggregate-tested source tree.
 - Source and target refs used for candidate proof: source `40e857e`, behavior/test implementation `293bfa0`, target/merge base `458125b`.
-- Dirty state: intended evidence-only review/ledger/LC-003 freshness reconciliation.
+- Dirty state: evidence reconciliation is committed at `129c121`; only the guarded lifecycle/ledger transition remains pending commit.
 - Branch policy: local Apply commits allowed; no push, PR, merge, close, deployment, or release authorized.
 - Reverse-traceability command/result: fresh diff-scoped LC-003 audit reports 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests; generated Tuyau registry index remains generated support.
 
@@ -159,7 +159,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 - Actual integrated tree matches tested tree: not applicable; no integration performed.
 - Required aggregate rerun after drift: complete on `40e857e`; any later behavior/test drift requires another rerun.
 - Conflict check: pass at aggregate candidate.
-- Commit state: behavior/test remediation `293bfa0`; exact aggregate candidate `40e857e`; final evidence/lifecycle reconciliation pending.
+- Commit state: behavior/test remediation `293bfa0`; exact aggregate candidate `40e857e`; evidence reconciliation `129c121`; lifecycle/ledger transition pending commit.
 - PR status: not created.
 - Merge status: not performed; blocked on fresh independent review, owner reconfirmation, and explicit authorization.
 

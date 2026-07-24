@@ -1,5 +1,5 @@
 ---
-status: in_progress
+status: in_review
 ---
 # Tasks: UI Refinements
 
@@ -8,9 +8,9 @@ status: in_progress
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
 - The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
 - Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
-- Next action: transition back to `in_review` and run a fresh independent `/sdd-review`; after that, ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary.
-- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, target `develop` at `458125b`.
-- Expected dirty files: this ledger, LC-003 freshness note, and `review.md` until the evidence/lifecycle record is committed; generated/build/browser outputs remain ignored local artifacts.
+- The Change has returned to `in_review`. Next action: run a fresh independent `/sdd-review`; after that, ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary.
+- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, reconciled evidence `129c121`, target `develop` at `458125b`.
+- Expected dirty files: this lifecycle/ledger update until committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -316,9 +316,9 @@ status: in_progress
 - Exact behavior/test implementation candidate: `293bfa0` (`Neutralize outer Story focus boundary`). Exact clean aggregate candidate: `40e857e` (`Record Story focus remediation candidate`).
 - Freshness and cache treatment: the replacement run used isolated acknowledged disposable test/E2E schemas and the project wrapper's forced uncached stages.
 - Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
-- Post-gate evidence-record-only changes and affected checks rerun: this final ledger/LC-003/review freshness update is evidence-only; scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness must pass after commit. Any later application or test change invalidates aggregate reuse.
+- Post-gate evidence-record-only changes and affected checks rerun: `40e857e..129c121` changes only the ledger, LC-003, and review record; scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after the lifecycle commit. Any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; `/sdd-review` must assess the new committed source against `develop`.
-- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; aggregate candidate tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` is the current source tree because target has not advanced.
+- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; reconciled evidence source `129c121` yields tree `cacc2b42dccbdde909e482a368f93ed7eb9feb98`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
 - Integration-candidate result or reason source proof is reusable: pending fresh independent review; source proof is exact for the aggregate candidate and later changes are evidence-only.
 - Remote CI role: corroborating.
 
@@ -326,10 +326,10 @@ status: in_progress
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); exact aggregate candidate `40e857e` (`Record Story focus remediation candidate`).
-- Prospective integration tree: `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` at the aggregate candidate; target has 0 target-only commits.
+- Prospective integration tree: `cacc2b42dccbdde909e482a368f93ed7eb9feb98` at reconciled evidence commit `129c121`; target has 0 target-only commits and the post-aggregate diff is evidence-only.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
-- Intended implementation fully committed: yes at `293bfa0`; aggregate evidence candidate committed and tested at `40e857e`.
-- Unrelated dirty state: none before this evidence-only final reconciliation.
+- Intended implementation fully committed: yes at `293bfa0`; aggregate evidence candidate committed/tested at `40e857e`; reconciliation committed at `129c121`.
+- Unrelated dirty state: none; lifecycle/ledger transition is the only pending commit.
 - Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
 - Required non-manual evidence still pending: fresh independent review only.
@@ -342,4 +342,4 @@ status: in_progress
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
 - PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.
 - Deferred gaps accepted: the React Router RSC-specific audit advisory remains a non-blocking suggestion because this Vite SPA does not enable RSC mode.
-- Folder state: active, `in_progress`; transition to `in_review`, fresh independent review, and owner reconfirmation remain pending.
+- Folder state: active, `in_review`; fresh independent review and owner reconfirmation remain pending.
