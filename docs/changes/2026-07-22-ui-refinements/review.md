@@ -100,18 +100,18 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 ## Review Bundle
 
-- Source branch/ref: `change/ui-refinements` at committed baseline `cdbd0cd`; neutral-focus remediation is an uncommitted Apply candidate.
-- Reviewed source commit: prior watermark `7ffbf4e` is superseded; a new watermark requires the committed remediation, fresh aggregate, and independent review.
+- Source branch/ref: `change/ui-refinements`; neutral-focus behavior/test implementation is committed at `293bfa0`.
+- Reviewed source commit: prior watermark `7ffbf4e` is superseded; a new watermark requires the aggregate evidence candidate and fresh independent review.
 - Target branch/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Merge base: `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Source-only commits: 45 before the remediation commit.
+- Source-only commits: 46 through the remediation commit.
 - Target-only commits: 0.
 - Changed files: 34 committed candidate paths plus intended edits within the existing Workbench Storybook/CSS and SDD paths.
 - Diff stat: pending committed remediation.
 - Conflict check: pending final source commit; target has not advanced.
 - Prospective integration tree: pending final source commit.
 - Source and target refs used for candidate proof: prior source `7ffbf4e`, current baseline `cdbd0cd`, target/merge base `458125b`.
-- Dirty state: intended Storybook, CSS, Change ledger/review, and LC-003 remediation only.
+- Dirty state: intended review/ledger candidate refresh only; application, Storybook, and LC-003 remediation are committed.
 - Branch policy: local Apply commits allowed; no push, PR, merge, close, deployment, or release authorized.
 - Reverse-traceability command/result: fresh diff-scoped LC-003 audit required after the remediation commit.
 
@@ -152,14 +152,14 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Reviewed source commit: prior `7ffbf4e` watermark is stale; replacement pending.
+- Reviewed source commit: prior `7ffbf4e` watermark is stale; replacement pending after implementation commit `293bfa0` receives aggregate proof.
 - Target branch: `develop`.
 - Reviewed integration tree/ref: pending final remediation candidate.
 - Source/target refs rechecked: target remains `458125b` with 0 target-only commits.
 - Actual integrated tree matches tested tree: not applicable; no integration performed.
 - Required aggregate rerun after drift: required because application CSS and executable Storybook evidence changed.
 - Conflict check: pending final source commit.
-- Commit state: remediation commit pending.
+- Commit state: behavior/test remediation committed at `293bfa0`; evidence refresh and aggregate candidate pending.
 - PR status: not created.
 - Merge status: not performed; blocked on fresh aggregate, independent review, owner reconfirmation, and explicit authorization.
 

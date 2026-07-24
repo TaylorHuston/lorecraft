@@ -6,9 +6,10 @@ status: in_progress
 ## Resume Here
 
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
-- Next action: lock the outer Story region's computed focus color with a failing Storybook assertion, apply the narrow CSS fix, rerun rendered and aggregate proof, reconcile LC-003/review evidence, and return the Change to `in_review` for fresh independent review.
-- Active branch/ref: `change/ui-refinements`; the Change returned to `in_progress` from reviewed source `cdbd0cd`. Prior aggregate proof at `38d4dcc` is stale for the CSS/test candidate.
-- Expected dirty files: `AdventureWorkbench.module.css`, `AdventurePage.stories.tsx`, this ledger, LC-003, and `review.md`; generated/build/browser outputs remain ignored local artifacts.
+- The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, and failing-first computed-style Storybook proof plus focused frontend, lint/typecheck, and direct rendered verification pass.
+- Next action: commit this candidate ledger refresh, run the full uncached aggregate on that exact clean commit, record the result, complete self-check/reverse traceability, and return the Change to `in_review` for fresh independent review.
+- Active branch/ref: `change/ui-refinements`; prior aggregate proof at `38d4dcc` and review watermark `7ffbf4e` are stale for the new CSS/test candidate.
+- Expected dirty files: this ledger and `review.md` until the aggregate candidate record is committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -310,7 +311,7 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required: yes; the Change crosses backend persistence-derived query data, a typed contract, privacy-sensitive owner projections, and client UI.
 - Trigger or project-policy reason: repository guidance requires `ci:required` on the final source candidate with an acknowledged disposable-test environment.
-- Exact aggregate behavior candidate: pending the neutral Story-focus remediation commit. Prior `38d4dcc` proof is stale because application CSS and executable Storybook evidence changed.
+- Exact behavior/test implementation candidate: `293bfa0` (`Neutralize outer Story focus boundary`). The aggregate candidate will be the clean evidence-only descendant containing this ledger refresh; prior `38d4dcc` proof remains stale.
 - Freshness and cache treatment: the replacement run must use isolated acknowledged disposable test/E2E schemas and the project wrapper's forced uncached stages.
 - Aggregate result and meaningful execution/count evidence: pending. Focused proof currently passes 20/20 Storybook and 42/42 route/workbench tests plus frontend lint/typecheck and direct rendered inspection.
 - Post-gate evidence-record-only changes and affected checks rerun: not applicable; current changes are behavior/test-bearing.
@@ -322,12 +323,12 @@ status: in_progress
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Candidate source commit: pending the verified neutral-focus phase commit.
-- Prospective integration tree: pending final committed source.
+- Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); aggregate evidence candidate commit pending.
+- Prospective integration tree: pending final committed evidence candidate.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
-- Intended implementation fully committed: no; phase commit pending.
-- Unrelated dirty state: none; intended CSS, Storybook, LC-003, tasks, and review files only.
-- Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, and scoped validation pass; fresh aggregate and final reverse traceability remain pending.
+- Intended implementation fully committed: yes at `293bfa0`; ledger refresh commit pending.
+- Unrelated dirty state: none; only this intended ledger refresh is expected before the aggregate run.
+- Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, and scoped validation pass on the committed implementation; fresh aggregate and final reverse traceability remain pending.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
 - Required non-manual evidence still pending: exact-commit aggregate and fresh independent review.
 - Independent review: prior `ready` verdict invalidated; `review.md` records `changes-requested` until a fresh review replaces it.
