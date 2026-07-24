@@ -3,8 +3,8 @@ schema: sdd-epic-v2
 id: LC-003
 status: in_progress
 created: 2026-07-16
-modified: 2026-07-23
-last_verified: 2026-07-22
+modified: 2026-07-24
+last_verified: 2026-07-24
 stories:
   - S1
   - S2
@@ -67,8 +67,8 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 
 | Story | Implementation | Verification | Capability                             | Last Verified | Notes                                                                                                                              |
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-22    | Scenario evidence is narrowed to current anchors; database rerun, production/recovery, and owner manual acceptance remain explicit gaps. |
-| S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-22    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; database/live-provider and owner manual proof remain explicit gaps. |
+| S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-24    | Scenario evidence is narrowed to current anchors; production/recovery and owner manual acceptance remain explicit gaps. |
+| S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-24    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; live-provider and owner manual proof remain explicit gaps. |
 | S3    | implemented    | partial      | Inspect NPC details.                   | 2026-07-22    | Player-visible Scene details and Settings-only Debug editing are implemented; rendered recovery and owner manual proof remain pending. |
 
 ## Stories
@@ -78,8 +78,8 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 Implementation: implemented
 Verification: partial
 Created: 2026-07-16
-Modified: 2026-07-22
-Last verified: 2026-07-22
+Modified: 2026-07-24
+Last verified: 2026-07-24
 
 As a signed-in account holder, I want to start and resume a private Adventure from an accessible World, so that I can enter stable canon as my own player character.
 
@@ -345,8 +345,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 | S1/R5-S3 | Automated tests `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R5-S3` reset-unavailable, duplicate-confirmation, and conflict cases | Reset and delete controls disclose recovery/conflict states safely. | Passing 2026-07-20 |
 | S1/R5-S3 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R4-S2 confirms reset, restores cancelled focus, and restarts the same Adventure` | The wide Adventure Settings workspace keeps Reset on its initial tab and provides keyboard-operable Player/NPC/Location section navigation. | Passing 2026-07-22 |
 | S1/R5-S6 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S1/R3-S2 + R5-S6 polls pending work until the ready opening is authoritative` | Announces readiness while preserving current focus. | Passing 2026-07-22 |
-| S1/R5-S7 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 identifies the rejected Player Debug field after an autosave validation failure`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 retries an unchanged Player Debug draft after a recoverable autosave failure`, `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S1/R5-S7`, and `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S1/R5-S7` | Fielded validation links errors to Player inputs; an unchanged recoverable draft can be retried; bounded fields and the production boundary are explicit. | Frontend passing 2026-07-23; backend unit rerun awaits disposable database environment |
-| S1/R5-S7 | Automated tests `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7` owner mutation, denied non-owner no-mutation, non-ready, invalid-Location, and active-turn cases | Owner-only Player Debug persistence changes no frozen canon, revision, or turn data; non-owner, non-ready, invalid, and resolving requests fail closed. | Present 2026-07-23; guarded execution pending an acknowledged disposable database |
+| S1/R5-S7 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 identifies the rejected Player Debug field after an autosave validation failure`, `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S1/R5-S7 retries an unchanged Player Debug draft after a recoverable autosave failure`, `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S1/R5-S7`, and `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S1/R5-S7` | Fielded validation links errors to Player inputs; an unchanged recoverable draft can be retried; bounded fields and the production boundary are explicit. | Frontend passing 2026-07-23; backend unit evidence remains supporting proof. |
+| S1/R5-S7 | Automated tests `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7: autosaves owner Player state without changing frozen canon, revisions, or turns`, `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7: rejects missing CSRF without changing Adventure Player state`, `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7: hides Player Debug editing from another Adventure owner`, `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7: rejects Player Debug editing before an Adventure is ready`, and `apps/backend/tests/functional/adventure_player_debug_state.spec.ts#LC-003/S1/R5-S7: rejects invalid frozen Locations and edits while a turn is active` | The owner receives the public Player projection after a valid save; missing CSRF, a non-owner, non-ready Adventure, invalid frozen Location, and active turn all refuse without a Player write; the valid save leaves frozen canon, revisions, and turns unchanged. | Passing 2026-07-24 against the acknowledged disposable test database. |
 | S1/R5-S7 | Rendered Storybook `Application/Adventures/Workbench/Ready Desktop` Player Settings | Settings exposes the five Adventure Player fields with no browser console error. | Passing 2026-07-23 |
 
 #### Verification Gaps
@@ -354,7 +354,7 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 - `S1/R3-S9`, `S1/R3-S10`: Production worker/restart acceptance is historical only and was not reproducibly rerun; explicit operational verification is required before claiming current proof.
 - `S1/R5-S5`: No current Adventure-route title/focus test directly proves this navigation behavior.
 - `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey was started with the acknowledged disposable E2E environment but stalled after setup and the account journey; rerun it before `in_review`. Current component-story, rendered-browser, and focused route/workbench evidence pass.
-- `S1/R5-S7`: The new Player Debug functional API boundary must run against an acknowledged disposable test database, then the targeted E2E and aggregate candidate gates must be rerun.
+- `S1/R5-S7`: The functional API boundary now passes against the acknowledged disposable test database; the targeted E2E and aggregate candidate gates remain required.
 - All S1: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
@@ -369,8 +369,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 Implementation: implemented
 Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-23
-Last verified: 2026-07-22
+Modified: 2026-07-24
+Last verified: 2026-07-24
 
 As a player, I want Act, Pass, or Guide to resolve a durable Game Master turn, so that my private Adventure can progress through narration and bounded persistent consequences.
 
@@ -624,6 +624,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R5-S2, S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S2 + R5-S4 preserves story during progress and offers failed-turn recovery` | Pending state retains Story/replaces the composer; failure supports Retry/Discard. | Passing 2026-07-22 |
 | S2/R5-S4 | Automated test `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S4 renders a concurrent-turn conflict` | UI reports an actionable conflict rather than a transport code. | Passing 2026-07-20 |
 | S2/R5-S6 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S6 renders Guide input as an italicized player message beside the left/right transcript`, `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S6 projects a submitted Guide as an italicized active player message`, and `apps/frontend/src/adventures/tuyauAdventureApi.test.ts#reads the owner-safe Adventure projection including Guide transcript input` | Renders durable and active Guide input as an italicized Player-labelled entry, accepts the owner detail's `guide` contract, and preserves right-aligned Act/Pass plus left-aligned narration. | Passing 2026-07-22 |
+| S2/R5-S6 | Automated test `apps/backend/tests/functional/adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` | An adversarial fixture inserts equal-timestamp, equal-sequence entries in reverse lineage and still returns owner Act/Pass/Guide events and narration in head-lineage then entry-sequence order. | Passing 2026-07-24 against the acknowledged disposable test database. |
 | S2/R5-S6 | Component story `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyDesktop` | The ready desktop fixture directly proves left/right author labels and an italicized owner Guide entry; direct browser inspection found meaningful content with no Vite overlay or console errors. | Passing 2026-07-22 |
 
 #### Verification Gaps
@@ -632,7 +633,6 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 - `S2/R3-S6`: Development trace inspection passes, but the compatible provider omitted usage counters; API-model cost remains an estimate rather than measured usage.
 - `S2/R4-S5`, `S2/R4-S6`: Source/Adventure isolation and post-turn reset lack current scenario-specific repeatable evidence in the narrowed table.
 - `S2/R5-S5`: No direct responsive/touch/reduced-motion/zoom proof is retained in the cited automated anchors; rendered/manual confirmation remains pending.
-- `S2/R3-S2`, `S2/R5-S6`: `apps/backend/tests/functional/adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` now adversarially inserts equal-timestamp, equal-sequence narrations in reverse lineage, but its guarded functional run cannot execute until the caller supplies an acknowledged disposable `TEST_DATABASE_URL`; the current workspace has only an application `DATABASE_URL`.
 - All S2: Owner manual desktop/mobile confirmation remains pending; no raw prompt, Guide, or provider body will be retained as normal operational evidence.
 
 #### Story Notes

@@ -117,7 +117,17 @@ test.group('Adventure Player Debug state API', (group) => {
     ).json(validPlayerState)
 
     response.assertOk()
-    response.assertBodyContains({ data: { player: validPlayerState } })
+    response.assertBodyContains({
+      data: {
+        player: {
+          name: validPlayerState.name,
+          currentLocation: { key: validPlayerState.currentLocationKey, name: 'Vestry' },
+          physicalDescription: validPlayerState.physicalDescription,
+          backstory: validPlayerState.backstory,
+          status: validPlayerState.status,
+        },
+      },
+    })
     assert.deepInclude(
       await db.from('adventure_players').where('adventure_id', adventureId).firstOrFail(),
       {
@@ -145,6 +155,35 @@ test.group('Adventure Player Debug state API', (group) => {
       .firstOrFail()
     assert.equal(Number(revisionCount.total), 1)
     assert.equal(adventure.turn_count, 0)
+  })
+
+  test('LC-003/S1/R5-S7: rejects missing CSRF without changing Adventure Player state', async ({
+    client,
+    assert,
+  }) => {
+    const browser = await createAuthenticatedBrowser(client, 'player-debug-csrf@example.com')
+    const owner = await User.findByOrFail('email', 'player-debug-csrf@example.com')
+    const { adventureId } = await createReadyAdventure(owner.id)
+    const playerBeforeDeniedWrite = await db
+      .from('adventure_players')
+      .where('adventure_id', adventureId)
+      .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+      .firstOrFail()
+
+    const response = await withBrowserSession(
+      client.patch(`/api/v1/adventures/${adventureId}/player/debug-state`),
+      browser
+    ).json(validPlayerState)
+
+    response.assertForbidden()
+    assert.deepEqual(
+      await db
+        .from('adventure_players')
+        .where('adventure_id', adventureId)
+        .select('name', 'current_location_key', 'physical_description', 'backstory', 'status')
+        .firstOrFail(),
+      playerBeforeDeniedWrite
+    )
   })
 
   test('LC-003/S1/R5-S7: hides Player Debug editing from another Adventure owner', async ({
