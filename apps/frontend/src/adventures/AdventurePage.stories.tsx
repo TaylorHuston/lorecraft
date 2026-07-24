@@ -180,6 +180,10 @@ export const ReadyDesktop: Story = {
     expect(storyRect.left).toBeLessThan(sceneRect.left)
     expect(storyRect.width).toBeGreaterThan(playerRect.width)
     expect(storyRect.width).toBeGreaterThan(sceneRect.width)
+    story.focus()
+    expect(story).toHaveFocus()
+    expect(story.matches(':focus-visible')).toBe(true)
+    expect(getComputedStyle(story).outlineColor).toBe('rgb(98, 93, 88)')
     expectNoHorizontalOverflow(canvasElement)
   },
 }
