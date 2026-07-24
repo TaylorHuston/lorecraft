@@ -39,6 +39,13 @@ async function expectVestryContext(page: Page, testInfo: { project: { name: stri
   await expect(page.getByRole('region', { name: 'Scene' })).toContainText('Vestry')
 }
 
+async function openAdventureSettings(page: Page, testInfo: { project: { name: string } }) {
+  if (testInfo.project.name.includes('mobile')) {
+    await page.getByRole('tab', { name: 'Player' }).click()
+  }
+  await page.getByRole('button', { name: 'Adventure settings' }).click()
+}
+
 test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure', async ({
   browser,
   page,
@@ -135,11 +142,23 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
       ? page.getByRole('tabpanel', { name: 'Scene' })
       : page.getByRole('region', { name: 'Scene' })
     await scene.getByRole('button', { name: 'Mira', exact: true }).click()
-    await expect(scene.getByLabel('Mood')).toHaveValue('Watchful after the bell.')
-    await expect(scene.getByLabel('Status')).toHaveValue('Waiting beside the altar.')
-    await expect(scene.getByLabel('Memory')).toHaveValue(
+    const sceneNpcDetails = scene.getByRole('region', { name: 'NPC details' })
+    await expect(sceneNpcDetails).toContainText('Waiting beside the altar.')
+    await expect(sceneNpcDetails.getByText('Watchful after the bell.')).toHaveCount(0)
+    await expect(
+      sceneNpcDetails.getByText('The player asked about the second bell toll.')
+    ).toHaveCount(0)
+
+    await openAdventureSettings(page, testInfo)
+    const npcSettings = page.getByRole('dialog', { name: 'Adventure settings' })
+    await npcSettings.getByRole('tab', { name: 'NPCs' }).click()
+    await npcSettings.getByRole('button', { name: 'Edit Mira' }).click()
+    await expect(npcSettings.getByLabel('Mood')).toHaveValue('Watchful after the bell.')
+    await expect(npcSettings.getByLabel('Status')).toHaveValue('Waiting beside the altar.')
+    await expect(npcSettings.getByLabel('Memory')).toHaveValue(
       'The player asked about the second bell toll.'
     )
+    await npcSettings.getByRole('button', { name: 'Close Adventure settings' }).click()
     if (testInfo.project.name.includes('mobile')) {
       await page.getByRole('tab', { name: 'Story' }).click()
     }
@@ -164,7 +183,11 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await page.getByLabel('Private direction for this turn').fill(privateGuide)
     await page.getByRole('button', { name: 'Send' }).click()
     await expect(page.getByText(guideTurn)).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByText(privateGuide, { exact: true })).toHaveCount(0)
+    const guideMessage = page
+      .getByRole('article', { name: 'Player message' })
+      .filter({ hasText: privateGuide })
+    await expect(guideMessage.getByText('Guide', { exact: true })).toBeVisible()
+    await expect(guideMessage.locator('em')).toHaveText(privateGuide)
 
     await page.getByRole('button', { name: 'Pass' }).click()
     await expect(page.getByText(passTurn)).toBeVisible({ timeout: 15_000 })
@@ -217,14 +240,20 @@ test('LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure'
     await expect(page.getByText(actTurn, { exact: true })).toHaveCount(4)
     await expectVestryContext(page, testInfo)
 
-    await page.getByRole('button', { name: 'Adventure settings' }).click()
+    await openAdventureSettings(page, testInfo)
     const settingsDialog = page.getByRole('dialog', { name: 'Adventure settings' })
     await settingsDialog.getByRole('button', { name: 'Reset Adventure' }).click()
     const resetDialog = page.getByRole('dialog', { name: 'Reset Adventure?' })
     await resetDialog.getByRole('button', { name: 'Reset Adventure' }).click()
     await expect(page).toHaveURL(adventureUrl)
+    if (testInfo.project.name.includes('mobile')) {
+      await page.getByRole('tab', { name: 'Story' }).click()
+    }
     await expect(page.getByText(opening)).toBeVisible({ timeout: 15_000 })
 
+    if (testInfo.project.name.includes('mobile')) {
+      await page.getByRole('tab', { name: 'Player' }).click()
+    }
     await page.getByRole('link', { name: 'Return to Worlds' }).click()
     await expect(page).toHaveURL(/\/worlds$/)
     await page.getByRole('link', { name: 'Stormbound Chapel' }).click()

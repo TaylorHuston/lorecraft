@@ -69,7 +69,7 @@ Candidate Stories are planning signals only. They are not accepted Epic/Story tr
 | ----- | -------------- | ------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | S1    | implemented    | partial      | Start and resume a private Adventure.  | 2026-07-24    | Scenario evidence is narrowed to current anchors; production/recovery and owner manual acceptance remain explicit gaps. |
 | S2    | implemented    | partial      | Resolve a structured Game Master turn. | 2026-07-24    | Durable turn foundation, current-Scene card context, and local Debug capture are implemented; live-provider and owner manual proof remain explicit gaps. |
-| S3    | implemented    | partial      | Inspect NPC details.                   | 2026-07-22    | Player-visible Scene details and Settings-only Debug editing are implemented; rendered recovery and owner manual proof remain pending. |
+| S3    | implemented    | partial      | Inspect NPC details.                   | 2026-07-24    | Player-visible Scene details and Settings-only Debug editing have desktop/mobile E2E proof; rendered recovery and owner manual proof remain pending. |
 
 ## Stories
 
@@ -353,8 +353,8 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 
 - `S1/R3-S9`, `S1/R3-S10`: Production worker/restart acceptance is historical only and was not reproducibly rerun; explicit operational verification is required before claiming current proof.
 - `S1/R5-S5`: No current Adventure-route title/focus test directly proves this navigation behavior.
-- `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey was started with the acknowledged disposable E2E environment but stalled after setup and the account journey; rerun it before `in_review`. Current component-story, rendered-browser, and focused route/workbench evidence pass.
-- `S1/R5-S7`: The functional API boundary now passes against the acknowledged disposable test database; the targeted E2E and aggregate candidate gates remain required.
+- `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey passes on desktop and mobile against the acknowledged disposable E2E environment; component-story, rendered-browser, and focused route/workbench evidence also pass.
+- `S1/R5-S7`: The functional API boundary and targeted desktop/mobile E2E pass against acknowledged disposable environments; the aggregate candidate gate remains required.
 - All S1: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
@@ -626,6 +626,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 | S2/R5-S6 | Automated tests `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S2/R5-S6 renders Guide input as an italicized player message beside the left/right transcript`, `apps/frontend/src/adventures/AdventureRoutes.test.tsx#LC-003/S2/R5-S6 projects a submitted Guide as an italicized active player message`, and `apps/frontend/src/adventures/tuyauAdventureApi.test.ts#reads the owner-safe Adventure projection including Guide transcript input` | Renders durable and active Guide input as an italicized Player-labelled entry, accepts the owner detail's `guide` contract, and preserves right-aligned Act/Pass plus left-aligned narration. | Passing 2026-07-22 |
 | S2/R5-S6 | Automated test `apps/backend/tests/functional/adventure_query_service.spec.ts#LC-003/S2/R3-S2 + R5-S6: orders tied-timestamp owner chat history by head revision lineage` | An adversarial fixture inserts equal-timestamp, equal-sequence entries in reverse lineage and still returns owner Act/Pass/Guide events and narration in head-lineage then entry-sequence order. | Passing 2026-07-24 against the acknowledged disposable test database. |
 | S2/R5-S6 | Component story `apps/frontend/src/adventures/AdventurePage.stories.tsx#ReadyDesktop` | The ready desktop fixture directly proves left/right author labels and an italicized owner Guide entry; direct browser inspection found meaningful content with no Vite overlay or console errors. | Passing 2026-07-22 |
+| S2/R1-S3, S2/R5-S6 | Automated E2E `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | The authenticated owner submits Guide input, receives the provider-controlled narration, and sees the durable Guide event as an italicized Player message on desktop and mobile. | Passing 2026-07-24 against an acknowledged guarded isolated schema |
 
 #### Verification Gaps
 
@@ -645,8 +646,8 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 Implementation: implemented
 Verification: partial
 Created: 2026-07-19
-Modified: 2026-07-22
-Last verified: 2026-07-22
+Modified: 2026-07-24
+Last verified: 2026-07-24
 
 As an Adventure player, I want to inspect only visible details for NPCs in my current Scene, while keeping complete Debug editing in Settings, so that the Scene pane reflects what the player can see.
 
@@ -740,7 +741,7 @@ The system SHALL allow local Debug mode in Adventure Settings to autosave every 
 | S3/R3-S2 | `apps/backend/tests/unit/adventure_validation.spec.ts#LC-003/S3/R3-S2: accepts only complete bounded Debug NPC state` and `apps/backend/tests/database/character_state_bounds_migration.spec.ts#LC-003/S1/R4-S2 + S3/R3-S2: preserves authored values, backfills legacy blanks, and enforces complete bounded state` | Invalid or legacy Debug state is subject to whitespace-aware nonblank bounds, while reconciliation preserves nonblank authored values. | Passing 2026-07-20 against a guarded isolated schema |
 | S3/R3-S2 | `apps/backend/tests/unit/adventure_npc_debug_state_service.spec.ts#LC-003/S3/R3-S2: production refuses the NPC Debug editor boundary`, `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: hides Debug editing from a different Adventure owner`, and `apps/backend/tests/functional/adventure_npc_debug_state.spec.ts#LC-003/S3/R3-S2: rejects invalid frozen Locations and edits while a turn is active` | Production disables the editor boundary; another owner receives non-disclosing not-found, and invalid frozen Locations or active turns are refused. | Existing guarded database proof last passed 2026-07-20; labels reconciled 2026-07-22 |
 | S3/R3-S2 | `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 identifies the rejected Debug NPC field after an autosave validation failure` and `apps/frontend/src/adventures/AdventureWorkbench.test.tsx#LC-003/S3/R3-S2 retries an unchanged NPC draft after a recoverable autosave failure` | Validation marks the rejected field with actionable guidance; a recoverable failure preserves the unchanged draft for an explicit retry. | Passing 2026-07-20 |
-| S3/R1-S3 | `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | A fixture-controlled completed Act refreshes the selected current-Scene NPC's authoritative Mood, Status, and Memory values. | Passing 2026-07-22 on desktop against an acknowledged guarded isolated schema; prior mobile proof passed 2026-07-20 |
+| S3/R1-S1, S3/R1-S3, S3/R3-S3 | Automated E2E `apps/frontend/e2e/adventure-foundation.spec.ts#LC-003 creates, opens, resumes, resets, and deletes an isolated Adventure` | A fixture-controlled completed Act refreshes the selected current-Scene NPC's public Status without exposing Mood or Memory there; the Settings-only complete editor exposes the authoritative Mood, Status, and Memory values on desktop and mobile. | Passing 2026-07-24 against an acknowledged guarded isolated schema |
 
 #### Verification Gaps
 
@@ -766,7 +767,7 @@ The system SHALL allow local Debug mode in Adventure Settings to autosave every 
 
 ## Open Decisions
 
-- No active Change blocks this Epic. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
+- The active UI Refinements Change has completed focused database and desktop/mobile E2E proof but still requires its aggregate candidate gate, independent review, and owner manual confirmation. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
 
 ## Completion Criteria
 

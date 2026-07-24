@@ -5,9 +5,10 @@ status: in_progress
 
 ## Resume Here
 
-- Completed the targeted Player Debug and tied-timestamp query functional suites against the acknowledged disposable test database. The Player response assertion now matches its public `currentLocation` projection; the suite also proves a missing CSRF token cannot mutate Player state. Historical report check-result tokens were normalized so scoped validation passes with only the two accepted `LARGE_STORY_SCOPE` warnings.
-- Next action: rerun `apps/frontend/e2e/adventure-foundation.spec.ts` once port `4315` is clear. An existing healthy fake-provider process (PID `51470`) owns that reserved port; do not terminate it without its owner's authorization. Then run `npm run ci:required` on the final committed candidate using the acknowledged disposable environment.
-- Active branch/ref: `change/ui-refinements` at `7ce5cd728a3a2febe2ddcdb109c773492d09f5ab` (`Verify Adventure debug boundaries`); the worktree is clean after this verified phase.
+- Completed the targeted Player Debug and tied-timestamp query functional suites against the acknowledged disposable test database, then completed the previously blocked Adventure Playwright journey on desktop and mobile. The E2E now follows the accepted Scene/Settings Debug boundary, owner-visible italicized Guide transcript, and mobile Player-scoped Settings/Return controls.
+- Next action: run the focused static and scoped artifact gates for the E2E reconciliation, commit the coherent verification-remediation phase, then run `npm run ci:required` on that exact committed candidate using the acknowledged disposable environment.
+- Active branch/ref: `change/ui-refinements` at `e7a11b29acd014243d0bda791b692ea7e3a4d1da` (`Record Adventure verification progress`).
+- Expected dirty files: `apps/frontend/e2e/adventure-foundation.spec.ts`, `docs/epics/lc-003-adventure-play/epic.md`, and this `tasks.md`; Playwright output remains ignored local evidence.
 
 ## Interactive Log
 
@@ -75,13 +76,14 @@ status: in_progress
 - [x] Add a development/test-only Player Debug editor and typed owner route.
 - [x] Hide the main Story scroll region's native scrollbar without disabling scrolling.
 - [x] Add a failing-first player-visible Scene NPC detail contract and retain complete Debug editing in Settings.
-- [ ] Rerun the targeted Playwright Adventure journey after the existing fake-provider process releases port `4315` or its owner authorizes stopping it.
+- [x] Rerun the targeted Playwright Adventure journey on desktop and mobile after port `4315` became available.
 - [x] Run scoped SDD validation after each completed refinement and prepare the final manual UI walkthrough.
 
 ## Implementation Ledger
 
 | Date | Slice | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|
+| 2026-07-24 | LC-003/S1/R5, S2/R5-S6, and S3/R1/R3 targeted E2E reconciliation | Adventure Playwright journey, LC-003, Change ledger | Reproduced and corrected stale E2E assumptions after the accepted Scene/Settings, owner-visible Guide, and mobile Player-tab refinements; desktop and mobile now complete the isolated Adventure lifecycle. | commit pending |
 | 2026-07-23 | LC-003/S1/R5-S7 functional Player boundary | Player Debug API functional suite, LC-003, Change ledger | Added owner mutation, denied non-owner no-mutation, non-ready, invalid frozen-Location, and active-turn cases. The test harness safely refuses before database writes without an acknowledged disposable target. | `01aef46`, `8a69307` |
 | 2026-07-23 | LC-003/S1/R5-S7 Player Debug recovery | `AdventureWorkbench`, focused Player editor tests, LC-003, Change ledger | Matched NPC Debug recovery: field errors now describe the affected Player input, and an unchanged recoverable draft can retry. Story scroll keeps a neutral visible keyboard-focus treatment. | `7861e41` |
 | 2026-07-23 | LC-003/S2/R5-S6 lineage ordering | `AdventureQueryService.findForOwner`, functional query fixture, LC-003, Change ledger | Replaced timestamp-dependent transcript ordering with active revision lineage followed by entry sequence; the fixture inserts equal-time/equal-sequence narration rows in reverse lineage. | `04d47f1` |
@@ -121,6 +123,8 @@ status: in_progress
 
 | Date | Check | Evidence Type | What It Proves | Result |
 |---|---|---|---|---|
+| 2026-07-24 | frontend lint and typecheck plus scoped `sdd validate` | static and artifact supporting gates | The reconciled E2E source compiles and lints; LC-003 and Change evidence remain structurally coherent. | passed; validation has 0 errors and two accepted `LARGE_STORY_SCOPE` warnings |
+| 2026-07-24 | `npm run test:e2e -- apps/frontend/e2e/adventure-foundation.spec.ts` | targeted deterministic E2E | The acknowledged isolated desktop/mobile journey proves Adventure creation/opening, owner and non-owner boundaries, public Scene versus Settings-only NPC state, owner-visible italicized Guide transcript, immediate Pass, concurrent/retry/discard recovery, reset, resume, Return to Worlds, and deletion. The first executable reruns exposed stale test assumptions at the exact revised boundaries; the final rerun exercised the corrected journey. | passed: 7/7 projects/tests, including desktop and mobile Adventure journeys |
 | 2026-07-24 | `npm run check:contracts` | commit-sensitive generated-contract check | The committed candidate leaves the generated Tuyau client clean. | passed on `7ce5cd7` |
 | 2026-07-24 | `npm run test --workspace @lorecraft/backend -- --files tests/functional/adventure_player_debug_state.spec.ts --files tests/functional/adventure_query_service.spec.ts` | focused functional API/query test | Owner Player saves, missing-CSRF/non-owner/not-ready/invalid/busy refusals, no-mutation assertions, and adversarial tied-timestamp transcript lineage all execute against the acknowledged disposable test database. | passed: 9/9; database safety suite passed 20/20 first |
 | 2026-07-24 | `sdd validate lorecraft --change 2026-07-22-ui-refinements --repo /Users/taylor/src/my-life/spaces/lorecraft --workspace /Users/taylor --json` | scoped artifact validation | Change, Epic, and all three historical report snapshots are structurally coherent after normalizing each current-check result to the allowed vocabulary. | passed: 0 errors; two accepted `LARGE_STORY_SCOPE` warnings |
@@ -269,8 +273,8 @@ status: in_progress
 | Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
 |---|---|---|---|---|---|
 | 2026-07-23 | Historical verification reports require current report schema and linear immutable lineage. | The report chain cannot hide current validation failures; historical outcomes stay unchanged. | LC-003 review records, Change validation, final review handoff. | Migrated 2026-07-17 → 2026-07-22 0753 → 2026-07-22 1700; normalized current-check result vocabulary on 2026-07-24; scoped validation passes. | resolved |
-| 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, generated contract, and adversarial database proof are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | partial; E2E and aggregate proof remain |
-| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, and functional API proof are complete; E2E is blocked by port `4315` and aggregate proof remains. | partial |
+| 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, and desktop/mobile E2E are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | partial; aggregate proof remains |
+| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, and desktop/mobile E2E are complete; aggregate proof remains. | partial |
 
 ## Verification Environment
 
@@ -279,7 +283,7 @@ status: in_progress
 | Query projection | guarded disposable database with the existing backend test harness | LC-003/S2/R3-S2, R5-S6 | ready and executed | Focused adversarial query test passed on 2026-07-24. |
 | Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
 | Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | executed on `7ce5cd7` | `npm run check:contracts` passed; this ledger-only commit does not affect generated client output. |
-| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | partial | Focused functional proof passed; targeted E2E is blocked by an existing process on reserved port `4315`, then `npm run ci:required` remains required. |
+| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | partial | Focused functional proof and targeted desktop/mobile E2E passed against acknowledged isolated targets; `npm run ci:required` remains required on the exact final commit. |
 | Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | ready | The migrated immutable report chain preserves its source outcomes and now passes scoped Change validation with one unambiguous current tip. |
 
 ## Verification Scope Decision
@@ -287,7 +291,7 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: `7ce5cd7` (`Verify Adventure debug boundaries`) contains the corrected Player response assertion, missing-CSRF functional proof, normalized historical report check results, and current evidence reconciliation. No aggregate result from an earlier candidate is reusable.
+- Exact committed source candidate: pending the E2E reconciliation commit containing the current Adventure journey, LC-003 evidence, and Change ledger. No aggregate result from an earlier candidate is reusable.
 - Freshness and cache treatment: run against the final commit with the required disposable-test environment; record meaningful execution.
 - Aggregate result and meaningful execution/count evidence: pending.
 - Post-gate evidence-record-only changes and affected checks rerun: pending.
@@ -302,5 +306,5 @@ status: in_progress
 - Manual UI confirmation status: pending user.
 - Release communication status: not applicable unless a refinement changes public user-visible behavior.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
-- Deferred gaps accepted: none. The targeted Playwright rerun is an unresolved verification gap blocked by the existing process on reserved port `4315`, not accepted.
+- Deferred gaps accepted: none. Targeted desktop/mobile Playwright proof now passes; the aggregate candidate gate, implementation self-check, independent review, and owner manual confirmation remain unresolved gates rather than accepted gaps.
 - Folder state: active, `in_progress` after the 2026-07-23 Apply discovery transition.
