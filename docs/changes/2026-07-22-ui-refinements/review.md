@@ -4,21 +4,21 @@
 
 changes-requested
 
-The prior `ready` verdict is stale. Owner manual confirmation exposed an orange focus boundary on the programmatically focused outer Story region. Apply has reproduced and remediated the defect with failing-first rendered proof, but the changed CSS/test candidate still requires a fresh aggregate gate and independent `/sdd-review` before integration readiness can be restored.
+The prior `ready` verdict is stale. Owner manual confirmation exposed an orange focus boundary on the programmatically focused outer Story region. Apply reproduced and remediated the defect with failing-first rendered proof, and replacement aggregate candidate `40e857e` passes all required stages. A fresh independent `/sdd-review` must now replace this stale verdict before integration readiness can be restored.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
-| Change artifacts | findings | The accepted neutral Story-focus contract is unchanged, but this review record is invalidated until the manual-feedback remediation receives fresh aggregate and independent review proof. |
+| Change artifacts | findings | The accepted neutral Story-focus contract and LC-003 evidence are reconciled, but this review record remains invalidated until fresh independent review. |
 | Change status | findings | The Change correctly returned to `in_progress` while the owner-reported focus defect is remediated. |
 | Epic truth | pass | LC-003 owns the responsive workbench, owner transcript, Scene privacy, Settings Debug editors, and Return to Worlds behavior. |
 | Canonical map authority | pass | LC-003 has one current implementation map and one current verification map per Story. |
 | Requirements and Scenarios | pass | The reviewed behavior is governed by LC-003/S1 R5, S2 R3/R5, and S3 R1-R3, including Player Debug Scenario R5-S7 and transcript chronology R5-S6. |
 | Story reference traceability | pass | Scoped validation reports 0 errors; the two large-Story warnings are accepted review prompts, not missing references. |
 | Reverse traceability | pass | The `develop...HEAD` inventory classified all 34 changed paths: 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests. The generated Tuyau registry index is generated support. |
-| Tests and verification | findings | Failing-first and fixed focused Storybook proof pass, but the prior aggregate at `38d4dcc` is stale after CSS/test changes. |
-| Verification scope and aggregate candidate | findings | A new uncached aggregate is required on the committed neutral-focus candidate. |
+| Tests and verification | pass | Failing-first and fixed focused Storybook proof pass; replacement uncached aggregate `40e857e` passes 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests. |
+| Verification scope and aggregate candidate | pass | All nine stages passed on exact clean candidate `40e857e` with 0 cached tasks and isolated acknowledged schemas. |
 | Semantic anchor ownership | pass | LC-003 points to governing query, Debug service/controller/route/client, page/workbench, presentation, and generated adapter anchors. |
 | Evidence falsification | pass | Exact tied-timestamp lineage, Player owner/CSRF/readiness/location/busy/no-mutation, retry/accessibility, route, Storybook, and E2E assertions were inspected and executed. |
 | Pattern conformance | pass | Player Debug recovery and field errors match the established NPC editor contract; Debug service/client boundaries match adjacent Adventure patterns. |
@@ -32,7 +32,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 | Documentation | pass | Change artifacts and LC-003 reflect current behavior and evidence; historical Epic reports preserve their audited outcomes and valid lineage. |
 | Idea repository / current-state truth | pass | The Idea still identifies this repository as the official app and preserves Adventure-local, non-canonical state boundaries. |
 | Release communication | pass | `CHANGELOG.md` now records the responsive workbench, transcript/privacy changes, navigation, and development-only Player/NPC editors. |
-| Branch and merge readiness | findings | Integration is not ready while the Change is `in_progress` and the neutral-focus candidate lacks fresh aggregate/review proof. |
+| Branch and merge readiness | findings | Integration is not ready while the Change is `in_progress`; replacement aggregate proof passes, but fresh independent review and owner reconfirmation remain. |
 | Prospective integration candidate | findings | Prior watermark `7ffbf4e` is superseded by the manual-feedback remediation. |
 | PRD alignment | pass | The implementation remains a private creator-first Adventure surface derived from frozen World canon without changing canonical World data. |
 
@@ -44,7 +44,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 ### REQUIRED
 
-- [ ] `apps/frontend/src/adventures/AdventureWorkbench.module.css:.storyRegion:focus-visible` - Owner manual confirmation found that route/recovery focus could still draw the orange action focus ring around the main Story boundary. Apply has changed the outer region to the neutral `--border-strong` treatment and added computed-style Storybook proof; fresh aggregate and independent review are required before this finding is resolved.
+- [ ] `apps/frontend/src/adventures/AdventureWorkbench.module.css:.storyRegion:focus-visible` - Owner manual confirmation found that route/recovery focus could still draw the orange action focus ring around the main Story boundary. Apply changed the outer region to neutral `--border-strong`, added failing-first computed-style Storybook proof, and passed replacement aggregate `40e857e`; fresh independent review is the remaining resolution gate.
 
 ### SUGGESTION
 
@@ -54,10 +54,10 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 | Command / Scenario | Evidence Type | Requirement / Scenario | Result | What It Proves |
 |---|---|---|---|---|
-| `npm run ci:required` | aggregate candidate gate | candidate-wide | pass on `38d4dcc` | Forced build, contracts, guarded migrations, lint, typecheck, all tests, Storybook build/tests, and desktop/mobile E2E pass together. |
+| `npm run ci:required` | aggregate candidate gate | candidate-wide | pass on `40e857e` | Forced build, contracts, guarded migrations, lint, typecheck, all tests, Storybook build/tests, and desktop/mobile E2E pass together after neutral-focus remediation. |
 | Backend aggregate tests | focused + broad automated | LC-003/S1-S3 | 185/185 pass | Player Debug boundaries/no-mutation, transcript lineage, Adventure lifecycle, privacy, workers, and adjacent regressions. |
 | Frontend Vitest aggregate | focused + broad automated | LC-003/S1-S3 | 155/155 pass | Routed Settings/editors, retry/accessibility, transcript, Scene privacy, navigation, and responsive behavior contracts. |
-| Storybook browser tests | component preview test | LC-003/S1 R5; S2 R5; S3 R1-R3 | 89/89 pass | Representative component states and interactions remain accessible and coherent. |
+| Storybook browser tests | component preview test | LC-003/S1 R5; S2 R5; S3 R1-R3 | 89/89 pass | ReadyDesktop programmatically focuses the outer Story region and confirms its neutral computed boundary; all representative states pass. |
 | Playwright aggregate | deterministic E2E | LC-003 plus adjacent journeys | 11/11 pass | Adventure desktop/mobile create/play/recover/reset/delete journey and adjacent account/World behavior pass. |
 | `sdd validate lorecraft --change 2026-07-22-ui-refinements ... --json` | artifact validation | Change + LC-003 | pass, 0 errors / 2 accepted warnings | Artifact structure, references, and report lineage are valid. |
 | `sdd_orphan_audit.py . --epic LC-003 --changed-from develop --format json` | reverse traceability | candidate-wide | pass | 34 candidates, 0 missing refs, 0 unowned tests; generated/support paths classified. |
@@ -70,14 +70,14 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 - Project-defined aggregate command: `npm run ci:required`.
 - Aggregate gate required: yes.
 - Trigger or project-policy reason: the diff crosses persistence-derived query behavior, local Debug mutation boundaries, generated contracts, privacy-sensitive owner projections, responsive UI, and deterministic E2E behavior.
-- Cache/freshness policy: the prior run used `--force` and reported 0 cached Turbo tasks, but the owner-feedback CSS and Storybook changes invalidate that candidate.
-- Post-gate evidence-record-only changes and affected checks rerun: not applicable to the current remediation because application CSS and executable Storybook evidence changed. A fresh exact-commit aggregate is required.
+- Cache/freshness policy: replacement candidate `40e857e` ran through the project's forced uncached wrapper and reported 0 cached Turbo tasks.
+- Post-gate evidence-record-only changes and affected checks rerun: final review/ledger/LC-003 freshness changes are evidence-only; scoped validation, contracts, reverse traceability, diff/merge-tree checks, and cleanliness must pass after their commit. Any later application or test change invalidates aggregate reuse.
 
 | Stage | Exact Commit / Tree | Command | Meaningful Execution / Counts | Result |
 |---|---|---|---|---|
-| Prior aggregate behavior candidate | `38d4dcc54f50daeb2982f5b43683052f7b33bab7` / `38fc1e4009adb9adbe6f761b20f37b59a99a6445` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | historical pass; stale for current CSS/test candidate |
-| Neutral Story-focus remediation | commit pending | focused Storybook, frontend route/workbench tests, lint/typecheck, and direct browser inspection | failing-first outline assertion then 20/20 Storybook and 42/42 frontend tests; neutral computed outline; clean browser | focused pass; aggregate pending |
-| Prospective integration candidate | pending final committed source | `git merge-tree --write-tree develop HEAD` after aggregate | target currently has 0 target-only commits | blocked on fresh aggregate and independent review |
+| Neutral Story-focus behavior/test implementation | `293bfa0` | focused Storybook, frontend route/workbench tests, lint/typecheck, and direct browser inspection | failing-first orange outline, then 20/20 Storybook and 42/42 frontend tests; neutral computed outline; clean browser | pass |
+| Replacement aggregate candidate | `40e857e97095342cf0bb63809f16e3dde173480a` / `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | pass |
+| Prospective integration candidate | source `40e857e` + target `458125b` / tree `5a7fbe5` | `git merge-tree --write-tree develop 40e857e` | target has 0 target-only commits; prospective tree equals aggregate-tested source tree | source proof exact; fresh independent review pending |
 | Actual integrated result | pending | no integration authorized | not integrated | not applicable |
 
 ## Boundary And Conservation Review
@@ -91,7 +91,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 | Surface / Fixture | Viewport | State / Interaction | Tool / Setup | Directly Inspected Evidence | Console / Network | Result |
 |---|---|---|---|---|---|---|
-| `Application/Adventures/Workbench--ReadyDesktop` | 1280x900 | three panes, transcript, composer, focus | Storybook + `agent-browser` | Player/Story/Scene composition, pinned title, Action/Pass/Guide treatments, fade/spacing, and controls inspected | clean console; fixture network not applicable | pass |
+| `Application/Adventures/Workbench--ReadyDesktop` | 1280x900 | three panes, transcript, composer, programmatic outer-Story focus | Storybook + `agent-browser` | Outer focus changed from orange `rgb(209, 136, 92)` to neutral `rgb(98, 93, 88)` while preserving visible focus, composition, and 1280/1280 width | clean console; fixture network not applicable | pass |
 | Ready desktop Settings | 1280x900 | Adventure, Player, NPC cards/editor | Storybook + `agent-browser` | Stable modal, full-height workspace, enabled Player fields, NPC cards/editor, and no horizontal overflow | clean console | pass |
 | `ReadyMobile` | 390x844 | Story/Player tabs and Settings Player editor | Storybook + `agent-browser` | Mobile tabs, Return/Settings controls, composer, two-column Settings tabs, scrollable Player fields, and 390/390 document width | clean console | pass |
 | Ready mobile Scene detail | 390x844 | select Mira and return | Storybook + `agent-browser` | Only name, physical description, and Status are visible; no Debug/private fields | clean console | pass |
@@ -100,20 +100,20 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 ## Review Bundle
 
-- Source branch/ref: `change/ui-refinements`; neutral-focus behavior/test implementation is committed at `293bfa0`.
-- Reviewed source commit: prior watermark `7ffbf4e` is superseded; a new watermark requires the aggregate evidence candidate and fresh independent review.
+- Source branch/ref: `change/ui-refinements`; aggregate candidate `40e857e97095342cf0bb63809f16e3dde173480a`.
+- Reviewed source commit: prior watermark `7ffbf4e` is superseded; fresh independent review must establish a new watermark after this evidence-only reconciliation.
 - Target branch/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Merge base: `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Source-only commits: 46 through the remediation commit.
+- Source-only commits: 47 through the aggregate candidate.
 - Target-only commits: 0.
-- Changed files: 34 committed candidate paths plus intended edits within the existing Workbench Storybook/CSS and SDD paths.
-- Diff stat: pending committed remediation.
-- Conflict check: pending final source commit; target has not advanced.
-- Prospective integration tree: pending final source commit.
-- Source and target refs used for candidate proof: prior source `7ffbf4e`, current baseline `cdbd0cd`, target/merge base `458125b`.
-- Dirty state: intended review/ledger candidate refresh only; application, Storybook, and LC-003 remediation are committed.
+- Changed files: 34.
+- Diff stat: 3,283 insertions, 589 deletions at `40e857e`.
+- Conflict check: pass for source `40e857e` and unchanged target.
+- Prospective integration tree: `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`, identical to the aggregate-tested source tree.
+- Source and target refs used for candidate proof: source `40e857e`, behavior/test implementation `293bfa0`, target/merge base `458125b`.
+- Dirty state: intended evidence-only review/ledger/LC-003 freshness reconciliation.
 - Branch policy: local Apply commits allowed; no push, PR, merge, close, deployment, or release authorized.
-- Reverse-traceability command/result: fresh diff-scoped LC-003 audit required after the remediation commit.
+- Reverse-traceability command/result: fresh diff-scoped LC-003 audit reports 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests; generated Tuyau registry index remains generated support.
 
 ## Reverse Traceability
 
@@ -138,7 +138,7 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 | Security / authority / budget / mutation safety | main review + dependency scan | pass with suggestion | App boundaries pass; RSC-only dependency advisory recorded. |
 | UI / visual identity | current rendered browser review | pass | Desktop/mobile representative states inspected directly. |
 | Docs / Idea truth / release communication / PRD | main review | pass after remediation | Missing changelog coverage was added in `38d4dcc`. |
-| Integration readiness | main review | findings | Prior reviewed source is superseded; fresh aggregate and independent review are required. |
+| Integration readiness | main review | findings | Prior reviewed source is superseded; replacement aggregate passes and fresh independent review is required. |
 
 ## Consolidated Remediation
 
@@ -146,22 +146,22 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 - Apply fix: both Story focus targets now share the neutral selector; `ReadyDesktop` programmatically focuses the outer region and asserts its computed outline color.
 - Focused proof: failing-first Storybook received orange `rgb(209, 136, 92)`; fixed Storybook passes 20/20, route/workbench tests pass 42/42, lint/typecheck pass, and clean 1280x900 browser inspection receives neutral `rgb(98, 93, 88)` without overflow or console/runtime errors.
 - Deferred or unsafe findings: React Router's RSC-specific advisory remains deferred until a patched compatible release; current architecture does not use RSC mode.
-- Affected verification union: full `ci:required`, scoped SDD validation, reverse traceability, merge-tree check, and fresh independent rendered/code review remain required after commit.
-- Regression-focused rereview: pending final committed and aggregate candidate.
+- Affected verification union: full `ci:required`, scoped SDD validation, contracts, reverse traceability, and merge-tree checks pass; fresh independent rendered/code review remains required.
+- Regression-focused Apply self-check: pass; selector scope is limited to the two Story focus targets, no debug instrumentation remains, and all changed-source ownership/evidence is reconciled.
 
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Reviewed source commit: prior `7ffbf4e` watermark is stale; replacement pending after implementation commit `293bfa0` receives aggregate proof.
+- Reviewed source commit: prior `7ffbf4e` watermark is stale; replacement pending fresh independent review of aggregate candidate `40e857e` plus evidence-only descendants.
 - Target branch: `develop`.
-- Reviewed integration tree/ref: pending final remediation candidate.
+- Reviewed integration tree/ref: aggregate-tested source/prospective tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`.
 - Source/target refs rechecked: target remains `458125b` with 0 target-only commits.
 - Actual integrated tree matches tested tree: not applicable; no integration performed.
-- Required aggregate rerun after drift: required because application CSS and executable Storybook evidence changed.
-- Conflict check: pending final source commit.
-- Commit state: behavior/test remediation committed at `293bfa0`; evidence refresh and aggregate candidate pending.
+- Required aggregate rerun after drift: complete on `40e857e`; any later behavior/test drift requires another rerun.
+- Conflict check: pass at aggregate candidate.
+- Commit state: behavior/test remediation `293bfa0`; exact aggregate candidate `40e857e`; final evidence/lifecycle reconciliation pending.
 - PR status: not created.
-- Merge status: not performed; blocked on fresh aggregate, independent review, owner reconfirmation, and explicit authorization.
+- Merge status: not performed; blocked on fresh independent review, owner reconfirmation, and explicit authorization.
 
 ## Suggested Manual UI Testing
 
@@ -178,4 +178,5 @@ Status: `pending user`. The owner found the orange Story-boundary defect; after 
 - 2026-07-24: Added missing release communication in `38d4dcc`.
 - 2026-07-24: Fresh uncached `ci:required` passed on `38d4dcc`; final verdict is `ready`, with owner manual confirmation still `pending user`.
 - 2026-07-24: Rechecked source `7ffbf4e` after the dev-server handoff. Its post-aggregate diff was evidence-only; validation, contracts, reverse traceability, merge-tree, and cleanliness checks passed.
-- 2026-07-24: Owner manual confirmation then found an orange outer-Story focus boundary. The prior `ready` verdict and aggregate watermark are stale; Apply reproduced the selector mismatch and began neutral-focus remediation with failing-first rendered proof.
+- 2026-07-24: Owner manual confirmation then found an orange outer-Story focus boundary. The prior `ready` verdict and aggregate watermark became stale; Apply reproduced the selector mismatch and added failing-first rendered proof.
+- 2026-07-24: Neutral-focus implementation `293bfa0` and exact aggregate candidate `40e857e` pass focused/rendered proof plus all nine required aggregate stages. Fresh independent review and owner reconfirmation remain pending.

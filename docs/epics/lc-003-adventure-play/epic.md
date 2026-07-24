@@ -773,7 +773,7 @@ The system SHALL allow local Debug mode in Adventure Settings to autosave every 
 
 ## Open Decisions
 
-- The active UI Refinements Change has completed focused database, desktop/mobile E2E, aggregate, and independent-review proof. Owner manual confirmation found one orange outer-Story focus regression; its neutral-focus remediation is in progress and requires a fresh aggregate candidate plus independent review. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
+- The active UI Refinements Change has completed focused database, desktop/mobile E2E, and aggregate proof. Owner manual confirmation found one orange outer-Story focus regression; its neutral-focus remediation and replacement aggregate now pass, while fresh independent review and owner reconfirmation remain pending. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
 
 ## Completion Criteria
 

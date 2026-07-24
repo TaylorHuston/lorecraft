@@ -6,10 +6,11 @@ status: in_progress
 ## Resume Here
 
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
-- The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, and failing-first computed-style Storybook proof plus focused frontend, lint/typecheck, and direct rendered verification pass.
-- Next action: commit this candidate ledger refresh, run the full uncached aggregate on that exact clean commit, record the result, complete self-check/reverse traceability, and return the Change to `in_review` for fresh independent review.
-- Active branch/ref: `change/ui-refinements`; prior aggregate proof at `38d4dcc` and review watermark `7ffbf4e` are stale for the new CSS/test candidate.
-- Expected dirty files: this ledger and `review.md` until the aggregate candidate record is committed; generated/build/browser outputs remain ignored local artifacts.
+- The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
+- Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
+- Next action: transition back to `in_review` and run a fresh independent `/sdd-review`; after that, ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary.
+- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, target `develop` at `458125b`.
+- Expected dirty files: this ledger, LC-003 freshness note, and `review.md` until the evidence/lifecycle record is committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -201,6 +202,7 @@ status: in_progress
 | 2026-07-24 | `sdd validate lorecraft --change 2026-07-22-ui-refinements ... --json` | final scoped artifact validation | The reconciled Change, LC-003 Epic, and immutable Epic-verification chain are structurally coherent after the aggregate evidence refresh. | passed: 0 errors; two accepted `LARGE_STORY_SCOPE` warnings |
 | 2026-07-24 | `npm run test:storybook --workspace @lorecraft/frontend -- AdventurePage.stories.tsx` before neutral-focus fix | failing-first rendered regression | `ReadyDesktop` programmatically focuses the outer Story region and requires the computed outline to match `--border-strong`. | failed as expected: received orange `rgb(209, 136, 92)` instead of neutral `rgb(98, 93, 88)` |
 | 2026-07-24 | same focused Storybook command plus clean `agent-browser` inspection after CSS fix | focused rendered regression | Both the automated Chromium story and direct 1280x900 browser focus the outer Story boundary. | passed: 20/20 focused Storybook tests; computed neutral `rgb(98, 93, 88)`, no overflow or console/runtime errors |
+| 2026-07-24 | `npm run ci:required` on clean `40e857e` | final uncached aggregate candidate gate after owner-feedback remediation | All nine stages ran with isolated acknowledged disposable test/E2E schemas; the project wrapper forced Turbo caches off. | passed: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 cached tasks |
 
 ## Visual Verification Matrix
 
@@ -294,7 +296,7 @@ status: in_progress
 | 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, and release communication. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, desktop/mobile E2E, and the `38d4dcc` aggregate are current. `CHANGELOG.md` now records the user-visible transcript/privacy refinement. | resolved |
 | 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, desktop/mobile E2E, changed-surface ownership, exact no-mutation proof, and the final aggregate are complete. | resolved |
 | 2026-07-24 | Self-check reverse traceability and evidence falsification. | Every behavior-bearing changed source/test must be navigable from LC-003, and security/no-mutation claims must match exact assertions. | LC-003 implementation maps, Player Debug functional evidence, generated routes/contracts, Settings presentation, Change ledger. | Added adapter/presentation anchors; all eight changed tests are owned; generated registry output is explicitly classified; exact frozen/invalid/busy no-mutation assertions pass. | resolved |
-| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region and the selector shares `--border-strong` with the inner scroller. | remediation verified; aggregate and review refresh pending |
+| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region, both selectors share `--border-strong`, and exact candidate `40e857e` passes the full uncached aggregate. | resolved; fresh independent review and owner reconfirmation pending |
 
 ## Verification Environment
 
@@ -303,7 +305,7 @@ status: in_progress
 | Query projection | guarded disposable database with the existing backend test harness | LC-003/S2/R3-S2, R5-S6 | ready and executed | Focused adversarial query test passed on 2026-07-24. |
 | Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
 | Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | executed on `0fd4cc3` | `npm run check:contracts` passed after the E2E reconciliation commit. |
-| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | prior proof executed; replacement pending | `38d4dcc` passed 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests, but the owner-feedback CSS/test change invalidates aggregate reuse. A fresh exact-commit aggregate is required. |
+| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | ready and executed | Replacement aggregate `40e857e` passes 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests after the owner-feedback CSS/test remediation. |
 | Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | ready | The migrated immutable report chain preserves its source outcomes and now passes scoped Change validation with one unambiguous current tip. |
 
 ## Verification Scope Decision
@@ -311,27 +313,27 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required: yes; the Change crosses backend persistence-derived query data, a typed contract, privacy-sensitive owner projections, and client UI.
 - Trigger or project-policy reason: repository guidance requires `ci:required` on the final source candidate with an acknowledged disposable-test environment.
-- Exact behavior/test implementation candidate: `293bfa0` (`Neutralize outer Story focus boundary`). The aggregate candidate will be the clean evidence-only descendant containing this ledger refresh; prior `38d4dcc` proof remains stale.
-- Freshness and cache treatment: the replacement run must use isolated acknowledged disposable test/E2E schemas and the project wrapper's forced uncached stages.
-- Aggregate result and meaningful execution/count evidence: pending. Focused proof currently passes 20/20 Storybook and 42/42 route/workbench tests plus frontend lint/typecheck and direct rendered inspection.
-- Post-gate evidence-record-only changes and affected checks rerun: not applicable; current changes are behavior/test-bearing.
+- Exact behavior/test implementation candidate: `293bfa0` (`Neutralize outer Story focus boundary`). Exact clean aggregate candidate: `40e857e` (`Record Story focus remediation candidate`).
+- Freshness and cache treatment: the replacement run used isolated acknowledged disposable test/E2E schemas and the project wrapper's forced uncached stages.
+- Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
+- Post-gate evidence-record-only changes and affected checks rerun: this final ledger/LC-003/review freshness update is evidence-only; scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness must pass after commit. Any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; `/sdd-review` must assess the new committed source against `develop`.
-- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; final source/tree pending remediation commit.
-- Integration-candidate result or reason source proof is reusable: no; prior independent-review watermark is superseded.
+- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; aggregate candidate tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` is the current source tree because target has not advanced.
+- Integration-candidate result or reason source proof is reusable: pending fresh independent review; source proof is exact for the aggregate candidate and later changes are evidence-only.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); aggregate evidence candidate commit pending.
-- Prospective integration tree: pending final committed evidence candidate.
+- Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); exact aggregate candidate `40e857e` (`Record Story focus remediation candidate`).
+- Prospective integration tree: `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` at the aggregate candidate; target has 0 target-only commits.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
-- Intended implementation fully committed: yes at `293bfa0`; ledger refresh commit pending.
-- Unrelated dirty state: none; only this intended ledger refresh is expected before the aggregate run.
-- Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, and scoped validation pass on the committed implementation; fresh aggregate and final reverse traceability remain pending.
+- Intended implementation fully committed: yes at `293bfa0`; aggregate evidence candidate committed and tested at `40e857e`.
+- Unrelated dirty state: none before this evidence-only final reconciliation.
+- Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
-- Required non-manual evidence still pending: exact-commit aggregate and fresh independent review.
-- Independent review: prior `ready` verdict invalidated; `review.md` records `changes-requested` until a fresh review replaces it.
+- Required non-manual evidence still pending: fresh independent review only.
+- Independent review: prior `ready` verdict remains invalidated; `review.md` records the remediated finding and requires a fresh review against the new candidate.
 
 ## Closeout
 
@@ -340,4 +342,4 @@ status: in_progress
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
 - PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.
 - Deferred gaps accepted: the React Router RSC-specific audit advisory remains a non-blocking suggestion because this Vite SPA does not enable RSC mode.
-- Folder state: active, `in_progress`; fresh aggregate, transition to `in_review`, independent review, and owner reconfirmation remain pending.
+- Folder state: active, `in_progress`; transition to `in_review`, fresh independent review, and owner reconfirmation remain pending.
