@@ -15,7 +15,7 @@ stories:
 
 ## Product Context
 
-- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/` and `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`
+- Related changes: `docs/changes/closed/2026-07-16-private-adventure-foundation/`, `docs/changes/closed/2026-07-19-character-authoring-and-npc-cards/`, and `docs/changes/closed/2026-07-22-ui-refinements/`
 - Related ADRs:
   - `docs/adrs/2026-07-14-world-canon-and-adventure-isolation.md`
   - `docs/adrs/2026-07-16-immutable-world-version-snapshots.md`

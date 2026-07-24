@@ -11,7 +11,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 | Gate | Result | Notes |
 |---|---|---|
 | Change artifacts | pass | Proposal, design, ledger, and this review agree after correcting stale Pass-confirmation and aggregate-gap wording. |
-| Change status | pass | Active folder is `in_review`. |
+| Change status | pass | Closed folder retains stored `in_review` status as required; folder location is canonical closure. |
 | Epic truth | pass | LC-003 owns the responsive workbench, owner transcript, Scene privacy, Settings Debug editors, neutral Story focus, and Return to Worlds behavior. |
 | Canonical map authority | pass | Each LC-003 Story has one current `Implemented By` map and one current `Verified By` map. |
 | Requirements and Scenarios | pass | LC-003/S1 R5, S2 R3/R5, and S3 R1-R3 match implementation, including immediate Pass, Player Debug R5-S7, and lineage ordering R5-S6. |
@@ -78,7 +78,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 | Behavior/test implementation | `293bfa0` | focused Storybook, route/workbench tests, lint/typecheck, browser inspection | failing-first orange outline; then 20/20 Storybook, 42/42 frontend, neutral computed boundary | pass |
 | Aggregate candidate | `40e857e97095342cf0bb63809f16e3dde173480a` / `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached | pass |
 | Fresh independent source review | `b9eb218e733c38056d0b48451e782e209eeb3c4c` / `5136f90f20e01a19f9e68d58abe0443c5a00ea4b` | full `/sdd-review` | complete diff/artifact/security/UI/integration wave plus safe artifact remediation | pass |
-| Actual integrated result | pending | no integration authorized | not integrated | not applicable |
+| Actual integrated result | `40468fb79bb543f71880cfc2c358dedd80fd8fab` / `e514933a0e88bb2813958cd11ec5c926dc9a14dc` | local `--no-ff` merge into `develop` | integrated tree exactly matches accepted source `cd5c1d8` | pass |
 
 ## Boundary And Conservation Review
 
@@ -104,12 +104,12 @@ Fresh independent review finds no blocking or required application, artifact, ve
 
 - Source branch/ref: `change/ui-refinements`.
 - Reviewed source commit / watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; review-record commit `92cf739` and the owner-acceptance commit are evidence-only descendants.
-- Target branch/ref and merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
+- Target branch/ref and original merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; integrated target `40468fb79bb543f71880cfc2c358dedd80fd8fab`.
 - Source-only commits: 50 through the review watermark.
 - Target-only commits: 0.
 - Changed files: 34.
 - Diff stat at review watermark: 3,282 insertions, 591 deletions.
-- Conflict check: pass; prospective integration tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`, identical to the reviewed source tree because target has not advanced.
+- Conflict check: pass; final accepted prospective and actual integration tree `e514933a0e88bb2813958cd11ec5c926dc9a14dc`, identical to accepted source `cd5c1d8`.
 - Dirty state: clean at review watermark; the subsequent watermark-record update is evidence only.
 - Branch policy: compliant `change/*` source targeting non-production `develop`; local merge-and-close is authorized. Push, branch deletion, deployment, and production actions are not authorized.
 - External PR/issue/review metadata: no PR exists; owner feedback is recorded in the Change ledger.
@@ -153,13 +153,15 @@ Fresh independent review finds no blocking or required application, artifact, ve
 
 - Source branch: `change/ui-refinements`.
 - Review watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; subsequent review and owner-acceptance records are evidence only.
-- Target branch: `develop`.
+- Target branch: `develop` at local merge `40468fb79bb543f71880cfc2c358dedd80fd8fab`.
 - Tested source/integration trees: aggregate behavior tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`; reviewed prospective tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`; their differences are SDD evidence only.
-- Source/target refs: target remains `458125b` with 0 target-only commits.
+- Source/target refs: source `cd5c1d8` merged from unchanged target baseline `458125b`.
 - Required aggregate rerun after drift: not required for evidence-only changes; structural and integration-sensitive checks are rerun.
 - Conflict check: pass.
+- Actual integrated tree matches accepted source: yes, `e514933a0e88bb2813958cd11ec5c926dc9a14dc`.
 - PR status: not created; project policy does not require a PR for routine local integration.
-- Merge status: local merge-and-close authorized on 2026-07-24; execution pending this final freshness check.
+- Merge status: completed locally as `40468fb` on 2026-07-24; no push performed.
+- Closeout status: canonical folder transition completed after the local merge; this record and folder move are committed together on `develop`.
 
 ## Suggested Manual UI Testing
 
@@ -176,3 +178,5 @@ Status: `user confirmed` on 2026-07-24.
 - 2026-07-24: Focus remediation `293bfa0` and exact aggregate candidate `40e857e` passed; source returned to `in_review` at `53e0898`.
 - 2026-07-24: Fresh independent review completed the full artifact, code, evidence, security, UI, docs, and integration wave; verdict `ready`.
 - 2026-07-24: Owner confirmed the remediated walkthrough and explicitly authorized local merge-and-close.
+- 2026-07-24: Accepted source `cd5c1d8` merged locally into `develop` as `40468fb`; actual tree `e514933a` exactly matched the accepted source candidate.
+- 2026-07-24: Canonical `sdd change close` transition moved the Change under `docs/changes/closed/` for the final closeout commit.

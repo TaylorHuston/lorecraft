@@ -8,11 +8,13 @@ status: in_review
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
 - The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
 - Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
-- Fresh independent `/sdd-review` passes every technical gate at immutable watermark `b9eb218`; later commits are evidence-only.
+- Fresh independent `/sdd-review` passes every technical gate at immutable watermark `b9eb218`; later source commits are evidence-only.
 - The owner reconfirmed acceptance and explicitly authorized the local merge-and-close on 2026-07-24 by requesting “close and merge.” Manual status is `user confirmed`.
-- Next action: recheck source/target refs, conflict state, structural gates, and candidate-tree freshness; then merge `change/ui-refinements` into `develop` and close the Change.
-- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, review watermark `b9eb218`, review record `92cf739`, target `develop` at `458125b`.
-- Expected dirty files: `review.md` and this ledger until owner acceptance is committed; generated/build/browser outputs remain ignored local artifacts.
+- `change/ui-refinements` merged locally into `develop` as `40468fb`; actual integrated tree `e514933a0e88bb2813958cd11ec5c926dc9a14dc` exactly matches accepted source `cd5c1d8`.
+- The canonical `sdd change close` transition moved this Change under `docs/changes/closed/` after merge, review, and acceptance gates passed.
+- Next action: the planned Adventure Guidance Debug Editor is unblocked and may be promoted through `/sdd-apply` when selected.
+- Active branch/ref at closeout: `develop` at merge `40468fb`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, review watermark `b9eb218`, accepted source `cd5c1d8`.
+- Expected dirty files at this snapshot: this closed folder and the LC-003 related-change link until the closeout commit; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -321,18 +323,18 @@ status: in_review
 - Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
 - Post-gate evidence-record-only changes and affected checks rerun: `40e857e..53e0898` changes only the ledger, LC-003, and review record; the safe review batch also changes only those artifacts. Scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after its commit. Any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; fresh `/sdd-review` assessed the complete source against `develop`, whose target has not advanced.
-- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; review-record source `92cf739` yields tree `71238020b7114e03fc681f21790c441b031c182b`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
-- Integration-candidate result or reason source proof is reusable: pass; the target has 0 target-only commits, every post-aggregate change is classified SDD evidence only, and owner acceptance is `user confirmed`.
+- Integration source/target and actual tree: accepted source `cd5c1d8` merged into `develop` from baseline `458125be450cbbd74b5638a073a5058c7e74d7e2` as `40468fb79bb543f71880cfc2c358dedd80fd8fab`; actual integrated tree `e514933a0e88bb2813958cd11ec5c926dc9a14dc` exactly matches the accepted source tree.
+- Integration-candidate result: pass; every post-aggregate source change is classified SDD evidence only, owner acceptance is `user confirmed`, and the actual merge content matches the pre-merge candidate.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
 
-- Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
+- Integration target / original merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; merged target is `40468fb79bb543f71880cfc2c358dedd80fd8fab`.
 - Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); exact aggregate candidate `40e857e` (`Record Story focus remediation candidate`).
-- Prospective integration tree: `71238020b7114e03fc681f21790c441b031c182b` at review-record commit `92cf739`; target has 0 target-only commits and the post-aggregate diff is evidence-only. The owner-acceptance commit will also be evidence-only and is rechecked before merge.
-- Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
+- Actual integration tree: `e514933a0e88bb2813958cd11ec5c926dc9a14dc` at merge commit `40468fb`; it exactly matches accepted source `cd5c1d8` and differs from the aggregate tree only by SDD evidence records.
+- Source differs from target: no after integration; `develop` now contains all 34 intended changed paths.
 - Intended implementation fully committed: yes at `293bfa0`; aggregate candidate committed/tested at `40e857e`; fresh review and safe artifact remediation committed at `b9eb218`.
-- Unrelated dirty state: none; only the owner-acceptance record is pending commit.
+- Unrelated dirty state: none; only the closeout record and canonical folder move are pending commit.
 - Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
 - Required non-manual evidence still pending: none.
@@ -343,6 +345,6 @@ status: in_review
 - Review record: fresh independent verdict is `ready` at immutable watermark `b9eb218`; this follow-up records that watermark only.
 - Manual UI confirmation status: user confirmed on 2026-07-24 through the explicit “close and merge” instruction.
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
-- PR / merge state: local merge-and-close explicitly authorized on 2026-07-24; execution pending. Push, branch deletion, deployment, production action, and release remain unauthorized.
+- PR / merge state: no PR required; local merge completed as `40468fb` on 2026-07-24. Push, branch deletion, deployment, production action, and release remain unauthorized.
 - Deferred gaps accepted: the React Router RSC-specific audit advisory remains a non-blocking suggestion because this Vite SPA does not enable RSC mode.
-- Folder state: active, `in_review`; review and acceptance gates pass, pending authorized local merge and folder closeout.
+- Folder state: closed under `docs/changes/closed/2026-07-22-ui-refinements/`; stored status remains `in_review` by workflow design. Merge, review, and acceptance gates pass.
