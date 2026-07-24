@@ -9,7 +9,7 @@ The format is based on Keep a Changelog 1.1.0.
 ### Added
 
 - World authors can create, edit, and delete complete Character Cards, including their initial Adventure mood, status, and memory.
-- Adventure Scene panels now let owners inspect a complete development/debug card for each NPC currently present.
+- Adventure settings now include development-only autosaving editors for Adventure-owned Player state and complete current-Scene NPC debug state.
 - Account creation, sign-in, persistent browser sessions, sign-out, and a protected Lorecraft workspace.
 - An authenticated World catalog with a shared read-only `Stormbound Chapel` starter World.
 - Structured World detail for canonical Locations and complete development/debug Character Cards, including private Character knowledge for authorized development readers; player-safe disclosure remains deferred.
@@ -20,6 +20,7 @@ The format is based on Keep a Changelog 1.1.0.
 
 ### Changed
 
+- Adventure play now uses a three-pane desktop layout and mobile Story, Scene, and Player tabs, aligns Actions, Passes, and private Guide prompts with their transcript outcomes, exposes only public NPC details in the Scene, and includes direct Return to Worlds navigation.
 - Account access and World-browsing screens now share a consistent, responsive creator-focused interface.
 - Password visibility, World recovery actions, Adventure forms, and destructive confirmations now use consistent accessible controls with clear pending and error feedback.
 - Adventure creation now explains that player details and frozen World context are processed by the configured AI provider.
