@@ -8,9 +8,10 @@ status: in_review
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
 - The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
 - Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
-- The Change has returned to `in_review`. Next action: run a fresh independent `/sdd-review`; after that, ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary.
-- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, reconciled evidence `129c121`, target `develop` at `458125b`.
-- Expected dirty files: this lifecycle/ledger update until committed; generated/build/browser outputs remain ignored local artifacts.
+- Fresh independent `/sdd-review` passes every technical gate against source `53e0898` plus the safe artifact-remediation batch. The verdict is `ready`; owner reconfirmation remains `pending user` and blocks merge/closeout.
+- Next action: ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary; after confirmation, recheck review freshness before any authorized merge-and-close.
+- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, pre-review source `53e0898`, target `develop` at `458125b`.
+- Expected dirty files: `review.md`, this ledger, and LC-003 until the safe review-remediation batch is committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -296,7 +297,7 @@ status: in_review
 | 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, and release communication. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, desktop/mobile E2E, and the `38d4dcc` aggregate are current. `CHANGELOG.md` now records the user-visible transcript/privacy refinement. | resolved |
 | 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, desktop/mobile E2E, changed-surface ownership, exact no-mutation proof, and the final aggregate are complete. | resolved |
 | 2026-07-24 | Self-check reverse traceability and evidence falsification. | Every behavior-bearing changed source/test must be navigable from LC-003, and security/no-mutation claims must match exact assertions. | LC-003 implementation maps, Player Debug functional evidence, generated routes/contracts, Settings presentation, Change ledger. | Added adapter/presentation anchors; all eight changed tests are owned; generated registry output is explicitly classified; exact frozen/invalid/busy no-mutation assertions pass. | resolved |
-| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region, both selectors share `--border-strong`, and exact candidate `40e857e` passes the full uncached aggregate. | resolved; fresh independent review and owner reconfirmation pending |
+| 2026-07-24 | Owner manual confirmation exposed an intermittent orange main-Story boundary. | The accepted neutral focus treatment applies to both the keyboard-focusable narration scroller and the programmatically focused outer Story route/recovery target. | Workbench CSS, ReadyDesktop Storybook proof, rendered matrix, LC-003/S1 R5, review freshness, aggregate candidate. | Root cause reproduced as `.storyRegion:focus-visible` retaining `--focus-ring`; failing-first computed-style proof now covers the outer region, both selectors share `--border-strong`, exact candidate `40e857e` passes the full uncached aggregate, and fresh independent desktop/mobile rendered review passes. | resolved; owner reconfirmation pending |
 
 ## Verification Environment
 
@@ -316,10 +317,10 @@ status: in_review
 - Exact behavior/test implementation candidate: `293bfa0` (`Neutralize outer Story focus boundary`). Exact clean aggregate candidate: `40e857e` (`Record Story focus remediation candidate`).
 - Freshness and cache treatment: the replacement run used isolated acknowledged disposable test/E2E schemas and the project wrapper's forced uncached stages.
 - Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
-- Post-gate evidence-record-only changes and affected checks rerun: `40e857e..129c121` changes only the ledger, LC-003, and review record; scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after the lifecycle commit. Any later application or test change invalidates aggregate reuse.
-- Prospective integration gate required: yes; `/sdd-review` must assess the new committed source against `develop`.
+- Post-gate evidence-record-only changes and affected checks rerun: `40e857e..53e0898` changes only the ledger, LC-003, and review record; the safe review batch also changes only those artifacts. Scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after its commit. Any later application or test change invalidates aggregate reuse.
+- Prospective integration gate required: yes; fresh `/sdd-review` assessed the complete source against `develop`, whose target has not advanced.
 - Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; reconciled evidence source `129c121` yields tree `cacc2b42dccbdde909e482a368f93ed7eb9feb98`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
-- Integration-candidate result or reason source proof is reusable: pending fresh independent review; source proof is exact for the aggregate candidate and later changes are evidence-only.
+- Integration-candidate result or reason source proof is reusable: pass; the target has 0 target-only commits, and every post-aggregate change is classified SDD evidence only. Owner acceptance remains separate.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
@@ -329,17 +330,17 @@ status: in_review
 - Prospective integration tree: `cacc2b42dccbdde909e482a368f93ed7eb9feb98` at reconciled evidence commit `129c121`; target has 0 target-only commits and the post-aggregate diff is evidence-only.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
 - Intended implementation fully committed: yes at `293bfa0`; aggregate evidence candidate committed/tested at `40e857e`; reconciliation committed at `129c121`.
-- Unrelated dirty state: none; lifecycle/ledger transition is the only pending commit.
+- Unrelated dirty state: none; only the safe review artifact-remediation batch is pending commit.
 - Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
-- Required non-manual evidence still pending: fresh independent review only.
-- Independent review: prior `ready` verdict remains invalidated; `review.md` records the remediated finding and requires a fresh review against the new candidate.
+- Required non-manual evidence still pending: none.
+- Independent review: `ready`; all technical gates pass, with owner manual reconfirmation tracked separately as `pending user`.
 
 ## Closeout
 
-- Review record: prior `ready` watermark is stale; `review.md` records the owner focus finding and current Apply remediation.
+- Review record: fresh independent verdict is `ready`; the safe review batch will establish the new immutable review watermark.
 - Manual UI confirmation status: pending user; owner reconfirmation is required after fresh independent review.
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
 - PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.
 - Deferred gaps accepted: the React Router RSC-specific audit advisory remains a non-blocking suggestion because this Vite SPA does not enable RSC mode.
-- Folder state: active, `in_review`; fresh independent review and owner reconfirmation remain pending.
+- Folder state: active, `in_review`; technical review is ready and owner reconfirmation remains pending before merge/closeout.

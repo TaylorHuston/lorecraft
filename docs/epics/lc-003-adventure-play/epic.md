@@ -357,8 +357,6 @@ The system SHALL present creation, pending, failure, ready, reset, delete, resum
 
 - `S1/R3-S9`, `S1/R3-S10`: Production worker/restart acceptance is historical only and was not reproducibly rerun; explicit operational verification is required before claiming current proof.
 - `S1/R5-S5`: No current Adventure-route title/focus test directly proves this navigation behavior.
-- `S1/R5-S2`, `S1/R5-S4`: The targeted Playwright Adventure journey passes on desktop and mobile against the acknowledged disposable E2E environment; component-story, rendered-browser, and focused route/workbench evidence also pass.
-- `S1/R5-S7`: The functional API boundary and targeted desktop/mobile E2E pass against acknowledged disposable environments; the aggregate candidate gate remains required.
 - All S1: Owner manual desktop/mobile acceptance remains pending.
 
 #### Story Notes
@@ -392,7 +390,7 @@ The system SHALL let the owner of a ready Adventure submit exactly one valid Act
 
 ###### Scenario R1-S2: Pass Without Player Intent
 
-- WHEN the owner selects Pass and confirms the action
+- WHEN the owner selects Pass
 - THEN Lorecraft creates one pending turn without requiring invented player intent
 - AND the Game Master may advance the scene while preserving player agency.
 
@@ -573,7 +571,7 @@ The system SHALL integrate resolving actions and lifecycle feedback into the acc
 
 - WHEN the Adventure is used at desktop, tablet, or mobile widths with keyboard, touch, reduced motion, or zoom
 - THEN the existing Player / Story / Scene composition remains usable without horizontal overflow
-- AND action modes, submission, Pass confirmation, pending state, and recovery controls have unambiguous labels, visible focus, and appropriate touch targets.
+- AND action modes, submission, immediate Pass behavior, pending state, and recovery controls have unambiguous labels, visible focus, and appropriate touch targets.
 
 ###### Scenario R5-S6: Owner Chat Transcript
 
@@ -773,7 +771,7 @@ The system SHALL allow local Debug mode in Adventure Settings to autosave every 
 
 ## Open Decisions
 
-- The active UI Refinements Change has completed focused database, desktop/mobile E2E, and aggregate proof. Owner manual confirmation found one orange outer-Story focus regression; its neutral-focus remediation and replacement aggregate now pass, while fresh independent review and owner reconfirmation remain pending. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
+- The active UI Refinements Change has completed focused database, desktop/mobile E2E, replacement aggregate, and fresh independent review proof. Owner manual confirmation found one orange outer-Story focus regression; its neutral-focus remediation now passes automated and independent rendered verification, while owner reconfirmation remains pending. S3 remains partially verified; Story, `/look`, and `/help` remain candidate scope until their own promoted Change.
 
 ## Completion Criteria
 

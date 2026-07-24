@@ -2,39 +2,39 @@
 
 ## Verdict
 
-changes-requested
+ready
 
-The prior `ready` verdict is stale. Owner manual confirmation exposed an orange focus boundary on the programmatically focused outer Story region. Apply reproduced and remediated the defect with failing-first rendered proof, and replacement aggregate candidate `40e857e` passes all required stages. A fresh independent `/sdd-review` must now replace this stale verdict before integration readiness can be restored.
+Fresh independent review finds no blocking or required application, artifact, verification, security, UI, documentation, or integration-readiness issue. The owner-reported outer Story focus defect is remediated and independently reproduced as a neutral boundary. Manual confirmation remains `pending user`, so merge and closeout are not yet ready.
 
 ## Gate Scorecard
 
 | Gate | Result | Notes |
 |---|---|---|
-| Change artifacts | findings | The accepted neutral Story-focus contract and LC-003 evidence are reconciled, but this review record remains invalidated until fresh independent review. |
-| Change status | pass | Apply completed the owner-reported focus remediation and returned the Change to `in_review` for a fresh independent gate. |
-| Epic truth | pass | LC-003 owns the responsive workbench, owner transcript, Scene privacy, Settings Debug editors, and Return to Worlds behavior. |
-| Canonical map authority | pass | LC-003 has one current implementation map and one current verification map per Story. |
-| Requirements and Scenarios | pass | The reviewed behavior is governed by LC-003/S1 R5, S2 R3/R5, and S3 R1-R3, including Player Debug Scenario R5-S7 and transcript chronology R5-S6. |
-| Story reference traceability | pass | Scoped validation reports 0 errors; the two large-Story warnings are accepted review prompts, not missing references. |
-| Reverse traceability | pass | The `develop...HEAD` inventory classified all 34 changed paths: 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests. The generated Tuyau registry index is generated support. |
-| Tests and verification | pass | Failing-first and fixed focused Storybook proof pass; replacement uncached aggregate `40e857e` passes 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests. |
-| Verification scope and aggregate candidate | pass | All nine stages passed on exact clean candidate `40e857e` with 0 cached tasks and isolated acknowledged schemas. |
-| Semantic anchor ownership | pass | LC-003 points to governing query, Debug service/controller/route/client, page/workbench, presentation, and generated adapter anchors. |
-| Evidence falsification | pass | Exact tied-timestamp lineage, Player owner/CSRF/readiness/location/busy/no-mutation, retry/accessibility, route, Storybook, and E2E assertions were inspected and executed. |
-| Pattern conformance | pass | Player Debug recovery and field errors match the established NPC editor contract; Debug service/client boundaries match adjacent Adventure patterns. |
-| Boundary contracts | pass | Owner scope, non-disclosing not-found behavior, 409/422 meaning, retryability, authoritative refresh, and production refusal survive service, HTTP, generated client, and UI boundaries. |
-| Stateful transitions | pass | Reload chronology, active/completed turns, retry/discard, unchanged-draft retry, autosave refresh, dialog navigation, and responsive tab transitions have focused proof. |
-| Rendered UI verification | pass | The outer Story focus defect was reproduced as orange `rgb(209, 136, 92)` and directly rechecked at 1280x900 as neutral `rgb(98, 93, 88)` with no overflow or console/runtime errors. |
-| Manual UI confirmation | findings | Owner feedback found the focus defect; the remediation still needs owner reconfirmation after fresh review. |
-| Code review | findings | The narrow CSS/test remediation is Apply-owned and awaits fresh independent review. |
-| Visual / UX consistency | pass | The remediated outer and inner Story focus targets now share the accepted neutral boundary while preserving visible focus. |
-| Security review | pass | Owner authorization, CSRF, frozen-source isolation, production Debug refusal, private Guide handling, and no-mutation denial paths pass. One non-exploitable-in-current-architecture dependency advisory remains a suggestion. |
-| Documentation | pass | Change artifacts and LC-003 reflect current behavior and evidence; historical Epic reports preserve their audited outcomes and valid lineage. |
-| Idea repository / current-state truth | pass | The Idea still identifies this repository as the official app and preserves Adventure-local, non-canonical state boundaries. |
-| Release communication | pass | `CHANGELOG.md` now records the responsive workbench, transcript/privacy changes, navigation, and development-only Player/NPC editors. |
-| Branch and merge readiness | findings | The Change is back in `in_review` and replacement aggregate proof passes, but fresh independent review and owner reconfirmation remain. |
-| Prospective integration candidate | findings | Prior watermark `7ffbf4e` is superseded by the manual-feedback remediation. |
-| PRD alignment | pass | The implementation remains a private creator-first Adventure surface derived from frozen World canon without changing canonical World data. |
+| Change artifacts | pass | Proposal, design, ledger, and this review agree after correcting stale Pass-confirmation and aggregate-gap wording. |
+| Change status | pass | Active folder is `in_review`. |
+| Epic truth | pass | LC-003 owns the responsive workbench, owner transcript, Scene privacy, Settings Debug editors, neutral Story focus, and Return to Worlds behavior. |
+| Canonical map authority | pass | Each LC-003 Story has one current `Implemented By` map and one current `Verified By` map. |
+| Requirements and Scenarios | pass | LC-003/S1 R5, S2 R3/R5, and S3 R1-R3 match implementation, including immediate Pass, Player Debug R5-S7, and lineage ordering R5-S6. |
+| Story reference traceability | pass | Scoped validation reports 0 errors; two `LARGE_STORY_SCOPE` warnings remain accepted review prompts. No duplicate Story labels or full references were found. |
+| Reverse traceability | pass | All 34 changed paths are classified; 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests. Generated Tuyau registry output is support infrastructure. |
+| Tests and verification | pass | Replacement aggregate and fresh focused frontend/Storybook checks pass. |
+| Verification scope and aggregate candidate | pass | Exact clean candidate `40e857e` passed all nine forced-uncached stages; every later change is SDD evidence only. |
+| Semantic anchor ownership | pass | Epic anchors resolve to governing query, Debug service/controller/route/client, page/workbench, presentation, and generated-contract definitions. |
+| Evidence falsification | pass | Exact lineage, Player authorization/CSRF/readiness/location/busy/no-mutation, retry/accessibility, route, Storybook, and E2E assertions were opened and matched passing discovery commands. |
+| Pattern conformance | pass | Player Debug follows the established NPC service/editor/adapter recovery and validation contract, with explicit field differences. |
+| Boundary contracts | pass | Owner scope, non-disclosing 404, CSRF, 409/422 meaning, retryability, production refusal, and authoritative detail refresh survive service-to-UI translation. |
+| Stateful transitions | pass | Reload chronology, active/completed turns, retry/discard, unchanged-draft retry, autosave refresh, Settings navigation, and responsive tabs have direct proof. |
+| Rendered UI verification | pass | Current Storybook source was independently exercised at 1280×900 and 390×844 across ready, focus, Settings, Scene detail, and recovery states. |
+| Manual UI confirmation | pass | Walkthrough is current; status remains `pending user`, which is a separate acceptance and closeout gate. |
+| Code review | pass | Complete `develop...HEAD` application diff and the focused remediation diff were inspected; no required defect remains. |
+| Visual / UX consistency | pass | Desktop/mobile composition, transcript hierarchy, modal layout, Scene privacy, touch targets, and neutral Story focus align with the accepted design. |
+| Security review | pass | Owner authorization, CSRF, frozen-canon isolation, production Debug refusal, private Guide handling, and denial no-mutation paths pass. One RSC-only dependency advisory remains a suggestion. |
+| Documentation | pass | README, changelog, ADRs, LC-003, historical report lineage, and Change records do not contradict current implementation after safe artifact remediation. |
+| Idea repository / current-state truth | pass | Private Idea entry points identify `spaces/lorecraft` as active official application and `lorecraft-mvp` as archived prototype reference. |
+| Release communication | pass | `CHANGELOG.md` covers the responsive workbench, transcript/privacy, navigation, and development-only Debug editors; the focus correction needs no separate bullet. |
+| Branch and merge readiness | pass | Source/target policy, clean conflict result, and technical candidate are unambiguous; owner acceptance and explicit merge authorization remain required. |
+| Prospective integration candidate | pass | `develop` has 0 target-only commits; prospective content equals source, and post-aggregate differences are evidence-only. |
+| PRD alignment | pass | The Change remains a private, non-canonical Adventure surface derived from frozen World canon without changing creator-owned World truth. |
 
 ## Findings
 
@@ -44,139 +44,134 @@ The prior `ready` verdict is stale. Owner manual confirmation exposed an orange 
 
 ### REQUIRED
 
-- [ ] `apps/frontend/src/adventures/AdventureWorkbench.module.css:.storyRegion:focus-visible` - Owner manual confirmation found that route/recovery focus could still draw the orange action focus ring around the main Story boundary. Apply changed the outer region to neutral `--border-strong`, added failing-first computed-style Storybook proof, and passed replacement aggregate `40e857e`; fresh independent review is the remaining resolution gate.
+- None.
 
 ### SUGGESTION
 
-- [ ] `apps/frontend/package.json:29` - `npm audit --omit=dev --audit-level=high` reports GHSA-qwww-vcr4-c8h2 for `react-router@7.18.1`. The advisory applies to React Server Components action execution; Lorecraft is a Vite `BrowserRouter` SPA and does not enable the affected RSC mode, so no current exploit path was found. Recommendation: move to a patched compatible React Router release when available rather than force-downgrading the application.
+- [ ] `apps/frontend/package.json:29` - `npm audit --omit=dev --audit-level=high` reports GHSA-qwww-vcr4-c8h2 through `react-router-dom@7.18.1`. The advisory requires React Router RSC action execution; Lorecraft is a Vite `BrowserRouter` SPA and no RSC path is enabled. Upgrade to a patched compatible release when available instead of applying the reported downgrade.
 
 ## Verification Evidence
 
 | Command / Scenario | Evidence Type | Requirement / Scenario | Result | What It Proves |
 |---|---|---|---|---|
-| `npm run ci:required` | aggregate candidate gate | candidate-wide | pass on `40e857e` | Forced build, contracts, guarded migrations, lint, typecheck, all tests, Storybook build/tests, and desktop/mobile E2E pass together after neutral-focus remediation. |
-| Backend aggregate tests | focused + broad automated | LC-003/S1-S3 | 185/185 pass | Player Debug boundaries/no-mutation, transcript lineage, Adventure lifecycle, privacy, workers, and adjacent regressions. |
-| Frontend Vitest aggregate | focused + broad automated | LC-003/S1-S3 | 155/155 pass | Routed Settings/editors, retry/accessibility, transcript, Scene privacy, navigation, and responsive behavior contracts. |
-| Storybook browser tests | component preview test | LC-003/S1 R5; S2 R5; S3 R1-R3 | 89/89 pass | ReadyDesktop programmatically focuses the outer Story region and confirms its neutral computed boundary; all representative states pass. |
-| Playwright aggregate | deterministic E2E | LC-003 plus adjacent journeys | 11/11 pass | Adventure desktop/mobile create/play/recover/reset/delete journey and adjacent account/World behavior pass. |
-| `sdd validate lorecraft --change 2026-07-22-ui-refinements ... --json` | artifact validation | Change + LC-003 | pass, 0 errors / 2 accepted warnings | Artifact structure, references, and report lineage are valid. |
-| `sdd_orphan_audit.py . --epic LC-003 --changed-from develop --format json` | reverse traceability | candidate-wide | pass | 34 candidates, 0 missing refs, 0 unowned tests; generated/support paths classified. |
-| `npm run check:contracts` | generated-contract check | Player Debug/detail transport | pass | Committed Tuyau output matches route/controller contracts. |
-| `npm audit --omit=dev --audit-level=high` | dependency security scan | dependency surface | findings | One high RSC-specific React Router advisory; affected mode is not used by this SPA. |
-| Current Storybook browser walkthrough | rendered verification | UI-bearing candidate | pass | Desktop/mobile ready, Settings, Player/NPC editor, Scene detail, and recovery states render without overflow or console errors. |
+| `npm run ci:required` | aggregate candidate gate | candidate-wide | pass on `40e857e`: 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | Build, contracts, guarded migrations, lint, typecheck, all tests, Storybook build/tests, and desktop/mobile E2E pass together after focus remediation. |
+| `npm run test --workspace @lorecraft/frontend -- AdventureWorkbench.test.tsx AdventureRoutes.test.tsx tuyauAdventureApi.test.ts` | fresh focused automated | LC-003/S1-S3 | 59/59 pass | Workbench, routed recovery/Settings, Player retry/accessibility, Scene privacy, and adapter semantics remain green at review. |
+| `npm run test:storybook --workspace @lorecraft/frontend` | fresh component browser test | LC-003/S1 R5; S2 R5; S3 R1-R3 | 89/89 pass | Current component states include computed neutral outer-Story focus proof. |
+| Frontend/backend lint and typecheck | broad supporting gate | changed application surface | pass | Current source satisfies project static checks. |
+| `sdd validate lorecraft --change 2026-07-22-ui-refinements ... --json` | artifact validation | Change + LC-003 | pass: 0 errors, 2 accepted warnings | Artifact shape, references, and report lineage are structurally valid. |
+| `sdd_orphan_audit.py . --epic LC-003 --changed-from develop --format json` | reverse traceability | candidate-wide | pass | 34 candidates, 0 missing refs, 0 unowned tests; generated registry index classified. |
+| `npm run check:contracts` | generated-contract check | Player Debug/detail transport | pass | Committed Tuyau output matches current routes/controllers. |
+| `git merge-tree --write-tree develop HEAD` | integration-candidate check | source vs target | pass | Target applies without conflict and has not advanced. |
+| Current Storybook walkthrough | independent rendered verification | UI-bearing candidate | pass | Desktop/mobile ready, focus, Settings, Player/NPC editors, Scene privacy, and recovery states render without overflow or errors. |
+| Owner walkthrough below | manual acceptance | UI-bearing candidate | `pending user` | Required owner reconfirmation remains distinct from technical verification. |
+| Live-provider or production-path rerun | optional confidence evidence for this Change | unchanged provider/production boundaries | not rerun | This Change does not modify provider or deployment behavior; broader LC-003 operational gaps remain explicit in the Epic and do not block this UI/integration candidate. |
 
 ## Verification Scope And Candidate Gates
 
 - Project-defined aggregate command: `npm run ci:required`.
-- Aggregate gate required: yes.
-- Trigger or project-policy reason: the diff crosses persistence-derived query behavior, local Debug mutation boundaries, generated contracts, privacy-sensitive owner projections, responsive UI, and deterministic E2E behavior.
-- Cache/freshness policy: replacement candidate `40e857e` ran through the project's forced uncached wrapper and reported 0 cached Turbo tasks.
-- Post-gate evidence-record-only changes and affected checks rerun: final review/ledger/LC-003 freshness changes are evidence-only; scoped validation, contracts, reverse traceability, diff/merge-tree checks, and cleanliness must pass after their commit. Any later application or test change invalidates aggregate reuse.
+- Aggregate gate required: yes; the diff crosses persistence-derived projection, local Debug mutation, generated contracts, privacy-sensitive owner data, responsive UI, and E2E behavior.
+- Cache/freshness policy: exact clean candidate `40e857e` used the project wrapper's forced uncached stages and acknowledged isolated disposable schemas.
+- Post-gate evidence-only classification: `40e857e..53e0898` changes only `review.md`, `tasks.md`, and LC-003; this safe review batch also changes only those artifacts. Validation, contracts, traceability, diff, merge-tree, and cleanliness are rerun after commit. Any later behavior, test, dependency, generated-contract, configuration, or migration change invalidates aggregate reuse.
 
 | Stage | Exact Commit / Tree | Command | Meaningful Execution / Counts | Result |
 |---|---|---|---|---|
-| Neutral Story-focus behavior/test implementation | `293bfa0` | focused Storybook, frontend route/workbench tests, lint/typecheck, and direct browser inspection | failing-first orange outline, then 20/20 Storybook and 42/42 frontend tests; neutral computed outline; clean browser | pass |
-| Replacement aggregate candidate | `40e857e97095342cf0bb63809f16e3dde173480a` / `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | pass |
-| Prospective integration candidate | source `40e857e` + target `458125b` / tree `5a7fbe5` | `git merge-tree --write-tree develop 40e857e` | target has 0 target-only commits; prospective tree equals aggregate-tested source tree | source proof exact; fresh independent review pending |
+| Behavior/test implementation | `293bfa0` | focused Storybook, route/workbench tests, lint/typecheck, browser inspection | failing-first orange outline; then 20/20 Storybook, 42/42 frontend, neutral computed boundary | pass |
+| Aggregate candidate | `40e857e97095342cf0bb63809f16e3dde173480a` / `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached | pass |
+| Fresh independent source review | `53e0898d30eefd76ab9f36bcf035406885595a00` plus this evidence-only safe batch | full `/sdd-review` | complete diff/artifact/security/UI/integration wave | pass |
 | Actual integrated result | pending | no integration authorized | not integrated | not applicable |
 
 ## Boundary And Conservation Review
 
-- Boundary Contract Matrix status and exact proof: pass; functional Player Debug API tests and adapter/UI tests preserve authorization, status/reason, field errors, retry, and authoritative detail refresh.
-- Capability identifier issuer, scope, lifetime, and invalid-reuse proof: no new capability identifier is introduced. Existing Adventure IDs remain server-issued UUIDs, owner-scoped, and non-disclosing on malformed/cross-owner use.
-- Content-budget and provider-visible provenance conservation: pass; Guide text is owner-visible but remains excluded from normal generation history and raw model evidence, with query/context/privacy tests.
-- Filesystem ancestor/confinement validation before mutation and fail-closed no-write proof: not applicable; the reviewed diff adds no filesystem mutation boundary.
+- Boundary Contract Matrix: pass; functional Player Debug API tests and adapter/UI tests preserve authorization, status/reason, field errors, retry, and authoritative response semantics.
+- Capability identifiers: no new capability token is introduced. Existing server-issued Adventure UUIDs remain owner-scoped and malformed/cross-owner use is non-disclosing.
+- Content/provenance conservation: Guide text is owner-visible but excluded from normal generation history and operational model evidence; query/context/privacy tests cover the boundary.
+- Filesystem confinement: not applicable; the diff adds no filesystem mutation path.
 
 ## Rendered UI Verification
 
-| Surface / Fixture | Viewport | State / Interaction | Tool / Setup | Directly Inspected Evidence | Console / Network | Result |
+| Surface / Route or Fixture | Viewport | State / Interaction | Tool / Setup | Directly Inspected Evidence | Console / Network | Result |
 |---|---|---|---|---|---|---|
-| `Application/Adventures/Workbench--ReadyDesktop` | 1280x900 | three panes, transcript, composer, programmatic outer-Story focus | Storybook + `agent-browser` | Outer focus changed from orange `rgb(209, 136, 92)` to neutral `rgb(98, 93, 88)` while preserving visible focus, composition, and 1280/1280 width | clean console; fixture network not applicable | pass |
-| Ready desktop Settings | 1280x900 | Adventure, Player, NPC cards/editor | Storybook + `agent-browser` | Stable modal, full-height workspace, enabled Player fields, NPC cards/editor, and no horizontal overflow | clean console | pass |
-| `ReadyMobile` | 390x844 | Story/Player tabs and Settings Player editor | Storybook + `agent-browser` | Mobile tabs, Return/Settings controls, composer, two-column Settings tabs, scrollable Player fields, and 390/390 document width | clean console | pass |
-| Ready mobile Scene detail | 390x844 | select Mira and return | Storybook + `agent-browser` | Only name, physical description, and Status are visible; no Debug/private fields | clean console | pass |
-| `TurnFailedMobile` | 390x844 | recoverable failed turn | Storybook + `agent-browser` | Story chronology and Retry/Discard recovery remain available without overflow | clean console | pass |
-| `OpeningFailedMobile` | 390x844 | failed opening | Storybook + `agent-browser` | Failure explanation and Try again action render coherently | clean console | pass |
+| `Workbench--ReadyDesktop` | 1280×900 | ready three panes; outer and inner Story focus | Storybook + `agent-browser` | 1280/1280 document; outer and inner focused Story boundaries compute to neutral `rgb(98, 93, 88)` at 2px; 3 Player and 4 Game Master messages; italic Guide; no top header | clean console/errors; fixture network not applicable | pass |
+| Ready desktop Settings | 1280×900 | Player and NPC editor navigation | Storybook + `agent-browser` | 1120×832 dialog, 734px workspace; five enabled Player fields; ten NPC fields; no overflow | clean | pass |
+| Ready desktop Scene | 1280×900 | select Mira | Storybook + `agent-browser` | Only name, physical description, and Status render; no private/Debug text | clean | pass |
+| Ready mobile | 390×844 | Story, Player, Scene tabs; composer; Story focus | Storybook + `agent-browser` | 390/390 width; Story transcript/composer and neutral-or-absent Story focus after pointer modality; mobile tabs remain usable | clean | pass |
+| Mobile Settings | 390×844 | Player editor | Storybook + `agent-browser` | 358×812 dialog; two-column section tabs and all five Player fields fit without horizontal overflow | clean | pass |
+| Mobile Scene detail | 390×844 | selected Mira | Storybook + `agent-browser` | Public-only name, physical description, and Status; no clipping or private fields | clean | pass |
+| `TurnFailed` | 390×844 | retry/discard recovery | Storybook + `agent-browser` | Prior transcript retained; alert and both recovery actions remain visible | clean | pass |
+| `OpeningFailedMobile` | 390×844 | opening failure | Storybook + `agent-browser` | Failure explanation, Try again, and `/worlds` return remain visible without overflow | clean | pass |
 
 ## Review Bundle
 
-- Source branch/ref: `change/ui-refinements`; aggregate candidate `40e857e97095342cf0bb63809f16e3dde173480a`.
-- Reviewed source commit: prior watermark `7ffbf4e` is superseded; fresh independent review must establish a new watermark after this evidence-only reconciliation.
-- Target branch/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Merge base: `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Source-only commits: 47 through the aggregate candidate.
+- Source branch/ref: `change/ui-refinements`.
+- Reviewed application source commit: `53e0898d30eefd76ab9f36bcf035406885595a00`; safe artifact remediation is committed separately before the final watermark refresh.
+- Target branch/ref and merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
+- Source-only commits: 49 before this safe review batch.
 - Target-only commits: 0.
 - Changed files: 34.
-- Diff stat: 3,283 insertions, 589 deletions at `40e857e`.
-- Conflict check: pass for source `40e857e` and unchanged target.
-- Prospective integration tree: `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`, identical to the aggregate-tested source tree.
-- Source and target refs used for candidate proof: source `40e857e`, behavior/test implementation `293bfa0`, target/merge base `458125b`.
-- Dirty state: evidence reconciliation is committed at `129c121`; only the guarded lifecycle/ledger transition remains pending commit.
-- Branch policy: local Apply commits allowed; no push, PR, merge, close, deployment, or release authorized.
-- Reverse-traceability command/result: fresh diff-scoped LC-003 audit reports 0 missing implementation refs, 0 missing verification refs, and 0 unowned tests; generated Tuyau registry index remains generated support.
+- Diff stat at pre-review source: 3,286 insertions, 589 deletions.
+- Conflict check: pass; pre-review prospective tree `173eb89d080d9bf3525e69c458ba42f14f5486e8`.
+- Dirty state: only intended `review.md`, `tasks.md`, and LC-003 safe remediation before commit.
+- Branch policy: compliant `change/*` source targeting non-production `develop`; local review commit authorized, no push/merge/close authorized.
+- External PR/issue/review metadata: no PR exists; owner feedback is recorded in the Change ledger.
+- Reverse traceability: 0 missing implementation refs, 0 missing verification refs, 0 unowned tests; generated registry index is support.
 
 ## Reverse Traceability
 
 - Candidate scope: complete `develop...change/ui-refinements` diff.
-- Epic ownership reconciled: LC-003/S1, S2, and S3 maps own all behavior-bearing source/test changes.
-- Support/generated/framework classifications: changelog and routes are support/adapters; Tuyau schema/tree/index are generated contracts, with the registry index intentionally not a direct Scenario owner.
-- Stranded refactor surfaces checked: old Scene Debug presentation, transcript ordering, settings editor placement, pass confirmation, route navigation, adapters, generated bindings, tests, and Storybook fixtures.
-- Explicit gaps or tracked cleanup: no required traceability gap; only the React Router RSC advisory suggestion remains.
+- Epic ownership: LC-003/S1-S3 owns all behavior-bearing source and tests.
+- Support/generated/framework: changelog and SDD records are support; route registration and Tuyau output are adapter/generated support.
+- Stranded surfaces checked: old Scene Debug presentation, Pass confirmation, prior transcript ordering, Settings placement, source-World return target, generated bindings, and superseded focus selector.
+- Explicit gaps: none for this Change; broader production/live-provider and owner-acceptance gaps remain honestly recorded in LC-003.
 
 ## Discovery Wave
 
 | Pass | Reviewer | Result | Notes |
 |---|---|---|---|
-| Artifact truth | main review | pass | Change, LC-003, PRD, Idea, ADRs, historical reports, README, changelog, and guidance inspected. |
-| Reverse traceability | packaged audit + main review | pass | Every changed source/test path classified. |
-| Code diff | main review | pass | Complete application diff and high-risk backend/frontend boundaries inspected. |
-| Verification coverage | main review | pass | Exact test anchors inspected; full required gate executed. |
-| Evidence falsification | main review | pass | Lineage and Player no-mutation/security claims matched exact assertions. |
-| Pattern conformance | main review | pass | Player/NPC editor and Adventure API/query sibling contracts compared. |
-| Boundary contracts | main review | pass | Domain/HTTP/generated-client/UI semantics preserved. |
-| Stateful transitions | main review | pass | Retry, failure, reload, pending, navigation, and editor transitions covered. |
-| Security / authority / budget / mutation safety | main review + dependency scan | pass with suggestion | App boundaries pass; RSC-only dependency advisory recorded. |
-| UI / visual identity | current rendered browser review | pass | Desktop/mobile representative states inspected directly. |
-| Docs / Idea truth / release communication / PRD | main review | pass after remediation | Missing changelog coverage was added in `38d4dcc`. |
-| Integration readiness | main review | findings | Prior reviewed source is superseded; replacement aggregate passes and fresh independent review is required. |
+| Artifact truth | main review | pass after safe remediation | Corrected stale Pass-confirmation and aggregate-gap wording. |
+| Reverse traceability | packaged audit + main review | pass | Every changed path classified. |
+| Code diff | main review | pass | Every changed application path and focused remediation hunk inspected. |
+| Verification coverage | main review | pass | Exact focused evidence and aggregate discovery/counts inspected. |
+| Evidence falsification | main review | pass | High-risk lineage, security, no-mutation, retry, and rendered-focus assertions matched source. |
+| Pattern conformance | main review | pass | Player/NPC Debug siblings compared across service, client, editor, and tests. |
+| Boundary contracts | main review | pass | Domain/HTTP/generated client/UI status and retry semantics preserved. |
+| Stateful transitions | main review | pass | Reload, retry/discard, autosave recovery, refresh, focus, and navigation inspected. |
+| Security / authority / budget / mutation safety | main review + npm audit | pass with suggestion | App boundaries pass; RSC-only dependency advisory retained. |
+| UI / visual identity | current independent browser review | pass | Desktop/mobile current-source screenshots and computed styles directly inspected. |
+| Docs / Idea truth / release communication / PRD | main review | pass | Public/private routing and non-canonical boundary remain aligned. |
+| Integration readiness | main review | pass technically | Manual acceptance and explicit integration authorization remain separate blockers. |
 
 ## Consolidated Remediation
 
-- Root cause: `.storyRegion:focus-visible` retained the orange `--focus-ring` even though `.storyContent:focus-visible` had been changed to the accepted neutral `--border-strong`. Route/recovery programmatic focus targets the outer region, making the orange boundary appear intermittently.
-- Apply fix: both Story focus targets now share the neutral selector; `ReadyDesktop` programmatically focuses the outer region and asserts its computed outline color.
-- Focused proof: failing-first Storybook received orange `rgb(209, 136, 92)`; fixed Storybook passes 20/20, route/workbench tests pass 42/42, lint/typecheck pass, and clean 1280x900 browser inspection receives neutral `rgb(98, 93, 88)` without overflow or console/runtime errors.
-- Deferred or unsafe findings: React Router's RSC-specific advisory remains deferred until a patched compatible release; current architecture does not use RSC mode.
-- Affected verification union: full `ci:required`, scoped SDD validation, contracts, reverse traceability, and merge-tree checks pass; fresh independent rendered/code review remains required.
-- Regression-focused Apply self-check: pass; selector scope is limited to the two Story focus targets, no debug instrumentation remains, and all changed-source ownership/evidence is reconciled.
+- Root causes addressed: stale Epic wording still described removed Pass confirmation and completed aggregate evidence as pending; review/ledger still represented the fresh review as outstanding.
+- Safe-fix batch: reconciled LC-003, refreshed `tasks.md`, and replaced the stale `changes-requested` review with this complete `ready` record.
+- Deferred findings: React Router RSC advisory suggestion only.
+- Affected verification union: scoped validation, generated-contract cleanliness, reverse traceability, diff checks, merge-tree, Git cleanliness, and review-record consistency.
+- Regression-focused rereview: artifact changes only; no application/test/runtime boundary changed.
+- New regressions introduced: none.
 
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Reviewed source commit: prior `7ffbf4e` watermark is stale; replacement pending fresh independent review of aggregate candidate `40e857e` plus evidence-only descendants.
+- Review watermark: pending the safe review-batch commit; it will cover application source `53e0898` plus artifact remediation.
 - Target branch: `develop`.
-- Reviewed integration tree/ref: aggregate-tested source/prospective tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`.
-- Source/target refs rechecked: target remains `458125b` with 0 target-only commits.
-- Actual integrated tree matches tested tree: not applicable; no integration performed.
-- Required aggregate rerun after drift: complete on `40e857e`; any later behavior/test drift requires another rerun.
-- Conflict check: pass at aggregate candidate.
-- Commit state: behavior/test remediation `293bfa0`; exact aggregate candidate `40e857e`; evidence reconciliation `129c121`; lifecycle/ledger transition pending commit.
-- PR status: not created.
-- Merge status: not performed; blocked on fresh independent review, owner reconfirmation, and explicit authorization.
+- Tested source tree: aggregate behavior tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`; later source differences are evidence only.
+- Source/target refs: target remains `458125b` with 0 target-only commits.
+- Required aggregate rerun after drift: not required for evidence-only changes; structural and integration-sensitive checks are rerun.
+- Conflict check: pass.
+- PR status: not created; project policy does not require a PR for routine local integration.
+- Merge status: not performed. Owner acceptance and explicit merge-and-close authorization remain required.
 
 ## Suggested Manual UI Testing
 
-1. Open a ready Adventure at desktop width. Confirm the Player / Story / Scene layout, pinned World title, transcript spacing and Action/Pass/italic Guide ordering, public-only Scene NPC detail, and Player Return to Worlds navigation.
-2. Open Settings. Confirm Player and current-Scene NPC edits autosave locally, rejected edits expose usable errors/retry, modal height stays stable, and no World canon changes.
-3. Repeat at a narrow viewport using Story / Player / Scene tabs. Confirm the composer and Settings tabs do not overflow and Return to Worlds reaches `/worlds`.
+1. Open a ready Adventure at desktop width, click or route into Story, and trigger a recovery focus return. Expected: at most a subtle neutral gray boundary—never orange.
+2. Confirm desktop/mobile transcript alignment, italic Guide, immediate Pass, public-only Scene NPC details, Player/NPC Settings editors, and rejected-edit retry.
+3. Confirm the arrow-only Return to Worlds reaches `/worlds` and narrow Story/Player/Scene plus Settings tabs do not overflow.
 
-Status: `pending user`. The owner found the orange Story-boundary defect; after Apply and fresh independent review, reconfirm that the main narration boundary remains neutral when clicked, routed to, or restored by recovery focus.
+Status: `pending user`.
 
 ## Review Log
 
-- 2026-07-23: Earlier independent review recorded `changes-requested`; the Change was replanned and remediated through Apply.
-- 2026-07-24: Full independent discovery completed against source `8ab3bf9` and unchanged target `458125b`; direct desktop/mobile rendering passed.
-- 2026-07-24: Added missing release communication in `38d4dcc`.
-- 2026-07-24: Fresh uncached `ci:required` passed on `38d4dcc`; final verdict is `ready`, with owner manual confirmation still `pending user`.
-- 2026-07-24: Rechecked source `7ffbf4e` after the dev-server handoff. Its post-aggregate diff was evidence-only; validation, contracts, reverse traceability, merge-tree, and cleanliness checks passed.
-- 2026-07-24: Owner manual confirmation then found an orange outer-Story focus boundary. The prior `ready` verdict and aggregate watermark became stale; Apply reproduced the selector mismatch and added failing-first rendered proof.
-- 2026-07-24: Neutral-focus implementation `293bfa0` and exact aggregate candidate `40e857e` pass focused/rendered proof plus all nine required aggregate stages. Fresh independent review and owner reconfirmation remain pending.
+- 2026-07-23: Initial independent review requested Player Debug, lineage-ordering, recovery, accessibility, evidence, and report-lineage remediation.
+- 2026-07-24: Earlier remediated candidate passed review, then owner feedback exposed the orange outer-Story focus selector and invalidated that watermark.
+- 2026-07-24: Focus remediation `293bfa0` and exact aggregate candidate `40e857e` passed; source returned to `in_review` at `53e0898`.
+- 2026-07-24: Fresh independent review completed the full artifact, code, evidence, security, UI, docs, and integration wave; verdict `ready`, owner confirmation `pending user`.
