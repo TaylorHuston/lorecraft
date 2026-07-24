@@ -7,7 +7,7 @@ status: in_review
 
 - Independent `/sdd-review` is technically `ready`. Fresh uncached aggregate proof passed all nine stages on clean candidate `38d4dcc`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests.
 - Next action: complete the pending owner UI walkthrough below. After confirmation, resume `/sdd-review` to recheck staleness and request authorization for the policy-defined local merge-and-close.
-- Active branch/ref: `change/ui-refinements`; reviewed source `38d4dcc`, prospective integration tree `38fc1e4`, and immutable behavior/test implementation `05ff5ab` are recorded below. The final review/tasks reconciliation is evidence-only.
+- Active branch/ref: `change/ui-refinements`; reviewed source watermark `7ffbf4e`, prospective integration tree `9325144`, aggregate behavior candidate `38d4dcc`, and immutable behavior/test implementation `05ff5ab` are recorded below. The refreshed review/tasks reconciliation is evidence-only.
 - Expected dirty files: none; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
@@ -301,20 +301,20 @@ status: in_review
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required: yes; the Change crosses backend persistence-derived query data, a typed contract, privacy-sensitive owner projections, and client UI.
 - Trigger or project-policy reason: repository guidance requires `ci:required` on the final source candidate with an acknowledged disposable-test environment.
-- Exact committed source candidate: `38d4dcc` (`Document Adventure UI refinements`) is the exact clean source HEAD tested by the fresh independent-review aggregate; behavior/test implementation remains immutable at `05ff5ab`.
+- Exact aggregate behavior candidate: `38d4dcc` (`Document Adventure UI refinements`) is the exact clean source HEAD tested by the fresh independent-review aggregate; behavior/test implementation remains immutable at `05ff5ab`. Reviewed source watermark `7ffbf4e` differs only in `review.md` and `tasks.md`.
 - Freshness and cache treatment: the run used isolated acknowledged disposable test/E2E schemas, and the project wrapper forced build/lint/typecheck/test caches off.
 - Aggregate result and meaningful execution/count evidence: `38d4dcc` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
-- Post-gate evidence-record-only changes and affected checks rerun: final `review.md`/`tasks.md` reconciliation is evidence-only; scoped validation, contract cleanliness, diff checks, merge-tree checks, and Git cleanliness are rerun after its commit. Any later application or test change invalidates aggregate reuse.
+- Post-gate evidence-record-only changes and affected checks rerun: `38d4dcc..7ffbf4e` changes only `review.md` and `tasks.md`; scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness pass at the reviewed watermark. The refreshed review record remains evidence-only; any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; independent review passed it.
-- Current target and prospective integration tree/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; prospective tree `38fc1e4009adb9adbe6f761b20f37b59a99a6445`, identical to the reviewed source tree.
-- Integration-candidate result or reason source proof is reusable: pass; target has 0 target-only commits, so exact source aggregate proof applies to the identical prospective tree.
+- Current target and prospective integration tree/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; reviewed source `7ffbf4e` yields prospective tree `9325144a6a35393022b47eba30d4207d98b55907`, identical to that source tree.
+- Integration-candidate result or reason source proof is reusable: pass; target has 0 target-only commits, and the only difference from aggregate-tested tree `38fc1e4` is the classified review evidence.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Reviewed source commit: `38d4dcc54f50daeb2982f5b43683052f7b33bab7`; behavior/test implementation is immutable at `05ff5ab`.
-- Prospective integration tree: `38fc1e4009adb9adbe6f761b20f37b59a99a6445`, identical to the reviewed source tree.
+- Reviewed source commit: `7ffbf4e16b6a35b950678949fe8171fb87bc4edd`; aggregate behavior candidate is `38d4dcc54f50daeb2982f5b43683052f7b33bab7`, and behavior/test implementation is immutable at `05ff5ab`.
+- Prospective integration tree: `9325144a6a35393022b47eba30d4207d98b55907`, identical to the reviewed source tree.
 - Source differs from target: yes; 34 changed paths span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, SDD artifacts, and release communication.
 - Intended implementation fully committed: yes; final review/tasks recording is evidence-only.
 - Unrelated dirty state: none after the review evidence commit.
@@ -325,7 +325,7 @@ status: in_review
 
 ## Closeout
 
-- Review record: `review.md` records the 2026-07-24 independent `ready` verdict against source `38d4dcc` and target `458125b`.
+- Review record: `review.md` records the 2026-07-24 independent `ready` verdict, aggregate proof at `38d4dcc`, and refreshed reviewed source watermark `7ffbf4e` against target `458125b`.
 - Manual UI confirmation status: pending user; the complete current walkthrough is recorded above and in `review.md`.
 - Release communication status: complete in `CHANGELOG.md` at `38d4dcc`.
 - PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.

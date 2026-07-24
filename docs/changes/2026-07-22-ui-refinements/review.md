@@ -33,7 +33,7 @@ The source branch is technically ready for `develop`. Required owner manual conf
 | Idea repository / current-state truth | pass | The Idea still identifies this repository as the official app and preserves Adventure-local, non-canonical state boundaries. |
 | Release communication | pass | `CHANGELOG.md` now records the responsive workbench, transcript/privacy changes, navigation, and development-only Player/NPC editors. |
 | Branch and merge readiness | pass | `change/ui-refinements` is clean, target `develop` has not advanced, conflict check passes, and the prospective merge tree equals the reviewed source tree. |
-| Prospective integration candidate | pass | Source `38d4dcc` + target `458125b` yields tree `38fc1e4`, identical to source tree `38fc1e4`; source aggregate proof is therefore reusable. |
+| Prospective integration candidate | pass | Reviewed source `7ffbf4e` + target `458125b` yields tree `9325144`, identical to the reviewed source tree; aggregate proof from `38d4dcc` remains reusable because the intervening diff is only this review record and ledger. |
 | PRD alignment | pass | The implementation remains a private creator-first Adventure surface derived from frozen World canon without changing canonical World data. |
 
 ## Findings
@@ -75,8 +75,9 @@ The source branch is technically ready for `develop`. Required owner manual conf
 
 | Stage | Exact Commit / Tree | Command | Meaningful Execution / Counts | Result |
 |---|---|---|---|---|
-| Reviewed source candidate | `38d4dcc54f50daeb2982f5b43683052f7b33bab7` / `38fc1e4009adb9adbe6f761b20f37b59a99a6445` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | pass |
-| Prospective integration candidate | source `38d4dcc` + target `458125b` / tree `38fc1e4` | merge-tree conflict/tree check | no target-only commits; prospective tree equals reviewed source tree | pass; reusable source proof |
+| Aggregate behavior candidate | `38d4dcc54f50daeb2982f5b43683052f7b33bab7` / `38fc1e4009adb9adbe6f761b20f37b59a99a6445` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached tasks | pass |
+| Reviewed source watermark | `7ffbf4e16b6a35b950678949fe8171fb87bc4edd` / `9325144a6a35393022b47eba30d4207d98b55907` | post-aggregate diff classification plus SDD validation, contracts, reverse traceability, and diff checks | `38d4dcc..7ffbf4e` changes only `review.md` and `tasks.md`; all artifact-observing gates pass | pass; aggregate reusable |
+| Prospective integration candidate | source `7ffbf4e` + target `458125b` / tree `9325144` | `git merge-tree --write-tree develop HEAD` | no target-only commits; prospective tree equals reviewed source tree | pass; reusable source proof |
 | Actual integrated result | pending | pending owner confirmation and authorized integration | not integrated | not applicable |
 
 ## Boundary And Conservation Review
@@ -99,18 +100,18 @@ The source branch is technically ready for `develop`. Required owner manual conf
 
 ## Review Bundle
 
-- Source branch/ref: `change/ui-refinements` at `38d4dcc54f50daeb2982f5b43683052f7b33bab7`.
-- Reviewed source commit: `38d4dcc54f50daeb2982f5b43683052f7b33bab7`.
+- Source branch/ref: `change/ui-refinements` at `7ffbf4e16b6a35b950678949fe8171fb87bc4edd`.
+- Reviewed source commit: `7ffbf4e16b6a35b950678949fe8171fb87bc4edd`; aggregate behavior candidate `38d4dcc54f50daeb2982f5b43683052f7b33bab7` remains reusable because the later diff is evidence-only.
 - Target branch/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Merge base: `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Source-only commits: 43.
+- Source-only commits: 44.
 - Target-only commits: 0.
 - Changed files: 34.
-- Diff stat: 3,205 insertions, 584 deletions.
+- Diff stat: 3,264 insertions, 584 deletions.
 - Conflict check: pass; no conflict markers.
-- Prospective integration tree: `38fc1e4009adb9adbe6f761b20f37b59a99a6445`, identical to the source tree.
-- Source and target refs used for candidate proof: source `38d4dcc`, target/merge base `458125b`.
-- Dirty state: clean at aggregate and review discovery completion.
+- Prospective integration tree: `9325144a6a35393022b47eba30d4207d98b55907`, identical to the reviewed `7ffbf4e` source tree.
+- Source and target refs used for candidate proof: reviewed source `7ffbf4e`, aggregate behavior source `38d4dcc`, target/merge base `458125b`.
+- Dirty state: clean at aggregate completion and again at the `7ffbf4e` re-review watermark.
 - Branch policy: local review-fix commits allowed; no push, PR, merge, close, deployment, or release authorized.
 - Reverse-traceability command/result: diff-scoped LC-003 audit; 34 candidates, 0 missing implementation refs, 0 missing verification refs, 0 unowned tests, one generated registry source classification.
 
@@ -151,14 +152,14 @@ The source branch is technically ready for `develop`. Required owner manual conf
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Reviewed source commit: `38d4dcc54f50daeb2982f5b43683052f7b33bab7`.
+- Reviewed source commit: `7ffbf4e16b6a35b950678949fe8171fb87bc4edd`.
 - Target branch: `develop`.
-- Tested integration tree/ref: `38fc1e4009adb9adbe6f761b20f37b59a99a6445`.
+- Reviewed integration tree/ref: `9325144a6a35393022b47eba30d4207d98b55907`; aggregate-tested behavior tree `38fc1e4009adb9adbe6f761b20f37b59a99a6445` differs only by the review evidence files.
 - Source/target refs rechecked immediately before evidence reconciliation: yes; target remained `458125b` with 0 target-only commits.
 - Actual integrated tree matches tested tree: pending; no integration performed.
 - Required aggregate rerun after drift: any application/test or target drift requires rerun; evidence-only review recording does not.
 - Conflict check: pass.
-- Commit state: reviewed source clean; final review evidence commit pending.
+- Commit state: reviewed source clean; the commit containing this refreshed review record is an evidence-only descendant and does not alter aggregate-observed application behavior.
 - PR status: not created.
 - Merge status: not performed; blocked on owner manual confirmation and explicit authorization.
 
@@ -176,3 +177,4 @@ Status: `pending user`. A `ready` technical verdict does not authorize merge or 
 - 2026-07-24: Full independent discovery completed against source `8ab3bf9` and unchanged target `458125b`; direct desktop/mobile rendering passed.
 - 2026-07-24: Added missing release communication in `38d4dcc`.
 - 2026-07-24: Fresh uncached `ci:required` passed on `38d4dcc`; final verdict is `ready`, with owner manual confirmation still `pending user`.
+- 2026-07-24: Rechecked source `7ffbf4e` after the dev-server handoff. Its post-aggregate diff is evidence-only; validation, contracts, reverse traceability, merge-tree, and cleanliness checks pass without invalidating aggregate reuse.
