@@ -6,9 +6,9 @@ status: in_progress
 ## Resume Here
 
 - Completed the targeted database and desktop/mobile E2E proof, then ran the full uncached aggregate gate on `a236c8a`. The implementation self-check reconciled changed-surface ownership and found one evidence-integrity gap: invalid-Location and busy Player Debug cases did not explicitly assert no mutation despite the ledger claim. The strengthened focused suite now passes 5/5.
-- Next action: commit the self-check remediation and artifact reconciliation, rerun `npm run ci:required` on that exact committed candidate because test-source changes invalidate the earlier aggregate result, then finalize the immutable handoff and transition to `in_review` if all gates remain clean.
-- Active branch/ref: `change/ui-refinements` at `a236c8a` (`Record Adventure E2E reconciliation`).
-- Expected dirty files: Player Debug functional evidence, LC-003 implementation maps, and this ledger; generated/build/browser outputs remain ignored local artifacts.
+- Next action: rerun `npm run ci:required` on the final committed self-check candidate, then record the immutable handoff and transition to `in_review` if all gates remain clean.
+- Active branch/ref: `change/ui-refinements` at `05ff5ab` (`Close UI refinement self-check gaps`).
+- Expected dirty files: only this post-commit ledger refresh; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -83,7 +83,7 @@ status: in_progress
 
 | Date | Slice | Files / Areas | Result | Commit / Ref |
 |---|---|---|---|---|
-| 2026-07-24 | Implementation self-check evidence and reverse-traceability remediation | Player Debug functional test, LC-003 maps, Change ledger | Added exact frozen-snapshot and invalid/busy no-mutation assertions; mapped changed route/client/presentation owners; classified generated registry output; reconciled historical commit candidates and current rendered evidence. | commit pending |
+| 2026-07-24 | Implementation self-check evidence and reverse-traceability remediation | Player Debug functional test, LC-003 maps, Change ledger | Added exact frozen-snapshot and invalid/busy no-mutation assertions; mapped changed route/client/presentation owners; classified generated registry output; reconciled historical commit candidates and current rendered evidence. | `05ff5ab` |
 | 2026-07-24 | LC-003/S1/R5, S2/R5-S6, and S3/R1/R3 targeted E2E reconciliation | Adventure Playwright journey, LC-003, Change ledger | Reproduced and corrected stale E2E assumptions after the accepted Scene/Settings, owner-visible Guide, and mobile Player-tab refinements; desktop and mobile now complete the isolated Adventure lifecycle. | `0fd4cc3` |
 | 2026-07-23 | LC-003/S1/R5-S7 functional Player boundary | Player Debug API functional suite, LC-003, Change ledger | Added owner mutation, denied non-owner no-mutation, non-ready, invalid frozen-Location, and active-turn cases. The test harness safely refuses before database writes without an acknowledged disposable target. | `01aef46`, `8a69307` |
 | 2026-07-23 | LC-003/S1/R5-S7 Player Debug recovery | `AdventureWorkbench`, focused Player editor tests, LC-003, Change ledger | Matched NPC Debug recovery: field errors now describe the affected Player input, and an unchanged recoverable draft can retry. Story scroll keeps a neutral visible keyboard-focus treatment. | `7861e41` |
@@ -299,7 +299,7 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: pending the self-check evidence and traceability remediation commit; current HEAD is `a236c8a`, whose uncached aggregate passed before the test-source hardening.
+- Exact committed source candidate: `05ff5ab` (`Close UI refinement self-check gaps`) contains the final behavior/test implementation and reconciled Epic evidence; its post-commit ledger follow-up must remain evidence-only.
 - Freshness and cache treatment: rerun against the final commit with the required disposable-test environment; the project wrapper forces build/lint/typecheck/test caches off.
 - Aggregate result and meaningful execution/count evidence: `a236c8a` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests; final rerun pending because test source changed.
 - Post-gate evidence-record-only changes and affected checks rerun: Epic/tasks-only handoff updates may reuse the final code/test aggregate only after classification plus scoped validation; any further behavior or test change invalidates it.
@@ -311,11 +311,11 @@ status: in_progress
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Candidate source commit: pending final self-check remediation and aggregate rerun.
+- Candidate source commit: `05ff5ab` contains the final behavior/test implementation; a post-commit ledger-only follow-up is pending before the aggregate rerun.
 - Source differs from target: yes; 33 changed paths currently span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, and SDD artifacts.
-- Intended implementation fully committed: pending the current focused evidence/artifact batch.
-- Unrelated dirty state: none; current dirt is limited to the active Change self-check remediation.
-- Commit-sensitive checks: generated contract passed on committed E2E candidate; final aggregate and scoped validation pending after the remediation commit.
+- Intended implementation fully committed: yes at `05ff5ab`; only cold-resume evidence is changing afterward.
+- Unrelated dirty state: none; current dirt is limited to this post-commit ledger refresh.
+- Commit-sensitive checks: generated contract passed on the committed E2E candidate; final aggregate and scoped validation remain pending after the ledger follow-up.
 - Reverse traceability: LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output is the only intentionally unowned source candidate.
 - Required risk, fan-out, environment, or evidence rows still pending: final aggregate rerun and immutable-candidate recording only; owner manual confirmation may remain `pending user` for independent review.
 - Independent review: required after Apply transitions the Change to `in_review`.
