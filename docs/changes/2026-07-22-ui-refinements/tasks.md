@@ -8,10 +8,10 @@ status: in_review
 - Owner manual testing found that the main Story boundary can still show the orange focus ring when route or recovery logic programmatically focuses the outer Story region. This invalidates the prior `ready` watermark and is classified as a defect against the accepted neutral Story-focus treatment.
 - The outer Story focus defect is fixed at `293bfa0`: both Story focus targets use the neutral boundary, with failing-first computed-style Storybook proof and clean rendered inspection.
 - Fresh uncached `npm run ci:required` passed all nine stages on exact clean candidate `40e857e`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests with 0 cached tasks. Final validation, contracts, reverse traceability, and self-check pass.
-- Fresh independent `/sdd-review` passes every technical gate against source `53e0898` plus the safe artifact-remediation batch. The verdict is `ready`; owner reconfirmation remains `pending user` and blocks merge/closeout.
+- Fresh independent `/sdd-review` passes every technical gate at immutable watermark `b9eb218`. The verdict is `ready`; owner reconfirmation remains `pending user` and blocks merge/closeout.
 - Next action: ask the owner to reconfirm that clicking, routing into, or restoring focus to Story never produces an orange boundary; after confirmation, recheck review freshness before any authorized merge-and-close.
-- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, pre-review source `53e0898`, target `develop` at `458125b`.
-- Expected dirty files: `review.md`, this ledger, and LC-003 until the safe review-remediation batch is committed; generated/build/browser outputs remain ignored local artifacts.
+- Active branch/ref: `change/ui-refinements`; behavior/test implementation `293bfa0`, aggregate candidate `40e857e`, review watermark `b9eb218`, target `develop` at `458125b`.
+- Expected dirty files: `review.md` and this ledger until the watermark record is committed; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -319,7 +319,7 @@ status: in_review
 - Aggregate result and meaningful execution/count evidence: `40e857e` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
 - Post-gate evidence-record-only changes and affected checks rerun: `40e857e..53e0898` changes only the ledger, LC-003, and review record; the safe review batch also changes only those artifacts. Scoped validation, contract cleanliness, reverse traceability, diff checks, merge-tree checks, and Git cleanliness are rerun after its commit. Any later application or test change invalidates aggregate reuse.
 - Prospective integration gate required: yes; fresh `/sdd-review` assessed the complete source against `develop`, whose target has not advanced.
-- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; reconciled evidence source `129c121` yields tree `cacc2b42dccbdde909e482a368f93ed7eb9feb98`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
+- Current target and prospective integration tree/ref: `develop` remains `458125be450cbbd74b5638a073a5058c7e74d7e2`; review watermark `b9eb218` yields tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`, differing from aggregate tree `5a7fbe5` only by SDD evidence records.
 - Integration-candidate result or reason source proof is reusable: pass; the target has 0 target-only commits, and every post-aggregate change is classified SDD evidence only. Owner acceptance remains separate.
 - Remote CI role: corroborating.
 
@@ -327,9 +327,9 @@ status: in_review
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Behavior/test implementation commit: `293bfa0` (`Neutralize outer Story focus boundary`); exact aggregate candidate `40e857e` (`Record Story focus remediation candidate`).
-- Prospective integration tree: `cacc2b42dccbdde909e482a368f93ed7eb9feb98` at reconciled evidence commit `129c121`; target has 0 target-only commits and the post-aggregate diff is evidence-only.
+- Prospective integration tree: `5136f90f20e01a19f9e68d58abe0443c5a00ea4b` at review watermark `b9eb218`; target has 0 target-only commits and the post-aggregate diff is evidence-only.
 - Source differs from target: yes; the existing 34 changed paths now include behavior-bearing updates within the already-owned Workbench CSS and Storybook fixture.
-- Intended implementation fully committed: yes at `293bfa0`; aggregate evidence candidate committed/tested at `40e857e`; reconciliation committed at `129c121`.
+- Intended implementation fully committed: yes at `293bfa0`; aggregate candidate committed/tested at `40e857e`; fresh review and safe artifact remediation committed at `b9eb218`.
 - Unrelated dirty state: none; only the safe review artifact-remediation batch is pending commit.
 - Commit-sensitive checks: focused tests, lint/typecheck, rendered inspection, scoped validation, contracts, full uncached aggregate, and final reverse traceability pass.
 - Reverse traceability: precommit LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output remains the only intentionally unowned source candidate.
@@ -338,7 +338,7 @@ status: in_review
 
 ## Closeout
 
-- Review record: fresh independent verdict is `ready`; the safe review batch will establish the new immutable review watermark.
+- Review record: fresh independent verdict is `ready` at immutable watermark `b9eb218`; this follow-up records that watermark only.
 - Manual UI confirmation status: pending user; owner reconfirmation is required after fresh independent review.
 - Release communication status: existing `CHANGELOG.md` entry remains accurate; this narrow focus correction needs no new release bullet.
 - PR / merge state: not started; no push, PR, merge, close, deployment, or release was authorized.

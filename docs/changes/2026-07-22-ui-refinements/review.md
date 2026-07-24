@@ -77,7 +77,7 @@ Fresh independent review finds no blocking or required application, artifact, ve
 |---|---|---|---|---|
 | Behavior/test implementation | `293bfa0` | focused Storybook, route/workbench tests, lint/typecheck, browser inspection | failing-first orange outline; then 20/20 Storybook, 42/42 frontend, neutral computed boundary | pass |
 | Aggregate candidate | `40e857e97095342cf0bb63809f16e3dde173480a` / `5a7fbe5472d672868e40eeffcdbb180f535ccbbf` | `npm run ci:required` | 9 stages; 185 backend, 155 frontend, 89 Storybook, 11 E2E; 0 cached | pass |
-| Fresh independent source review | `53e0898d30eefd76ab9f36bcf035406885595a00` plus this evidence-only safe batch | full `/sdd-review` | complete diff/artifact/security/UI/integration wave | pass |
+| Fresh independent source review | `b9eb218e733c38056d0b48451e782e209eeb3c4c` / `5136f90f20e01a19f9e68d58abe0443c5a00ea4b` | full `/sdd-review` | complete diff/artifact/security/UI/integration wave plus safe artifact remediation | pass |
 | Actual integrated result | pending | no integration authorized | not integrated | not applicable |
 
 ## Boundary And Conservation Review
@@ -103,14 +103,14 @@ Fresh independent review finds no blocking or required application, artifact, ve
 ## Review Bundle
 
 - Source branch/ref: `change/ui-refinements`.
-- Reviewed application source commit: `53e0898d30eefd76ab9f36bcf035406885595a00`; safe artifact remediation is committed separately before the final watermark refresh.
+- Reviewed source commit / watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; it contains application source `53e0898` plus the safe artifact-remediation batch.
 - Target branch/ref and merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Source-only commits: 49 before this safe review batch.
+- Source-only commits: 50 through the review watermark.
 - Target-only commits: 0.
 - Changed files: 34.
-- Diff stat at pre-review source: 3,286 insertions, 589 deletions.
-- Conflict check: pass; pre-review prospective tree `173eb89d080d9bf3525e69c458ba42f14f5486e8`.
-- Dirty state: only intended `review.md`, `tasks.md`, and LC-003 safe remediation before commit.
+- Diff stat at review watermark: 3,282 insertions, 591 deletions.
+- Conflict check: pass; prospective integration tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`, identical to the reviewed source tree because target has not advanced.
+- Dirty state: clean at review watermark; the subsequent watermark-record update is evidence only.
 - Branch policy: compliant `change/*` source targeting non-production `develop`; local review commit authorized, no push/merge/close authorized.
 - External PR/issue/review metadata: no PR exists; owner feedback is recorded in the Change ledger.
 - Reverse traceability: 0 missing implementation refs, 0 missing verification refs, 0 unowned tests; generated registry index is support.
@@ -152,9 +152,9 @@ Fresh independent review finds no blocking or required application, artifact, ve
 ## PR / Merge Readiness
 
 - Source branch: `change/ui-refinements`.
-- Review watermark: pending the safe review-batch commit; it will cover application source `53e0898` plus artifact remediation.
+- Review watermark: `b9eb218e733c38056d0b48451e782e209eeb3c4c`; subsequent review-record update is evidence only.
 - Target branch: `develop`.
-- Tested source tree: aggregate behavior tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`; later source differences are evidence only.
+- Tested source/integration trees: aggregate behavior tree `5a7fbe5472d672868e40eeffcdbb180f535ccbbf`; reviewed prospective tree `5136f90f20e01a19f9e68d58abe0443c5a00ea4b`; their differences are SDD evidence only.
 - Source/target refs: target remains `458125b` with 0 target-only commits.
 - Required aggregate rerun after drift: not required for evidence-only changes; structural and integration-sensitive checks are rerun.
 - Conflict check: pass.
