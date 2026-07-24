@@ -6,9 +6,9 @@ status: in_review
 ## Resume Here
 
 - Implementation, focused evidence, rendered desktop/mobile inspection, reverse traceability, and the self-check remediation are complete. The full uncached aggregate passed all nine stages on clean candidate `9b87b98`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests.
-- Next action: transition to `in_review` for independent `/sdd-review`.
-- Active branch/ref: `change/ui-refinements` at `5463078` (`Record UI refinement handoff candidate`); behavior/test implementation is immutable at `05ff5ab` and final aggregate proof is anchored to clean `9b87b98`.
-- Expected dirty files: only the guarded lifecycle transition and this final resume refresh; generated/build/browser outputs remain ignored local artifacts.
+- Next action: invoke `/sdd-review` for a fresh independent integration gate and the pending owner UI walkthrough.
+- Active branch/ref: `change/ui-refinements`; handoff candidate `5463078`, immutable behavior/test implementation `05ff5ab`, and clean aggregate proof `9b87b98` are recorded below. Later lifecycle/resume commits are evidence-only.
+- Expected dirty files: none; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -306,7 +306,7 @@ status: in_review
 - Aggregate result and meaningful execution/count evidence: `9b87b98` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
 - Post-gate evidence-record-only changes and affected checks rerun: this LC-003/tasks freshness update is evidence-only, so the aggregate is reusable after scoped validation; any later behavior or test change invalidates it.
 - Prospective integration gate required: yes; `/sdd-review` will assess the accumulated `develop` candidate.
-- Current target and prospective integration tree/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; evidence-only handoff candidate `5fe3da2`.
+- Current target and prospective integration tree/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; evidence-only handoff candidate `5463078`.
 - Integration-candidate result or reason source proof is reusable: independent review pending; source proof is fresh and reusable because post-gate changes are evidence-only.
 - Remote CI role: corroborating.
 
@@ -315,8 +315,8 @@ status: in_review
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
 - Candidate source commit: `5463078` (`Record UI refinement handoff candidate`); behavior/test implementation is immutable at `05ff5ab`, and clean tested candidate `9b87b98` differs afterward only by evidence records.
 - Source differs from target: yes; 33 changed paths span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, and SDD artifacts.
-- Intended implementation fully committed: yes; `5fe3da2` contains final Epic/tasks evidence after the immutable behavior/test candidate.
-- Unrelated dirty state: none; current dirt is limited to this post-commit handoff refresh.
+- Intended implementation fully committed: yes; `5fe3da2` contains final Epic/tasks evidence and `5463078` records the handoff after the immutable behavior/test candidate.
+- Unrelated dirty state: none; the worktree is clean after the lifecycle transition.
 - Commit-sensitive checks: generated contract passed on the committed E2E candidate; the full uncached aggregate passed on `9b87b98`; scoped validation passes after the evidence-only refresh with 0 errors and the two accepted large-Story warnings.
 - Reverse traceability: LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output is the only intentionally unowned source candidate.
 - Required risk, fan-out, environment, or evidence rows still pending: none for Apply; owner manual confirmation remains `pending user` for independent review.
