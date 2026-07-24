@@ -5,10 +5,10 @@ status: in_progress
 
 ## Resume Here
 
-- Completed the targeted database and desktop/mobile E2E proof, then ran the full uncached aggregate gate on `a236c8a`. The implementation self-check reconciled changed-surface ownership and found one evidence-integrity gap: invalid-Location and busy Player Debug cases did not explicitly assert no mutation despite the ledger claim. The strengthened focused suite now passes 5/5.
-- Next action: rerun `npm run ci:required` on the final committed self-check candidate, then record the immutable handoff and transition to `in_review` if all gates remain clean.
-- Active branch/ref: `change/ui-refinements` at `05ff5ab` (`Close UI refinement self-check gaps`).
-- Expected dirty files: only this post-commit ledger refresh; generated/build/browser outputs remain ignored local artifacts.
+- Implementation, focused evidence, rendered desktop/mobile inspection, reverse traceability, and the self-check remediation are complete. The full uncached aggregate passed all nine stages on clean candidate `9b87b98`: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests.
+- Next action: commit this evidence-only handoff batch, rerun scoped validation, then transition to `in_review` for independent `/sdd-review`.
+- Active branch/ref: `change/ui-refinements` at `9b87b98` (`Record UI refinement self-check`); behavior/test implementation is immutable at `05ff5ab`.
+- Expected dirty files: only LC-003 verification freshness and this final handoff ledger; generated/build/browser outputs remain ignored local artifacts.
 
 ## Interactive Log
 
@@ -196,6 +196,8 @@ status: in_progress
 | 2026-07-23 | Story ending buffer regression | focused workbench test, lint, and rendered Storybook | The final narration keeps an additional spacing token of clearance before the fixed composer. The Story remains scrollable and its scrollbar stays hidden. | passed; 19 focused tests, lint, 196px computed bottom padding, direct rendered inspection |
 | 2026-07-23 | Return to Worlds regression | failing-first focused workbench contract, Storybook interaction, and rendered browser | The initial contract failed because the old visible source-World link remained. Ready, narrow, and opening-failure views now expose an icon-only `Return to Worlds` link to `/worlds`. | passed after expected initial failure; 19 focused tests, 20 focused Storybook tests, direct rendered inspection |
 | 2026-07-23 | Return to Worlds Change validation | SDD artifact validation | The UI refinement's artifacts remain structurally coherent, but validation is blocked by three pre-existing LC-003 Epic verification reports that lack the required report-schema declaration. | blocked; unrelated `MISSING_EPIC_VERIFY_REPORT_SCHEMA` findings in existing review files |
+| 2026-07-24 | `npm run ci:required` on clean `9b87b98` | final uncached aggregate integration gate | All nine project-defined stages executed after the final behavior/test commit and evidence-integrity hardening, using acknowledged disposable test/E2E databases and a process-local test `APP_KEY`. | passed: 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 cached |
+| 2026-07-24 | `sdd validate lorecraft --change 2026-07-22-ui-refinements ... --json` | final scoped artifact validation | The reconciled Change, LC-003 Epic, and immutable Epic-verification chain are structurally coherent after the aggregate evidence refresh. | passed: 0 errors; two accepted `LARGE_STORY_SCOPE` warnings |
 
 ## Visual Verification Matrix
 
@@ -280,8 +282,8 @@ status: in_progress
 | Date | Decision / Discovery | End-State Consequence | Affected Surfaces To Reconcile | Evidence / Artifact Updates | Status |
 |---|---|---|---|---|---|
 | 2026-07-23 | Historical verification reports require current report schema and linear immutable lineage. | The report chain cannot hide current validation failures; historical outcomes stay unchanged. | LC-003 review records, Change validation, final review handoff. | Migrated 2026-07-17 → 2026-07-22 0753 → 2026-07-22 1700; normalized current-check result vocabulary on 2026-07-24; scoped validation passes. | resolved |
-| 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, desktop/mobile E2E, and the `a236c8a` aggregate are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | partial; final aggregate rerun required after test-source hardening |
-| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, desktop/mobile E2E, changed-surface ownership, and exact no-mutation proof are complete. | partial; final aggregate rerun required |
+| 2026-07-22 | Durable Act/Pass/Guide chat transcript. | Existing turn/revision data becomes an owner-only read projection; prompt context stays narration-only. | LC-003/S2, query service, typed contract/client type, workbench/CSS, fixtures/tests, Storybook, README release communication assessment. | Implementation, focused frontend/browser proof, generated contract, adversarial database proof, desktop/mobile E2E, and the final `9b87b98` aggregate are current. README remains unchanged because it does not make a conflicting transcript-privacy claim; a release note is not expected for this private refinement. | resolved |
+| 2026-07-23 | Independent review found unowned Player Debug state mutation, timestamp-order ambiguity, and recovery/focus defects. | Player Debug gains a governing Scenario; transcript uses revision lineage; shared Debug recovery/accessibility parity becomes mandatory. | LC-003/S1 and S2, query/service/controller/routes, typed contract, Player editor/CSS, functional/frontend/E2E tests, historical Epic report chain, aggregate gate. | Report normalization, lineage ordering, Player recovery/focus, functional API proof, desktop/mobile E2E, changed-surface ownership, exact no-mutation proof, and the final aggregate are complete. | resolved |
 | 2026-07-24 | Self-check reverse traceability and evidence falsification. | Every behavior-bearing changed source/test must be navigable from LC-003, and security/no-mutation claims must match exact assertions. | LC-003 implementation maps, Player Debug functional evidence, generated routes/contracts, Settings presentation, Change ledger. | Added adapter/presentation anchors; all eight changed tests are owned; generated registry output is explicitly classified; exact frozen/invalid/busy no-mutation assertions pass. | resolved |
 
 ## Verification Environment
@@ -291,7 +293,7 @@ status: in_progress
 | Query projection | guarded disposable database with the existing backend test harness | LC-003/S2/R3-S2, R5-S6 | ready and executed | Focused adversarial query test passed on 2026-07-24. |
 | Browser/Storybook rendering | existing frontend/Storybook development runtime | LC-003/S2/R5-S6 desktop and narrow message layout | ready | Direct desktop, narrow, and pending state inspection completed with no overlay/errors. |
 | Generated contract | committed backend generated Tuyau client comparison | owner-detail type change | executed on `0fd4cc3` | `npm run check:contracts` passed after the E2E reconciliation commit. |
-| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | partial | Strengthened focused functional proof and targeted desktop/mobile E2E pass. The full aggregate passed on `a236c8a`, but the later test-source hardening requires a fresh run on the final commit. |
+| Player Debug functional API and aggregate CI | guarded disposable test and E2E databases with both write acknowledgements | S1/R5-S7, S2/R5-S6, full candidate integration | ready and executed | Strengthened focused functional proof, targeted desktop/mobile E2E, and the final uncached aggregate all pass; `9b87b98` produced 185 backend, 155 frontend, 89 Storybook, and 11 E2E passes. |
 | Epic report lineage | current `sdd-epic-verify` report format | `sdd validate` readiness | ready | The migrated immutable report chain preserves its source outcomes and now passes scoped Change validation with one unambiguous current tip. |
 
 ## Verification Scope Decision
@@ -299,32 +301,32 @@ status: in_progress
 - Project-defined aggregate command or authoritative constituent source: `npm run ci:required` from root `package.json` and repository guidance.
 - Aggregate gate required before `in_review`: yes; the Change crosses backend persistence-derived query data, a typed contract, and client UI.
 - Trigger or project-policy reason: root guidance requires `ci:required` after the final implementation commit with an acknowledged disposable-test environment.
-- Exact committed source candidate: `05ff5ab` (`Close UI refinement self-check gaps`) contains the final behavior/test implementation and reconciled Epic evidence; its post-commit ledger follow-up must remain evidence-only.
-- Freshness and cache treatment: rerun against the final commit with the required disposable-test environment; the project wrapper forces build/lint/typecheck/test caches off.
-- Aggregate result and meaningful execution/count evidence: `a236c8a` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 E2E tests; final rerun pending because test source changed.
-- Post-gate evidence-record-only changes and affected checks rerun: Epic/tasks-only handoff updates may reuse the final code/test aggregate only after classification plus scoped validation; any further behavior or test change invalidates it.
+- Exact committed source candidate: `05ff5ab` (`Close UI refinement self-check gaps`) contains the final behavior/test implementation; `9b87b98` is the exact clean evidence-only HEAD tested by the final aggregate.
+- Freshness and cache treatment: the final run used the required acknowledged disposable-test environment, and the project wrapper forced build/lint/typecheck/test caches off.
+- Aggregate result and meaningful execution/count evidence: `9b87b98` passed all nine stages with 185 backend, 155 frontend, 89 Storybook, and 11 desktop/mobile E2E tests; 0 tasks were cached.
+- Post-gate evidence-record-only changes and affected checks rerun: this LC-003/tasks freshness update is evidence-only, so the aggregate is reusable after scoped validation; any later behavior or test change invalidates it.
 - Prospective integration gate required: yes; `/sdd-review` will assess the accumulated `develop` candidate.
-- Current target and prospective integration tree/ref: `develop`; pending final candidate.
-- Integration-candidate result or reason source proof is reusable: pending independent review.
+- Current target and prospective integration tree/ref: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`; final evidence-only handoff commit pending.
+- Integration-candidate result or reason source proof is reusable: independent review pending; source proof is fresh and reusable because post-gate changes are evidence-only.
 - Remote CI role: corroborating.
 
 ## Review Handoff Candidate
 
 - Integration target / merge base: `develop` at `458125be450cbbd74b5638a073a5058c7e74d7e2`.
-- Candidate source commit: `05ff5ab` contains the final behavior/test implementation; a post-commit ledger-only follow-up is pending before the aggregate rerun.
-- Source differs from target: yes; 33 changed paths currently span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, and SDD artifacts.
-- Intended implementation fully committed: yes at `05ff5ab`; only cold-resume evidence is changing afterward.
-- Unrelated dirty state: none; current dirt is limited to this post-commit ledger refresh.
-- Commit-sensitive checks: generated contract passed on the committed E2E candidate; final aggregate and scoped validation remain pending after the ledger follow-up.
+- Candidate source commit: final evidence-only handoff commit pending; behavior/test implementation is immutable at `05ff5ab`, and clean tested candidate `9b87b98` differs afterward only by ledger evidence.
+- Source differs from target: yes; 33 changed paths span backend query/Debug boundaries, generated contracts, frontend presentation/client behavior, tests, and SDD artifacts.
+- Intended implementation fully committed: yes at `05ff5ab`; only final Epic/tasks evidence is changing afterward.
+- Unrelated dirty state: none; current dirt is limited to final LC-003 verification freshness and this handoff ledger.
+- Commit-sensitive checks: generated contract passed on the committed E2E candidate; the full uncached aggregate passed on `9b87b98`; scoped validation passes after the evidence-only refresh with 0 errors and the two accepted large-Story warnings.
 - Reverse traceability: LC-003 changed-surface audit has 0 missing implementation/test refs and 0 unowned tests; generated Tuyau registry output is the only intentionally unowned source candidate.
-- Required risk, fan-out, environment, or evidence rows still pending: final aggregate rerun and immutable-candidate recording only; owner manual confirmation may remain `pending user` for independent review.
+- Required risk, fan-out, environment, or evidence rows still pending: final evidence-only commit and lifecycle transition only; owner manual confirmation may remain `pending user` for independent review.
 - Independent review: required after Apply transitions the Change to `in_review`.
 
 ## Closeout
 
 - Review record: `review.md` records the 2026-07-23 `changes-requested` findings; this replan addresses its ownership and constraint decisions. A new independent review is required after Apply.
 - Manual UI confirmation status: pending user.
-- Release communication status: not applicable unless a refinement changes public user-visible behavior.
+- Release communication status: not applicable for this private local product-flow refinement.
 - PR / merge state: not started; current branch is `change/ui-refinements` from `develop`.
-- Deferred gaps accepted: none. Targeted desktop/mobile Playwright proof now passes; the aggregate candidate gate, implementation self-check, independent review, and owner manual confirmation remain unresolved gates rather than accepted gaps.
-- Folder state: active, `in_progress` after the 2026-07-23 Apply discovery transition.
+- Deferred gaps accepted: none. Implementation, targeted and aggregate verification, self-check, and reverse traceability are complete; independent review and owner manual confirmation remain review-stage gates.
+- Folder state: active, `in_progress`, pending the final evidence-only commit and transition to `in_review`.
